@@ -1,27 +1,64 @@
-# 咩咩登峰
+# Temple Run · Web Edition
 
-一个使用 Three.js / WebGL 绘制的小羊登山游戏。页面框架、菜单、分数和触屏按钮由 HTML/CSS 实现；透视山坡、连续石阶、小羊、金币和炸弹由 3D 场景绘制。
+用 Three.js 复刻的原版 Temple Run 1.39（Unity）网页版，并保留工程内的原版资源（骨骼角色、路面/转角/障碍 mesh、UI 图集、音效等）。
 
-游戏使用本地打包的 CC0 3D 羊、苔藓岩石模型与草地 PBR 贴图。素材来源见 [ASSETS.md](ASSETS.md)。
+- 玩法：三条石径奔跑，左右换道 / 上下跳跃滑铲 / 路口转弯，收集金币与宝石，磁铁 / 加速 / 护盾 / 金币加成、金币倍率、断桥窄路坠崖、猴子偷金币、追逐者等原版机制。
+- 资源：角色为原版 skinned mesh + 骨骼动画重定向；路面/墙体/门楣/障碍取自 APK；UI/音效/死亡插画为原版素材。
+- 兼容：桌面键盘、触屏滑动/点按、倾斜换道（移动端）；局域网手机可扫码直连游玩。
 
-## 运行
+![蓝色天空与转角](docs/screenshots/blue-sky.png)
+![干净的转角视野](docs/screenshots/corner-clean.png)
+![断桥单车道](docs/screenshots/cliff-single-lane.png)
+
+## 运行网页版
 
 ```bash
 npm install
-npm run dev
+npm run temple:dev -- --port 5173
+# 浏览器打开 http://localhost:5173
 ```
 
-打开终端显示的本地地址。生产构建使用 `npm run build`。
+构建：
+
+```bash
+npm run temple:build   # 产物在 target/temple-run/dist
+```
 
 ## 操作
 
-- 点击“跳一下”，或按 `空格`、`↑`、`W`：跳上下一阶
-- 在空中再点一次或再按一次：跨过一阶，避开炸弹
-- `F`：全屏
-- 手机端使用屏幕底部的跳跃键
+| 输入 | 动作 |
+| --- | --- |
+| ← / → | 换道、路口转弯 |
+| ↑ / 点击屏幕 | 跳跃 |
+| ↓ / 下滑 | 滑铲 |
+| 倾斜手机 | 换道 / 路口倾斜转弯 |
+| Esc / 暂停按钮 | 暂停 |
 
-沿石阶登顶，收集金铃铛，并在 30 秒内避开炸弹。
+## 仓库结构
 
-## 神庙逃亡 Web Runner
+```
+target/temple-run/      # 游戏本体（web 前端 + 分析脚本/素材清单）
+target/temple-run/web/  # 页面与源码：src/main.js、runnerRig.js、sfx.js、style.css
+target/temple-run/analysis/  # APK 逆向产物（rig json、贴图、清单、报告）
+apk/                    # 原版 temple-run.xapk（分片，见 apk/README.md）
+src/                    # 另一款小游戏「咩咩登峰」（Three.js 小羊登山）
+docs/screenshots/       # 截图
+```
 
-独立游戏位于 [`target/temple-run/`](target/temple-run/)。运行 `npm run temple:dev` 启动，`npm run temple:build` 构建。
+## 原版安装包
+
+GitHub 单文件上限 100 MB，`temple-run.xapk` 以 75 MB 分片存放在 `apk/`，重组方式见 [apk/README.md](apk/README.md)。
+
+## 原版机制对照（IL2CPP 逆向）
+
+| 原版字段/资源 | 网页版实现 |
+| --- | --- |
+| 蓝色天空、干净转角 | 蓝色渐变天空 + 浅蓝雾；转角仅保留低墙/火盆/箭头 |
+| `kObstacleTreeJump` | 树墩排（跳跃） |
+| `kObstacleTreeSlide` | 倒木横杆（滑铲） |
+| `AllowTiltToTurn` | 倾斜换道 / 路口倾斜转弯 |
+| `AllowFallOnCliffs` `CanPathExtendOnSide` `kPathLevelCliff` | 断桥单车道 + 坠崖死亡 |
+| `CoinMagnetMultiplier` | 磁铁能力 |
+| `FootStepsCliff` | 悬崖脚步音 |
+
+更多开发记录见 [target/temple-run/progress.md](target/temple-run/progress.md) 与 [target/temple-run/README.md](target/temple-run/README.md)。
