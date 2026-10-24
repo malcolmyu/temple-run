@@ -1,0 +1,1263 @@
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { loadRunnerRig } from './runnerRig.js';
+import * as sfx from './sfx.js';
+import './style.css';
+
+const $ = (id) => document.getElementById(id);
+const asset=(name)=>`${import.meta.env.BASE_URL}assets/apk/${name}`;
+let audioContext, muted=false;
+function tone(frequency,duration=.1,type='sine',volume=.05){
+  if(muted)return;
+  try{
+    audioContext ||= new (window.AudioContext||window.webkitAudioContext)();
+    if(audioContext.state==='suspended')audioContext.resume();
+    const oscillator=audioContext.createOscillator(),gain=audioContext.createGain();
+    oscillator.type=type;oscillator.frequency.setValueAtTime(frequency,audioContext.currentTime);
+    gain.gain.setValueAtTime(volume,audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
+    oscillator.connect(gain).connect(audioContext.destination);
+    oscillator.start();oscillator.stop(audioContext.currentTime+duration);
+  }catch{}
+}
+const canvas = $('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.5;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const skyCanvas=document.createElement('canvas');skyCanvas.width=8;skyCanvas.height=256;
+{
+  const g=skyCanvas.getContext('2d').createLinearGradient(0,0,0,256);
+  g.addColorStop(0,'#2b4033');g.addColorStop(.45,'#45603f');g.addColorStop(.75,'#557050');g.addColorStop(1,'#3a5038');
+  const ctx2=skyCanvas.getContext('2d');ctx2.fillStyle=g;ctx2.fillRect(0,0,8,256);
+}
+const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
+scene.background = skyTexture;
+scene.fog = new THREE.FogExp2(0x5d7355, 0.015);
+const camera = new THREE.PerspectiveCamera(60, 1, .1, 190);
+camera.position.set(0, 5.8, 11.5);
+camera.lookAt(0, 1.4, -15);
+scene.add(new THREE.HemisphereLight(0xd8e6d4, 0x5f4a2f, 2.5));
+const sun = new THREE.DirectionalLight(0xffd9a0, 3.5);
+sun.position.set(-12, 22, -24);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+sun.shadow.camera.left = -20; sun.shadow.camera.right = 20;
+sun.shadow.camera.top = 25; sun.shadow.camera.bottom = -25;
+sun.shadow.camera.near = 1; sun.shadow.camera.far = 70;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0x8ac5b2, 1.1); fill.position.set(10, 8, 8); scene.add(fill);
+const material = (color, options={}) => new THREE.MeshStandardMaterial({color,roughness:.86,...options});
+const mats = {
+  stone:material(0x837c65), edge:material(0xb7a98a), seam:material(0x544c3c),
+  moss:material(0x496f4c), leaf:material(0x3c7451,{side:THREE.DoubleSide}),
+  darkLeaf:material(0x254d3f), bark:material(0x554a34), gold:material(0xf5bb43,{metalness:.72,roughness:.25,emissive:0x6b4309,emissiveIntensity:.3}),
+  goldLight:material(0xffdf7d,{emissive:0x9b6118,emissiveIntensity:.5}),
+  red:material(0xae4135), fire:material(0xff7a24,{emissive:0xff5a12,emissiveIntensity:1.15}),
+  black:material(0x1a231c), skin:material(0xb87751), shirt:material(0xd6b388), pants:material(0x554839),
+  belt:material(0x433025), hair:material(0x34291f), eye:material(0x161713),
+};
+const textureLoader=new THREE.TextureLoader();
+const roadAtlas=textureLoader.load(asset('wallTexture.png'));roadAtlas.colorSpace=THREE.SRGBColorSpace;
+roadAtlas.offset.set(0,.755);roadAtlas.repeat.set(.5,.235);
+const wallStoneAtlas=textureLoader.load(asset('wallTexture.png'));wallStoneAtlas.colorSpace=THREE.SRGBColorSpace;
+wallStoneAtlas.offset.set(.5,.755);wallStoneAtlas.repeat.set(.24,.235);
+const roadTextureMat=material(0xffffff,{map:roadAtlas,side:THREE.DoubleSide});
+const ancientStone=material(0xe3d6b7,{map:wallStoneAtlas});
+const junctionPavingAtlas=roadAtlas.clone();junctionPavingAtlas.needsUpdate=true;junctionPavingAtlas.repeat.set(.2457*4.8/4,.2714*4.8/12);junctionPavingAtlas.offset.set(.5038,.7226);
+const junctionPavingMat=material(0xffffff,{map:junctionPavingAtlas,side:THREE.DoubleSide});
+let pavementTexture=null;
+function updatePavementRepeat(){if(pavementTexture)pavementTexture.repeat.set(8.4/4,8.4/12);}
+const junctionWallMat=material(0xa89b80,{side:THREE.DoubleSide});
+// Crop one brick cell out of the original wallTexture atlas and tile it (avoids atlas wrap bleeding).
+new THREE.TextureLoader().load(asset('wallTexture.png'),tex=>{
+  const brickCanvas=document.createElement('canvas');brickCanvas.width=brickCanvas.height=256;
+  brickCanvas.getContext('2d').drawImage(tex.image,256,0,256,256,0,0,256,256);
+  const map=new THREE.CanvasTexture(brickCanvas);
+  map.wrapS=map.wrapT=THREE.RepeatWrapping;map.colorSpace=THREE.SRGBColorSpace;
+  map.repeat.set(3,2);
+  junctionWallMat.map=map;junctionWallMat.needsUpdate=true;
+  const stoneMap=map.clone();stoneMap.needsUpdate=true;stoneMap.repeat.set(1,1);
+  obstacleStone.map=stoneMap;obstacleStone.needsUpdate=true;
+  // Cropped paving cell (brick floor) for the junction platform.
+  const paveCanvas=document.createElement('canvas');paveCanvas.width=paveCanvas.height=250;
+  paveCanvas.getContext('2d').drawImage(tex.image,516,6,250,250,0,0,250,250);
+  const paveMap=new THREE.CanvasTexture(paveCanvas);
+  paveMap.wrapS=paveMap.wrapT=THREE.RepeatWrapping;paveMap.colorSpace=THREE.SRGBColorSpace;
+  pavementTexture=paveMap;
+  junctionPavingMat.map=paveMap;junctionPavingMat.needsUpdate=true;
+  if(typeof updatePavementRepeat==='function')updatePavementRepeat();
+},undefined,()=>{});
+const barkAtlas=textureLoader.load(asset('treeTexture.png'));barkAtlas.colorSpace=THREE.SRGBColorSpace;
+barkAtlas.offset.set(.72,.53);barkAtlas.repeat.set(.25,.45);
+const originalBark=material(0xc6b597,{map:barkAtlas});
+// Original road tile extracted from the APK scene (8 x 12 units, baked Y-up, top at y=0).
+const roadTileTexture=textureLoader.load(asset('wallTexture.png'));roadTileTexture.colorSpace=THREE.SRGBColorSpace;
+const roadTileMat=material(0xffffff,{map:roadTileTexture,side:THREE.DoubleSide});
+const ROAD_TILE_LIFT=1.36; // baked tile top (=parapet rim) is 1.38 above the paving plane
+let roadTileTemplate=null;
+const obstacleStoneAtlas=textureLoader.load(asset('wallTexture.png'));obstacleStoneAtlas.colorSpace=THREE.SRGBColorSpace;
+obstacleStoneAtlas.offset.set(.25,.5);obstacleStoneAtlas.repeat.set(.5,.5);
+const obstacleStone=material(0xd8c8a8,{map:obstacleStoneAtlas});
+const obstacleWoodAtlas=textureLoader.load(asset('treeTexture.png'));obstacleWoodAtlas.colorSpace=THREE.SRGBColorSpace;
+obstacleWoodAtlas.offset.set(.72,.53);obstacleWoodAtlas.repeat.set(.5,.5);
+const obstacleWood=material(0xc9b795,{map:obstacleWoodAtlas});
+const fireCore=material(0xffd894,{emissive:0xffa62a,emissiveIntensity:1.1,transparent:true,opacity:.95,depthWrite:false});
+const fireOuter=material(0xff5a10,{emissive:0xff6a12,emissiveIntensity:.7,transparent:true,opacity:.88,depthWrite:false});
+const flameGlow=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');
+  const grd=g.createRadialGradient(64,64,4,64,64,62);grd.addColorStop(0,'rgba(255,240,190,1)');grd.addColorStop(.35,'rgba(255,170,60,.75)');grd.addColorStop(1,'rgba(255,90,10,0)');
+  g.fillStyle=grd;g.fillRect(0,0,128,128);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;})();
+function makeFlameGlow(x,y,z,scale){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:flameGlow,color:0xffb45a,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.6}));sp.position.set(x,y,z);sp.scale.setScalar(scale);return sp}
+// Tiny additive sparkle bursts for coin / power-up pickups (original has a golden sparkle on pickup).
+const sparks=[];
+function spawnSparks(pos,color,count=6,spread=.7,size=.42,life=.6){
+  for(let i=0;i<count;i++){
+    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:flameGlow,color,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.9}));
+    sp.position.copy(pos);
+    const k=size*(0.6+Math.random()*.8);sp.scale.setScalar(k);
+    scene.add(sp);
+    sparks.push({sp,vx:(Math.random()-.5)*spread,vy:.35+Math.random()*.9,vz:(Math.random()-.5)*spread,life:life*(.75+Math.random()*.45),max:life});
+  }
+}
+function updateSparks(dt){
+  for(let i=sparks.length-1;i>=0;i--){
+    const p=sparks[i];p.life-=dt;
+    if(p.life<=0){scene.remove(p.sp);sparks.splice(i,1);continue}
+    p.vy-=2.2*dt;
+    p.sp.position.x+=p.vx*dt;p.sp.position.y+=p.vy*dt;p.sp.position.z+=p.vz*dt;
+    p.sp.material.opacity=Math.max(0,p.life/p.max)*.95;
+  }
+}
+const facadeTexture=textureLoader.load(asset('wallTexture.png'));facadeTexture.colorSpace=THREE.SRGBColorSpace;
+const facadeMat=new THREE.MeshStandardMaterial({map:facadeTexture,side:THREE.DoubleSide,roughness:.95,metalness:0});
+const treeTexture=textureLoader.load(asset('treeTexture.png'));treeTexture.colorSpace=THREE.SRGBColorSpace;
+const treeMat=new THREE.MeshStandardMaterial({map:treeTexture,side:THREE.DoubleSide,roughness:.95,metalness:0});
+let treeTemplate=null,rockTemplate=null;
+new OBJLoader().load(`${import.meta.env.BASE_URL}assets/track/decor-tree-a.obj`,obj=>{
+  obj.traverse(part=>{if(part.isMesh){part.material=treeMat;part.castShadow=false}});
+  treeTemplate=obj;refreshRoadSurface();
+});
+new OBJLoader().load(`${import.meta.env.BASE_URL}assets/track/decor-rock-a.obj`,obj=>{
+  obj.traverse(part=>{if(part.isMesh){part.material=treeMat;part.castShadow=false}});
+  rockTemplate=obj;refreshRoadSurface();
+});
+let gateTemplate=null;
+new OBJLoader().load(`${import.meta.env.BASE_URL}assets/track/track-gate-a.obj`,obj=>{
+  obj.traverse(part=>{if(part.isMesh){part.material=facadeMat;part.castShadow=false;part.receiveShadow=false}});
+  gateTemplate=obj;refreshRoadSurface();
+},undefined,()=>console.warn('Track gate unavailable'));
+let trackWallTemplate=null;
+new OBJLoader().load(`${import.meta.env.BASE_URL}assets/track/track-wall-straight-a.obj`,obj=>{
+  obj.traverse(part=>{if(part.isMesh){part.material=facadeMat;part.castShadow=true;part.receiveShadow=true}});
+  trackWallTemplate=obj;refreshRoadSurface();
+},undefined,()=>console.warn('Track wall facade unavailable'));
+const CORRIDOR_WALL_SCALE=.2,CORRIDOR_WALL_X=6.4,CORRIDOR_WALL_NEAR_TURN=10;
+// Authentic Temple Run proportions: the exported tile carries a 30 u ground skirt, so sink it
+// by 30*scale to leave the ~1.4 m ruin wall the original actually shows above the road.
+const LOWWALL_SINK=-6.0;
+// ---- original APK obstacle prefabs (exported by the asset scout) ----
+const obstacleTreeMat=new THREE.MeshStandardMaterial({map:treeTexture,side:THREE.DoubleSide,roughness:.95,metalness:0,alphaTest:.4});
+const obstacleStoneMat=new THREE.MeshStandardMaterial({map:obstacleStoneAtlas,color:0xd8c8a8,side:THREE.DoubleSide,roughness:.95,metalness:0});
+const obstaclePrefabs={};
+function loadObstaclePrefab(name){
+  const tree=name.startsWith('tree');
+  new OBJLoader().load(`${import.meta.env.BASE_URL}assets/obstacles/${name}.obj`,obj=>{
+    obj.traverse(part=>{if(part.isMesh){part.material=tree?obstacleTreeMat:obstacleStoneMat;part.castShadow=true;part.receiveShadow=true}});
+    // static APK scenery: origin sits at tile centre, so recentre XZ and drop it onto y=0
+    const box=new THREE.Box3().setFromObject(obj),ctr=box.getCenter(new THREE.Vector3());
+    obj.position.set(-ctr.x,-box.min.y,-ctr.z);
+    const wrapped=new THREE.Group();wrapped.add(obj);
+    obstaclePrefabs[name]=wrapped;
+  },undefined,()=>console.warn('Obstacle prefab unavailable: '+name));
+}
+['tree-jump-left','tree-jump-right','tree-slide','flame-tower','stone-pedestal','tower-arch'].forEach(loadObstaclePrefab);
+function obstaclePrefab(name,scale,rotY=Math.PI){
+  const src=obstaclePrefabs[name];if(!src)return null;
+  const clone=src.clone(true);clone.scale.setScalar(scale);clone.rotation.y=rotY;return clone;
+}
+new OBJLoader().load(`${import.meta.env.BASE_URL}assets/track/temple-road-tile.obj`,obj=>{
+  obj.traverse(part=>{if(part.isMesh){part.material=roadTileMat;part.castShadow=false;part.receiveShadow=true}});
+  roadTileTemplate=obj;refreshRoadSurface();
+},undefined,()=>console.warn('Original road tile unavailable; procedural road in use'));
+const geo = {
+  box:new THREE.BoxGeometry(1,1,1), sphere:new THREE.SphereGeometry(1,12,8),
+  cyl:new THREE.CylinderGeometry(1,1,1,12), cone:new THREE.ConeGeometry(1,1,7),
+  coin:new THREE.TorusGeometry(.31,.085,7,16),
+};
+function mesh(parent, geometry, mat, x=0,y=0,z=0,sx=1,sy=1,sz=1){
+  const o=new THREE.Mesh(geometry,mat);o.position.set(x,y,z);o.scale.set(sx,sy,sz);parent.add(o);return o;
+}
+function rand(seed){const v=Math.sin(seed*128.13+21.4)*43758.5453;return v-Math.floor(v)}
+const TILE=12, TILE_COUNT=12, lanes=[-1.3,0,1.3], PLAYER_Z=3;
+const pathSegments=[{start:0,end:Infinity,x:0,z:PLAYER_Z,heading:0}];
+function pathAt(distance,side=0){
+  let segment=pathSegments[0];
+  for(const candidate of pathSegments){if(distance>=candidate.start)segment=candidate;else break}
+  const travel=distance-segment.start;
+  // Temple Run 1 corridors are perfectly straight between 90-degree turns - no S-curve.
+  const heading=segment.heading,lateral=side;
+  let latX=Math.cos(heading),latZ=-Math.sin(heading);
+  // Swing the lane offset around the corner instead of snapping it 90 degrees at the turn.
+  const index=pathSegments.indexOf(segment),BLEND=5.5;
+  if(index>0&&travel<BLEND){
+    const k=Math.min(1,Math.max(0,travel/BLEND)),prev=pathSegments[index-1];
+    const px=Math.cos(prev.heading),pz=-Math.sin(prev.heading);
+    latX=px*(1-k)+latX*k;latZ=pz*(1-k)+latZ*k;
+    const len=Math.hypot(latX,latZ)||1;latX/=len;latZ/=len;
+  }
+  return {x:segment.x-Math.sin(heading)*travel+latX*lateral,
+    z:segment.z-Math.cos(heading)*travel+latZ*lateral,heading};
+}
+function placeOnPath(group,distance,side=0){const point=pathAt(distance,side);group.position.x=point.x;group.position.z=point.z;group.rotation.y=point.heading}
+function addPathTurn(at,direction){
+  const last=pathSegments[pathSegments.length-1];last.end=at;const point=pathAt(at);
+  pathSegments.push({start:at,end:Infinity,x:point.x,z:point.z,heading:last.heading-direction*Math.PI/2});
+}
+const world=new THREE.Group();scene.add(world);
+const tiles=[];
+function createTree(parent,x,z,seed){
+  const h=3.1+rand(seed)*3.6;
+  const trunk=mesh(parent,geo.cyl,originalBark,x,h*.42,z,.2,h*.85,.2);trunk.castShadow=true;
+  for(let i=0;i<4;i++){
+    const crown=mesh(parent,geo.sphere,i%2?mats.leaf:mats.darkLeaf,x+(rand(seed+i+4)-.5)*1.8,h*.7+i*.38,z+(rand(seed+i+15)-.5)*1.5,1.5-i*.13,.85,1.2);
+    crown.castShadow=i===0;
+  }
+  for(let i=0;i<3;i++){
+    const vine=mesh(parent,geo.cyl,mats.moss,x+(i-1)*.7,h*.57,z+.45,.025,1.8,.025);vine.rotation.z=(i-1)*.25;
+  }
+}
+function createTorch(parent,x,z){
+  mesh(parent,geo.cyl,mats.seam,x,1.15,z,.13,2.3,.13).castShadow=true;
+  mesh(parent,geo.cyl,mats.edge,x,2.25,z,.32,.21,.32);
+  const flame=mesh(parent,geo.cone,mats.fire,x,2.6,z,.24,.6,.24);flame.rotation.z=Math.PI;
+  return flame;
+}
+const flames=[];
+for(let i=0;i<TILE_COUNT;i++){
+  const group=new THREE.Group();group.pathDistance=-9+i*TILE;placeOnPath(group,group.pathDistance);world.add(group);
+  const surface=new THREE.Group();group.surface=surface;group.add(surface);
+  const decor=new THREE.Group();group.decor=decor;group.add(decor);
+  for(const side of [-1,1]){
+    const x=side*(6.5+rand(i*11+side+10)*2.8);
+    createTree(decor,x,-3,i*19+side+20);
+    createTree(decor,x+side*2.3,3,i*17+side+31);
+    const column=mesh(decor,geo.cyl,ancientStone,side*5.35,1.4,0,.6,2.8,.6);column.castShadow=true;
+    mesh(decor,geo.box,mats.edge,side*5.35,2.85,0,1.55,.33,1.55);
+    mesh(decor,geo.box,mats.moss,side*5.35,.15,0,1.25,.3,1.25);
+    if(i%2===0)flames.push(createTorch(decor,side*4.85,3));
+  }
+  tiles.push(group);
+}
+function buildProcRoadSurface(surface){
+  const road=mesh(surface,new RoundedBoxGeometry(8.3,.65,TILE+.12,2,.08),mats.stone,0,-.38,0);road.receiveShadow=true;
+  const paving=mesh(surface,new THREE.PlaneGeometry(8.05,TILE),roadTextureMat,0,-.035,0);paving.rotation.x=-Math.PI/2;paving.receiveShadow=true;
+  for(const x of [-4.2,4.2]){
+    const rim=mesh(surface,geo.box,mats.edge,x,.03,0,.28,.48,TILE);rim.castShadow=true;
+    for(const dz of [-4.5,-1.5,1.5,4.5]) mesh(surface,geo.box,mats.seam,x*1.04,-.2,dz,.25,.75,.13);
+  }
+  for(const x of [-1.18,1.18]) mesh(surface,geo.box,mats.seam,x,-.036,0,.048,.015,TILE);
+}
+function refreshRoadSurface(){
+  tiles.forEach(tile=>{
+    const surface=tile.surface;while(surface.children.length)surface.remove(surface.children[0]);
+    if(roadTileTemplate){const tileMesh=roadTileTemplate.clone(true);tileMesh.position.y=ROAD_TILE_LIFT;surface.add(tileMesh);}
+    else buildProcRoadSurface(surface);
+    if(trackWallTemplate){
+      for(const side of [-1,1]){
+        const wall=trackWallTemplate.clone(true);
+        wall.scale.setScalar(CORRIDOR_WALL_SCALE);
+        wall.position.set(side*CORRIDOR_WALL_X,LOWWALL_SINK,0);
+        wall.rotation.y=side>0?0:Math.PI;
+        wall.userData.facade=true;
+        surface.add(wall);
+      }
+      // Wall torches on the inner face of both temple walls.
+      for(const side of [-1,1]){
+        for(const z of [-3.3,3.3]){
+          // Sconces sit on top of the ~1.36 m ruin wall (wall top = 6.78*.2 + LOWWALL_SINK).
+          mesh(surface,geo.box,mats.seam,side*3.98,1.72,z,.14,.7,.14);
+          mesh(surface,geo.box,mats.seam,side*3.9,1.38,z,.12,.12,.34);
+          const flame=mesh(surface,geo.cone,mats.fire,side*3.86,2.06,z,.22,.54,.22);
+          flames.push(flame);
+        }
+        // Jungle canopy spilling over the wall top.
+        for(let i=0;i<4;i++){
+          const z=-4.5+i*3;
+          const leaf=mesh(surface,geo.sphere,i%2?mats.leaf:mats.darkLeaf,side*(5.6+rand(z+side)*1.1),1.55+rand(z*2+side)*.75,z,(1.4+rand(z)*.9),(.7+rand(z*3)*.35),(1.3+rand(z*5)*.8));
+          leaf.castShadow=false;leaf.userData.facade=true;
+        }
+        // Jungle canopy arching over the corridor edges (dense-forest feel).
+        for(let i=0;i<2;i++){
+          const z=-3.6+i*6.4;
+          const leaf=mesh(surface,geo.sphere,i?mats.leaf:mats.darkLeaf,side*(4.6+rand(z+side)*2.6),8.6+rand(z*2+side*3)*2.8,z,(3.2+rand(z+side)*2.2),(1.5+rand(z*3)*.9),(2.6+rand(z*5+side)*1.6));
+          leaf.castShadow=false;leaf.userData.facade=true;
+        }
+        // Dense jungle right behind the low ruin walls (the original shows foliage, not a cliff).
+        for(let i=0;i<4;i++){
+          const z=-4.2+i*3.6;
+          const bush=mesh(surface,geo.sphere,i%2?treeMat:mats.darkLeaf,side*(8.4+rand(z+side*7)*3.6),1.2+rand(z*3+side)*2.6,z,(2.2+rand(z+side)*1.9),(1.4+rand(z*2)*1.3),(2.0+rand(z*5+side)*1.5));
+          bush.castShadow=false;bush.userData.facade=true;
+        }
+        // Inner canopy: branches hanging over the path so the corridor feels tunnelled by jungle.
+        for(let i=0;i<2;i++){
+          const z=-2.4+i*5.6;
+          const leaf=mesh(surface,geo.sphere,i?mats.leaf:mats.darkLeaf,side*(2.4+rand(z*3+side)*1.9),7.3+rand(z+side*5)*2.2,z,(3.4+rand(z+side)*2.4),(1.1+rand(z*2)*.7),(2.2+rand(z*7+side)*1.4));
+          leaf.castShadow=false;leaf.userData.facade=true;
+        }
+        // Tall jungle trees and boulders beyond the temple walls for skyline depth.
+        if(treeTemplate){
+          for(let i=0;i<4;i++){
+            const tree=treeTemplate.clone(true);
+            const scl=.06+rand(tile.pathDistance+side*7+i)*.05;
+            tree.scale.setScalar(scl);
+            tree.position.set(side*(12+rand(tile.pathDistance+side+i)*13),0,-4.5+i*3.6+rand(i+tile.pathDistance)*1.2);
+            tree.rotation.y=rand(tile.pathDistance+i)*Math.PI*2;
+            tree.userData.facade=true;
+            surface.add(tree);
+          }
+        }
+        if(rockTemplate&&Math.abs(side)===1&&(tile.pathDistance%24>10)){
+          const rock=rockTemplate.clone(true);
+          rock.scale.setScalar(.07+rand(tile.pathDistance)*.03);
+          rock.position.set(side*10.5,0,rand(tile.pathDistance)*3);
+          rock.rotation.y=rand(tile.pathDistance*3)*Math.PI*2;
+          rock.userData.facade=true;
+          surface.add(rock);
+        }
+      }
+    }
+  });
+}
+refreshRoadSurface();
+const undergrowth=mesh(scene,geo.box,material(0x22352a),0,-2,-60,190,2,180);undergrowth.receiveShadow=true;
+const junction=new THREE.Group();junction.visible=false;scene.add(junction);
+let junctionHeading=0,junctionCorner={x:0,z:0};
+const markerMat=new THREE.MeshStandardMaterial({color:0xf3c258,metalness:.62,roughness:.32,emissive:0x8a5811,emissiveIntensity:.55});
+function buildJunction(dir){
+  while(junction.children.length)junction.remove(junction.children[0]);
+  const padMat=material(0x8a8066,{map:pavementTexture});
+  const padCX=-dir*2,padCZ=-2;
+  const pad=mesh(junction,new RoundedBoxGeometry(5.0,.62,5.0,2,.1),padMat,padCX,-.37,padCZ);pad.receiveShadow=true;
+  mesh(junction,new THREE.BoxGeometry(4.8,3.4,4.8),mats.stone,padCX,-2.3,padCZ).receiveShadow=true;
+  const paving=mesh(junction,new THREE.PlaneGeometry(4.8,4.8),junctionPavingMat,padCX,-.028,padCZ);paving.rotation.x=-Math.PI/2;paving.receiveShadow=true;
+  // Second paving quadrant: the corner needs two of the four quadrants of an 8x8 square.
+  const qx=dir*2, qz=-2;
+  mesh(junction,new THREE.BoxGeometry(4.6,3.2,4.6),mats.stone,qx,-2.35,qz).receiveShadow=true;
+  const paving2=mesh(junction,new THREE.PlaneGeometry(4.55,4.55),junctionPavingMat,qx,-.028,qz);paving2.rotation.x=-Math.PI/2;paving2.receiveShadow=true;
+  mesh(junction,geo.box,obstacleStone,-dir*4.5,.14,padCZ,.3,.5,5.0).castShadow=true;
+  mesh(junction,geo.box,obstacleStone,padCX,.14,-4.5,5.0,.5,.3).castShadow=true;
+  // Temple silhouette rising behind the dead end (the original turns end at a temple facade).
+  if(templeGateTemplate){
+    const t=templeGateTemplate.clone(true);
+    t.scale.setScalar(.26);
+    t.position.set(0,-.4,-11.6);
+    t.rotation.y=Math.PI;
+    junction.add(t);
+  }
+  // Big animated 3D turn arrow on the junction pad, pointing along the exit direction.
+  {
+    const arrowMat=material(0xffc247,{emissive:0xff9a12,emissiveIntensity:.75,roughness:.35,metalness:.3});
+    const arrow=new THREE.Group();
+    mesh(arrow,geo.box,arrowMat,0,.18,0,2.0,.16,.62);
+    const head=mesh(arrow,geo.cone,arrowMat,1.25,.18,0,.82,1.15,.62);
+    head.rotation.z=-Math.PI/2;head.castShadow=true;
+    const gl=makeFlameGlow(.7,.5,0,2.6);arrow.add(gl);
+    arrow.position.set(padCX,.28,padCZ+1.1);
+    arrow.rotation.order='YXZ';
+    arrow.rotation.y=dir<0?Math.PI:0;
+    arrow.rotation.x=-.42;
+    junction.add(arrow);
+    junction.userData.arrow=arrow;
+  }
+  // Corner walls line up with the corridor facades (inner face at 4.0, height 7.0).
+  const wallMat=junctionWallMat, WALL_H=7.0;
+  if(trackWallTemplate){
+    const sideFace=trackWallTemplate.clone(true);
+    sideFace.scale.setScalar(CORRIDOR_WALL_SCALE);
+    sideFace.position.set(-dir*CORRIDOR_WALL_X,0,-.6);
+    sideFace.rotation.y=-dir>0?0:Math.PI;
+    junction.add(sideFace);
+  }else{
+    mesh(junction,geo.box,wallMat,-dir*5.2,WALL_H/2+.35,-.6,2.4,WALL_H,10.4).castShadow=true;
+    mesh(junction,geo.box,markerMat,-dir*4.42,WALL_H+.1,-.6,.06,.16,10.1);
+    for(let i=-2;i<=2;i++) mesh(junction,geo.box,wallMat,-dir*5.2,WALL_H+.85,-5.2+i*2.3,1.16,.8,1.05).castShadow=true;
+  }
+  // Corner wing walls: the corridor facades are hidden within 10 m of a turn, so
+  // continue the ruined temple walls around the corner. IMPORTANT: wings must start
+  // outside the perpendicular road opening (|x|>4.2 / |z|>4.2) or they block the
+  // outgoing corridor and the chase camera.
+  {
+    const wingH=7.0,wx=4.75,wingLen=10.6,wingFrom=4.3;
+    const wingCenter=wingFrom+wingLen/2;
+    // walls parallel to the incoming road (left/right of the incoming corridor)
+    for(const sx of [dir,-dir]){
+      mesh(junction,geo.box,junctionWallMat,sx*wx,wingH/2+.35,wingCenter,1.1,wingH,wingLen).castShadow=true;
+      mesh(junction,geo.box,markerMat,sx*(wx-.58),wingH+.1,wingCenter,.06,.16,wingLen*.98);
+    }
+    // walls parallel to the outgoing road (both sides of the outgoing corridor)
+    for(const sz of [1,-1]){
+      mesh(junction,geo.box,junctionWallMat,dir*wingCenter,wingH/2+.35,sz*wx,wingLen,wingH,1.1).castShadow=true;
+      mesh(junction,geo.box,markerMat,dir*wingCenter,wingH+.1,sz*(wx-.58),wingLen*.98,.16,.06);
+    }
+  }
+  // Low parapets sealing the open corners, continuing the road-tile rims.
+  // gold chevrons painted on the floor pointing into the turn
+  for(let i=0;i<3;i++){
+    const chevron=mesh(junction,geo.cone,markerMat,dir*(1+i*1.4),.1,-.5,.5,.9,.5);
+    chevron.rotation.z=-dir*Math.PI/2;
+  }
+  // Original temple facade closes the dead end, oriented so its decorated face looks at the player.
+  if(trackWallTemplate){
+    const face=trackWallTemplate.clone(true);
+    face.scale.setScalar(CORRIDOR_WALL_SCALE);
+    face.position.set(0,0,-8.3);
+    face.rotation.y=Math.PI/2;
+    junction.add(face);
+  }
+  flames.push(createTorch(junction,dir*4.35,-4.35),createTorch(junction,-dir*4.35,-4.35));
+  junction.rotation.y=junctionHeading;
+  junction.position.set(junctionCorner.x,0,junctionCorner.z);
+}
+const enemy=new THREE.Group();scene.add(enemy);
+const enemyFallback=new THREE.Group();enemy.add(enemyFallback);
+for(const side of [-1,1]){
+  mesh(enemyFallback,geo.sphere,mats.black,side*.65,1.1,0,.72,.88,.62).castShadow=true;
+  mesh(enemyFallback,geo.sphere,mats.black,side*.65,2.04,-.22,.51,.45,.47);
+  mesh(enemyFallback,geo.sphere,mats.fire,side*.65-.15,2.12,.23,.07,.08,.04);
+  mesh(enemyFallback,geo.sphere,mats.fire,side*.65+.15,2.12,.23,.07,.08,.04);
+}
+new OBJLoader().load(asset('mesh-96-enemy.obj'),model=>{
+  const tex=textureLoader.load(asset('texture-53-enemyTexture.png'));tex.colorSpace=THREE.SRGBColorSpace;tex.flipY=false;
+  model.traverse(part=>{if(part.isMesh){part.material=new THREE.MeshStandardMaterial({map:tex,color:0x9c7a66,emissiveMap:tex,emissive:0x8a5a3a,emissiveIntensity:.85,roughness:.95,side:THREE.DoubleSide});part.castShadow=true}});
+  model.rotation.x=-Math.PI/2;model.scale.set(.085,.085,.12);
+  enemy.add(model);enemyFallback.visible=false;
+},undefined,()=>console.warn('Original enemy model unavailable; using fallback'));
+
+// Keep a simple fallback if the extracted character cannot be loaded.
+const player=new THREE.Group();player.position.set(0,0,PLAYER_Z);scene.add(player);
+// Start gate: the temple doorway you burst out of (the original opens inside a temple).
+const startGate=new THREE.Group();scene.add(startGate);
+new OBJLoader().load(`${import.meta.env.BASE_URL}assets/obstacles/tower-arch.obj`,obj=>{
+  obj.traverse(part=>{if(part.isMesh){part.material=facadeMat;part.castShadow=true;part.receiveShadow=true}});
+  obj.position.set(0,-.35,PLAYER_Z+6.2);obj.rotation.y=Math.PI;obj.scale.setScalar(.22);
+  startGate.add(obj);
+},undefined,()=>{});
+const body=new THREE.Group();player.add(body);
+mesh(body,geo.box,mats.pants,0,.67,0,.73,.68,.48).castShadow=true;
+mesh(body,geo.box,mats.shirt,0,1.42,0,1.05,1.02,.62).castShadow=true;
+mesh(body,geo.box,mats.belt,0,1.05,.34,.95,.17,.12);
+mesh(body,geo.sphere,mats.skin,0,2.22,.04,.46,.52,.43).castShadow=true;
+mesh(body,geo.sphere,mats.hair,0,2.63,-.1,.49,.2,.44);
+mesh(body,geo.box,mats.hair,0,2.35,-.36,.85,.22,.17);
+for(const side of [-1,1]) mesh(body,geo.sphere,mats.eye,side*.16,2.3,.43,.045,.045,.03);
+const limbs=[];
+for(const side of [-1,1]){
+  const arm=new THREE.Group();arm.position.set(side*.62,1.82,0);body.add(arm);
+  mesh(arm,geo.cyl,mats.shirt,0,-.34,0,.17,.75,.18).rotation.z=side*.22;
+  mesh(arm,geo.sphere,mats.skin,side*.08,-.75,.04,.15,.17,.15);
+  const leg=new THREE.Group();leg.position.set(side*.23,.57,0);body.add(leg);
+  mesh(leg,geo.cyl,mats.pants,0,-.25,0,.2,.55,.22);
+  mesh(leg,geo.box,mats.belt,0,-.56,.14,.35,.2,.55);
+  limbs.push({arm,leg,side});
+}
+// The original Temple Run character: real skinned mesh + baked run/jump/slide clips,
+// CPU-skinned each frame (see runnerRig.js). Falls back to the static OBJ if anything fails.
+// ---- characters / coin bank (original STORE) ----
+const charStoreKey='atb_temple_run_chars';
+const CHARS=[
+  {id:'jhony',name:'Jhony',sub:'默认跑者',price:0,tex:'assets/characters/jhony.png'},
+  {id:'selene',name:'Selene',sub:'宇航员',price:300,tex:'assets/characters/selene.png',av:'assets/ui/avatar-selene.png'},
+  {id:'scarlett',name:'Scarlett',sub:'女探险家',price:400,tex:'assets/characters/scarlett.png',av:'assets/ui/avatar-scarlett.png'},
+  {id:'werewolf',name:'万圣狼人',sub:'万圣节限定',price:500,tex:'assets/characters/werewolf.png'},
+  {id:'barry',name:'Barry Bones',sub:'老练跑者',price:600,tex:'assets/characters/barry.png',av:'assets/ui/avatar-barry.png'},
+  {id:'karma',name:'Karma Lee',sub:'敏捷盗贼',price:700,tex:'assets/characters/karma.png',av:'assets/ui/avatar-karma.png'},
+  {id:'ghost',name:'血鬼',sub:'暗影皮肤',price:800,tex:'assets/characters/ghost.png'},
+  {id:'conquistador',name:'征服者',sub:'西班牙探险家',price:1000,tex:'assets/characters/conquistador.png'},
+  {id:'skeleton',name:'骷髅',sub:'亡灵诅咒',price:1200,tex:'assets/characters/skeleton.png'},
+];
+let charState={bank:0,owned:['jhony'],equipped:'jhony'};
+try{
+  const raw=localStorage.getItem(charStoreKey);
+  if(raw){const p=JSON.parse(raw);if(p&&typeof p.bank==='number')charState.bank=p.bank;if(Array.isArray(p.owned))charState.owned=p.owned;if(p.equipped)charState.equipped=p.equipped}
+}catch{}
+if(!charState.owned.includes('jhony'))charState.owned.unshift('jhony');
+if(!CHARS.some(c=>c.id===charState.equipped))charState.equipped='jhony';
+const charById=(id)=>CHARS.find(c=>c.id===id)||CHARS[0];
+const charTexUrl=(id)=>`${import.meta.env.BASE_URL}${charById(id).tex}`;
+function saveCharState(){try{localStorage.setItem(charStoreKey,JSON.stringify(charState))}catch{}}
+const originalMeshes=[];
+let runnerRig=null;
+function loadFallbackRunner(){
+  new OBJLoader().load(asset('mesh-90-player.obj'),model=>{
+    const tex=textureLoader.load(asset('texture-63-playerTexture.png'));
+    tex.colorSpace=THREE.SRGBColorSpace;tex.flipY=false;
+    model.traverse(part=>{
+      if(!part.isMesh)return;
+      part.material=new THREE.MeshStandardMaterial({map:tex,roughness:.96,side:THREE.DoubleSide});
+      part.castShadow=true;
+      originalMeshes.push({geometry:part.geometry,base:part.geometry.attributes.position.array.slice()});
+    });
+    model.scale.setScalar(.27);
+    model.position.y=1.46;
+    model.rotation.y=Math.PI;
+    body.add(model);
+    for(const limb of limbs){limb.arm.visible=false;limb.leg.visible=false}
+    for(const child of body.children)if(child!==model)child.visible=false;
+  },undefined,()=>console.warn('Original runner model unavailable; using geometric fallback'));
+}
+loadRunnerRig(asset('runner-rig.json'),charTexUrl(charState.equipped),{scale:.27,yOffset:1.32}).then(rig=>{
+  runnerRig=rig;
+  body.add(rig.object);
+  for(const child of body.children)if(child!==rig.object)child.visible=false;
+}).catch(err=>{console.warn('Skinned runner unavailable; using static fallback',err);loadFallbackRunner()});
+function setRunnerSkin(id){
+  const url=charTexUrl(id);
+  new THREE.TextureLoader().load(url,tex=>{
+    tex.colorSpace=THREE.SRGBColorSpace;tex.flipY=false;
+    if(runnerRig&&runnerRig.material){runnerRig.material.map=tex;runnerRig.material.needsUpdate=true}
+    else if(originalMeshes.length){originalMeshes.forEach(()=>{});}
+  },undefined,()=>console.warn('Character texture unavailable: '+url));
+}
+function animateOriginalRunner(time){
+  for(const {geometry,base} of originalMeshes){
+    const positions=geometry.attributes.position.array;
+    for(let i=0;i<base.length;i+=3){
+      let x=base[i],y=base[i+1],z=base[i+2];
+      const side=Math.sign(x)||1;
+      if(Math.abs(x)>1.5&&y>1.8){
+        const px=side*1.5,py=2.9,angle=-side*1.5;
+        const dx=x-px,dy=y-py;
+        x=px+dx*Math.cos(angle)-dy*Math.sin(angle);
+        y=py+dx*Math.sin(angle)+dy*Math.cos(angle);
+        const swing=Math.sin(time*15+(side>0?0:Math.PI))*.24;
+        const armY=y-2.9;
+        y=2.9+armY*Math.cos(swing)-z*Math.sin(swing);
+        z=armY*Math.sin(swing)+z*Math.cos(swing);
+      }else if(y< -2.3&&Math.abs(x)>.45){
+        const swing=Math.sin(time*15+(side>0?Math.PI:0))*.32;
+        const legY=y+2.3;
+        y=-2.3+legY*Math.cos(swing)-z*Math.sin(swing);
+        z=legY*Math.sin(swing)+z*Math.cos(swing);
+      }
+      positions[i]=x;positions[i+1]=y;positions[i+2]=z;
+    }
+    geometry.attributes.position.needsUpdate=true;
+    geometry.computeVertexNormals();
+  }
+}
+const shadow=mesh(scene,new THREE.CircleGeometry(.62,20),new THREE.MeshBasicMaterial({color:0x151d13,transparent:true,opacity:.35,depthWrite:false}),0,.015,PLAYER_Z,1,1,1);
+shadow.rotation.x=-Math.PI/2;
+
+function createObstacle(kind,lane,pathDistance){
+  const full=kind==='hurdle'||kind==='arch'||kind==='gap'||kind==='fire';
+  const group=new THREE.Group();placeOnPath(group,pathDistance,full?0:lanes[lane]);scene.add(group);
+  let groupScale=full?1:(kind==='hurdle'?.82:.62), usedPrefab=false;
+  if(kind==='hurdle'){
+    const prefab=obstaclePrefab(rand(pathDistance+3)>.5?'tree-jump-left':'tree-jump-right',.094);
+    if(prefab){group.add(prefab);usedPrefab=true}
+    else{
+    // Fallback: procedural fallen tree-root barrier.
+    const trunk=mesh(group,geo.cyl,originalBark,0,.42,0,.5,2.5,.5);trunk.rotation.z=Math.PI/2;trunk.castShadow=true;
+    const branch=mesh(group,geo.cyl,originalBark,-.2,.82,.22,.24,1.75,.24);branch.rotation.set(.5,.35,Math.PI/2-.3);branch.castShadow=true;
+    for(const [x,z,rz] of [[-.95,.12,.95],[-.7,-.16,.6],[.95,.1,-.95],[.68,-.14,-.55]]){
+      const root=mesh(group,geo.cone,originalBark,x,.22,z,.3,.95,.3);
+      root.rotation.set(0,0,rz);root.castShadow=true;
+    }
+    mesh(group,geo.sphere,obstacleWood,0,.34,.3,.34,.3,.3);
+    }
+  }else if(kind==='arch'){
+    const prefab=obstaclePrefab('tree-slide',.124);
+    if(prefab){prefab.position.z=.6;group.add(prefab);usedPrefab=true}
+    else{
+    for(const x of [-.85,.85]) mesh(group,geo.box,obstacleStone,x,1.6,0,.4,3.2,.62).castShadow=true;
+    mesh(group,geo.box,obstacleStone,0,2.47,0,2.1,1.2,.72).castShadow=true;
+    mesh(group,geo.box,mats.gold,0,3.12,0,2.1,.1,.74);
+    for(const x of [-.35,0,.35]) mesh(group,geo.cone,mats.edge,x,1.55,.37,.13,.55,.13).rotation.z=Math.PI;
+    }
+  }else if(kind==='gap'){
+    // Broken bridge section. The road surface is a solid tile, so the "hole" is painted
+    // just above the paving (y=0.04) and framed by bright rims + broken slabs + torches.
+    const DEPTH=4.6;
+    const voidMat=new THREE.MeshBasicMaterial({color:0x05070a});
+    const hole=(w,d,rot,off)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),voidMat);m.rotation.x=-Math.PI/2;m.rotation.z=rot;m.position.set(0,.042,off);group.add(m);return m};
+    hole(3.9,DEPTH,0,0);hole(3.2,DEPTH*.6,.18,DEPTH*.32);hole(2.4,DEPTH*.5,-.24,-DEPTH*.34);
+    // chipped stone lips on both rims
+    for(const rz of [1,-1]){
+      for(let i=-3;i<=3;i++){
+        const x=i*.55+rz*.06,w=.36+rand(i*3.7+rz)*.16,h=.2+rand(i*7.1+rz)*.08;
+        const slab=mesh(group,geo.box,obstacleStone,x,.06,rz*(DEPTH/2+.12),w,h,.6);
+        slab.rotation.y=rand(i*5.3+rz*2.1)*.5;slab.rotation.x=rand(i*2.9+rz)*.2;
+        if(rand(i*9.1+rz)>.55){
+          const drop=mesh(group,geo.box,obstacleStone,x+rand(i)*.2,.02,rz*(DEPTH/2-.28),w*.7,.14,.4);
+          drop.rotation.x=rz*.5;drop.rotation.y=rand(i*4.7)*.6;
+        }
+      }
+      mesh(group,geo.box,mats.gold,0,.13,rz*(DEPTH/2+.46),3.9,.06,.1);
+      for(const x of [-2.05,2.05]){
+        mesh(group,geo.cyl,obstacleWood,x,.55,rz*(DEPTH/2+.55),.12,1.05,.12);
+        mesh(group,geo.cyl,mats.edge,x,.02,rz*(DEPTH/2+.55),.24,.1,.24);
+        const fire=mesh(group,geo.cone,fireOuter,x,1.14,rz*(DEPTH/2+.55),.2,.5,.2);fire.rotation.y=rand(x*3)*2;
+        const glow=makeFlameGlow(x,1.18,rz*(DEPTH/2+.55),1.2);group.add(glow);
+      }
+    }
+  }else if(kind==='fire'){
+    // Original twin flame-tower pedestals flank the lane; the flames themselves are procedural.
+    const prefab=obstaclePrefab('flame-tower',.19);
+    if(prefab){group.add(prefab);usedPrefab=true}
+    mesh(group,geo.box,mats.black,0,-.01,0,2.1,.05,2.2);
+    mesh(group,geo.box,obstacleStone,0,.07,0,2.0,.18,2.1);
+    const jets=[];
+    for(const [x,z,sc] of [[-.62,-.45,1.05],[.62,-.45,.95],[-.62,.42,.9],[.62,.42,1],[0,0,1.15]]){
+      const outer=mesh(group,geo.cone,fireOuter,x,.42+1.05*sc,z,.46*sc,2.1*sc,.46*sc);jets.push(outer);
+      const inner=mesh(group,geo.cone,fireCore,x,.42+.86*sc,z,.22*sc,1.35*sc,.22*sc);jets.push(inner);
+      const glow=makeFlameGlow(x,.95*sc+.4,z,2.4*sc);group.add(glow);jets.push(glow);
+    }
+    for(const f of jets)f.userData.base=f.scale.y;
+    group.userData.flames=jets;
+  }else if(kind==='block'){
+    // Original stone lane blocker (6.2x14.9x10.1 APK units -> ~1.2x3.0x2.0 game units at .2).
+    const prefab=obstaclePrefab('stone-pedestal',.27);
+    if(prefab){
+      // Darken the stone so lane blockers read against the tan temple walls.
+      prefab.traverse(p=>{if(p.isMesh&&p.material&&p.material.color){p.material=p.material.clone();p.material.color.multiplyScalar(.5)}});
+      group.add(prefab);usedPrefab=true}
+    else{
+      mesh(group,new RoundedBoxGeometry(1.7,2,1.1,2,.13),obstacleStone,0,1,0).castShadow=true;
+      mesh(group,geo.box,mats.gold,0,2.02,0,1.55,.1,.95);
+      mesh(group,geo.box,mats.moss,0,1.78,.58,1.45,.24,.08);
+    }
+  }
+  if(!usedPrefab)group.scale.setScalar(groupScale);
+  return {kind,lane,group,pathDistance,passed:false,full};
+}
+// Painted idol-face coin texture (the original coins show an engraved temple face).
+const coinFaceTex=(()=>{const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');
+  const grd=g.createRadialGradient(52,48,6,64,64,64);grd.addColorStop(0,'#ffeeb0');grd.addColorStop(.55,'#f4c64f');grd.addColorStop(1,'#b9721c');
+  g.fillStyle=grd;g.beginPath();g.arc(64,64,62,0,Math.PI*2);g.fill();
+  g.strokeStyle='#8a4f10';g.lineWidth=6;g.beginPath();g.arc(64,64,57,0,Math.PI*2);g.stroke();
+  g.strokeStyle='#a9631a';g.lineWidth=3;g.beginPath();g.arc(64,64,47,0,Math.PI*2);g.stroke();
+  g.fillStyle='#7d4a10';
+  g.beginPath();g.ellipse(46,56,9,7,0,0,Math.PI*2);g.fill();
+  g.beginPath();g.ellipse(82,56,9,7,0,0,Math.PI*2);g.fill();
+  g.beginPath();g.moveTo(64,62);g.lineTo(69,76);g.lineTo(59,76);g.closePath();g.fill();
+  g.lineWidth=5;g.strokeStyle='#7d4a10';g.beginPath();g.arc(64,84,16,.15*Math.PI,.85*Math.PI);g.stroke();
+  g.lineWidth=3;g.beginPath();g.moveTo(50,92);g.lineTo(78,92);g.stroke();
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;})();
+const coinFaceMat=new THREE.MeshStandardMaterial({map:coinFaceTex,metalness:.45,roughness:.3,emissive:0x6a4310,emissiveIntensity:.55});
+const coinSideMat=new THREE.MeshStandardMaterial({color:0xc98a26,metalness:.7,roughness:.35});
+const coinGeo=new THREE.CylinderGeometry(.27,.27,.055,22);coinGeo.rotateX(Math.PI/2);
+function createCoin(lane,pathDistance,y=1.3){
+  const group=new THREE.Group();placeOnPath(group,pathDistance,lanes[lane]);group.position.y=y;scene.add(group);
+  const face=mesh(group,coinGeo,[coinSideMat,coinFaceMat,coinFaceMat]);face.castShadow=false;
+  const gl=makeFlameGlow(0,0,0,.9);gl.material.opacity=.18;gl.material.color.set(0xffd76a);group.add(gl);
+  return {lane,group,pathDistance,y,taken:false};
+}
+const storeKey='atb_temple_run_best';
+const settingsKey='atb_temple_run_settings';
+const statsKey='atb_temple_run_stats';
+const RUN_SPEED_MIN=12, RUN_SPEED_MAX=22, RUN_SPEED=16;
+let best=0;try{best=Number(localStorage.getItem(storeKey))||0}catch{}
+$('best').textContent=best;
+let settings={sfx:true,haptics:true,hq:true,music:true};
+try{Object.assign(settings,JSON.parse(localStorage.getItem(settingsKey)||'{}'))}catch{}
+let stats={runs:0,totalDistance:0,totalCoins:0,bestMulti:1,turns:0};
+try{Object.assign(stats,JSON.parse(localStorage.getItem(statsKey)||'{}'))}catch{}
+const saveSettings=()=>{try{localStorage.setItem(settingsKey,JSON.stringify(settings))}catch{}};
+const saveStats=()=>{try{localStorage.setItem(statsKey,JSON.stringify(stats))}catch{}};
+function applySettings(){
+  muted=!settings.sfx;
+  sfx.setMuted(!settings.sfx);
+  if(!settings.music){sfx.stopMusic(.4)}
+  else if(state==='playing'&&!sfx.musicInfo().current){sfx.startMusic('theme')}
+  const sb=$('soundBtn');if(sb){sb.textContent=settings.sfx?'♫':'♪̸';sb.setAttribute('aria-label',settings.sfx?'关闭声音':'开启声音')}
+  renderer.setPixelRatio(settings.hq?Math.min(devicePixelRatio||1,2):1);
+  resize();
+}
+function haptic(ms=60){if(!settings.haptics)return;try{navigator.vibrate&&navigator.vibrate(ms)}catch{}}
+let state='menu', distance=0, coins=0, speed=RUN_SPEED, lane=1, laneX=0, multiplier=1, comboCount=0, lastCoinAt=0, runBestMulti=1, impactFlash=0;
+let jumpY=0, jumpV=0, sliding=0, runTime=0, nextSpawn=16, nextTurn=57, turnDirection=0, turnQueued=false, turnFlash=0, turnFlashDir=1, playerYaw=0;
+let templeGateTemplate=null;
+new OBJLoader().load(`${import.meta.env.BASE_URL}assets/obstacles/tower-arch.obj`,obj=>{
+  obj.traverse(part=>{if(part.isMesh){part.material=facadeMat;part.castShadow=true;part.receiveShadow=true}});
+  templeGateTemplate=obj;
+},undefined,()=>console.warn('Temple gate prefab unavailable'));
+let chaseGap=4.8,stumbleCooldown=0,turnCount=0,lastTurnDistance=-Infinity,airborne=false,lastStep=0,stumbleKick=0,lastDustAt=0;
+const POWER_KINDS=['magnet','bonus','boost','shield'];
+const powerLabel={magnet:'磁铁',bonus:'金币加成',boost:'加速',shield:'护盾'};
+const powerColor={magnet:0xff6a52,bonus:0xffd24a,boost:0x54e08a,shield:0x5aa8ff};
+const powerDuration={magnet:9,bonus:10,boost:4.5};
+let power={type:null,until:0,shield:0},pickups=[],lastPickupAt=-999;
+// Power-up auras around the runner (shield bubble / magnet ring / boost trail).
+const shieldBubble=new THREE.Mesh(new THREE.SphereGeometry(1,18,12),
+  new THREE.MeshBasicMaterial({color:0x9fe0ff,transparent:true,opacity:.22,depthWrite:false,side:THREE.DoubleSide}));
+shieldBubble.visible=false;shieldBubble.scale.set(1.05,1.25,1.05);shieldBubble.position.y=1.05;player.add(shieldBubble);
+const magnetRing=new THREE.Mesh(new THREE.TorusGeometry(.62,.035,8,26),
+  new THREE.MeshBasicMaterial({color:0xff7a52,transparent:true,opacity:.85}));
+magnetRing.rotation.x=Math.PI/2;magnetRing.visible=false;player.add(magnetRing);
+let boostTrailAt=0;
+const pwIconUrl={boost:'assets/ui/pw-boost.png',shield:'assets/ui/pw-wings.png',bonus:'assets/ui/pw-bonus.png'};
+const pwIconTex={};
+for(const k in pwIconUrl)new THREE.TextureLoader().load(`${import.meta.env.BASE_URL}${pwIconUrl[k]}`,t=>{t.colorSpace=THREE.SRGBColorSpace;pwIconTex[k]=t});
+function createPickup(kind,lane,pathDistance){
+  const group=new THREE.Group();placeOnPath(group,pathDistance,lanes[lane]);group.position.y=1.35;scene.add(group);
+  const color=powerColor[kind];
+  const iconTex=pwIconTex[kind];
+  if(iconTex){
+    // Original UI icon as a billboard sprite (matches the game's power-up art).
+    const icon=new THREE.Sprite(new THREE.SpriteMaterial({map:iconTex,transparent:true,depthWrite:false}));
+    const iw=2.35;icon.scale.set(iw,iw*(iconTex.image.height/iconTex.image.width),1);
+    group.add(icon);
+  }else{
+    const mat=new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:1.15,metalness:.35,roughness:.22});
+    mesh(group,new THREE.OctahedronGeometry(.52,0),mat).castShadow=true;
+    const ring=mesh(group,new THREE.TorusGeometry(.68,.05,6,22),mat);ring.rotation.x=Math.PI/2;
+  }
+  const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:flameGlow,color,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.7}));
+  glow.scale.setScalar(iconTex?2.1:2.9);glow.material.opacity=iconTex?.3:.7;group.add(glow);group.userData.glow=glow;
+  return {kind,lane,group,pathDistance,taken:false};
+}
+function activatePower(kind){
+  if(kind==='shield'){power.type='shield';power.shield=1;power.until=0}
+  else{power.type=kind;power.until=runTime+powerDuration[kind];power.shield=0}
+  if(kind==='boost')sfx.startLoop('boostLoop',{gain:.9});
+  else if(kind==='magnet')sfx.play('magnet',{gain:.9});
+  else sfx.play('shimmer',{gain:.8});
+  updatePowerBadge();setHint(`${powerLabel[kind]}！`,1.3);
+  const clip=kind==='shield'?'angelWings':kind==='bonus'?'scoreBlast':kind==='boost'?'wings':'recharged';
+  sfx.play(clip,{gain:.85});
+}
+function updatePowerBadge(){
+  const el=$('powerBadge');if(!el)return;
+  let label='',rem=0;
+  if(power.shield>0){label=powerLabel.shield}
+  else if(power.type&&power.until>0){label=powerLabel[power.type];rem=Math.max(0,power.until-runTime)}
+  if(!label){el.classList.add('hidden');return}
+  el.classList.remove('hidden');
+  const hex=(powerColor[power.type||'shield']).toString(16).padStart(6,'0');
+  el.style.borderColor=`#${hex}`;
+  el.style.boxShadow=`0 0 0 2px #${hex}55,0 4px 12px #0008`;
+  el.textContent=rem>0?`${label} ${rem.toFixed(0)}s`:`${label} · 就绪`;
+}
+let death=null;
+let obstacles=[],coinItems=[],previous=performance.now(),hintTimeout=0,lastJumpAt=-9,lastSlideAt=-9;
+let reviveUsed=false,reviveCost=50,invincibleUntil=0,deathRun=null;
+const show=(id,on)=>$(id).classList.toggle('hidden',!on);
+function setHint(value,duration=1.2){$('hint').textContent=value;$('hint').classList.add('visible');hintTimeout=duration}
+function clearObjects(){for(const item of [...obstacles,...coinItems,...pickups])scene.remove(item.group);obstacles=[];coinItems=[];pickups=[]}
+function reset(){
+  stopReviveTimer();
+  const dv=$('deathVignette');if(dv){dv.classList.remove('on');dv.classList.add('hidden')}
+  sfx.stopAllLoops();sfx.play('click');sfx.startLoop('ambience',{gain:.7});if(settings.music)sfx.startMusic('theme');
+  clearObjects();distance=0;coins=0;speed=RUN_SPEED;lane=1;laneX=0;jumpY=0;jumpV=0;sliding=0;runTime=0;death=null;multiplier=1;comboCount=0;lastCoinAt=0;runBestMulti=1;impactFlash=0;const ifl=$('impactFlash');if(ifl)ifl.style.opacity='0';updateMultiBadge();reviveUsed=false;invincibleUntil=0;deathRun=null;body.visible=true;
+  {const ac=$('actionCue');if(ac)ac.classList.add('hidden')}
+  power={type:null,until:0,shield:0};updatePowerBadge();shieldBubble.visible=false;magnetRing.visible=false;
+  nextSpawn=16;nextTurn=57;turnDirection=0;turnQueued=false;turnFlash=0;turnFlashDir=1;turnCount=0;lastTurnDistance=-Infinity;chaseGap=4.8;stumbleCooldown=0;playerYaw=0;stumbleKick=0;
+  junction.visible=false;tiles.forEach(tile=>tile.decor.visible=true);
+  pathSegments.length=1;Object.assign(pathSegments[0],{start:0,end:Infinity,x:0,z:PLAYER_Z,heading:0});
+  tiles.forEach((tile,i)=>{tile.pathDistance=-9+i*TILE;placeOnPath(tile,tile.pathDistance)});
+  for(let i=0;i<6;i++)coinItems.push(createCoin(1,15+i*2.7));
+  player.position.set(0,0,PLAYER_Z);body.position.y=0;body.scale.y=1;body.rotation.set(0,0,0);enemy.scale.setScalar(1);shadow.material.opacity=.33;
+  $('distance').textContent='0';$('coins').textContent='0';show('menu',false);show('pauseOverlay',false);show('endOverlay',false);show('turnCue',false);
+  state='playing';closePanel();setHint('向左或向右换道 · 向上跳跃 · 向下滑铲',2.8);
+  // Drop-in intro: start slightly high and let the chase camera settle in.
+  const intro=pathAt(-9);camera.position.set(intro.x,7.4,intro.z);camera.lookAt(0,1.4,PLAYER_Z-8);
+}
+function finishDeath(){
+  sfx.stopMusic(1.4);
+  if(state!=='dying')return;
+  state='ended';const previousBest=best;best=Math.max(best,Math.floor(distance));
+  sfx.play('gameOver');
+  if(best>previousBest&&best>0)sfx.play('best');
+  const art={fall:'deathIllustrationFallA@2x.png',caught:'deathIllustrationEaten@2x.png',impact:'deathIllustrationTree@2x.png'}[death.kind]||'deathIllustrationSlide@2x.png';
+  $('endArt').src=`${import.meta.env.BASE_URL}assets/ui/${art}`;
+  try{localStorage.setItem(storeKey,String(best))}catch{}
+  $('best').textContent=best;$('endDistance').textContent=`${Math.floor(distance)} m`;$('endCoins').textContent=coins;$('endBest').textContent=`${best} m`;const em=$('endMulti');if(em)em.textContent='×'+runBestMulti;
+  $('endReason').textContent=death.reason;
+  deathRun={distance:Math.floor(distance),coins,multiplier:runBestMulti,turns:turnCount};
+  const nb=$('newBestTag');if(nb)nb.classList.toggle('hidden',!(best>previousBest&&best>0));
+  updateReviveButton();startReviveTimer();
+  show('endOverlay',true);
+}
+const REVIVE_WINDOW=8;let reviveTimer=0,reviveTick=null;
+function stopReviveTimer(){if(reviveTick){clearInterval(reviveTick);reviveTick=null}}
+function startReviveTimer(){
+  stopReviveTimer();reviveTimer=REVIVE_WINDOW;
+  const bar=$('reviveBar');if(bar)bar.style.width='100%';
+  reviveTick=setInterval(()=>{
+    if(state!=='ended'){stopReviveTimer();return}
+    reviveTimer=Math.max(0,reviveTimer-.1);
+    const b=$('reviveBar');if(b)b.style.width=(reviveTimer/REVIVE_WINDOW*100).toFixed(1)+'%';
+    const nt=$('reviveNote');
+    if(nt&&!reviveUsed&&coins>=reviveCost)nt.textContent=`限时 ${Math.ceil(reviveTimer)}s · 每局可复活一次`;
+    if(reviveTimer<=0){stopReviveTimer();reviveUsed=true;updateReviveButton();const n=$('reviveNote');if(n)n.textContent='复活机会已过期';}
+  },100);
+}
+function updateReviveButton(){
+  const btn=$('reviveBtn');
+  if(!btn)return;
+  if(reviveUsed){btn.classList.add('disabled');$('reviveCost').textContent='已用';$('reviveNote').textContent=reviveTimer<=0?'复活机会已过期':'本局已复活过一次';return}
+  if(coins<reviveCost){btn.classList.add('disabled');$('reviveCost').textContent=reviveCost+' · 币不足';$('reviveNote').textContent=`需要 ${reviveCost} 金币（本局 ${coins}）`;return}
+  btn.classList.remove('disabled');$('reviveCost').textContent=String(reviveCost);$('reviveNote').textContent='每局可复活一次，保留当前里程';
+}
+function commitRun(){
+  if(!deathRun)return;
+  charState.bank+=deathRun.coins;saveCharState();
+  stats.runs+=1;stats.totalDistance+=deathRun.distance;stats.totalCoins+=deathRun.coins;
+  stats.bestMulti=Math.max(stats.bestMulti,deathRun.multiplier);stats.turns+=deathRun.turns;saveStats();
+  deathRun=null;
+}
+function revive(){
+  if(state!=='ended'||reviveUsed||reviveTimer<=0||coins<reviveCost)return;
+  stopReviveTimer();
+  coins-=reviveCost;reviveUsed=true;$('coins').textContent=coins;
+  state='playing';death=null;show('endOverlay',false);if(settings.music)sfx.startMusic('theme');
+  distance=Math.max(0,distance-12);
+  speed=RUN_SPEED_MIN+Math.min(RUN_SPEED_MAX-RUN_SPEED_MIN,distance*.02);
+  clearObjects();nextSpawn=distance+26;
+  jumpY=0;jumpV=0;sliding=0;stumbleCooldown=0;chaseGap=8;multiplier=1;comboCount=0;updateMultiBadge();
+  body.rotation.set(0,0,0);body.scale.y=1;player.position.y=0;enemy.scale.setScalar(1);
+  turnDirection=0;turnQueued=false;show('turnCue',false);junction.visible=false;
+  nextTurn=9+12*Math.max(1,Math.round((distance+72-9)/12));
+  pathSegments.length=1;Object.assign(pathSegments[0],{start:0,end:Infinity,x:0,z:PLAYER_Z,heading:0});
+  invincibleUntil=runTime+2.6;
+  setHint('金币复活！短暂无敌',1.8);sfx.play('recharged',{gain:.9});sfx.play('wooosh',{gain:.6});haptic(40);
+}
+function goMenu(){sfx.stopMusic(.8);commitRun();reset();state='menu';show('menu',true);$('distance').textContent='0';$('coins').textContent='0'}
+function end(reason,kind='impact'){
+  if(state!=='playing')return;
+  state='dying';death={reason,kind,elapsed:0,duration:kind==='fall'?1.55:kind==='caught'?1.4:1.25,
+    pitch:body.rotation.x,roll:body.rotation.z,height:player.position.y,gap:chaseGap};
+  if(kind==='fall')sfx.play('scream');else sfx.play('splat');haptic(kind==='fall'?90:60);
+  show('turnCue',false);$('hint').classList.remove('visible');
+  const dv=$('deathVignette');if(dv){dv.classList.remove('hidden');void dv.offsetWidth;dv.classList.add('on')}
+  const ac=$('actionCue');if(ac)ac.classList.add('hidden');
+}
+function updateDeath(dt){
+  death.elapsed+=dt;
+  const progress=Math.min(1,death.elapsed/death.duration),ease=1-(1-progress)**2;
+  if(death.kind==='fall'){
+    player.position.y=death.height-6*progress;
+    body.rotation.x=THREE.MathUtils.lerp(death.pitch,-.55,ease);
+    body.rotation.z=THREE.MathUtils.lerp(death.roll,.35,ease);
+    shadow.material.opacity=.33*(1-progress);
+  }else{
+    const caught=death.kind==='caught';
+    player.position.y=THREE.MathUtils.lerp(death.height,0,ease);
+    body.rotation.x=THREE.MathUtils.lerp(death.pitch,caught?.65:-1.35,ease);
+    body.rotation.z=THREE.MathUtils.lerp(death.roll,caught?-.8:.38,ease);
+    body.position.y=-.16*ease;
+    chaseGap=THREE.MathUtils.lerp(death.gap,caught?.25:2.2,ease);
+    placeOnPath(enemy,distance-chaseGap,Math.sin(runTime*5)*.3);
+    enemy.position.y=.08+Math.sin(progress*Math.PI)*.35;
+    enemy.scale.setScalar(1+Math.sin(progress*Math.PI)*.12);
+  }
+  // Death cinematic: dolly in and tilt down onto the runner.
+  const back=pathAt(distance-5.0,laneX*.1);
+  const settle=Math.min(1,death.elapsed/.9);
+  camera.position.lerp(new THREE.Vector3(back.x,3.15-settle*.75,back.z),Math.min(1,dt*5.5));
+  camera.lookAt(player.position.x,1.0+settle*.25,player.position.z);
+  camera.fov+=(48-camera.fov)*Math.min(1,dt*4);camera.updateProjectionMatrix();
+  if(progress>=1)finishDeath();
+}
+function pause(){if(state==='playing'){state='paused';sfx.play('click',{gain:.6});sfx.pauseMusic();show('pauseOverlay',true)}else if(state==='paused'){state='playing';sfx.resumeMusic();show('pauseOverlay',false);previous=performance.now()}}
+function dampAngle(current,target,lambda,dt){const delta=((target-current+Math.PI)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)-Math.PI;return current+delta*(1-Math.exp(-lambda*dt))}
+function updateTurnCue(){
+  if(turnDirection===0)return;
+  const remain=Math.max(0,Math.ceil(nextTurn-distance));
+  $('turnArrow').textContent=turnDirection<0?'↰':'↱';
+  $('turnText').textContent=turnQueued?'转弯已确认':`${turnDirection<0?'前方左转':'前方右转'} · ${remain} m`;
+  $('turnCue').classList.toggle('ready',turnQueued);
+}
+function beginTurn(){
+  turnDirection=rand(Math.floor(nextTurn))>.5?1:-1;
+  junctionHeading=pathAt(nextTurn-.01).heading;
+  addPathTurn(nextTurn,turnDirection);
+  const corner=pathAt(nextTurn);junctionCorner={x:corner.x,z:corner.z};
+  buildJunction(turnDirection);
+  junction.visible=true;turnQueued=false;
+  updateTurnCue();show('turnCue',true);
+  sfx.play('whoosh',{gain:.8});
+}
+function completeTurn(){
+  turnCount++;lastTurnDistance=nextTurn;turnFlash=1.1;turnFlashDir=turnDirection;
+  turnDirection=0;turnQueued=false;
+  nextTurn=9+12*Math.max(1,Math.round((nextTurn+96+Math.floor(rand(nextTurn*.37+3.1)*40)-9)/12));
+  show('turnCue',false);$('turnCue').classList.remove('ready');
+  setHint('漂亮的转弯！',.9);
+  sfx.play('swish',{rate:1.15});
+}
+function stumbleOrCatch(){
+  if(stumbleCooldown>0){chaseGap=1.2;end('追逐者抓住了你。','caught')}
+  else{stumbleCooldown=8;chaseGap=3.8;impactFlash=1;spawnSparks(player.position,0xd8c9a0,9,1.2,.42,.5);setHint('绊倒了！追逐者靠近了',1.6);sfx.play('stumble',{gain:.9});haptic(70);stumbleKick=1}
+}
+function move(dir){
+  if(state!=='playing')return;
+  if(turnDirection!==0 && distance>=nextTurn-42 && distance<nextTurn+2){
+    if(dir===turnDirection){
+      if(!turnQueued){turnQueued=true;updateTurnCue();sfx.play('click',{gain:.5});setHint('方向正确，保持住！',.9)}
+      return;
+    }
+  }
+  lane=Math.max(0,Math.min(2,lane+dir));
+  sfx.play('swish',{gain:.55,rate:.95+Math.random()*.1});
+}
+function jump(){if(state!=='playing')return;if(jumpY<=.02 && jumpV<=0){jumpV=8.8;sliding=0;airborne=true;lastJumpAt=runTime;setHint('跳！',.35);sfx.play('jump',{gain:.85})}}
+function slide(){if(state!=='playing')return;if(jumpY<.12){sliding=.95;setHint('滑铲！',.35);sfx.play('slide',{gain:1.3})}else jumpV=-8}
+function spawnWave(){
+  // Wave patterns like the original: single full-width piece, forced-lane pair, or staggered pair.
+  const base=distance+83;
+  // Keep the junction plaza clean: never spawn obstacles/coins on the turn platform.
+  if(Math.abs(base-nextTurn)<24||Math.abs(base+8-nextTurn)<24){nextSpawn+=13;return}
+  const seed=Math.floor(nextSpawn);
+  const fullKinds=['hurdle','arch','gap','fire'];
+  let obstacleLane=1,safeLane=1,span=26,blockers=0;
+  const pattern=rand(seed+301);
+  if(pattern<.45){
+    const kind=fullKinds[Math.floor(rand(seed)*4)];
+    obstacleLane=Math.floor(rand(seed+22)*3);
+    obstacles.push(createObstacle(kind,obstacleLane,base));
+    safeLane=Math.floor(rand(seed+50)*3);
+    span=22+rand(seed+8)*10;
+  }else if(pattern<.72){
+    // Two lane blockers side by side: one lane is forced (the original's signature "doorway" wave).
+    const l1=Math.floor(rand(seed+2)*3),l2=(l1+1+Math.floor(rand(seed+3)*2))%3;
+    obstacles.push(createObstacle('block',l1,base));
+    obstacles.push(createObstacle('block',l2,base));
+    safeLane=3-l1-l2;obstacleLane=l1;blockers=2;
+    span=24+rand(seed+8)*9;
+  }else if(pattern<.9){
+    // Staggered pair: dodge, then dodge again the other way.
+    const l1=Math.floor(rand(seed+4)*3),l2=(l1+1+Math.floor(rand(seed+5)*2))%3;
+    obstacles.push(createObstacle('block',l1,base));
+    obstacles.push(createObstacle('block',l2,base+8));
+    safeLane=3-l1-l2;obstacleLane=l1;blockers=1;
+    span=32+rand(seed+8)*8;
+  }else{
+    // Full-width piece with a coin arc over/through it.
+    const kind=fullKinds[Math.floor(rand(seed+6)*4)];
+    obstacleLane=Math.floor(rand(seed+22)*3);
+    obstacles.push(createObstacle(kind,obstacleLane,base));
+    safeLane=Math.floor(rand(seed+50)*3);
+    span=26+rand(seed+8)*8;
+  }
+  // Coins must never intersect an obstacle: full-width pieces clear 6.5 m around them,
+  // lane blockers clear 4 m on their own lane (the player needs room to read the dodge).
+  const coinFits=(pd,ln)=>{for(const o of obstacles){const dd=Math.abs(o.pathDistance-pd);if(o.full&&dd<6.5)return false;if(!o.full&&o.lane===ln&&dd<4)return false}return true};
+  let placed=0;const arc=rand(seed+61)>.68;
+  for(let cd=distance+70;placed<5&&cd<distance+96;cd+=2.2){
+    if(coinFits(cd,safeLane)){
+      const y=arc?1.35+Math.sin((placed/4)*Math.PI)*1.25:1.3;
+      coinItems.push(createCoin(safeLane,cd,y));placed++
+    }
+  }
+  if(rand(seed+75)>.72&&!blockers)for(let i=0;i<3;i++){
+    const cd=distance+91+i*2.6;if(coinFits(cd,obstacleLane))coinItems.push(createCoin(obstacleLane,cd));
+  }
+  if((distance-lastPickupAt>170||rand(seed+137)>.8)&&coinFits(distance+83,safeLane)){
+    pickups.push(createPickup(POWER_KINDS[Math.floor(rand(seed+91)*4)],safeLane,distance+83));lastPickupAt=distance;
+  }
+  nextSpawn+=span;
+}
+function update(dt){
+  if(state==='dying'){updateDeath(dt);return}
+  if(state!=='playing')return;
+  runTime+=dt;
+  if(multiplier>1&&runTime-lastCoinAt>2.4){multiplier=1;comboCount=0;updateMultiBadge()}distance+=speed*dt;
+  if(power.until>0&&runTime>power.until){power.type=null;power.until=0;sfx.play('recharged',{gain:.4})}
+  if(airborne&&jumpY===0&&jumpV===0){airborne=false;sfx.play('land',{gain:.8})}
+  updatePowerBadge();
+  // Auras
+  const shieldOn=power.shield>0,magnetOn2=power.type==='magnet',boostOn2=power.type==='boost';
+  shieldBubble.visible=shieldOn;
+  if(shieldOn){const pulse=1+Math.sin(runTime*5.5)*.05;shieldBubble.scale.set(1.05*pulse,1.25*pulse,1.05*pulse);shieldBubble.material.opacity=.13+Math.sin(runTime*5.5)*.04}
+  magnetRing.visible=magnetOn2;
+  if(magnetOn2){magnetRing.rotation.z=runTime*3.2;magnetRing.position.y=1.15+Math.sin(runTime*3.4)*.12}
+  if(boostOn2&&runTime-boostTrailAt>.09){boostTrailAt=runTime;const p=pathAt(distance-1.2,laneX);spawnSparks(new THREE.Vector3(p.x,.6+Math.random()*.9,p.z),0x66ffb0,2,.5,.3,.5)}
+  if(speed>0&&speed!==0)speed=RUN_SPEED_MIN+Math.min(RUN_SPEED_MAX-RUN_SPEED_MIN,distance*.02);
+  const boostOn=power.type==='boost';if(boostOn){distance+=speed*.55*dt}
+  const step=Math.floor(runTime/.21);
+  if(step!==lastStep){lastStep=step;if(!sliding&&jumpY<=0&&stumbleCooldown<=0)sfx.play('footstep',{gain:.5,rate:.94+Math.random()*.09,detune:(Math.random()-.5)*90})}
+  while(distance>=nextSpawn)spawnWave();
+  if(turnDirection===0 && distance>nextTurn-42)beginTurn();
+  if(turnDirection!==0){
+    if(turnQueued && distance>=nextTurn)completeTurn();
+    else if(!turnQueued && distance>nextTurn+2)end('错过路口，前方没有路了。');
+    else updateTurnCue();
+  }
+  junction.visible=turnDirection!==0||distance<lastTurnDistance+17;
+  {
+    const ja=junction.userData.arrow;
+    if(ja){
+      const pulse=1+.05*Math.sin(runTime*5.2);
+      ja.scale.set(pulse,1,pulse);
+      for(const c of ja.children){if(c.isSprite)c.material.opacity=.45+.25*Math.sin(runTime*6.5)}
+    }
+  }
+  turnFlash=Math.max(0,turnFlash-dt*1.8);
+  for(const tile of tiles){
+    if(tile.pathDistance<distance-20)tile.pathDistance+=TILE*TILE_COUNT;
+    placeOnPath(tile,tile.pathDistance);
+    const nearTurn=pathSegments.slice(1).some(segment=>Math.abs(tile.pathDistance-segment.start)<CORRIDOR_WALL_NEAR_TURN);
+    tile.decor.visible=!pathSegments.slice(1).some(segment=>Math.abs(tile.pathDistance-segment.start)<22);
+    tile.surface.children.forEach(child=>{if(child.userData.facade)child.visible=!nearTurn});
+  }
+  laneX=THREE.MathUtils.damp(laneX,lanes[lane],12,dt);
+  const playerHeading=pathAt(distance,laneX).heading;
+  placeOnPath(player,distance,laneX);
+  playerYaw=dampAngle(playerYaw,playerHeading,turnFlash>0?16:11,dt);
+  player.rotation.y=playerYaw;
+  const wasAir=jumpY>.02;
+  jumpV-=23*dt;jumpY=Math.max(0,jumpY+jumpV*dt);if(jumpY===0&&jumpV<0)jumpV=0;
+  if(wasAir&&jumpY===0){const f=pathAt(distance-.4,laneX);spawnSparks(new THREE.Vector3(f.x,.3,f.z),0xcdbb98,4,.9,.3,.45)}
+  sliding=Math.max(0,sliding-dt);
+  if(sliding>0&&runTime-lastDustAt>.11){lastDustAt=runTime;const f=pathAt(distance-1.1,laneX);spawnSparks(new THREE.Vector3(f.x,.25,f.z),0xc9bb9c,2,.7,.26,.4)}
+  player.position.y=jumpY;
+  body.visible=runTime>=invincibleUntil||Math.floor(runTime*14)%2===0;
+  if(!runnerRig)body.scale.y=THREE.MathUtils.damp(body.scale.y,sliding>0?.54:1,14,dt);
+  // Lean into lane changes and corner turns like the original runner.
+  const turnLean=turnFlash>0&&turnDirection!==0?-turnDirection*Math.min(1,turnFlash*1.8)*.22:0;
+  body.rotation.z=THREE.MathUtils.damp(body.rotation.z,(lanes[lane]-laneX)*-.19+turnLean,9,dt);
+  stumbleKick=Math.max(0,stumbleKick-dt*2.4);
+  const boostPitch=power.type==='boost'?-.11:0;
+  body.rotation.x=sliding>0?-.23:Math.sin(runTime*15)*.045+boostPitch-stumbleKick*.5;
+  for(const {arm,leg,side} of limbs){arm.rotation.x=Math.sin(runTime*15+side*Math.PI)*.62;leg.rotation.x=Math.sin(runTime*15+side*Math.PI+Math.PI)*.65}
+  if(runnerRig){
+    runnerRig.setClip(sliding>0?'slide':(jumpY>0||jumpV>0?'jump':'run'));
+    runnerRig.update(dt, THREE.MathUtils.clamp(speed / RUN_SPEED, .65, 1.55));
+  }else if(originalMeshes.length)animateOriginalRunner(runTime);
+  placeOnPath(shadow,distance,laneX);shadow.material.opacity=.33-Math.min(jumpY,2)*.1;shadow.scale.setScalar(1+jumpY*.22);
+  stumbleCooldown=Math.max(0,stumbleCooldown-dt);chaseGap=THREE.MathUtils.damp(chaseGap,stumbleCooldown>0?3.6:11.5,stumbleCooldown?1.6:0.9,dt);
+  {
+  const close=chaseGap<7.5;
+  placeOnPath(enemy,distance-chaseGap,(close?1.15:1.9)+Math.sin(runTime*1.3)*.35);
+  enemy.position.y=(close?1.15:1.02)+Math.sin(runTime*2.6)*.14;
+  enemy.scale.setScalar(close?1.12:1);
+  enemy.visible=death?enemy.visible:(state==='playing'?close:true);
+}
+  const turnAmount=Math.min(1,turnFlash*1.4);
+  if(death){
+    // Death cinematic: swoop in close on the fallen runner (original zooms into the character).
+    const back=pathAt(distance-3.0,laneX*.1);
+    const settle=Math.min(1,death.elapsed/.85);
+    camera.position.lerp(new THREE.Vector3(back.x,2.55-settle*.45,back.z),Math.min(1,dt*7));
+    camera.lookAt(player.position.x,1.1+settle*.15,player.position.z);
+  }else{
+    const cameraPoint=pathAt(distance-(9.0-turnAmount*1.6),laneX*.1),ahead=pathAt(distance+6+turnAmount*10,laneX*.18),current=pathAt(distance,laneX*.16);
+    const mixAhead=.34+turnAmount*.26;
+    const lookPoint={x:THREE.MathUtils.lerp(current.x,ahead.x,mixAhead),z:THREE.MathUtils.lerp(current.z,ahead.z,mixAhead)};
+    camera.position.lerp(new THREE.Vector3(cameraPoint.x,4.05+turnAmount*1.85,cameraPoint.z),Math.min(1,dt*(turnFlash>0?16:8.5)));
+    if(impactFlash>0){camera.position.x+=Math.sin(runTime*63)*impactFlash*.09;camera.position.y+=Math.sin(runTime*57)*impactFlash*.07;}
+    if(stumbleCooldown>0)camera.position.y+=Math.sin(runTime*41)*.04;
+    camera.lookAt(lookPoint.x,1.35+turnAmount*1.15,lookPoint.z);
+  }
+  camera.rotateZ(turnFlash*turnFlashDir*.06);
+  const targetFov=(death?46:(camera.aspect<.7?65:58))+turnFlash*4+(power.type==='boost'?5:0);camera.fov+=(targetFov-camera.fov)*Math.min(1,dt*10);camera.updateProjectionMatrix();
+  updateSparks(dt);
+  if(impactFlash>0&&!window.__freezeFx){impactFlash=Math.max(0,impactFlash-dt*3.4)}
+  {const el=$('impactFlash');if(el)el.style.opacity=(Math.max(0,impactFlash)*.85).toFixed(2)}
+  for(const flame of flames){flame.scale.y=.52+Math.sin(runTime*15+flame.position.x)*.1;flame.rotation.y=runTime*2}
+  for(let i=obstacles.length-1;i>=0;i--){
+    const o=obstacles[i];placeOnPath(o.group,o.pathDistance,o.full?0:lanes[o.lane]);
+    if(o.group.userData.flames){const fs=o.group.userData.flames;for(let k=0;k<fs.length;k++){const f=fs[k];if(f.isSprite){const s0=1+.14*Math.sin(runTime*11+k*2.4);f.scale.setScalar(2.2*s0*(k%3===2?1:.9))}else{f.scale.y=f.userData.base*(1+.12*Math.sin(runTime*13+k*2.1));f.rotation.y=runTime*1.7+k}}}
+    const gapDepth=o.kind==='gap'?2.0:(o.full?.5:.85);
+    if(o.kind==='gap'&&!o.warned&&o.pathDistance-distance>3.5&&o.pathDistance-distance<11){
+      o.warned=true;setHint('前方坑洞 · 向上跳！',1.0);sfx.play('wooosh',{gain:.5});
+    }
+    if(!o.passed && Math.abs(o.pathDistance-distance)<gapDepth){
+      if(o.kind!=='gap')o.passed=true;
+      else if(distance>o.pathDistance+gapDepth)o.passed=true;
+      if(o.full||o.lane===lane){
+        const justJump=runTime-lastJumpAt<.32,justSlide=runTime-lastSlideAt<.32,invincible=runTime<invincibleUntil;
+        const escaped=invincible||o.kind==='gap'?(jumpY>.12||jumpV>0||justJump):(o.kind==='hurdle'||o.kind==='fire')?(jumpY>.55||jumpV>.4||justJump):o.kind==='arch'?(sliding>.05||justSlide):false;
+        if(!escaped){
+          if(power.type==='boost'){
+            setHint('冲撞！',.6);sfx.play('swish',{gain:.7});
+          }else if(power.shield>0){
+            power.shield=0;power.type=null;updatePowerBadge();stumbleCooldown=Math.max(stumbleCooldown,4);
+            setHint('护盾抵挡了一次撞击',1.4);sfx.play('angelWings',{gain:.9});
+          }else if(o.kind==='gap')end('掉进了断桥。','fall');
+          else stumbleOrCatch();
+        }
+      }
+    }
+    if(o.pathDistance<distance-16){scene.remove(o.group);obstacles.splice(i,1)}
+  }
+  // Contextual prompt: tell the player which move clears the next full-width obstacle.
+  {
+    const ACTIONS={hurdle:'↑ 跳过',fire:'↑ 跳过',gap:'↑ 跳过',arch:'↓ 滑铲'};
+    let cue=null,cueAhead=1e9;
+    for(const o of obstacles){
+      if(!o.full)continue;
+      const ahead=o.pathDistance-distance;
+      if(ahead>-2&&ahead<14&&ahead<cueAhead){cueAhead=ahead;cue=o}
+    }
+    const el=$('actionCue');
+    if(cue&&ACTIONS[cue.kind]){el.textContent=ACTIONS[cue.kind];el.classList.remove('hidden')}
+    else el.classList.add('hidden');
+  }
+  const magnetOn=power.type==='magnet';
+  for(let i=coinItems.length-1;i>=0;i--){
+    const c=coinItems[i];placeOnPath(c.group,c.pathDistance,lanes[c.lane]);c.group.position.y=c.y;c.group.children[0].rotation.y=runTime*3.5;
+    const gapAhead=c.pathDistance-distance;
+    if(magnetOn&&!c.taken&&gapAhead>-1.5&&gapAhead<10){const k=THREE.MathUtils.clamp(1-gapAhead/10,0,1);placeOnPath(c.group,c.pathDistance,THREE.MathUtils.lerp(lanes[c.lane],lanes[lane],k*.9))}
+    const collectDist=magnetOn?1.7:.85;
+    if(!c.taken && Math.abs(gapAhead)<collectDist && (magnetOn||c.lane===lane) && jumpY<2.2){
+      c.taken=true;spawnSparks(c.group.position,0xffd75e,5,.55,.34);coins+=power.type==='bonus'?3:1;
+      comboCount=(runTime-lastCoinAt<1.3)?comboCount+1:1;lastCoinAt=runTime;
+      multiplier=Math.min(5,1+Math.floor(comboCount/4));if(multiplier>runBestMulti)runBestMulti=multiplier;updateMultiBadge();
+      $('coins').textContent=coins;
+      sfx.play(coins%10===0?'coinCascade':'coin',{gain:.8,rate:.97+(coins%5)*.02+(multiplier-1)*.05});
+      scene.remove(c.group);coinItems.splice(i,1);continue
+    }
+    if(c.pathDistance<distance-16){scene.remove(c.group);coinItems.splice(i,1)}
+  }
+  for(let i=pickups.length-1;i>=0;i--){
+    const p=pickups[i];placeOnPath(p.group,p.pathDistance,lanes[p.lane]);
+    p.group.position.y=1.35+Math.sin(runTime*2.6+p.pathDistance)*.12;
+    p.group.rotation.y=runTime*2.4;
+    if(p.group.userData.glow)p.group.userData.glow.material.opacity=.55+.25*Math.sin(runTime*7+p.pathDistance);
+    if(!p.taken&&p.lane===lane&&Math.abs(p.pathDistance-distance)<.95&&jumpY<2.4){p.taken=true;activatePower(p.kind);scene.remove(p.group);pickups.splice(i,1);continue}
+    if(p.pathDistance<distance-16){scene.remove(p.group);pickups.splice(i,1)}
+  }
+  if(hintTimeout>0){hintTimeout-=dt;if(hintTimeout<=0)$('hint').classList.remove('visible')}
+  $('distance').textContent=Math.floor(distance);
+}
+function resize(){const rect=canvas.getBoundingClientRect();const w=Math.max(1,rect.width),h=Math.max(1,rect.height);renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w/h<.7?65:58;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(canvas);resize();
+function updateMultiBadge(){
+  const badge=document.getElementById('multiBadge');if(!badge)return;
+  badge.classList.toggle('hidden',multiplier<=1);
+  badge.textContent='×'+multiplier;
+  if(multiplier>1){badge.classList.remove('pop');void badge.offsetWidth;badge.classList.add('pop')}
+}
+/* ---- original menu panels: STORE / OPTIONS / STATS ---- */
+let panelOpen=null;
+const fmtNum=(n)=>n>=100000?(n/1000).toFixed(0)+'k':n>=10000?(n/1000).toFixed(1)+'k':String(n);
+function panelStoreHTML(){
+  const rows=CHARS.map(c=>{
+    const owned=charState.owned.includes(c.id), equipped=charState.equipped===c.id;
+    const right=equipped
+      ? `<span class="tag owned">已装备</span>`
+      : owned
+        ? `<button class="store-btn equip" data-equip="${c.id}">装备</button>`
+        : `<button class="store-btn buy ${charState.bank>=c.price?'':'disabled'}" data-buy="${c.id}">${fmtNum(c.price)}</button>`;
+    const av=c.av?`<span class="char-av" style="background-image:url(${c.av})"></span>`:`<span class="char-av rune">◆</span>`;
+    return `<div class="store-row">${av}<div class="char-meta">${c.name}<small>${c.sub}</small></div>${right}</div>`;
+  }).join('');
+  return rows+`<p class="panel-note">金币银行 ${fmtNum(charState.bank)} · 每局离场时入账，攒够就能解锁原作角色。</p>`;
+}
+function buyChar(id){
+  const c=charById(id);
+  if(charState.owned.includes(id)||charState.bank<c.price)return;
+  charState.bank-=c.price;charState.owned.push(id);charState.equipped=id;
+  saveCharState();setRunnerSkin(id);sfx.play('coinCascade',{gain:.9});haptic(30);
+  renderPanel('store');
+}
+function equipChar(id){
+  if(!charState.owned.includes(id))return;
+  charState.equipped=id;saveCharState();setRunnerSkin(id);sfx.play('click',{gain:.6});haptic(20);
+  renderPanel('store');
+}
+function panelOptionsHTML(){
+  return `<div class="switch-row"><span>音乐<small>原版背景音乐（61 s 循环）</small></span><input class="switch" type="checkbox" id="optMusic" ${settings.music?'checked':''}></div>
+  <div class="switch-row"><span>音效<small>原版音效 · 奔跑/金币/转弯</small></span><input class="switch" type="checkbox" id="optSfx" ${settings.sfx?'checked':''}></div>
+  <div class="switch-row"><span>震动反馈<small>设备支持时在碰撞/死亡触发</small></span><input class="switch" type="checkbox" id="optHaptics" ${settings.haptics?'checked':''}></div>
+  <div class="switch-row"><span>高清渲染<small>按设备像素比渲染，关闭可提升帧率</small></span><input class="switch" type="checkbox" id="optHq" ${settings.hq?'checked':''}></div>
+  <p class="panel-note">设置会自动保存在本地。</p>`;
+}
+function panelStatsHTML(){
+  const rows=[
+    ['历史最佳距离',`${best} m`],
+    ['累计奔跑距离',`${fmtNum(stats.totalDistance)} m`],
+    ['完成局数',String(stats.runs)],
+    ['累计金币',fmtNum(stats.totalCoins)],
+    ['最高金币倍率',`×${stats.bestMulti}`],
+    ['累计成功转弯',String(stats.turns)],
+  ];
+  return rows.map(([k,v])=>`<div class="stat-row"><span>${k}</span><b>${v}</b></div>`).join('')
+    +`<p class="panel-note">数据来自本机记录。</p>`;
+}
+function renderPanel(name){
+  panelOpen=name;
+  const art={store:'word-store',options:'word-options',stats:'word-stats'}[name];
+  $('panelTitle').src=`${import.meta.env.BASE_URL}assets/ui/${art}.png`;
+  $('panelBody').innerHTML=name==='store'?panelStoreHTML():name==='options'?panelOptionsHTML():panelStatsHTML();
+  if(name==='store'){
+    $('panelBody').querySelectorAll('[data-buy]').forEach(btn=>btn.addEventListener('click',()=>buyChar(btn.dataset.buy)));
+    $('panelBody').querySelectorAll('[data-equip]').forEach(btn=>btn.addEventListener('click',()=>equipChar(btn.dataset.equip)));
+  }
+  if(name==='options'){
+    $('optMusic').addEventListener('change',e=>{settings.music=e.target.checked;saveSettings();applySettings();if(settings.music)sfx.play('click',{gain:.6})});
+    $('optSfx').addEventListener('change',e=>{settings.sfx=e.target.checked;saveSettings();applySettings();if(settings.sfx)sfx.play('click',{gain:.6})});
+    $('optHaptics').addEventListener('change',e=>{settings.haptics=e.target.checked;saveSettings();haptic(50)});
+    $('optHq').addEventListener('change',e=>{settings.hq=e.target.checked;saveSettings();applySettings()});
+  }
+}
+function openPanel(name){if(state!=='menu'&&state!=='paused')return;renderPanel(name);show('panelOverlay',true);sfx.play('click',{gain:.6})}
+function closePanel(){if(!panelOpen)return;panelOpen=null;show('panelOverlay',false);sfx.play('click',{gain:.5})}
+window.render_game_to_text=()=>JSON.stringify({state,distance:Math.floor(distance),coins,multiplier,lane,jumpY,sliding,
+  speed,nextTurn,turnDirection,turnQueued,turnCount,turnFlash:+turnFlash.toFixed(2),chaseGap,stumbleCooldown,
+  junctionVisible:junction.visible,pathSegments:pathSegments.length,death:death&&{kind:death.kind,progress:+Math.min(1,death.elapsed/death.duration).toFixed(2)},
+  power:power.shield>0?'shield':power.type,powerRemain:+Math.max(0,power.until-runTime).toFixed(1),
+  pickups:pickups.filter(p=>p.pathDistance>=distance-2&&p.pathDistance<distance+95).map(p=>({kind:p.kind,lane:p.lane,ahead:Math.round(p.pathDistance-distance)})),
+  obstacles:obstacles.filter(o=>o.pathDistance>=distance-2&&o.pathDistance<distance+45).map(o=>({kind:o.kind,lane:o.lane,ahead:Math.round(o.pathDistance-distance)}))});
+window.advanceTime=(ms)=>{const steps=Math.max(1,Math.ceil(ms/25)),step=Math.min(ms/steps/1000,.05);for(let i=0;i<steps;i++)update(step);renderer.render(scene,camera)};
+if(import.meta.env.DEV)window.__templeDebug={ THREE, junction:()=>junction, enemy:()=>enemy, scene, camera, player, audio:sfx, stats:()=>stats, settings:()=>settings, openPanel, closePanel, obstacles:()=>obstacles.map(o=>({kind:o.kind,full:o.full,lane:o.lane,d:+o.pathDistance.toFixed(1)})), coins:()=>coinItems.map(c=>({lane:c.lane,d:+c.pathDistance.toFixed(1),taken:c.taken})), 
+  jumpTo(value){clearObjects();distance=value;nextSpawn=value+100;update(0.001);const from=pathAt(distance-9.0),now=pathAt(distance),ahead=pathAt(distance+10);camera.position.set(from.x,4.55,from.z);camera.lookAt(THREE.MathUtils.lerp(now.x,ahead.x,.3),1.5,THREE.MathUtils.lerp(now.z,ahead.z,.3));renderer.render(scene,camera)},
+  setNextTurn(value){nextTurn=value},
+  addCoins(n){coins+=n;$('coins').textContent=coins},
+  skipToTurn(){this.jumpTo(nextTurn-14)},
+  attemptTurn(dir){move(dir)},
+  restart(){reset()},
+  freeze(){speed=0},
+  thaw(){speed=RUN_SPEED},
+  setSpeed(value){speed=value},
+  spawnObstacle(kind,ahead=5){obstacles.push(createObstacle(kind,lane,distance+ahead))},spawnObstacleIn(kind,ln,ahead=5){obstacles.push(createObstacle(kind,ln,distance+ahead))},spawnPickup(kind,ahead=6){pickups.push(createPickup(kind,lane,distance+ahead))},spawnCoin(laneIdx,ahead=6,y=1.3){coinItems.push(createCoin(laneIdx,distance+ahead,y))},hit:stumbleOrCatch,end,slowDeath:(v)=>{if(death)death.duration=v},
+  givePower(kind){activatePower(kind)},rig:()=>runnerRig,
+  burst(n=16,ahead=3){const p=pathAt(distance+ahead,laneX*.4);spawnSparks(new THREE.Vector3(p.x,1.35,p.z),0xffd75e,n,1.4,.5,6)},
+  inspect(px,py,pz,tx,ty,tz){window.__inspect={px,py,pz,tx,ty,tz}},
+  uninspect(){delete window.__inspect}
+};
+function frame(now){const dt=Math.min(.05,(now-previous)/1000||0);previous=now;try{update(dt);const ins=window.__inspect;if(ins){camera.position.set(ins.px,ins.py,ins.pz);camera.lookAt(ins.tx,ins.ty,ins.tz)}renderer.render(scene,camera)}catch(error){console.error('Game frame failed',error);if(state==='playing')end('画面遇到问题，请重试。')}requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+$('startBtn').addEventListener('click',reset);$('restartBtn').addEventListener('click',()=>{commitRun();reset()});$('restartPauseBtn').addEventListener('click',()=>{commitRun();reset()});
+$('reviveBtn').addEventListener('click',revive);$('endMenuBtn').addEventListener('click',goMenu);$('pauseMenuBtn').addEventListener('click',goMenu);
+$('pauseBtn').addEventListener('click',pause);$('resumeBtn').addEventListener('click',pause);
+$('fsBtn').addEventListener('click',async()=>{
+  try{
+    if(document.fullscreenElement){await document.exitFullscreen();}
+    else{const el=document.documentElement;await (el.requestFullscreen?el.requestFullscreen({navigationUI:'hide'}):el.webkitRequestFullscreen());}
+  }catch(e){showHint('当前浏览器不支持全屏');}
+});
+document.querySelectorAll('[data-panel]').forEach(btn=>btn.addEventListener('click',()=>openPanel(btn.dataset.panel)));
+$('panelBack').addEventListener('click',closePanel);
+applySettings();
+$('soundBtn').addEventListener('click',()=>{settings.sfx=!settings.sfx;saveSettings();applySettings();if(settings.sfx){sfx.unlockAudio();sfx.play('click',{gain:.6})}});
+for(const [id,fn] of [['leftBtn',()=>move(-1)],['rightBtn',()=>move(1)],['jumpBtn',jump],['slideBtn',slide]])$(id).addEventListener('pointerdown',e=>{e.preventDefault();fn()});
+window.addEventListener('keydown',e=>{
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space'].includes(e.code))e.preventDefault();
+  if(e.repeat)return;
+  if(e.code==='Escape'&&panelOpen){closePanel();return}
+  if(e.code==='Escape'||e.code==='KeyP'){pause();return}
+  if((state==='menu'||state==='ended')&&(e.code==='Space'||e.code==='Enter')){reset();return}
+  if(e.code==='ArrowLeft'||e.code==='KeyA')move(-1);
+  else if(e.code==='ArrowRight'||e.code==='KeyD')move(1);
+  else if(e.code==='ArrowUp'||e.code==='Space'||e.code==='KeyW')jump();
+  else if(e.code==='ArrowDown'||e.code==='KeyS')slide();
+});
+const unlockAudio=()=>{sfx.unlockAudio()};
+addEventListener('pointerdown',unlockAudio,{once:true});addEventListener('keydown',unlockAudio,{once:true});
+let startX=0,startY=0;
+canvas.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY});
+canvas.addEventListener('pointerup',e=>{
+  if(state!=='playing')return;
+  const dx=e.clientX-startX,dy=e.clientY-startY;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<28)return;
+  if(Math.abs(dx)>Math.abs(dy))move(dx<0?-1:1);else if(dy<0)jump();else slide();
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')pause()});

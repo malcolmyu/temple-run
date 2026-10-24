@@ -1,0 +1,2187 @@
+{
+ "generator": "export_temple_obstacles.py",
+ "package": "com.imangi.templerun 1.39.0",
+ "unity": "2022.3.62f2",
+ "source": "/tmp/temple-unity-all/assets/bin/Data",
+ "coordinate_system": {
+  "up": "+Y",
+  "running": "+Z",
+  "across": "X",
+  "road_plane_y": 0,
+  "origin": "centre of the track tile the obstacle ships with (X = corridor centre line, Z = tile centre)",
+  "convention": "Horz tiles: root (x,y,z) -> (-z, y, x); Vert tiles: root (x,y,z) -> (x, y, z)",
+  "below_road": "negative Y is normal: tile walls carry a ~30 u skirt below the road, tree roots butt below it, pits are shafts below it",
+  "winding": "faces are emitted (a,c,b) = three.js CCW; DoubleSide recommended",
+  "uv": "raw Unity UV0, bottom-left origin, V not flipped -> THREE texture flipY = true"
+ },
+ "texture_note": "no texture PNG is duplicated in /assets/obstacles: every OBJ reuses the atlas that already ships with the game (/assets/apk/wallTexture.png, /assets/apk/treeTexture.png), raw Unity UV0 with V not flipped (THREE flipY = true)",
+ "scale_note": "sizes are REAL APK units (player rig is 10.8 u tall = 1.80 m, so 1 u = 1/6 m). The web game does not use this scale directly: scale the OBJ by its own factor and keep collision procedural.",
+ "game_scale_recommendation": {
+  "player_matched": 0.18,
+  "why": "10.8 u * 0.185 = 2.0 game units ~= a 1.9-2.16 u game player",
+  "corridor_matched": 0.43,
+  "why_corridor": "APK corridor is 30 u wide; the web game corridor is 13 units wide (CORRIDOR_WALL_X 6.4) -> 13/30 = 0.43",
+  "note": "the two anchors disagree (the web game already bends proportions: lane pitch is 1.3 units against a 13-wide corridor), so pick the factor per obstacle from its gameplay box and verify visually"
+ },
+ "files": [
+  {
+   "file": "tree-jump-left.obj",
+   "kind": "jump",
+   "role": "fallen tree root crossing the path (tree leans from the left)",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeJumpUpHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object105-Pivot"
+    ],
+    "mesh_files": [
+     "4a2beaa544e4a4c5983036e7976577b3"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object25-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 123,
+    "triangles": 90,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -61.731,
+     -35.05,
+     -19.23
+    ],
+    "max": [
+     25.752,
+     154.772,
+     29.761
+    ],
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 12814,
+   "verified": {
+    "vertices": 123,
+    "triangles": 90,
+    "uvs": 123,
+    "normals": 123,
+    "bbox": {
+     "min": [
+      -61.731,
+      -35.05,
+      -19.23
+     ],
+     "max": [
+      25.752,
+      154.772,
+      29.761
+     ]
+    },
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ],
+    "min_y": -35.05
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -25.0,
+     15.5
+    ],
+    "C": [
+     0.5,
+     9.5
+    ],
+    "R": [
+     -13.0,
+     14.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..10 -> jump over"
+   }
+  },
+  {
+   "file": "tree-jump-right.obj",
+   "kind": "jump",
+   "role": "fallen tree root crossing the path (tree leans from the right)",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeJumpDownHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object98-Pivot"
+    ],
+    "mesh_files": [
+     "62c4e0534905a4449a112e1eb8bd6558"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object22-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 123,
+    "triangles": 90,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -25.752,
+     -35.05,
+     -29.761
+    ],
+    "max": [
+     61.731,
+     154.772,
+     19.23
+    ],
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 12759,
+   "verified": {
+    "vertices": 123,
+    "triangles": 90,
+    "uvs": 123,
+    "normals": 123,
+    "bbox": {
+     "min": [
+      -25.752,
+      -35.05,
+      -29.761
+     ],
+     "max": [
+      61.731,
+      154.772,
+      19.23
+     ]
+    },
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ],
+    "min_y": -35.05
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -19.0,
+     14.0
+    ],
+    "C": [
+     0.5,
+     9.5
+    ],
+    "R": [
+     -8.5,
+     15.5
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..10 -> jump over"
+   }
+  },
+  {
+   "file": "tree-jump-left-vert.obj",
+   "kind": "jump",
+   "role": "same root obstacle, 90 deg turn variant",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeJumpLeftVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object97-Pivot"
+    ],
+    "mesh_files": [
+     "eee451b59799840a1a9088117df4b42d"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object24-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 123,
+    "triangles": 90,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -61.731,
+     -35.05,
+     -19.23
+    ],
+    "max": [
+     25.752,
+     154.772,
+     29.762
+    ],
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 12809,
+   "verified": {
+    "vertices": 123,
+    "triangles": 90,
+    "uvs": 123,
+    "normals": 123,
+    "bbox": {
+     "min": [
+      -61.731,
+      -35.05,
+      -19.23
+     ],
+     "max": [
+      25.752,
+      154.772,
+      29.762
+     ]
+    },
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ],
+    "min_y": -35.05
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -25.0,
+     15.5
+    ],
+    "C": [
+     0.5,
+     9.5
+    ],
+    "R": [
+     -13.0,
+     14.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..10 -> jump over"
+   }
+  },
+  {
+   "file": "tree-jump-right-vert.obj",
+   "kind": "jump",
+   "role": "same root obstacle, 90 deg turn variant",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeJumpRightVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object101-Pivot"
+    ],
+    "mesh_files": [
+     "9bcfc73d380404cffbbbc180ccf4dd07"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object23-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 123,
+    "triangles": 90,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -25.752,
+     -35.05,
+     -29.761
+    ],
+    "max": [
+     61.731,
+     154.772,
+     19.23
+    ],
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 12761,
+   "verified": {
+    "vertices": 123,
+    "triangles": 90,
+    "uvs": 123,
+    "normals": 123,
+    "bbox": {
+     "min": [
+      -25.752,
+      -35.05,
+      -29.761
+     ],
+     "max": [
+      61.731,
+      154.772,
+      19.23
+     ]
+    },
+    "size": [
+     87.483,
+     189.822,
+     48.992
+    ],
+    "min_y": -35.05
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -19.0,
+     14.0
+    ],
+    "C": [
+     0.5,
+     9.5
+    ],
+    "R": [
+     -8.5,
+     15.5
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..10 -> jump over"
+   }
+  },
+  {
+   "file": "tree-trip-left.obj",
+   "kind": "trip",
+   "role": "low tree root lying flat across the path (left)",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeTripUpHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object100-Pivot"
+    ],
+    "mesh_files": [
+     "70078743865ec449ab5cafc14abada6b"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object31-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 70,
+    "triangles": 50,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -61.731,
+     -32.914,
+     -25.041
+    ],
+    "max": [
+     11.677,
+     154.774,
+     23.951
+    ],
+    "size": [
+     73.408,
+     187.687,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 7349,
+   "verified": {
+    "vertices": 70,
+    "triangles": 50,
+    "uvs": 70,
+    "normals": 70,
+    "bbox": {
+     "min": [
+      -61.731,
+      -32.914,
+      -25.041
+     ],
+     "max": [
+      11.677,
+      154.774,
+      23.951
+     ]
+    },
+    "size": [
+     73.408,
+     187.687,
+     48.992
+    ],
+    "min_y": -32.914
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -23.5,
+     9.5
+    ],
+    "C": [
+     0.5,
+     3.5
+    ],
+    "R": [
+     0.5,
+     0.5
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..4 -> jump over"
+   }
+  },
+  {
+   "file": "tree-trip-right.obj",
+   "kind": "trip",
+   "role": "low tree root lying flat across the path (right)",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeTripDownHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object106-Pivot"
+    ],
+    "mesh_files": [
+     "362b92130e7404e829f984511dfc28d5"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object29-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 70,
+    "triangles": 50,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -11.677,
+     -32.914,
+     -23.951
+    ],
+    "max": [
+     71.731,
+     154.774,
+     25.041
+    ],
+    "size": [
+     83.408,
+     187.687,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 7227,
+   "verified": {
+    "vertices": 70,
+    "triangles": 50,
+    "uvs": 70,
+    "normals": 70,
+    "bbox": {
+     "min": [
+      -11.677,
+      -32.914,
+      -23.951
+     ],
+     "max": [
+      71.731,
+      154.774,
+      25.041
+     ]
+    },
+    "size": [
+     83.408,
+     187.687,
+     48.992
+    ],
+    "min_y": -32.914
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     0.5,
+     0.5
+    ],
+    "C": [
+     0.5,
+     3.5
+    ],
+    "R": [
+     -8.5,
+     8.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..4 -> jump over"
+   }
+  },
+  {
+   "file": "tree-trip-left-vert.obj",
+   "kind": "trip",
+   "role": "turn variant",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeTripLeftVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object104-Pivot"
+    ],
+    "mesh_files": [
+     "a2dcee7d4358c4317af86f0fe61895e9"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object30-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 70,
+    "triangles": 50,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -61.731,
+     -32.914,
+     -25.041
+    ],
+    "max": [
+     11.677,
+     154.774,
+     23.951
+    ],
+    "size": [
+     73.408,
+     187.687,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 7349,
+   "verified": {
+    "vertices": 70,
+    "triangles": 50,
+    "uvs": 70,
+    "normals": 70,
+    "bbox": {
+     "min": [
+      -61.731,
+      -32.914,
+      -25.041
+     ],
+     "max": [
+      11.677,
+      154.774,
+      23.951
+     ]
+    },
+    "size": [
+     73.408,
+     187.687,
+     48.992
+    ],
+    "min_y": -32.914
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -23.5,
+     9.5
+    ],
+    "C": [
+     0.5,
+     3.5
+    ],
+    "R": [
+     0.5,
+     0.5
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..4 -> jump over"
+   }
+  },
+  {
+   "file": "tree-trip-right-vert.obj",
+   "kind": "trip",
+   "role": "turn variant",
+   "suggested_game_obstacle": "hurdle",
+   "source": {
+    "prefab": "templeStraightTreeTripRightVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object103-Pivot"
+    ],
+    "mesh_files": [
+     "474990aa714f349bbb7379d54b825fd4"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object28-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 70,
+    "triangles": 50,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -11.677,
+     -32.914,
+     -23.951
+    ],
+    "max": [
+     61.731,
+     154.774,
+     25.041
+    ],
+    "size": [
+     73.408,
+     187.687,
+     48.992
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 7227,
+   "verified": {
+    "vertices": 70,
+    "triangles": 50,
+    "uvs": 70,
+    "normals": 70,
+    "bbox": {
+     "min": [
+      -11.677,
+      -32.914,
+      -23.951
+     ],
+     "max": [
+      61.731,
+      154.774,
+      25.041
+     ]
+    },
+    "size": [
+     73.408,
+     187.687,
+     48.992
+    ],
+    "min_y": -32.914
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     0.5,
+     0.5
+    ],
+    "C": [
+     0.5,
+     3.5
+    ],
+    "R": [
+     -8.5,
+     8.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "low obstacle",
+    "action": "jump",
+    "reason": "centre lane blocked 0..4 -> jump over"
+   }
+  },
+  {
+   "file": "tree-slide.obj",
+   "kind": "slide",
+   "role": "giant leaning tree, trunk/branch mass overhead - duck under",
+   "suggested_game_obstacle": "arch",
+   "source": {
+    "prefab": "templeStraightTreeSlideHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object99-Pivot"
+    ],
+    "mesh_files": [
+     "d8958a7ad98b24a04bc94dc6508ec30a"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object27-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 284,
+    "triangles": 170,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -32.848,
+     -33.559,
+     -10.379
+    ],
+    "max": [
+     33.287,
+     165.168,
+     25.948
+    ],
+    "size": [
+     66.134,
+     198.726,
+     36.327
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 28615,
+   "verified": {
+    "vertices": 284,
+    "triangles": 170,
+    "uvs": 284,
+    "normals": 284,
+    "bbox": {
+     "min": [
+      -32.848,
+      -33.559,
+      -10.379
+     ],
+     "max": [
+      33.286,
+      165.168,
+      25.948
+     ]
+    },
+    "size": [
+     66.134,
+     198.726,
+     36.327
+    ],
+    "min_y": -33.559
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -13.0,
+     164.0
+    ],
+    "C": [
+     11.0,
+     164.0
+    ],
+    "R": [
+     -11.5,
+     164.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "overhead",
+    "action": "slide",
+    "reason": "open below 11 vs a 10.8 u player -> duck/slide"
+   }
+  },
+  {
+   "file": "tree-slide-vert.obj",
+   "kind": "slide",
+   "role": "turn variant",
+   "suggested_game_obstacle": "arch",
+   "source": {
+    "prefab": "templeStraightTreeSlideVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object102-Pivot"
+    ],
+    "mesh_files": [
+     "c9fbdea49daeb4945bd1d094678ce743"
+    ],
+    "materials": [
+     "Temple Run Trees Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object26-Pivot"
+    ],
+    "tile_not_exported": true
+   },
+   "geometry": {
+    "vertices": 284,
+    "triangles": 170,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -32.848,
+     -33.559,
+     -10.379
+    ],
+    "max": [
+     33.287,
+     135.168,
+     25.948
+    ],
+    "size": [
+     66.134,
+     168.726,
+     36.327
+    ]
+   },
+   "texture": [
+    "treeTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/treeTexture",
+   "size_bytes": 28617,
+   "verified": {
+    "vertices": 284,
+    "triangles": 170,
+    "uvs": 284,
+    "normals": 284,
+    "bbox": {
+     "min": [
+      -32.848,
+      -33.559,
+      -10.379
+     ],
+     "max": [
+      33.287,
+      135.168,
+      25.948
+     ]
+    },
+    "size": [
+     66.134,
+     168.726,
+     36.327
+    ],
+    "min_y": -33.559
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -13.0,
+     134.0
+    ],
+    "C": [
+     11.0,
+     134.0
+    ],
+    "R": [
+     -11.5,
+     134.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "overhead",
+    "action": "slide",
+    "reason": "open below 11 vs a 10.8 u player -> duck/slide"
+   }
+  },
+  {
+   "file": "flame-tower.obj",
+   "kind": "fire",
+   "role": "twin stone flame pedestals flanking a lane + low walls",
+   "suggested_game_obstacle": "fire",
+   "source": {
+    "prefab": "templeStraightFlameTowerHighHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object69-Pivot"
+    ],
+    "mesh_files": [
+     "5804a12c995f947e283d3069eb09bdea"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object69-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 809,
+    "triangles": 462,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -21.513,
+     -30.0,
+     -30.293
+    ],
+    "max": [
+     21.292,
+     14.905,
+     29.71
+    ],
+    "size": [
+     42.805,
+     44.905,
+     60.002
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 80941,
+   "verified": {
+    "vertices": 809,
+    "triangles": 462,
+    "uvs": 809,
+    "normals": 809,
+    "bbox": {
+     "min": [
+      -21.513,
+      -30.0,
+      -30.293
+     ],
+     "max": [
+      21.292,
+      14.905,
+      29.71
+     ]
+    },
+    "size": [
+     42.805,
+     44.905,
+     60.002
+    ],
+    "min_y": -30.0
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -1.0,
+     14.0
+    ],
+    "C": null,
+    "R": [
+     -1.0,
+     14.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "clear",
+    "action": "run-through",
+    "reason": "centre lane clear, side lanes blocked up to 14"
+   }
+  },
+  {
+   "file": "flame-tower-vert.obj",
+   "kind": "fire",
+   "role": "turn variant",
+   "suggested_game_obstacle": "fire",
+   "source": {
+    "prefab": "templeStraightFlameTowerHighVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object209-Pivot"
+    ],
+    "mesh_files": [
+     "aea2c8450b8ba4c1887ff055c8a3ddcc"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object209-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 809,
+    "triangles": 462,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -21.292,
+     -30.0,
+     -29.71
+    ],
+    "max": [
+     21.513,
+     14.905,
+     30.293
+    ],
+    "size": [
+     42.805,
+     44.905,
+     60.002
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 80542,
+   "verified": {
+    "vertices": 809,
+    "triangles": 462,
+    "uvs": 809,
+    "normals": 809,
+    "bbox": {
+     "min": [
+      -21.292,
+      -30.0,
+      -29.71
+     ],
+     "max": [
+      21.513,
+      14.905,
+      30.293
+     ]
+    },
+    "size": [
+     42.805,
+     44.905,
+     60.002
+    ],
+    "min_y": -30.0
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -1.0,
+     14.0
+    ],
+    "C": null,
+    "R": [
+     -1.0,
+     14.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "clear",
+    "action": "run-through",
+    "reason": "centre lane clear, side lanes blocked up to 14"
+   }
+  },
+  {
+   "file": "pit.obj",
+   "kind": "gap",
+   "role": "stone-rimmed pit cut in the road (shaft below road)",
+   "suggested_game_obstacle": "gap",
+   "source": {
+    "prefab": "templeStraightHoleHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object16-Pivot"
+    ],
+    "mesh_files": [
+     "f7340f08861c443c68f77a75671dd3f2"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object16-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 958,
+    "triangles": 348,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -19.997,
+     -29.995,
+     -30.008
+    ],
+    "max": [
+     20.002,
+     2.725,
+     30.008
+    ],
+    "size": [
+     39.999,
+     32.72,
+     60.016
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 89362,
+   "verified": {
+    "vertices": 958,
+    "triangles": 348,
+    "uvs": 958,
+    "normals": 958,
+    "bbox": {
+     "min": [
+      -19.997,
+      -29.995,
+      -30.008
+     ],
+     "max": [
+      20.002,
+      2.725,
+      30.008
+     ]
+    },
+    "size": [
+     39.999,
+     32.72,
+     60.016
+    ],
+    "min_y": -29.995
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -29.5,
+     2.0
+    ],
+    "C": [
+     -29.5,
+     -1.0
+    ],
+    "R": [
+     -29.5,
+     2.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "gap",
+    "reason": "every lane is below-road geometry: this is the pit/gap rim"
+   }
+  },
+  {
+   "file": "pit-vert.obj",
+   "kind": "gap",
+   "role": "turn variant",
+   "suggested_game_obstacle": "gap",
+   "source": {
+    "prefab": "templeStraightHoleVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object21-Pivot"
+    ],
+    "mesh_files": [
+     "baa6426e42f164e75a6843499f92d91c"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object21-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 958,
+    "triangles": 348,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -19.997,
+     -29.995,
+     -30.008
+    ],
+    "max": [
+     20.002,
+     2.725,
+     30.008
+    ],
+    "size": [
+     39.999,
+     32.72,
+     60.016
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 89375,
+   "verified": {
+    "vertices": 958,
+    "triangles": 348,
+    "uvs": 958,
+    "normals": 958,
+    "bbox": {
+     "min": [
+      -19.997,
+      -29.995,
+      -30.008
+     ],
+     "max": [
+      20.002,
+      2.725,
+      30.008
+     ]
+    },
+    "size": [
+     39.999,
+     32.72,
+     60.016
+    ],
+    "min_y": -29.995
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -29.5,
+     2.0
+    ],
+    "C": [
+     -29.5,
+     -1.0
+    ],
+    "R": [
+     -29.5,
+     2.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "gap",
+    "reason": "every lane is below-road geometry: this is the pit/gap rim"
+   }
+  },
+  {
+   "file": "pit-long-a.obj",
+   "kind": "gap",
+   "role": "long pit, narrow rim",
+   "suggested_game_obstacle": "gap",
+   "source": {
+    "prefab": "templeStraightHoleLongAHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object20-Pivot"
+    ],
+    "mesh_files": [
+     "4c5652f862cfe49a69058a35c760f3f4"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object20-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 479,
+    "triangles": 174,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -19.997,
+     -29.995,
+     -30.008
+    ],
+    "max": [
+     20.002,
+     2.725,
+     -13.322
+    ],
+    "size": [
+     39.999,
+     32.72,
+     16.687
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 44644,
+   "verified": {
+    "vertices": 479,
+    "triangles": 174,
+    "uvs": 479,
+    "normals": 479,
+    "bbox": {
+     "min": [
+      -19.997,
+      -29.995,
+      -30.008
+     ],
+     "max": [
+      20.002,
+      2.725,
+      -13.322
+     ]
+    },
+    "size": [
+     39.999,
+     32.72,
+     16.687
+    ],
+    "min_y": -29.995
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -29.5,
+     2.0
+    ],
+    "C": [
+     -29.5,
+     -1.0
+    ],
+    "R": [
+     -29.5,
+     2.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "gap",
+    "reason": "every lane is below-road geometry: this is the pit/gap rim"
+   }
+  },
+  {
+   "file": "pit-long-b.obj",
+   "kind": "gap",
+   "role": "long pit, wide rim",
+   "suggested_game_obstacle": "gap",
+   "source": {
+    "prefab": "templeStraightHoleLongBHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object18-Pivot"
+    ],
+    "mesh_files": [
+     "b264eb4b32e7d461690c1f75ea4838e1"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object18-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 479,
+    "triangles": 174,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -19.997,
+     -29.995,
+     13.322
+    ],
+    "max": [
+     20.002,
+     2.725,
+     30.008
+    ],
+    "size": [
+     39.999,
+     32.72,
+     16.686
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 44237,
+   "verified": {
+    "vertices": 479,
+    "triangles": 174,
+    "uvs": 479,
+    "normals": 479,
+    "bbox": {
+     "min": [
+      -19.997,
+      -29.995,
+      13.322
+     ],
+     "max": [
+      20.002,
+      2.725,
+      30.008
+     ]
+    },
+    "size": [
+     39.999,
+     32.72,
+     16.686
+    ],
+    "min_y": -29.995
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -29.5,
+     2.0
+    ],
+    "C": [
+     -29.5,
+     -1.0
+    ],
+    "R": [
+     -29.5,
+     2.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "gap",
+    "reason": "every lane is below-road geometry: this is the pit/gap rim"
+   }
+  },
+  {
+   "file": "tower-arch.obj",
+   "kind": "archway",
+   "role": "tall temple tower with cross-beam over the road (run through)",
+   "suggested_game_obstacle": "scenery/block",
+   "source": {
+    "prefab": "templeStraightTowerHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object01-Pivot"
+    ],
+    "mesh_files": [
+     "eae89589a8fae4355b57cd6a7ca2ff9d"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object01-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 1125,
+    "triangles": 596,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -33.57,
+     -30.0,
+     -30.0
+    ],
+    "max": [
+     33.007,
+     137.223,
+     30.002
+    ],
+    "size": [
+     66.577,
+     167.223,
+     60.002
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 111143,
+   "verified": {
+    "vertices": 1125,
+    "triangles": 596,
+    "uvs": 1125,
+    "normals": 1125,
+    "bbox": {
+     "min": [
+      -33.57,
+      -30.0,
+      -30.0
+     ],
+     "max": [
+      33.007,
+      137.223,
+      30.002
+     ]
+    },
+    "size": [
+     66.577,
+     167.223,
+     60.002
+    ],
+    "min_y": -30.0
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -14.5,
+     137.0
+    ],
+    "C": [
+     50.0,
+     53.0
+    ],
+    "R": [
+     -14.5,
+     137.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "overhead",
+    "action": "run-through",
+    "reason": "beam underside 50 clears the 10.8 u player"
+   }
+  },
+  {
+   "file": "tower-arch-vert.obj",
+   "kind": "archway",
+   "role": "turn variant",
+   "suggested_game_obstacle": "scenery/block",
+   "source": {
+    "prefab": "templeStraightTowerVert_prefab",
+    "axis": "Vert",
+    "meshes": [
+     "Object02-Pivot"
+    ],
+    "mesh_files": [
+     "2880330408c8e41b2b3de6a787b9ff12"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object02-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 1125,
+    "triangles": 596,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -33.57,
+     -30.0,
+     -30.0
+    ],
+    "max": [
+     33.007,
+     137.223,
+     30.002
+    ],
+    "size": [
+     66.577,
+     167.223,
+     60.002
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 111292,
+   "verified": {
+    "vertices": 1125,
+    "triangles": 596,
+    "uvs": 1125,
+    "normals": 1125,
+    "bbox": {
+     "min": [
+      -33.57,
+      -30.0,
+      -30.0
+     ],
+     "max": [
+      33.007,
+      137.223,
+      30.002
+     ]
+    },
+    "size": [
+     66.577,
+     167.223,
+     60.002
+    ],
+    "min_y": -30.0
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -14.5,
+     137.0
+    ],
+    "C": [
+     50.0,
+     53.0
+    ],
+    "R": [
+     -14.5,
+     137.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "overhead",
+    "action": "run-through",
+    "reason": "beam underside 50 clears the 10.8 u player"
+   }
+  },
+  {
+   "file": "narrow-wall-right.obj",
+   "kind": "block",
+   "role": "low stone wall blocking the right side of the road",
+   "suggested_game_obstacle": "block",
+   "source": {
+    "prefab": "templeStraightNarrowLongDownHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object244-Pivot"
+    ],
+    "mesh_files": [
+     "0c9241c5a059b48fb86aaa42bf9e4650"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object244-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 396,
+    "triangles": 222,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -11.051,
+     -29.999,
+     -30.083
+    ],
+    "max": [
+     13.015,
+     6.775,
+     30.084
+    ],
+    "size": [
+     24.066,
+     36.775,
+     60.167
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 39004,
+   "verified": {
+    "vertices": 396,
+    "triangles": 222,
+    "uvs": 396,
+    "normals": 396,
+    "bbox": {
+     "min": [
+      -11.051,
+      -29.999,
+      -30.083
+     ],
+     "max": [
+      13.015,
+      6.775,
+      30.084
+     ]
+    },
+    "size": [
+     24.066,
+     36.775,
+     60.167
+    ],
+    "min_y": -29.999
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -28.0,
+     -16.0
+    ],
+    "C": [
+     -22.0,
+     -2.5
+    ],
+    "R": [
+     -28.0,
+     6.5
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "side-wall",
+    "reason": "centre is below-road geometry, side lane carries a 6 u wall"
+   }
+  },
+  {
+   "file": "narrow-wall-left.obj",
+   "kind": "block",
+   "role": "low stone wall blocking the left side of the road",
+   "suggested_game_obstacle": "block",
+   "source": {
+    "prefab": "templeStraightNarrowLongUpHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object242-Pivot"
+    ],
+    "mesh_files": [
+     "ef9067eb1fa8344e29061138c49baed7"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object242-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 396,
+    "triangles": 222,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -12.875,
+     -29.999,
+     -30.083
+    ],
+    "max": [
+     11.191,
+     6.775,
+     30.084
+    ],
+    "size": [
+     24.066,
+     36.775,
+     60.167
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 39339,
+   "verified": {
+    "vertices": 396,
+    "triangles": 222,
+    "uvs": 396,
+    "normals": 396,
+    "bbox": {
+     "min": [
+      -12.875,
+      -29.999,
+      -30.083
+     ],
+     "max": [
+      11.191,
+      6.775,
+      30.084
+     ]
+    },
+    "size": [
+     24.066,
+     36.775,
+     60.167
+    ],
+    "min_y": -29.999
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -28.0,
+     6.5
+    ],
+    "C": [
+     -22.0,
+     -2.5
+    ],
+    "R": [
+     -28.0,
+     -16.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "side-wall",
+    "reason": "centre is below-road geometry, side lane carries a 6 u wall"
+   }
+  },
+  {
+   "file": "narrow-beam-right.obj",
+   "kind": "block",
+   "role": "short waist-high wall on the right",
+   "suggested_game_obstacle": "block",
+   "source": {
+    "prefab": "templeStraightNarrowSmallDownHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object56-Pivot"
+    ],
+    "mesh_files": [
+     "9679c0919aad647358645ac91ca2eca0"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object56-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 693,
+    "triangles": 360,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -26.161,
+     -35.349,
+     -30.205
+    ],
+    "max": [
+     27.566,
+     6.777,
+     30.918
+    ],
+    "size": [
+     53.727,
+     42.126,
+     61.123
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 68161,
+   "verified": {
+    "vertices": 693,
+    "triangles": 360,
+    "uvs": 693,
+    "normals": 693,
+    "bbox": {
+     "min": [
+      -26.161,
+      -35.349,
+      -30.205
+     ],
+     "max": [
+      27.566,
+      6.777,
+      30.918
+     ]
+    },
+    "size": [
+     53.727,
+     42.126,
+     61.123
+    ],
+    "min_y": -35.349
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -31.0,
+     2.0
+    ],
+    "C": [
+     -22.0,
+     -1.0
+    ],
+    "R": [
+     -29.5,
+     6.5
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "side-wall",
+    "reason": "centre is below-road geometry, side lane carries a 6 u wall"
+   }
+  },
+  {
+   "file": "narrow-beam-left.obj",
+   "kind": "block",
+   "role": "short waist-high wall on the left",
+   "suggested_game_obstacle": "block",
+   "source": {
+    "prefab": "templeStraightNarrowSmallUpHorz_prefab",
+    "axis": "Horz",
+    "meshes": [
+     "Object53-Pivot"
+    ],
+    "mesh_files": [
+     "62e65c860f39d464f89a609f42510f11"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [
+     "Object53-Pivot"
+    ],
+    "tile_not_exported": false
+   },
+   "geometry": {
+    "vertices": 691,
+    "triangles": 360,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -27.426,
+     -35.349,
+     -30.205
+    ],
+    "max": [
+     26.3,
+     6.777,
+     30.918
+    ],
+    "size": [
+     53.727,
+     42.126,
+     61.123
+    ]
+   },
+   "texture": [
+    "wallTexture"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture",
+   "size_bytes": 68398,
+   "verified": {
+    "vertices": 691,
+    "triangles": 360,
+    "uvs": 691,
+    "normals": 691,
+    "bbox": {
+     "min": [
+      -27.426,
+      -35.349,
+      -30.205
+     ],
+     "max": [
+      26.3,
+      6.777,
+      30.918
+     ]
+    },
+    "size": [
+     53.727,
+     42.126,
+     61.123
+    ],
+    "min_y": -35.349
+   },
+   "lane_blocked_height_above_road": {
+    "L": [
+     -32.5,
+     6.5
+    ],
+    "C": [
+     -22.0,
+     -1.0
+    ],
+    "R": [
+     -31.0,
+     2.0
+    ]
+   },
+   "gameplay_reading": {
+    "centre_lane": "below road",
+    "action": "side-wall",
+    "reason": "centre is below-road geometry, side lane carries a 6 u wall"
+   }
+  },
+  {
+   "file": "stone-pedestal.obj",
+   "kind": "block",
+   "role": "stone lane blocker",
+   "suggested_game_obstacle": "block",
+   "source": {
+    "prefab": "templeStraightFlameTowerHighHorz_prefab",
+    "axis": "",
+    "meshes": [
+     "flame-tower.obj"
+    ],
+    "mesh_files": [
+     "flame-tower.obj"
+    ],
+    "materials": [
+     "Temple Run Material"
+    ],
+    "tile_mesh_in_prefab": [],
+    "tile_not_exported": true,
+    "note": "derived: both brazier pedestals of the flame tower are real APK geometry; this file is the right-hand one (8.5 <= X <= 15.6, |Z| <= 6), re-centred in XZ and left at road height, for use as the lane-change block"
+   },
+   "geometry": {
+    "vertices": 108,
+    "triangles": 52,
+    "uv_sets": 1,
+    "normals_included": true
+   },
+   "bounds_local": {
+    "min": [
+     -3.076,
+     -0.004,
+     -5.052
+    ],
+    "max": [
+     3.076,
+     14.905,
+     5.052
+    ],
+    "size": [
+     6.151,
+     14.908,
+     10.105
+    ]
+   },
+   "texture": [
+    "wallTexture.png"
+   ],
+   "texture_path_in_web": "/assets/apk/wallTexture.png",
+   "size_bytes": 10221,
+   "verified": {
+    "vertices": 108,
+    "triangles": 52,
+    "uvs": 108,
+    "normals": 108,
+    "bbox": {
+     "min": [
+      -3.076,
+      -0.004,
+      -5.052
+     ],
+     "max": [
+      3.076,
+      14.905,
+      5.052
+     ]
+    },
+    "size": [
+     6.151,
+     14.908,
+     10.105
+    ],
+    "min_y": -0.004
+   },
+   "lane_blocked_height_above_road": {
+    "L": null,
+    "C": [
+     2.0,
+     14.0
+    ],
+    "R": null
+   },
+   "gameplay_reading": {
+    "centre_lane": "blocked",
+    "action": "dodge",
+    "reason": "centre lane blocked 2..14 -> change lane"
+   }
+  }
+ ],
+ "not_present": [
+  "dedicated small stone block / crate / barrel obstacle mesh (the only low meshes in the APK are the 3 coin meshes Box01/Box06/Box07, 3.6 u)",
+  "spike trap / spikes / caltrops mesh",
+  "broken column / rubble pile mesh",
+  "brazier / fire pit mesh with its own flame geometry (the flame in FlameTower is a ParticleSystem, no flame mesh, no flame texture)",
+  "statue / idol / boulder obstacle standing on the road as a lane blocker (rock_prefab, rock2, rock3 are cliff-side jungle rocks, not road props)",
+  "separate slide-under archway mesh (the only overhead beam is the cross-beam of templeStraightTower, and the duck-under obstacle is the leaning tree of treeSlide)",
+  "coin/pickup trap, saw blade, rotating obstacle, or any moving-obstacle mesh",
+  "road / floor mesh with surface triangles (the endless road is procedural in the real game too)"
+ ]
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Temple Run track pieces - preview</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0a0d10; overflow: hidden; }
+  canvas { display: block; }
+  #hud {
+    position: fixed; left: 10px; top: 8px; font: 12px/1.45 ui-monospace, Menlo, monospace;
+    color: #cfe3ef; background: #0009; padding: 8px 10px; border-radius: 6px; max-width: 640px;
+  }
+  #hud b { color: #f4d47c; }
+  #err { position: fixed; left: 10px; bottom: 10px; font: 12px ui-monospace, monospace; color: #ff8080; white-space: pre; }
+</style>
+</head>
+<body>
+<div id="hud">loading OBJ…</div>
+<div id="err"></div>
+<script type="importmap">
+{ "imports": { "three": "/node_modules/three/build/three.module.js",
+               "three/addons/": "/node_modules/three/examples/jsm/" } }
+</script>
+<script type="module" src="./preview.js"></script>
+</body>
+</html>

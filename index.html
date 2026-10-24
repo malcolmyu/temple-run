@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#d9eff4" />
+    <title>咩咩登峰 · 小羊登山</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="intro" aria-label="游戏介绍">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> 云端冒险 · WEBGL GAME</div>
+        <h1>咩咩<span>登峰</span></h1>
+        <p class="intro-copy">沿着山坡上的石阶，<br />和小羊一起，向山顶进发。</p>
+        <div class="intro-rule"></div>
+        <div class="howto"><span class="howto-num">01</span><span>点击跳跃，沿石阶向上攀登</span></div>
+        <div class="howto"><span class="howto-num">02</span><span>空中再点一次，跨过炸弹障碍</span></div>
+        <div class="howto"><span class="howto-num">03</span><span>30 秒内登得越高越好</span></div>
+        <div class="intro-foot">一段轻盈的山间旅程 <span>✦</span></div>
+      </section>
+
+      <section class="game-shell" aria-label="小羊登山游戏">
+        <div id="game" class="game">
+          <canvas id="scene" aria-label="3D 小羊登山场景"></canvas>
+          <div class="game-vignette" aria-hidden="true"></div>
+          <header class="hud">
+            <div class="hud-brand"><span class="brand-icon">✿</span><span>咩咩登峰<small>THE LITTLE CLIMB</small></span></div>
+            <button id="sound-btn" class="icon-button" aria-label="开启声音" title="开启声音">♫</button>
+          </header>
+          <div class="stats">
+            <div class="stat"><span class="stat-label">已攀登</span><strong><span id="height-value">0</span><small>m</small></strong></div>
+            <div class="stat-separator"></div>
+            <div class="stat"><span class="stat-label">金铃铛</span><strong><span id="coin-value">0</span><small>枚</small></strong></div>
+          </div>
+          <div class="timer" aria-label="剩余时间"><span id="time-value">30</span><small>s</small></div>
+          <div id="message" class="message hidden" aria-live="polite"></div>
+          <div id="start-overlay" class="overlay">
+            <div class="overlay-card">
+              <div class="overlay-crest">✦</div>
+              <div class="overlay-kicker">3D 透视山路挑战</div>
+              <h2>山顶见，<br /><em>小羊！</em></h2>
+              <p>沿着山坡石阶向上跳。<br />空中再点一次，可以越过炸弹。</p>
+              <button id="start-btn" class="primary-button">开始 <span>↗</span></button>
+              <div class="overlay-hint">点击按钮 / 空格跳跃 · 连点跨越障碍</div>
+            </div>
+          </div>
+          <div id="end-overlay" class="overlay hidden">
+            <div class="overlay-card end-card">
+              <div class="overlay-crest">☁</div>
+              <div class="overlay-kicker">这次登山的足迹</div>
+              <h2>再试一次，<br /><em>登得更高！</em></h2>
+              <div class="end-result"><span>攀登高度</span><strong id="end-height">0 m</strong><span>金铃铛</span><strong id="end-coins">0 枚</strong></div>
+              <button id="restart-btn" class="primary-button">重新出发 <span>↗</span></button>
+            </div>
+          </div>
+          <div class="touch-controls" aria-label="触屏操作">
+            <button id="jump-btn" class="jump-button" aria-label="跳跃">跳一下<small>连续点击跨过炸弹</small></button>
+          </div>
+          <div class="game-bottom">沿着山路，继续向上 <span>✦</span></div>
+        </div>
+      </section>
+
+      <aside class="side-note" aria-label="游戏信息">
+        <div class="side-line"></div><span class="side-kicker">A LITTLE ADVENTURE</span>
+        <p>每一步都更接近天空。</p>
+        <div class="key-list"><div><kbd>SPACE</kbd><span>跳跃 / 连点跨越</span></div><div><kbd>F</kbd><span>全屏</span></div></div>
+        <div class="side-stamp">01 <span>/</span> ∞</div>
+      </aside>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

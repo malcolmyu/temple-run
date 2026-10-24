@@ -1,0 +1,281 @@
+import * as THREE from 'three';
+
+// CPU-skinned runner built from the original Unity SkinnedMeshRenderer data.
+// The JSON stores Unity-space data (bone local TRS raw, mesh positions with x negated
+// by the exporter). We skin in Unity space, then convert to Three.js space at the end
+// with the same x-negation the static OBJ export used, so placement matches.
+
+function trackFor(clip, boneName) {
+  return clip.tracks[boneName] || null;
+}
+
+function sampleRotation(curve, time, out) {
+  const { times, values } = curve;
+  const n = times.length;
+  if (n === 0) return out.set(0, 0, 0, 1);
+  if (n === 1 || time <= times[0]) return out.fromArray(values[0]);
+  if (time >= times[n - 1]) return out.fromArray(values[n - 1]);
+  let i = 1;
+  while (i < n && times[i] < time) i++;
+  const t0 = times[i - 1], t1 = times[i];
+  const alpha = (time - t0) / (t1 - t0 || 1);
+  const q0 = new THREE.Quaternion().fromArray(values[i - 1]);
+  const q1 = new THREE.Quaternion().fromArray(values[i]);
+  return out.copy(q0).slerp(q1, alpha);
+}
+
+function samplePosition(curve, time, out) {
+  const { times, values } = curve;
+  const n = times.length;
+  if (n === 0) return out.set(0, 0, 0);
+  if (n === 1 || time <= times[0]) return out.fromArray(values[0]);
+  if (time >= times[n - 1]) return out.fromArray(values[n - 1]);
+  let i = 1;
+  while (i < n && times[i] < time) i++;
+  const t0 = times[i - 1], t1 = times[i];
+  const alpha = (time - t0) / (t1 - t0 || 1);
+  out.fromArray(values[i - 1]).lerp(new THREE.Vector3().fromArray(values[i]), alpha);
+  return out;
+}
+
+export function buildRunnerRig(data, options = {}) {
+  const scale = options.scale ?? 0.27;
+  const yOffset = options.yOffset ?? 1.46;
+  const flipWinding = options.flipWinding !== false;
+  // The clips animate the root bone's position in an authoring space (root sits ~3.8u
+  // higher than the bind skeleton), which would lift the character off the ground.
+  // Rotation tracks are absolute-local and safe; root translation is not usable as-is.
+  const lockRootPosition = options.lockRootPosition === true;
+
+  const boneCount = data.bones.length;
+  const nodes = data.bones.map((bone) => {
+    const o = new THREE.Object3D();
+    o.name = bone.name;
+    o.position.fromArray(bone.position);
+    o.quaternion.fromArray(bone.rotation);
+    o.scale.fromArray(bone.scale ?? [1, 1, 1]);
+    return o;
+  });
+  const root = new THREE.Group();
+  data.bones.forEach((bone, i) => {
+    if (bone.parent >= 0 && bone.parent < boneCount) nodes[bone.parent].add(nodes[i]);
+    else root.add(nodes[i]);
+  });
+
+  const boneIndexByName = new Map(data.bones.map((b, i) => [b.name, i]));
+  const clipData = {};
+  for (const [name, clip] of Object.entries(data.clips || {})) {
+    const tracks = new Map();
+    for (const [boneName, kinds] of Object.entries(clip.tracks || {})) {
+      const idx = boneIndexByName.get(boneName);
+      if (idx === undefined) continue;
+      tracks.set(idx, kinds);
+    }
+    clipData[name] = { duration: Math.max(clip.duration || 0, 0.001), tracks };
+  }
+
+  // The mesh's own bind poses (row-major) map mesh space -> bone space.
+  // The scene transform values are NOT the bind pose, so they must not be inverted here.
+  root.updateMatrixWorld(true);
+  const bindMatrices = (data.bindposes || []).map((rows) => {
+    const m = new THREE.Matrix4();
+    m.set(rows[0][0], rows[0][1], rows[0][2], rows[0][3],
+          rows[1][0], rows[1][1], rows[1][2], rows[1][3],
+          rows[2][0], rows[2][1], rows[2][2], rows[2][3],
+          rows[3][0], rows[3][1], rows[3][2], rows[3][3]);
+    return m;
+  });
+  // Rest pose = the bind pose itself: local_i = B_parent * inverse(B_i).
+  const bindLocal = data.bones.map((bone, i) => {
+    const inv = new THREE.Matrix4().copy(bindMatrices[i]).invert();
+    if (bone.parent < 0 || !bindMatrices[bone.parent]) return inv;
+    return new THREE.Matrix4().copy(bindMatrices[bone.parent]).multiply(inv);
+  });
+  const rest = bindLocal.map((m) => {
+    const p = new THREE.Vector3();
+    const q = new THREE.Quaternion();
+    const s = new THREE.Vector3();
+    m.decompose(p, q, s);
+    return { position: p, quaternion: q, scale: s };
+  });
+  // Clip root translation is authored in a scene where the root sits ~3.8u above the
+  // bind pose. Keep only the relative motion (bob) by subtracting the first key offset.
+  const rootPositionOffset = new Map();
+  if (!lockRootPosition) {
+    const baseClip = clipData.run || Object.values(clipData)[0];
+    data.bones.forEach((bone, i) => {
+      if (bone.parent >= 0) return;
+      const track = baseClip && baseClip.tracks.get(i);
+      if (!track || !track.position || !track.position.values.length) return;
+      const first = new THREE.Vector3().fromArray(track.position.values[0]);
+      rootPositionOffset.set(i, first.sub(rest[i].position));
+    });
+  }
+
+  const vertexCount = data.positions.length;
+  const raw = new Float32Array(vertexCount * 3);
+  for (let i = 0; i < vertexCount; i++) {
+    const p = data.positions[i];
+    // undo the exporter x-negation; skinning happens in Unity space
+    raw[i * 3] = -p[0];
+    raw[i * 3 + 1] = p[1];
+    raw[i * 3 + 2] = p[2];
+  }
+  const boneIndices = data.boneIndices;
+  const boneWeights = data.boneWeights;
+  const indexArray = flipWinding
+    ? data.indices
+    : data.indices.map((v, i, arr) => (i % 3 === 1 ? arr[i + 1] : i % 3 === 2 ? arr[i - 1] : v));
+
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(vertexCount * 3);
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  if (data.uv) {
+    const uv = new Float32Array(vertexCount * 2);
+    for (let i = 0; i < vertexCount; i++) {
+      uv[i * 2] = data.uv[i][0];
+      uv[i * 2 + 1] = data.uv[i][1];
+    }
+    geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  }
+  geometry.setIndex(indexArray);
+
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0.82,
+    metalness: 0.04,
+    side: THREE.FrontSide,
+    map: options.texture || null,
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.castShadow = true;
+  mesh.frustumCulled = false;
+
+  const holder = new THREE.Group();
+  holder.add(mesh);
+  holder.scale.setScalar(scale);
+  holder.position.y = yOffset;
+  holder.rotation.y = Math.PI;
+
+  const bindIdentity = new THREE.Matrix4();
+  const boneMatrices = new Array(boneCount);
+  for (let i = 0; i < boneCount; i++) boneMatrices[i] = new THREE.Matrix4();
+  const blended = new THREE.Matrix4();
+  const scratch = new THREE.Matrix4();
+  const acc = new Float32Array(16);
+  const vertex = new THREE.Vector3();
+  const out = new THREE.Vector3();
+
+  let clipName = 'run';
+  let clipTime = 0;
+  let clipLoops = true;
+
+  function setClip(name, restart = false) {
+    if (!clipData[name]) return;
+    if (name === clipName && !restart) return;
+    clipName = name;
+    clipTime = 0;
+    clipLoops = name === 'run';
+  }
+
+  function applyPose(time) {
+    const clip = clipData[clipName];
+    for (let i = 0; i < boneCount; i++) {
+      const node = nodes[i];
+      const restPose = rest[i];
+      const track = clip ? clip.tracks.get(i) : null;
+      if (track && track.rotation) sampleRotation(track.rotation, time, node.quaternion);
+      else node.quaternion.copy(restPose.quaternion);
+      if (track && track.position && !(lockRootPosition && data.bones[i].parent < 0)) {
+        samplePosition(track.position, time, node.position);
+        const offset = rootPositionOffset.get(i);
+        if (offset) node.position.sub(offset);
+      } else node.position.copy(restPose.position);
+      node.scale.copy(restPose.scale);
+    }
+    root.updateMatrixWorld(true);
+    for (let i = 0; i < boneCount; i++) {
+      boneMatrices[i].multiplyMatrices(nodes[i].matrixWorld, bindMatrices[i] || bindIdentity);
+    }
+  }
+
+  function skin() {
+    for (let i = 0; i < vertexCount; i++) {
+      const w = boneWeights[i];
+      const bi = boneIndices[i];
+      const total = (w[0] || 0) + (w[1] || 0) + (w[2] || 0) + (w[3] || 0) || 1;
+      acc.fill(0);
+      for (let k = 0; k < 4; k++) {
+        const weight = (w[k] || 0) / total;
+        if (weight <= 0) continue;
+        const bone = bi[k];
+        const m = (boneMatrices[bone] || boneMatrices[0]).elements;
+        for (let e = 0; e < 16; e++) acc[e] += m[e] * weight;
+      }
+      blended.fromArray(acc);
+      vertex.set(raw[i * 3], raw[i * 3 + 1], raw[i * 3 + 2]).applyMatrix4(blended);
+      out.copy(vertex);
+      positions[i * 3] = -out.x;
+      positions[i * 3 + 1] = out.y;
+      positions[i * 3 + 2] = out.z;
+    }
+    geometry.attributes.position.needsUpdate = true;
+    geometry.computeVertexNormals();
+  }
+
+  function update(dt, timeScale = 1) {
+    const clip = clipData[clipName];
+    if (!clip) return;
+    clipTime += dt * (clipName === 'run' ? timeScale : 1);
+    if (clipLoops) clipTime %= clip.duration;
+    else clipTime = Math.min(clipTime, clip.duration);
+    applyPose(clipTime);
+    skin();
+  }
+
+  // Initial pose so the mesh exists before the first update (bind pose looks wrong:
+  // sample the run clip start instead).
+  clipName = clipData.run ? 'run' : Object.keys(clipData)[0] || '';
+  applyPose(0);
+  skin();
+
+  return {
+    object: holder,
+    mesh,
+    material,
+    setClip,
+    update,
+    getClip: () => clipName,
+    setTime(t) {
+      clipLoops = false;
+      clipTime = t;
+      applyPose(t);
+      skin();
+    },
+    getTime() {
+      return { clipName, clipTime };
+    },
+    clips: Object.keys(clipData),
+    vertexCount,
+    boneCount,
+  };
+}
+
+export async function loadRunnerRig(url, textureUrl, options = {}) {
+  const [data, texture] = await Promise.all([
+    fetch(url).then((r) => {
+      if (!r.ok) throw new Error(`runner rig ${url}: ${r.status}`);
+      return r.json();
+    }),
+    textureUrl
+      ? new Promise((resolve, reject) => {
+          new THREE.TextureLoader().load(textureUrl, (tex) => {
+            tex.colorSpace = THREE.SRGBColorSpace;
+            tex.flipY = true; // Unity bakes these UVs for a non-flipped V (verified against the atlas regions)
+            resolve(tex);
+          }, undefined, reject);
+        })
+      : Promise.resolve(null),
+  ]);
+  return buildRunnerRig(data, { ...options, texture });
+}
