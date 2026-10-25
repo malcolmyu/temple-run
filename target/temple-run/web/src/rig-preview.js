@@ -7,6 +7,8 @@ const texUrl = q.get('tex') || '/assets/apk/texture-63-playerTexture.png';
 const clip = q.get('clip') || 'run';
 const view = q.get('view') || 'front';
 const tParam = q.get('t');
+// fb=1 discards the rig's own clip tracks so the default runner's clips get retargeted onto it.
+const forceFb = q.get('fb') === '1';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x16241d);
@@ -21,7 +23,7 @@ const rim = new THREE.DirectionalLight(0x88aaff, 1.2); rim.position.set(3, 4, -6
 const grid = new THREE.GridHelper(8, 16, 0x4d7a5c, 0x2c4636); grid.position.y = 0.001; scene.add(grid);
 
 window.__rigError = null;
-window.rigReady = loadRunnerRig(rigUrl, texUrl)
+window.rigReady = loadRunnerRig(rigUrl, texUrl, { clipFallbackUrl: '/assets/characters/rig-orig_02___Default.json', forceFallbackClips: forceFb })
   .then((rig) => {
     scene.add(rig.object);
     rig.setClip(clip);

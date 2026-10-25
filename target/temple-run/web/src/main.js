@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { repairObjNormals } from './objNormals.js';
 import { loadRunnerRig } from './runnerRig.js';
 import * as sfx from './sfx.js';
 import './style.css';
@@ -249,6 +250,7 @@ function loadObstaclePrefab(name){
   const tree=name.startsWith('tree');
   new OBJLoader().load(`${import.meta.env.BASE_URL}assets/obstacles/${name}.obj`,obj=>{
     obj.traverse(part=>{if(part.isMesh){part.material=tree?obstacleTreeMat:obstacleStoneMat;part.castShadow=true;part.receiveShadow=true}});
+    repairObjNormals(obj);
     // static APK scenery: origin sits at tile centre, so recentre XZ and drop it onto y=0
     const box=new THREE.Box3().setFromObject(obj),ctr=box.getCenter(new THREE.Vector3());
     obj.position.set(-ctr.x,-box.min.y,-ctr.z);
@@ -263,6 +265,7 @@ function obstaclePrefab(name,scale,rotY=Math.PI){
 }
 new OBJLoader().load(`${import.meta.env.BASE_URL}assets/track/temple-road-tile.obj`,obj=>{
   obj.traverse(part=>{if(part.isMesh){part.material=roadTileMat;part.castShadow=false;part.receiveShadow=true}});
+  repairObjNormals(obj);
   roadTileTemplate=obj;refreshRoadSurface();
 },undefined,()=>console.warn('Original road tile unavailable; procedural road in use'));
 const geo = {
@@ -1087,6 +1090,7 @@ for(const side of [-1,1]){
 new OBJLoader().load(asset('mesh-96-enemy.obj'),model=>{
   const tex=textureLoader.load(asset('texture-53-enemyTexture.png'));tex.colorSpace=THREE.SRGBColorSpace;tex.flipY=false;
   model.traverse(part=>{if(part.isMesh){part.material=new THREE.MeshStandardMaterial({map:tex,color:0x9c7a66,emissiveMap:tex,emissive:0x8a5a3a,emissiveIntensity:.85,roughness:.95,side:THREE.DoubleSide});part.castShadow=true}});
+  repairObjNormals(model);
   model.rotation.x=-Math.PI/2;model.scale.set(.085,.085,.12);
   enemy.add(model);enemyFallback.visible=false;
 },undefined,()=>console.warn('Original enemy model unavailable; using fallback'));
@@ -1184,6 +1188,7 @@ function loadFallbackRunner(){
       part.castShadow=true;
       originalMeshes.push({geometry:part.geometry,base:part.geometry.attributes.position.array.slice()});
     });
+    repairObjNormals(model);
     model.scale.setScalar(.27);
     model.position.y=1.46;
     model.rotation.y=Math.PI;
@@ -1390,7 +1395,7 @@ function createObstacle(kind,lane,pathDistance){
     for(const [x,ln] of [[-1.15,.42],[.35,.6],[1.25,.34]]){
       const vine=mesh(group,geo.cyl,mats.moss,x,1.0-ln/2,.14,.035,ln,.035);
     }
-  }else if(kind==='gap'){  }else if(kind==='gap'){
+  }else if(kind==='gap'){
     // Broken bridge section. The road surface is a solid tile, so the "hole" is painted
     // just above the paving (y=0.04) and framed by bright rims + broken slabs + torches.
     // (The original APK pit mesh was evaluated but its shaft sits below the solid road

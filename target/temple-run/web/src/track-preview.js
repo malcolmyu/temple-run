@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { repairObjNormals } from './objNormals.js';
 import { loadRunnerRig } from './runnerRig.js';
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x5a7264);
@@ -18,6 +19,7 @@ texture.colorSpace = THREE.SRGBColorSpace;
 const mat = new THREE.MeshStandardMaterial({ map: texture, roughness: .95, metalness: 0, side: THREE.DoubleSide });
 new OBJLoader().load('/assets/track/temple-road-tile.obj', (obj) => {
   obj.traverse((p) => { if (p.isMesh) { p.material = mat; p.receiveShadow = true; } });
+  repairObjNormals(obj);
   obj.position.y = -0.02;
   // three tiles along -Z like the game
   for (let i = 0; i < 3; i++) { const c = obj.clone(true); c.position.z = -i * 12 + 4; scene.add(c); }

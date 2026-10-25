@@ -53,6 +53,157 @@ function computeBindRest(data){
   });
 }
 
+// Rest-pose world rotations for a bone hierarchy (bind pose, expressed as quaternions).
+function restWorldQuats(rest, bones) {
+  const out = new Array(bones.length);
+  const solve = (i) => {
+    if (out[i]) return out[i];
+    const parent = bones[i].parent;
+    out[i] = parent >= 0 ? solve(parent).clone().multiply(rest[i].quaternion) : rest[i].quaternion.clone();
+    return out[i];
+  };
+  for (let i = 0; i < bones.length; i++) solve(i);
+  return out;
+}
+
+function restWorldMatrices(data, rest) {
+  const world = new Array(data.bones.length);
+  const solve = (i) => {
+    if (world[i]) return world[i];
+    const m = new THREE.Matrix4().compose(rest[i].position, rest[i].quaternion, rest[i].scale);
+    const parent = data.bones[i].parent;
+    world[i] = parent >= 0 ? solve(parent).clone().multiply(m) : m.clone();
+    return world[i];
+  };
+  for (let i = 0; i < data.bones.length; i++) solve(i);
+  return world;
+}
+
+// Which child should a bone aim at? Limbs aim at the next segment, spines aim up the spine,
+// hips aim at the spine (never at a thigh, even though thighs are longer).
+function pickAimChild(bones, name, children) {
+  if (!children.length) return -1;
+  const n = name.toLowerCase();
+  const childNames = children.map((ci) => String(bones[ci].name || '').toLowerCase());
+  const prefer = [];
+  if (/pelvis|hips|root/.test(n)) prefer.push('spine', 'spine1', 'chest');
+  if (/spine|chest|neck/.test(n)) prefer.push('spine1', 'spine2', 'chest', 'neck', 'head');
+  if (/head/.test(n)) prefer.push('neck');
+  if (/clavicle/.test(n)) prefer.push('upperarm');
+  if (/upperarm/.test(n)) prefer.push('forearm');
+  if (/forearm/.test(n)) prefer.push('hand');
+  if (/thigh/.test(n)) prefer.push('calf');
+  if (/calf/.test(n)) prefer.push('foot');
+  for (const want of prefer) {
+    const idx = childNames.findIndex((c) => c.replace(/[^a-z0-9]/g, '').includes(want));
+    if (idx >= 0) return children[idx];
+  }
+  return children[0];
+}
+
+// Bone -> aim child, plus that aim direction and length in the rig's rest pose.
+function buildAimTable(data, rest) {
+  const world = restWorldMatrices(data, rest);
+  const children = data.bones.map(() => []);
+  data.bones.forEach((b, i) => { if (b.parent >= 0) children[b.parent].push(i); });
+  const pos = world.map((m) => new THREE.Vector3().setFromMatrixPosition(m));
+  return data.bones.map((b, i) => {
+    const child = pickAimChild(data.bones, b.name, children[i]);
+    const dir = child >= 0 ? pos[child].clone().sub(pos[i]) : null;
+    return { child, pos: pos[i], dir: dir && dir.lengthSq() > 1e-10 ? dir.clone().normalize() : null, dirRaw: dir };
+  });
+}
+
+// Rebuild one source clip on the target skeleton by aiming each target bone at the source
+// bone's animated direction. This is the only retarget that survives skeletons whose bind
+// pose, bone lengths or local axes differ from the authoring rig (the APK's shop skins are
+// exactly that): matching world rotations twists those limbs, matching joint directions does not.
+function retargetClipWorld(srcRig, tgtBones, tgtRest, clipName) {
+  const clip = (srcRig.clips || {})[clipName];
+  if (!clip || !clip.tracks) return null;
+  const srcBones = srcRig.bones || [];
+  const srcRest = computeBindRest(srcRig);
+  const srcAim = buildAimTable(srcRig, srcRest);
+  const tgtAim = buildAimTable({ bones: tgtBones }, tgtRest);
+  const tgtRestWorldQ = restWorldQuats(tgtRest, tgtBones);
+  const srcIndex = new Map(srcBones.map((b, i) => [normBoneName(b.name), i]));
+  const srcCurves = new Map();
+  for (const [boneName, kinds] of Object.entries(clip.tracks)) {
+    if (kinds && kinds.rotation && kinds.rotation.times && kinds.rotation.values) {
+      srcCurves.set(normBoneName(boneName), kinds.rotation);
+    }
+  }
+  if (!srcCurves.size) return null;
+
+  const timeSet = new Set();
+  for (const curve of srcCurves.values()) for (const t of curve.times) timeSet.add(Math.round(t * 1000));
+  const times = [...timeSet].sort((a, b) => a - b).map((t) => t / 1000);
+  if (times.length < 2) return null;
+
+  const mapping = tgtBones.map((b) => {
+    const si = srcIndex.get(normBoneName(b.name));
+    return si !== undefined ? si : -1;
+  });
+  if (!mapping.some((si) => si >= 0)) return null;
+
+  const srcLocal = new Array(srcBones.length);
+  const srcWorldQ = new Array(srcBones.length);
+  const srcWorldP = srcAim.map((a) => a.pos.clone());
+  const solveSrc = (i) => {
+    if (srcWorldQ[i]) return;
+    const parent = srcBones[i].parent;
+    if (parent >= 0) solveSrc(parent);
+    srcWorldQ[i] = parent >= 0 ? srcWorldQ[parent].clone().multiply(srcLocal[i]) : srcLocal[i].clone();
+    const off = srcRest[i].position;
+    srcWorldP[i] = parent >= 0 ? srcWorldP[parent].clone().add(off.clone().applyQuaternion(srcWorldQ[parent])) : off.clone();
+  };
+
+  const samples = tgtBones.map(() => []);
+  const tmp = new THREE.Quaternion();
+  for (const t of times) {
+    for (let i = 0; i < srcBones.length; i++) {
+      const curve = srcCurves.get(normBoneName(srcBones[i].name));
+      srcLocal[i] = curve ? sampleRotation(curve, t, new THREE.Quaternion()) : srcRest[i].quaternion;
+      srcWorldQ[i] = null;
+    }
+    for (let i = 0; i < srcBones.length; i++) solveSrc(i);
+
+    const tgtWorldQ = new Array(tgtBones.length);
+    const tgtWorldP = tgtBones.map((_, i) => tgtAim[i].pos.clone());
+    const solveTgt = (i) => {
+      if (tgtWorldQ[i]) return;
+      const parent = tgtBones[i].parent;
+      if (parent >= 0) solveTgt(parent);
+      const si = mapping[i];
+      let local = tgtRest[i].quaternion;
+      if (si >= 0 && tgtAim[i].dir && srcAim[si].child >= 0) {
+        // Direction of the source bone's aimed segment at this frame.
+        const childPos = srcWorldP[srcAim[si].child];
+        const dir = childPos.clone().sub(srcWorldP[si]);
+        if (dir.lengthSq() > 1e-12) {
+          dir.normalize();
+          // Rotate the target's rest aim onto the source's animated direction, then rebuild.
+          const delta = tmp.setFromUnitVectors(tgtAim[i].dir, dir);
+          const wantWorld = delta.clone().multiply(tgtRestWorldQ[i]);
+          local = parent >= 0 ? tgtWorldQ[parent].clone().invert().multiply(wantWorld) : wantWorld;
+          samples[i].push(local.toArray());
+        }
+      }
+      tgtWorldQ[i] = parent >= 0 ? tgtWorldQ[parent].clone().multiply(local) : local.clone();
+      const off = tgtRest[i].position;
+      tgtWorldP[i] = parent >= 0 ? tgtWorldP[parent].clone().add(off.clone().applyQuaternion(tgtWorldQ[parent])) : off.clone();
+    };
+    for (let i = 0; i < tgtBones.length; i++) solveTgt(i);
+  }
+
+  const tracks = new Map();
+  for (let i = 0; i < tgtBones.length; i++) {
+    if (!samples[i].length) continue;
+    tracks.set(i, { rotation: { times, values: samples[i] } });
+  }
+  return tracks.size ? { duration: Math.max(clip.duration || 0, 0.001), tracks } : null;
+}
+
 export function buildRunnerRig(data, options = {}) {
   const scale = options.scale ?? 0.27;
   const yOffset = options.yOffset ?? 1.46;
@@ -88,6 +239,8 @@ export function buildRunnerRig(data, options = {}) {
     }
     clipData[name] = { duration: Math.max(clip.duration || 0, 0.001), tracks };
   }
+  // Debug switch: ignore the rig's baked clips so the fallback retarget supplies them.
+  if (options.forceFallbackClips) for (const c of Object.values(clipData)) c.tracks.clear();
 
 
   // The mesh's own bind poses (row-major) map mesh space -> bone space.
@@ -103,34 +256,20 @@ export function buildRunnerRig(data, options = {}) {
   });
   const rest = computeBindRest(data);
 
-  // Shop-skin prefabs (Bone X skeletons) shipped with empty clip tracks. Retarget the default
-  // runner's clips with a bind-relative delta so bone axis conventions don't matter:
-  // q_target = q_targetRest * (q_srcRest^-1 * q_srcAnim).
+  // Unity's per-frame hip/spine local rotations are authored for one specific skeleton. The
+  // shop-skin prefabs ("Bone X" rigs) reuse that clip verbatim, so applying its local values
+  // twists every limb whose rest axes differ (T-rex arms on the astronaut, a 90° body lean on
+  // the vampire, crossed legs on the scarecrow). Rebuild those clips on the target skeleton
+  // from world-space deltas instead: deltaWorld(t) = srcWorld(t) * srcRestWorld⁻¹, then
+  // tgtWorld(t) = deltaWorld(t) * tgtRestWorld, and finally tgtLocal(t) = tgtParentWorld(t)⁻¹
+  // * tgtWorld(t). World deltas survive differing bone axis conventions; parent-relative
+  // deltas only work when both skeletons were authored in the same DCC orientation.
   if (options.fallbackClips && options.fallbackRig) {
-    const srcRest = computeBindRest(options.fallbackRig);
-    const srcIdx = new Map(options.fallbackRig.bones.map((b, i) => [normBoneName(b.name), i]));
-    const tgtIdx = new Map();
-    data.bones.forEach((b, i) => { const k = normBoneName(b.name); if (!tgtIdx.has(k)) tgtIdx.set(k, i); });
-    for (const [name, fb] of Object.entries(options.fallbackClips)) {
+    for (const name of Object.keys(options.fallbackClips)) {
       const cur = clipData[name];
       if (cur && cur.tracks.size) continue;
-      if (!fb || !fb.tracks) continue;
-      const tracks = new Map();
-      for (const [boneName, kinds] of Object.entries(fb.tracks)) {
-        const ti = tgtIdx.get(normBoneName(boneName));
-        const si = srcIdx.get(normBoneName(boneName));
-        if (ti === undefined || si === undefined) continue;
-        const out = {};
-        if (kinds.rotation && kinds.rotation.times) {
-          const qs = srcRest[si].quaternion, qt = rest[ti].quaternion, invRest = qs.clone().invert();
-          out.rotation = { times: kinds.rotation.times, values: kinds.rotation.values.map((arr) => {
-            const q = new THREE.Quaternion().fromArray(arr).premultiply(invRest);
-            return qt.clone().multiply(q).toArray();
-          }) };
-        }
-        tracks.set(ti, out);
-      }
-      if (tracks.size) clipData[name] = { duration: Math.max(fb.duration || 0, 0.001), tracks };
+      const retargeted = retargetClipWorld(options.fallbackRig, data.bones, rest, name);
+      if (retargeted) clipData[name] = retargeted;
     }
   }
 
@@ -348,6 +487,18 @@ export function buildRunnerRig(data, options = {}) {
     getTime() {
       return { clipName, clipTime };
     },
+    // Debug helper: posed joint origins in the same space the skinned mesh is rendered in
+    // (holder transform applied, x mirrored like the skinned vertices).
+    joints() {
+      const out = {};
+      for (let i = 0; i < boneCount; i++) {
+        const v = new THREE.Vector3().setFromMatrixPosition(nodes[i].matrixWorld);
+        v.x = -v.x;
+        v.applyMatrix4(holder.matrixWorld);
+        out[data.bones[i].name] = v.toArray().map((n) => +n.toFixed(3));
+      }
+      return out;
+    },
     clips: Object.keys(clipData),
     vertexCount,
     boneCount,
@@ -377,5 +528,14 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
       fallbackRig = fb; fallbackClips = fb.clips || null;
     } catch {}
   }
-  return buildRunnerRig(data, { ...options, texture, fallbackClips, fallbackRig });
+  // The APK's shop-skin clip tracks are the default runner's animation copied verbatim onto
+  // differently-built skeletons, so they cannot be played as-is. Whenever we retarget anyway
+  // and the rig does not even share the Bip01 naming family, drop its baked tracks.
+  let forceFallbackClips = options.forceFallbackClips === true;
+  if (!forceFallbackClips && fallbackClips && Array.isArray(data.bones)) {
+    const bip01 = data.bones.some((b) => /^bip0?1/i.test(String(b.name || '')));
+    if (!bip01) forceFallbackClips = true;
+  }
+  return buildRunnerRig(data, { ...options, texture, fallbackClips, fallbackRig, forceFallbackClips });
 }
+
