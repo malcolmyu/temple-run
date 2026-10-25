@@ -122,6 +122,26 @@ export class Game {
       audio: () => sfx.stats(),
       enableTilt: () => this.input.enableTilt(),
       stepLoop: () => this.stepLoop,
+      chaserInfo: () => {
+        const box = new THREE.Box3().setFromObject(this.chaserGroup);
+        const size = box.getSize(new THREE.Vector3());
+        const mats: string[] = [];
+        this.chaserGroup.traverse((object: THREE.Object3D) => {
+          const mesh = object as THREE.Mesh;
+          if (mesh.isMesh) {
+            const material = mesh.material as THREE.MeshStandardMaterial;
+            mats.push(`${material?.type ?? '?'}:${material?.map ? 'map' : 'nomap'}:${mesh.geometry?.type ?? '?'}`);
+          }
+        });
+        return { size: size.toArray().map((n) => +n.toFixed(2)), min: box.min.toArray().map((n) => +n.toFixed(2)), mats };
+      },
+      chaser: () => ({
+        pos: this.chaserGroup.position.toArray().map((n) => +n.toFixed(2)),
+        children: this.chaserGroup.children.length,
+        visible: this.chaserGroup.visible,
+        enemyLoaded: !!this.bundle.assets.enemy,
+        gap: this.world.require(this.runnerEntity, Chase).gap,
+      }),
       attemptTurn: (dir: 1 | -1) => this.queueTurn(dir),
       setNextTurn: (distance: number) => {
         const turn = this.world.require(this.runnerEntity, Turn);
@@ -691,7 +711,7 @@ export class Game {
     const side = LANES[1] + Math.sin(this.world.elapsed * 2.4) * 1.4;
     const point = this.path.at(this.distance + 2.5, side, true);
     this.monkeyGroup.position.set(point.x, 0, point.z);
-    this.monkeyGroup.rotation.y = point.heading + Math.PI;
+    this.monkeyGroup.rotation.y = point.heading;
     this.monkeyGroup.scale.setScalar(1 + Math.sin(this.world.elapsed * 9) * 0.03);
     if (this.monkeyTimer <= 0) {
       const stats = this.world.require(this.runnerEntity, RunStats);
@@ -953,7 +973,7 @@ export class Game {
     trackPos.side = lane.x;
     const point = this.path.at(trackPos.distance, lane.x, true);
     this.runnerGroup.position.set(point.x, 0, point.z);
-    this.runnerGroup.rotation.y = point.heading + Math.PI;
+    this.runnerGroup.rotation.y = point.heading;
   }
 
   private syncObjects(dt: number): void {
@@ -968,10 +988,16 @@ export class Game {
       this.runnerRig.update(dt, THREE.MathUtils.clamp(this.speed / RUN_SPEED, 0.65, 1.55));
     }
     const chase = this.world.require(this.runnerEntity, Chase);
-    const chaserPos = this.path.at(this.distance - 5.2 - chase.gap, 0, true);
-    this.chaserGroup.position.set(chaserPos.x, 0, chaserPos.z);
-    this.chaserGroup.rotation.y = chaserPos.heading + Math.PI;
-    const scale = 1 + Math.sin(this.world.elapsed * 6) * 0.03 + (chase.lunge > 0 ? 0.12 : 0);
+    // Same placement as the original: the chaser hovers just behind and to one side, so it
+    // stays in frame when it closes in (distance - gap is inside the camera's view).
+    const close = chase.gap < 7.5;
+    const chaseSide = (close ? 1.35 : 1.9) + Math.sin(this.world.elapsed * 1.3) * 0.3;
+    // Slightly ahead of `distance - gap` and hovering higher, so the chaser stays inside the
+    // camera frustum when it lunges (the raw original offset ends up below the frame).
+    const chaserPos = this.path.at(this.distance - chase.gap + (close ? 0.9 : 0), chaseSide, true);
+    this.chaserGroup.position.set(chaserPos.x, (close ? 1.75 : 1.15) + Math.sin(this.world.elapsed * 2.6) * 0.14, chaserPos.z);
+    this.chaserGroup.rotation.y = chaserPos.heading;
+    const scale = 1.45 + Math.sin(this.world.elapsed * 6) * 0.03 + (chase.lunge > 0 ? 0.18 : 0);
     this.chaserGroup.scale.setScalar(scale);
 
     for (const entity of this.obstacles) {
