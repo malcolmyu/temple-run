@@ -30,6 +30,45 @@ export class Input {
     for (const handler of this.handlers) handler(action);
   }
 
+  private tiltEnabled = false;
+  private tiltListening = false;
+  private lastTiltAt = 0;
+
+  /** Opt-in device orientation steering (the original's "tilt to turn"). */
+  async enableTilt(): Promise<boolean> {
+    this.tiltEnabled = true;
+    const anyOrientation = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> };
+    if (typeof anyOrientation.requestPermission === 'function') {
+      try {
+        const granted = await anyOrientation.requestPermission();
+        if (granted !== 'granted') {
+          this.tiltEnabled = false;
+          return false;
+        }
+      } catch {
+        this.tiltEnabled = false;
+        return false;
+      }
+    }
+    if (!this.tiltListening) {
+      this.tiltListening = true;
+      window.addEventListener('deviceorientation', (event) => {
+        if (!this.tiltEnabled) return;
+        const now = performance.now();
+        if (now - this.lastTiltAt < 280) return;
+        const gamma = event.gamma ?? 0;
+        if (Math.abs(gamma) < 18) return;
+        this.lastTiltAt = now;
+        this.push(gamma > 0 ? 'right' : 'left');
+      });
+    }
+    return true;
+  }
+
+  disableTilt(): void {
+    this.tiltEnabled = false;
+  }
+
   attach(windowTarget: Window, canvas: HTMLCanvasElement): void {
     windowTarget.addEventListener('keydown', (event) => {
       if (event.repeat) return;

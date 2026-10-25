@@ -19,7 +19,7 @@ export default defineConfig({
       // until it reaches feature parity.
       input: {
         main: path.join(here, 'web', 'index.html'),
-        next: path.join(here, 'web', 'next.html'),
+        legacy: path.join(here, 'web', 'legacy.html'),
       },
     },
   },

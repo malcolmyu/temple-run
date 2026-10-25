@@ -120,6 +120,7 @@ export class Game {
       progress: () => ({ ...progress }),
       spawnMonkey: () => this.spawnMonkey(this.distance + 10),
       audio: () => sfx.stats(),
+      enableTilt: () => this.input.enableTilt(),
       stepLoop: () => this.stepLoop,
       attemptTurn: (dir: 1 | -1) => this.queueTurn(dir),
       setNextTurn: (distance: number) => {
@@ -1007,6 +1008,7 @@ export class Game {
       this.stepLoop = null;
     }
     mutateUi.deathReason = reason;
+    mutateUi.deathKind = kind;
     mutateUi.phase = 'dying';
     this.deathTimer = 1.25;
     sfx.play(kind === 'fall' ? 'splat' : 'scream', { gain: 0.9 });

@@ -27,6 +27,7 @@ export interface HudState {
   nextCue: ObstacleKind | null;
   hint: string;
   deathReason: string;
+  deathKind: 'impact' | 'fall' | 'caught' | 'missed' | '';
   fps: number;
   skin: string;
   bankCoins: number;
@@ -62,6 +63,7 @@ const defaults = (): HudState => ({
   nextCue: null,
   hint: '',
   deathReason: '',
+  deathKind: '',
   fps: 60,
   skin: progress.equipped,
   bankCoins: progress.coins,

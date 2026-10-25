@@ -127,14 +127,14 @@ APK 内的角色、敌人和贴图由 UnityPy 导出，分析记录见 [`analysi
 
 ## v2 重构：TypeScript + ECS + Vue
 
-`web/next.html` 是重构中的第二版入口，与旧的 `index.html` 并行存在：
+`web/index.html` 现在挂载 TypeScript + ECS + Vue 的新版；旧的完整玩法保留在 `web/legacy.html` 以便对照：
 
 ```bash
 npm run temple:dev -- --port 5173
-# 旧版（完整玩法）：http://localhost:5173/
-# 新版（TypeScript + ECS + Vue）：http://localhost:5173/next.html
+# 新版（TypeScript + ECS + Vue）：http://localhost:5173/
+# 旧版（完整玩法）：http://localhost:5173/legacy.html
 npm run temple:typecheck   # vue-tsc 严格模式类型检查
-npm run temple:build       # 同时产出 index.html 与 next.html
+npm run temple:build       # 同时产出 index.html 与 legacy.html
 ```
 
 **目录结构（新版）**

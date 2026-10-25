@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#171d18">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317251d'/%3E%3Cpath d='M32 5 59 32 32 59 5 32Z' fill='%23e8b759'/%3E%3C/svg%3E">
+  <title>神庙逃亡 · 旧版（完整玩法）</title>
+</head>
+<body>
+  <div class="rotate-hint" id="rotateHint" aria-hidden="true">
+    <div class="rotate-card"><span class="rotate-icon">⟳</span><strong>请竖屏游玩</strong><small>ROTATE YOUR DEVICE</small></div>
+  </div>
+  <main class="app">
+    <div class="frame" id="frame">
+      <canvas id="scene" aria-label="3D 神庙跑酷游戏"></canvas>
+      <div class="shade"></div>
+      <div class="turn-glow" id="turnGlow"></div>
+      <div id="speedlines" class="speedlines"></div>
+      <div id="deathVignette" class="death-vignette hidden"></div>
+      <div id="impactFlash" class="impact-flash"></div>
+      <header class="hud">
+        <div class="brand"><span class="brand-mark">◆</span><span>神庙逃亡<small>THE LOST RELIC · WEB RUNNER</small></span></div>
+        <div class="hud-actions"><button class="icon-button" id="soundBtn" aria-label="关闭声音">♫</button><button class="icon-button" id="fsBtn" aria-label="全屏">⛶</button></div>
+      </header>
+      <div class="hud-score" id="hudScore">
+        <img class="score-word" src="/assets/ui/score-word.png" alt="SCORE">
+        <strong id="score">0</strong>
+        <div class="score-sub">
+          <span><img class="coin-ico" src="/assets/ui/coin.png" alt=""><b id="coins">0</b></span>
+          <span><img class="gem-ico" src="/assets/ui/gem.png" alt=""><b id="gems">0</b></span>
+        </div>
+        <span id="distance" class="hidden">0</span>
+      </div>
+      <div class="right-rail">
+        <button class="bag-btn" id="bagBtn" aria-label="商店"><img src="/assets/ui/bag.png" alt=""></button>
+        <button class="plate-btn" id="pauseBtn" aria-label="暂停游戏">Ⅱ</button>
+      </div>
+      <div id="multiBadge" class="multi hidden">×2</div>
+      <div id="powerMeter" class="power-meter hidden"><i id="powerFill"></i></div>
+      <div id="powerBadge" class="power hidden"></div>
+      <div id="powerToast" class="power-toast hidden"><img src="/assets/ui/pw-boost.png" alt=""><strong>获得强化</strong></div>
+      <div class="hint" id="hint" aria-live="polite"></div>
+      <div class="action-cue hidden" id="actionCue" aria-live="polite"></div>
+      <div class="milestone hidden" id="milestone"><img class="nj-art" src="/assets/ui/nicejob.png" alt="NICE JOB"><span id="milestoneText">500 m</span></div>
+      <div class="turn-edge hidden" id="turnEdge"><img id="turnEdgeImg" src="/assets/ui/arrow-left.png" alt=""><span id="turnEdgeTxt">左转</span></div>
+      <div class="turn-cue hidden" id="turnCue"><img id="turnArrow" class="cue-arrow" src="/assets/ui/arrow-left.png" alt=""><strong id="turnText">前方左转</strong><small>按对应方向键 / 向左滑动</small></div>
+      <div class="controls"><div><button id="leftBtn" aria-label="向左"><img src="/assets/ui/arrow-left.png" alt="←"></button><button id="rightBtn" aria-label="向右"><img src="/assets/ui/arrow-right.png" alt="→"></button></div><div><button id="slideBtn" aria-label="滑铲"><img src="/assets/ui/arrow-down.png" alt="↓"></button><button id="jumpBtn" aria-label="跳跃"><img src="/assets/ui/arrow-up.png" alt="↑"></button></div></div>
+      <div class="bottom-note">SWIPE TO SURVIVE <span>✦</span> RUN FOREVER</div>
+      <section class="overlay" id="menu"><div class="card"><img class="menu-logo" src="/assets/ui/logo.png" alt="Temple Run"><p class="kicker">AN ENDLESS TEMPLE ADVENTURE</p><p class="menu-tag">神庙逃亡 · 网页版</p><p class="lead">穿过古老遗迹，收集金币。<br>越过断桥，躲开烈焰，跑得更远。</p><button class="primary play-btn" id="startBtn"><img class="play-art" src="/assets/ui/play-btn.png" alt="PLAY"><small class="play-cn">开始奔跑</small><span>↗</span></button><div class="menu-actions"><button class="menu-art-btn" data-panel="store" aria-label="商店"><img src="/assets/ui/word-store.png" alt="STORE"></button><button class="menu-art-btn" data-panel="options" aria-label="选项"><img src="/assets/ui/word-options.png" alt="OPTIONS"></button><button class="menu-art-btn" data-panel="stats" aria-label="统计"><img src="/assets/ui/word-stats.png" alt="STATS"></button><button class="menu-art-btn" data-panel="objectives" aria-label="目标"><img src="/assets/ui/word-objectives.png" alt="OBJECTIVES"></button></div><div class="guide"><span>← → 换道 / 转弯</span><span>↑ 跳跃</span><span>↓ 滑铲</span></div><p class="menu-coins" id="menuCoins"></p><p class="audio-hint" id="audioHint">♪ 点击任意处开启原版音乐</p></div></section>
+      <div class="tutorial hidden" id="tutorial">
+        <img class="tut-ready" src="/assets/ui/tut-ready.png" alt="">
+        <img class="tut-turn" src="/assets/ui/tut-turn.png" alt="SWIPE TO TURN">
+        <div class="tut-row">
+          <img src="/assets/ui/tut-jump.png" alt="SWIPE TO JUMP">
+          <img src="/assets/ui/tut-slide.png" alt="SWIPE TO SLIDE">
+        </div>
+        <p class="tut-tip">点击 / 按任意键开始</p>
+      </div>
+      <section class="overlay hidden" id="panelOverlay"><div class="card panel-card"><img class="panel-title" id="panelTitle" alt=""><div class="panel-body" id="panelBody"></div><button class="primary" id="panelBack">返回 <span>↗</span></button></div></section>
+      <section class="overlay hidden" id="pauseOverlay"><div class="card"><img class="pause-art" src="/assets/ui/paused.png" alt="Paused"><p class="kicker">TAKE A BREATH</p><p class="menu-tag">已暂停</p><div class="pause-stats"><div><small>本局距离</small><strong id="pauseDistance">0 m</strong></div><div><small>本局金币</small><strong id="pauseCoins">0</strong></div><div><small>本局转弯</small><strong id="pauseTurns">0</strong></div><div><small>当前倍率</small><strong id="pauseMulti">×1</strong></div></div><button class="primary" id="resumeBtn">继续奔跑 <span>↗</span></button><button class="secondary" id="restartPauseBtn">重新开始</button>
+        <button class="secondary" id="pauseMenuBtn">返回菜单</button></div></section>
+      <section class="overlay hidden" id="endOverlay"><div class="card"><img class="death-art" id="endArt" alt=""><p class="kicker">THE RUN IS OVER</p><div id="newBestTag" class="new-best hidden">★ 新纪录</div><h2 id="endTitle">旅程结束</h2><p class="lead" id="endReason">再试一次，跑得更远。</p><div class="result"><div><small>本次距离</small><strong id="endDistance">0 m</strong></div><div><small>收集金币</small><strong id="endCoins">0</strong></div><div><small>最高倍率</small><strong id="endMulti">×1</strong></div><div><small>历史最佳</small><strong id="endBest">0 m</strong></div></div><p class="end-total" id="endTotalCoins"></p><div class="revive-row" id="reviveRow"><button class="primary revive" id="reviveBtn"><img class="revive-wings" src="/assets/ui/wings.png" alt=""><span id="reviveLabel">金币复活</span> <span class="cost" id="reviveCost">50</span></button><div class="revive-meter"><i id="reviveBar"></i></div><p class="revive-note" id="reviveNote">每局可复活一次，保留当前里程</p></div>
+        <button class="primary tryagain-btn" id="restartBtn"><img class="tryagain-art" src="/assets/ui/tryagain.png" alt="TRY AGAIN"><small>再跑一次</small><span>↗</span></button>
+        <div class="end-rail">
+          <button class="scroll-btn" id="endStoreBtn" title="商店"><img src="/assets/ui/scroll-store.png" alt="商店"></button>
+          <button class="scroll-btn" id="endObjBtn" title="目标"><img src="/assets/ui/scroll-objectives.png" alt="目标"></button>
+        </div>
+        <button class="ghost" id="endMenuBtn">返回菜单</button></div></section>
+    </div>
+    <aside class="side"><p class="eyebrow">A LOST RELIC AWAITS</p><h2>一直向前，<br><em>直到世界尽头。</em></h2><p>三条石径，瞬息变化的障碍，和藏在密林深处的古老遗迹。</p><div class="key-row"><kbd>←</kbd><kbd>→</kbd><span>换道 · 路口转弯</span></div><div class="key-row"><kbd>↑</kbd><span>跳跃</span><kbd>↓</kbd><span>滑铲</span></div><div class="line"></div>
+      <div class="qr-card" id="qrCard">
+        <img src="/assets/ui/qr-lan.png" alt="局域网二维码" class="qr-img">
+        <div class="qr-meta">
+          <strong>手机扫码 · 局域网直接玩</strong>
+          <span>手机与电脑连同一 Wi-Fi，扫码即开</span>
+          <code id="qrUrl">http://172.23.204.81:5173/</code>
+        </div>
+      </div>
+      <span class="edition">WEB EDITION / 2026</span></aside>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

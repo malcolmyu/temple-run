@@ -23,6 +23,7 @@ export interface Assets {
   wall: THREE.Group | null;
   tree: THREE.Group | null;
   gate: THREE.Group | null;
+  enemy: THREE.Group | null;
 }
 
 export interface SceneBundle {
@@ -147,12 +148,35 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     water: new THREE.MeshBasicMaterial({ color: 0x123f3d, transparent: true, opacity: 0.55 }),
   };
 
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
     loadObj(`${BASE}assets/track/decor-tree-a.obj`),
     loadObj(`${BASE}assets/track/track-gate-a.obj`),
+    loadObj(asset('mesh-96-enemy.obj')),
+    loadTexture(asset('texture-53-enemyTexture.png')).catch(() => null),
   ]);
+  if (enemyMesh && enemyTexture) {
+    enemyTexture.flipY = false;
+    const enemyMaterial = new THREE.MeshStandardMaterial({
+      map: enemyTexture,
+      color: 0x9c7a66,
+      emissive: 0x8a5a3a,
+      emissiveIntensity: 0.5,
+      roughness: 0.95,
+      side: THREE.DoubleSide,
+    });
+    enemyMesh.traverse((part: THREE.Object3D) => {
+      const meshPart = part as THREE.Mesh;
+      if (meshPart.isMesh) {
+        meshPart.material = enemyMaterial;
+        meshPart.castShadow = true;
+      }
+    });
+    repairObjNormals(enemyMesh);
+    enemyMesh.rotation.x = -Math.PI / 2;
+    enemyMesh.scale.set(0.085, 0.085, 0.12);
+  }
   const paint = (obj: THREE.Group | null, mat: THREE.Material, shadow: boolean): THREE.Group | null => {
     if (!obj) return null;
     obj.traverse((part: THREE.Object3D) => {
@@ -180,6 +204,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       wall: paint(wallTemplate, material.facade, true),
       tree: paint(treeTemplate, material.tree, false),
       gate: paint(gateTemplate, material.facade, false),
+      enemy: enemyMesh,
     },
   };
 }
@@ -646,6 +671,10 @@ export function buildPower(kind: PickupKind): THREE.Object3D {
 
 export function buildChaser(assets: Assets): THREE.Object3D {
   const group = new THREE.Group();
+  if (assets.enemy) {
+    group.add(assets.enemy.clone(true));
+    return group;
+  }
   const body = new THREE.Mesh(
     new THREE.SphereGeometry(0.8, 12, 10),
     new THREE.MeshStandardMaterial({ color: 0x231a16, roughness: 0.9 }),

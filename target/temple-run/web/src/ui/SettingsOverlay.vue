@@ -3,16 +3,28 @@ import { ref } from 'vue';
 import { mutableUi as ui, setAudioSettings } from '../game/state';
 import { progress } from '../game/progress';
 import * as sfx from '../sfx.js';
+import { getGame } from '../game/boot';
 
 const emit = defineEmits<{ close: [] }>();
 const music = ref(progress.music);
 const sound = ref(progress.sound);
+const tilt = ref(false);
 
 function toggleMusic(): void {
   music.value = !music.value;
   setAudioSettings(music.value, sound.value);
   if (music.value) sfx.startMusic('theme');
   else sfx.pauseMusic();
+}
+
+async function toggleTilt(): Promise<void> {
+  if (tilt.value) {
+    getGame()?.input.disableTilt();
+    tilt.value = false;
+    return;
+  }
+  const ok = await getGame()?.input.enableTilt();
+  tilt.value = !!ok;
 }
 
 function toggleSound(): void {
@@ -35,6 +47,10 @@ function toggleSound(): void {
       <button class="switch-row" @click="toggleSound">
         <span>音效<small>金币 / 跳跃 / 转弯</small></span>
         <em :class="{ on: sound }">{{ sound ? '开' : '关' }}</em>
+      </button>
+      <button class="switch-row" @click="toggleTilt">
+        <span>倾斜转向<small>左右倾斜手机换道 / 转弯（需授权）</small></span>
+        <em :class="{ on: tilt }">{{ tilt ? '开' : '关' }}</em>
       </button>
       <p class="menu-stats">帧率 {{ ui.fps }} fps · 已解锁 {{ progress.owned.length }} 个角色</p>
       <button class="primary" @click="emit('close')"><span>完成</span><em>↗</em></button>

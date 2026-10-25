@@ -73,6 +73,7 @@ onBeforeUnmount(() => {
         :gems="ui.gems"
         :best="ui.best"
         :reason="ui.deathReason"
+        :kind="ui.deathKind"
         :revive-available="ui.reviveAvailable"
         :revive-cost="ui.reviveCost"
         @restart="getGame()?.restart()"

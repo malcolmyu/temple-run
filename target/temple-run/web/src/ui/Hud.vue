@@ -57,6 +57,11 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
       <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
     </div>
 
+    <div v-if="turnLabel && ui.turnRemaining <= 18" class="turn-edge" :class="ui.turnDirection < 0 ? 'left' : 'right'">
+      <span>{{ ui.turnQueued ? '已确认' : ui.turnDirection < 0 ? '← 左转' : '右转 →' }}</span>
+      <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
+    </div>
+
     <div v-if="ui.hint" class="hint">{{ ui.hint }}</div>
 
     <div class="touch-pad">

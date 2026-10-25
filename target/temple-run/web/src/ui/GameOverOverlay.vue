@@ -1,5 +1,17 @@
 <script setup lang="ts">
-defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; reason: string; reviveAvailable: boolean; reviveCost: number }>();
+import { computed } from 'vue';
+
+const props = defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; reason: string; kind: string; reviveAvailable: boolean; reviveCost: number }>();
+const BASE = import.meta.env.BASE_URL;
+const art = computed(() => {
+  const map: Record<string, string> = {
+    fall: 'deathIllustrationFallA@2x.png',
+    caught: 'deathIllustrationEaten@2x.png',
+    impact: 'deathIllustrationTree@2x.png',
+    missed: 'deathIllustrationSlide@2x.png',
+  };
+  return `${BASE}assets/ui/${map[props.kind] ?? 'deathIllustrationSlide@2x.png'}`;
+});
 const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
 </script>
 
@@ -8,6 +20,7 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
     <div class="card">
       <p class="kicker">RUN ENDED</p>
       <h2 class="title">结束了</h2>
+      <img class="death-art" :src="art" alt="" />
       <p class="reason">{{ reason }}</p>
       <div class="result">
         <div><small>里程</small><strong>{{ distance }} m</strong></div>

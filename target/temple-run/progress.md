@@ -1432,3 +1432,10 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 音频：`stepTemple/stepPlank/stepCliff` 三套脚步循环随地貌切换并按速度调节 rate，桥下水声、大厅混响；死亡/重置时停止循环。
 - 验证：`temple:typecheck` 0 error；`temple:build` 双入口通过；v2 bot 1280 m / 17 转弯 / 153 金币；商店购买（2000→1700 解锁 Selene）、宝石复活（5→3）、目标领取、窄路坠崖均实测通过。
 - 截图：docs/screenshots/v2-{narrow,bridge,hall,objectives,upgrades,mobile,run}.png。
+
+2026-10-25（重构第三轮）：入口切换与表现补齐。
+- 默认入口切换：`web/index.html` 现在是 TypeScript/ECS/Vue 版，旧版移到 `web/legacy.html`；`temple:build` 双入口（index + legacy）。
+- 追踪者改用 APK 原版 `mesh-96-enemy.obj` + enemyTexture（不再是几何体占位）。
+- 结算面板接入 4 张原版死亡插画（坠崖/被吃/撞树/滑铲），按死亡类型切换。
+- 设置新增“倾斜转向”（DeviceOrientation，±18° 阈值、280ms 节流、iOS 权限请求）。
+- 验证：根路径与 legacy.html 均无 console error；类型检查/构建通过。
