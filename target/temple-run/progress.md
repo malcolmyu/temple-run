@@ -1409,3 +1409,16 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 5) 断桥/悬崖窄路（AllowFallOnCliffs / CanPathExtendOnSide）：从 120m 后每 10 个 tile 有连续 3 个 tile（36m）只剩一条车道，车道由 tile 序号决定（左/中/右）；缺失车道覆盖黑色深渊 + 断裂石板边缘 + 残墙 + 雾气；入口处三连金色箭头 + 火把提示；踩到缺失车道上会「踩空坠下悬崖」死亡（fall 动画），且该段内障碍/金币/宝石只生成在存活车道。
 - 修复点：narrow 覆盖层按 section identity（from+keep）重建，避免 tile 循环复用时残留。
 - 验证：天空/转角/两种树墩/窄路桌面 + 移动端截图；踩空死亡 reason=踩空坠下悬崖。；build 1.12s；console 0 error / 0 warning。
+
+2026-10-25（新环境首次启动）：修复「整条路面全黑」的渲染问题。
+- 现象：新克隆仓库 `npm install` 后启动，石板路面是一条纯黑带（远景正常、近景全黑），追踪者模型同样发黑；HUD/墙柱/植被正常，且与 README 截图不一致。
+- 定位：`temple-road-tile.obj`、`mesh-96-enemy.obj`、`temple-paving.obj` 等 APK 导出 OBJ 的面定义为 `f v/vt/vn`，但文件里没有任何 `vn` 段。OBJLoader 因此从空的法线数组取索引（得到 NaN），`normal` 属性整片是 NaN，MeshStandardMaterial 的光照结果被 NaN 污染 → 渲染成黑色（MeshBasicMaterial 截图可正常显示贴图，说明几何/UV 无误）。
+- 修：新增 `web/src/objNormals.js#repairObjNormals()`，按三角形位置重算面法线（跳过零面积三角形，剩余顶点回退到“向上”），在路面 / 障碍预制体 / 追踪者 / 兜底角色加载后调用；`track-preview.js` 同步修复。
+- 验证：全场景 2234 个 mesh，`normal` 含 NaN 的 0 个；自动 bot 1937m / 20 转弯（含悬崖窄路换道）无 console error；`temple:build` 通过；生产构建（vite preview）跑通、路面正常受光。
+
+2026-10-25（新环境 · Bug 修复 + 重构第一轮）：
+1) 「暗坑」实为看不见的断桥：`createObstacle` 里有一段重复的空 `else if(kind==='gap'){ }else if(kind==='gap'){...}`，第一个分支命中后直接返回，坑洞的黑色洞口/水光/断石/火把全部成了死代码——碰撞照常（掉下去即死），画面却什么都没有。删除空分支后 pit 的视觉完整出现。
+2) 四个皮肤的跑步畸形根因（逆向 APK 数据的结论）：`rig-werewolf` / `rig-selene_astronaut` / `rig-xixuegui` / `rig-Scarecrow_mesh` 的 `clips.run` 与来源骨架（Halloween_Runner）**逐骨骼数值几乎完全一致**（最大差 1.6°），但它们的 bind rest 与来源差异巨大（Scarecrow 平均 81.8° / 最大 158.7°，XiXueGui 平均 111.6° / 最大 179.6°，后者 bind 姿态甚至是躺着的：pelvis→head 指向 -X）。也就是说 APK 里这套 Run 轨道是按另一套骨架录的，按骨骼名原样注入到不同骨架必然扭曲四肢。
+   - 修：`runnerRig.js` 新增“按骨骼朝向重定向”（`retargetClipWorld` + `pickAimChild` + `buildAimTable`）：对每根骨骼，把它在静止姿态下指向目标子骨骼的方向，用四元数旋到源骨架当前帧的同一方向，再回解局部旋转。只匹配方向、不匹配世界旋转，因此不受水平/局部轴向差异影响；`loadRunnerRig` 检测到非 Bip01 命名的骨架时自动丢弃其烘焙轨道走该路径。宇航员 / 狼人 / 吸血鬼 / 稻草人现在的跑步、跳跃、滑铲姿势均正常（rig-preview 与游戏内截图核对）。
+3) 重构启动：新增 `web/next.html` + `web/src/game/**`（TypeScript + 手写 ECS + three.js 渲染层）+ `web/src/ui/**`（Vue 3 SFC）。ECS 用组件 store + 显式 order 的系统调度；`config.ts` / `path.ts` 承载数值与 90° 弯道数学；`state.ts` 作为 Vue 的单一响应式数据源；`game.ts` 已有轨道生成、转弯、跳跃滑铲、五类障碍判定、金币/宝石/道具、追逐者、相机、死亡结算与调试接口。`npm run temple:typecheck` 通过，`npm run temple:build` 同时产出两个入口，`vite preview` 下 next.html 可正常开跑。
+   - 待补：地貌变体、能量条/连击、猴子、里程碑、目标/升级/统计、复活、脚步与环境音、横屏/安全区。

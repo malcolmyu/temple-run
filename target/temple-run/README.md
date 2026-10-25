@@ -124,3 +124,39 @@ APK 内的角色、敌人和贴图由 UnityPy 导出，分析记录见 [`analysi
 | `AllowFallOnCliffs` `CanPathExtendOnSide` `kPathLevelCliff` | 单车道断桥窄路 + 坠崖死亡 |
 | `CoinMagnetMultiplier` | 磁铁能力（已有） |
 | `FootStepsCliff` | 悬崖脚步音（已有） |
+
+## v2 重构：TypeScript + ECS + Vue
+
+`web/next.html` 是重构中的第二版入口，与旧的 `index.html` 并行存在：
+
+```bash
+npm run temple:dev -- --port 5173
+# 旧版（完整玩法）：http://localhost:5173/
+# 新版（TypeScript + ECS + Vue）：http://localhost:5173/next.html
+npm run temple:typecheck   # vue-tsc 严格模式类型检查
+npm run temple:build       # 同时产出 index.html 与 next.html
+```
+
+**目录结构（新版）**
+
+```
+web/src/
+  main.ts                 # Vue 挂载
+  game/
+    ecs/world.ts          # 轻量 ECS：实体 / 组件 store / 系统调度
+    components.ts         # 组件定义（TrackPos / Lane / Jump / Turn / Obstacle / Pickup ...）
+    config.ts             # 数值常量（车道、速度、跳跃重力、转弯窗口）
+    path.ts               # 轨道分段 + 90° 弯道数学（TrackPath）
+    state.ts              # Vue 响应式 HUD 状态（唯一 UI 数据源）
+    input.ts              # 键盘 / 触摸 / 按钮 -> 动作队列
+    render.ts             # three.js 场景、原版瓦片/障碍/金币构建器
+    game.ts               # 系统编排 + 主循环 + 调试接口 window.__templeGame
+    boot.ts               # 单例装配
+  ui/                     # Vue 3 SFC：App / Hud / 菜单 / 暂停 / 结算 / 商店 / 设置
+```
+
+**已迁移**：轨道生成与转弯（预建 / 提示 / 漏按死亡）、三条车道与跳跃/滑铲物理、五类障碍及判定、金币/宝石/四种道具、追逐者间距与两次绊倒被抓住、相机跟随、HUD/菜单/暂停/结算/商店换肤/设置、best/金币/皮肤本地持久化。
+
+**待补齐（旧版功能）**：索桥/柱廊/悬崖窄路等地貌变体、能量条与金币倍率连击、猴子偷金币、里程碑、目标/升级/统计面板、宝石复活、脚步与环境音循环、横屏提示与安全区。
+
+**动画重定向**：`runnerRig.js` 不再直接套用 APK 里为别的骨架录制的 Run 轨道，而是按“骨骼朝向”把默认跑者的动作重定向到目标骨架（`retargetClipWorld`）：逐骨骼把目标静止朝向旋到源动画的朝向。宇航员 / 万圣狼人 / 血鬼 / 稻草人四种畸形骨架均由此修复。`rig-preview.html` 的 `?fb=1` 可强制走重定向路径做对比。

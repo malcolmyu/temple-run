@@ -15,7 +15,8 @@
 ```bash
 npm install
 npm run temple:dev -- --port 5173
-# 浏览器打开 http://localhost:5173
+# 浏览器打开 http://localhost:5173（完整玩法旧版）
+# 重构版（TypeScript + ECS + Vue）：http://localhost:5173/next.html
 ```
 
 构建：

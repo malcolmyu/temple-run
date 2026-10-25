@@ -1,0 +1,26 @@
+<script setup lang="ts">
+defineProps<{ ready: boolean; best: number; coins: number }>();
+const emit = defineEmits<{ start: []; store: []; settings: [] }>();
+</script>
+
+<template>
+  <section class="overlay">
+    <div class="card">
+      <p class="kicker">AN ENDLESS TEMPLE ADVENTURE</p>
+      <h1 class="logo">TEMPLE<br />RUN</h1>
+      <p class="tag">神庙逃亡 · 网页版重构</p>
+      <p class="lead">穿过古老遗迹，收集金币。<br />越过断桥，躲开烈焰，跑得更远。</p>
+      <button class="primary" :disabled="!ready" @click="emit('start')">
+        <span>{{ ready ? '开始奔跑' : '加载中…' }}</span><em>↗</em>
+      </button>
+      <div class="menu-row">
+        <button class="menu-btn" @click="emit('store')">STORE</button>
+        <button class="menu-btn" @click="emit('settings')">OPTIONS</button>
+      </div>
+      <div class="guide">
+        <span>← → 换道 / 转弯</span><span>↑ 跳跃</span><span>↓ 滑铲</span>
+      </div>
+      <p class="menu-stats">最远 {{ best }} m · 累计金币 {{ coins }}</p>
+    </div>
+  </section>
+</template>
