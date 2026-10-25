@@ -1,22 +1,25 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { mutableUi as ui } from '../game/state';
+import { mutableUi as ui, setAudioSettings } from '../game/state';
+import { progress } from '../game/progress';
 import * as sfx from '../sfx.js';
 
 const emit = defineEmits<{ close: [] }>();
-const music = ref(true);
-const sound = ref(true);
+const music = ref(progress.music);
+const sound = ref(progress.sound);
 
 function toggleMusic(): void {
   music.value = !music.value;
-  ui.music = music.value;
+  setAudioSettings(music.value, sound.value);
   if (music.value) sfx.startMusic('theme');
   else sfx.pauseMusic();
 }
+
 function toggleSound(): void {
   sound.value = !sound.value;
-  ui.sfx = sound.value;
+  setAudioSettings(music.value, sound.value);
   sfx.setMuted(!sound.value);
+  if (sound.value) sfx.play('click', { gain: 0.6 });
 }
 </script>
 
@@ -33,7 +36,7 @@ function toggleSound(): void {
         <span>音效<small>金币 / 跳跃 / 转弯</small></span>
         <em :class="{ on: sound }">{{ sound ? '开' : '关' }}</em>
       </button>
-      <p class="menu-stats">帧率 {{ ui.fps }} fps</p>
+      <p class="menu-stats">帧率 {{ ui.fps }} fps · 已解锁 {{ progress.owned.length }} 个角色</p>
       <button class="primary" @click="emit('close')"><span>完成</span><em>↗</em></button>
     </div>
   </section>

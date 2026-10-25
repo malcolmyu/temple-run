@@ -98,11 +98,24 @@ export const Chase = defineComponent<{ gap: number; cooldown: number; lunge: num
   lunge: 0,
 }));
 
-export const RunStats = defineComponent<{ distance: number; coins: number; gems: number; multiplier: number }>('RunStats', () => ({
+export const RunStats = defineComponent<{
+  distance: number;
+  coins: number;
+  gems: number;
+  multiplier: number;
+  charge: number;
+  combo: number;
+  comboTimer: number;
+  score: number;
+}>('RunStats', () => ({
   distance: 0,
   coins: 0,
   gems: 0,
   multiplier: 1,
+  charge: 0,
+  combo: 0,
+  comboTimer: 0,
+  score: 0,
 }));
 
 export const Power = defineComponent<{ kind: PickupKind | null; until: number; shield: boolean }>('Power', () => ({

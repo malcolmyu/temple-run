@@ -76,6 +76,15 @@ body { min-width: 320px; background: radial-gradient(circle at 50% 12%, #354b3e 
 .score-value { display: block; font-size: 34px; line-height: 1.05; color: #fff1c5; }
 .score-meta { display: flex; gap: 8px; justify-content: flex-end; font-size: 11px; color: #e6d3a0; }
 .multi { color: #ffcf68; font-weight: 800; }
+.energy { height: 4px; margin-top: 7px; border-radius: 4px; background: #0e1a12; overflow: hidden; }
+.energy i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, #f5bb43, #ffe9a8); transition: width .2s linear; }
+.multi-badge {
+  position: absolute; left: 18px; top: 104px;
+  padding: 3px 10px; border-radius: 100px;
+  background: linear-gradient(#f6cf74, #dc9c36); color: #3a2a12;
+  font-weight: 900; font-size: 13px;
+  box-shadow: 0 4px 12px #0007;
+}
 
 .power-badge {
   position: absolute; left: 18px; top: 66px;
@@ -148,9 +157,9 @@ body { min-width: 320px; background: radial-gradient(circle at 50% 12%, #354b3e 
 .primary:disabled { filter: grayscale(.5) brightness(.8); cursor: default; }
 .primary:active { transform: translateY(3px); box-shadow: 0 1px 0 #90652e; }
 .primary em { font-style: normal; font-size: 20px; }
-.menu-row { display: flex; gap: 10px; margin-top: 12px; }
+.menu-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .menu-btn {
-  flex: 1; padding: 10px; border-radius: 10px; cursor: pointer;
+  flex: 1 1 29%; min-width: 88px; padding: 9px 6px; border-radius: 10px; cursor: pointer;
   border: 1px solid #c9b98766; background: #1b2a21cc; color: #e9d6a3;
   font-size: 12px; font-weight: 700; letter-spacing: .08em;
 }
@@ -184,11 +193,43 @@ body { min-width: 320px; background: radial-gradient(circle at 50% 12%, #354b3e 
 .skin-name { font-size: 12px; font-weight: 700; }
 .skin small { font-size: 9.5px; color: #a29a7c; }
 .skin em { font-style: normal; font-size: 9px; color: #9be4a2; }
+.skin.locked { opacity: .82; }
+.skin.locked .price { color: #f0c878; }
+.bank { margin: 0 0 10px; font-size: 13px; color: #f0d79a; letter-spacing: .06em; }
+.notice { margin: 8px 0 0; font-size: 11px; color: #9be4a2; }
+.revive { background: linear-gradient(#9fe0ff, #4aa8d8); color: #0b2431; box-shadow: 0 5px 0 #2f6a8a, 0 9px 18px #0006; margin-bottom: 10px; }
+.objective-list { display: grid; gap: 10px; margin: 8px 0 12px; }
+.objective { text-align: left; padding: 10px 12px; border-radius: 12px; background: #16241bcc; border: 1px solid #c9b98733; }
+.objective.done { border-color: #9be4a266; }
+.objective-head { display: flex; align-items: center; justify-content: space-between; font-size: 12.5px; color: #f0dfae; }
+.objective-head span { font-size: 10px; color: #9be4a2; }
+.objective small { display: block; color: #a29a7c; font-size: 10.5px; margin: 3px 0 7px; }
+.objective .bar { height: 4px; border-radius: 4px; background: #0e1a12; overflow: hidden; }
+.objective .bar i { display: block; height: 100%; background: linear-gradient(90deg, #7fbf6a, #d9f0a8); }
+.objective .reward { display: flex; justify-content: space-between; margin: 6px 0 0; font-size: 10.5px; color: #c2b58d; }
+.objective .reward em { font-style: normal; color: #f0c878; }
+.mini { border: 1px solid #e8c47c88; background: #2a3a28dd; color: #f6e3ad; border-radius: 8px; padding: 3px 10px; font-size: 10px; cursor: pointer; }
+.stat-list { display: grid; gap: 2px; margin: 6px 0 16px; }
+.stat-list div { display: flex; justify-content: space-between; padding: 9px 2px; border-bottom: 1px solid #ffffff12; font-size: 12.5px; color: #cdbf98; }
+.stat-list strong { color: #ffe3a2; }
+.store-card { max-height: calc(100% - 30px); }
+.skin-grid { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.skin img { width: 44px; height: 44px; }
+.skin-name { font-size: 11px; }
 
 .loading { position: absolute; inset: 0; z-index: 9; display: grid; place-items: center; background: #0a140fdd; }
 .loading-card { text-align: center; display: grid; gap: 6px; color: #e9d6a3; font-size: 13px; }
 .loading-card span { color: #a8a07c; font-size: 11px; }
 .loading-card.error strong { color: #ffb0a0; }
+
+.rotate-hint { display: none; position: absolute; inset: 0; z-index: 20; place-items: center; background: #0b1510ee; }
+.rotate-card { text-align: center; display: grid; gap: 6px; color: #f2db9f; }
+.rotate-card span { font-size: 44px; }
+.rotate-card strong { font-size: 18px; letter-spacing: .1em; }
+.rotate-card small { font-size: 9px; letter-spacing: .3em; color: #b3a276; }
+@media (orientation: landscape) and (max-height: 520px) {
+  .rotate-hint { display: grid; }
+}
 
 @media (max-width: 900px) {
   .app { padding: 0; }

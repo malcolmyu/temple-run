@@ -1,4 +1,5 @@
 import { reactive, readonly } from 'vue';
+import { progress, recordRun as recordProgressRun, saveProgress } from './progress';
 import type { ObstacleKind, PickupKind } from './components';
 import type { Phase } from './components';
 
@@ -6,6 +7,8 @@ export interface HudState {
   phase: Phase;
   ready: boolean;
   distance: number;
+  score: number;
+  charge: number;
   coins: number;
   gems: number;
   multiplier: number;
@@ -26,21 +29,27 @@ export interface HudState {
   deathReason: string;
   fps: number;
   skin: string;
+  bankCoins: number;
+  bankGems: number;
   muted: boolean;
   music: boolean;
   sfx: boolean;
+  reviveAvailable: boolean;
+  reviveCost: number;
 }
 
 const defaults = (): HudState => ({
   phase: 'menu',
   ready: false,
   distance: 0,
+  score: 0,
+  charge: 0,
   coins: 0,
   gems: 0,
   multiplier: 1,
   speed: 0,
-  best: Number(localStorage.getItem('temple.best') ?? 0) || 0,
-  totalCoins: Number(localStorage.getItem('temple.coins') ?? 0) || 0,
+  best: progress.bestDistance,
+  totalCoins: progress.coins,
   lane: 1,
   jump: 0,
   sliding: 0,
@@ -54,10 +63,14 @@ const defaults = (): HudState => ({
   hint: '',
   deathReason: '',
   fps: 60,
-  skin: localStorage.getItem('temple.skin') ?? 'jhony',
+  skin: progress.equipped,
+  bankCoins: progress.coins,
+  bankGems: progress.gems,
   muted: false,
-  music: true,
-  sfx: true,
+  music: progress.music,
+  sfx: progress.sound,
+  reviveAvailable: false,
+  reviveCost: 2,
 });
 
 const state = reactive<HudState>(defaults());
@@ -78,16 +91,31 @@ export function setHint(text: string): void {
 }
 let hintTimer = 0;
 
-export function recordRun(distance: number, coins: number): void {
-  state.best = Math.max(state.best, Math.floor(distance));
-  state.totalCoins += coins;
-  localStorage.setItem('temple.best', String(state.best));
-  localStorage.setItem('temple.coins', String(state.totalCoins));
+export function recordRun(distance: number, coins: number, gems: number, score: number): void {
+  recordProgressRun(distance, coins, gems, score);
+  state.best = progress.bestDistance;
+  state.totalCoins = progress.coins;
+  state.bankCoins = progress.coins;
+  state.bankGems = progress.gems;
 }
 
 export function setSkin(id: string): void {
   state.skin = id;
-  localStorage.setItem('temple.skin', id);
+}
+
+export function syncBanks(): void {
+  state.bankCoins = progress.coins;
+  state.bankGems = progress.gems;
+  state.totalCoins = progress.coins;
+  state.best = progress.bestDistance;
+}
+
+export function setAudioSettings(music: boolean, sound: boolean): void {
+  state.music = music;
+  state.sfx = sound;
+  progress.music = music;
+  progress.sound = sound;
+  saveProgress();
 }
 
 export function resetHud(): void {
@@ -99,6 +127,8 @@ export function resetHud(): void {
     music: state.music,
     sfx: state.sfx,
     ready: state.ready,
+    bankCoins: state.bankCoins,
+    bankGems: state.bankGems,
   };
   Object.assign(state, defaults(), keep);
 }

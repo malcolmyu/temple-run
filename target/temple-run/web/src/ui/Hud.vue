@@ -36,14 +36,18 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 
     <div class="score-card">
       <span class="score-word">SCORE</span>
-      <strong class="score-value">{{ ui.distance }}</strong>
+      <strong class="score-value">{{ ui.score }}</strong>
       <div class="score-meta">
+        <span>{{ ui.distance }} m</span>
         <span>● {{ ui.coins }}</span>
         <span>◆ {{ ui.gems }}</span>
-        <span v-if="ui.multiplier > 1" class="multi">×{{ ui.multiplier }}</span>
+      </div>
+      <div class="energy" :title="`能量 ${Math.round(ui.charge)}%`">
+        <i :style="{ width: `${Math.min(100, ui.charge)}%` }" />
       </div>
     </div>
 
+    <div v-if="ui.multiplier > 1" class="multi-badge">×{{ ui.multiplier }}</div>
     <div v-if="ui.power" class="power-badge">{{ powerLabel }}</div>
     <div v-if="cueLabel && !turnLabel" class="action-cue">{{ cueLabel }}</div>
 

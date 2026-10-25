@@ -1423,3 +1423,12 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 3) 重构启动：新增 `web/next.html` + `web/src/game/**`（TypeScript + 手写 ECS + three.js 渲染层）+ `web/src/ui/**`（Vue 3 SFC）。ECS 用组件 store + 显式 order 的系统调度；`config.ts` / `path.ts` 承载数值与 90° 弯道数学；`state.ts` 作为 Vue 的单一响应式数据源；`game.ts` 已有轨道生成、转弯、跳跃滑铲、五类障碍判定、金币/宝石/道具、追逐者、相机、死亡结算与调试接口。`npm run temple:typecheck` 通过，`npm run temple:build` 同时产出两个入口，`vite preview` 下 next.html 可正常开跑。
    - 待补：地貌变体、能量条/连击、猴子、里程碑、目标/升级/统计、复活、脚步与环境音、横屏/安全区。
    - 补：`normalizeRigHeight()` 从旧版提到 runnerRig.js 共用，v2 换肤后按 2.55 世界高度归一化，修复 v2 里 Selene 等皮肤明显变小的问题。
+
+2026-10-25（重构第二轮）：v2 补齐玩法与地貌。
+- `game/terrain.ts`：四类地貌判定（bridge/hall/cliff/temple，周期性）与 120 m 后的单车道窄路；窄路段驶离存活车道直接坠崖（`die('踩空坠下悬崖')`）。
+- `render.ts`：木桥（木板桥面/绳栏/灯柱/峡谷水面）、柱廊大厅（切图柱身/横梁/红毯/暖光）、断崖（破碎石板/深渊/迷雾）、窄路覆盖层（黑色深渊 + 断口石板 + 三连金箭头）。
+- 场景修复：天空球半径 160 但轨道跑到 600 m 后相机飞出球体导致背景变黑，改为天空跟随相机；柱身用墙图集切块贴图，不再出现整张图集图案。
+- 玩法：能量条（金币充能，满格随机道具）、连击倍率（3 s 未吃金币归零）、500 m 里程碑、猴子偷金币（5.5 s 后偷 3 枚）、宝石复活、9 角色商店（金币/宝石定价与解锁）、4 条目标、2 项升级、统计面板、设置持久化。
+- 音频：`stepTemple/stepPlank/stepCliff` 三套脚步循环随地貌切换并按速度调节 rate，桥下水声、大厅混响；死亡/重置时停止循环。
+- 验证：`temple:typecheck` 0 error；`temple:build` 双入口通过；v2 bot 1280 m / 17 转弯 / 153 金币；商店购买（2000→1700 解锁 Selene）、宝石复活（5→3）、目标领取、窄路坠崖均实测通过。
+- 截图：docs/screenshots/v2-{narrow,bridge,hall,objectives,upgrades,mobile,run}.png。

@@ -37,21 +37,16 @@ import {
 } from './config';
 import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
-import { recordRun, resetHud, setHint, setPhase, setSkin, mutableUi as mutateUi } from './state';
+import { narrowAt, terrainAt } from './terrain';
+import { recordRun, resetHud, setHint, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
+import { progress, isOwned, saveProgress } from './progress';
+import { coinMultiplier, magnetBonusSeconds } from './upgrades';
+import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById } from './skins';
 import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.js';
 import * as sfx from '../sfx.js';
 
-const SKINS: Record<string, { rig: string; texture: string }> = {
-  jhony: { rig: 'orig_02___Default', texture: 'tex-orig_02___Default.png' },
-  scarlett: { rig: 'girl_Export1-01_-_Default', texture: 'tex-girl_Export1-01_-_Default.png' },
-  selene: { rig: 'selene_astronaut', texture: 'tex-selene_astronaut.png' },
-  werewolf: { rig: 'werewolf', texture: 'tex-Halloween_Werewolf.png' },
-  ghost: { rig: 'xixuegui', texture: 'tex-xixuegui.png' },
-  skeleton: { rig: 'Scarecrow_mesh', texture: 'tex-Scarecrow_Export01_-_Default.png' },
-};
-export const SKIN_IDS = Object.keys(SKINS);
-
-export const DEFAULT_SKIN_URL = `${import.meta.env.BASE_URL}assets/characters/rig-orig_02___Default.json`;
+export const SKIN_IDS = SKIN_CATALOG.map((skin) => skin.id);
+export const DEFAULT_SKIN_URL = DEFAULT_RIG_URL;
 
 const BASE = import.meta.env.BASE_URL;
 
@@ -104,7 +99,7 @@ export class Game {
     });
     this.resize();
     window.addEventListener('resize', this.resize);
-    await this.setSkin(mutateUi.skin && SKINS[mutateUi.skin] ? mutateUi.skin : 'jhony');
+    await this.setSkin(isOwned(progress.equipped) ? progress.equipped : 'jhony');
     this.resetWorld();
     mutateUi.ready = true;
     mutateUi.speed = RUN_SPEED;
@@ -121,6 +116,11 @@ export class Game {
       restart: () => this.restart(),
       toMenu: () => this.toMenu(),
       pause: () => this.togglePause(),
+      revive: () => this.revive(),
+      progress: () => ({ ...progress }),
+      spawnMonkey: () => this.spawnMonkey(this.distance + 10),
+      audio: () => sfx.stats(),
+      stepLoop: () => this.stepLoop,
       attemptTurn: (dir: 1 | -1) => this.queueTurn(dir),
       setNextTurn: (distance: number) => {
         const turn = this.world.require(this.runnerEntity, Turn);
@@ -139,6 +139,8 @@ export class Game {
         scale: this.runnerGroup.scale.toArray(),
       }),
       scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length }),
+      terrain: (d: number) => terrainAt(d, this.path),
+      narrow: (d: number) => narrowAt(d, this.path),
     };
   }
 
@@ -216,6 +218,14 @@ export class Game {
       this.bundle.scene.remove(group);
       this.junctions.delete(distance);
     }
+    if (this.stepLoop) {
+      sfx.stopLoop(this.stepLoop, 0.1);
+      this.stepLoop = null;
+    }
+    if (this.monkeyGroup) {
+      this.bundle.scene.remove(this.monkeyGroup);
+      this.monkeyGroup = null;
+    }
     this.runnerGroup.clear();
     if (this.runnerRig) this.runnerGroup.add(this.runnerRig.object);
     this.chaserGroup.clear();
@@ -225,6 +235,10 @@ export class Game {
     this.nextPickup = 60;
     this.deathTimer = 0;
     this.hintCooldown = 0;
+    this.narrowWarned = false;
+    this.lastMilestone = 0;
+    this.invincibleUntil = 0;
+    this.reviveUsed = false;
     this.stepAccumulator = 0;
     this.createRunner();
     const chaser = this.world.createEntity();
@@ -281,9 +295,12 @@ export class Game {
     this.resetWorld();
   }
 
-  async setSkin(id: string): Promise<void> {
-    const skin = SKINS[id] ?? SKINS.jhony;
+  async setSkin(id: string, force = false): Promise<void> {
+    const skin = skinById(id);
+    if (!force && !isOwned(id)) return;
     setSkin(id);
+    progress.equipped = id;
+    saveProgress();
     const token = ++this.rigToken;
     this.runnerGroup.clear();
     try {
@@ -342,6 +359,7 @@ export class Game {
     this.updateObstacles(dt);
     this.updatePickups(dt);
     this.updateChase(dt);
+    this.updateMonkey(dt);
     this.updateCamera(dt);
     this.syncHud(dt);
     if (mutateUi.phase === 'dying') {
@@ -446,7 +464,8 @@ export class Game {
     const junction = buildJunction(this.bundle.assets, direction, this.path, turn.next);
     this.bundle.scene.add(junction);
     this.junctions.set(turn.next, junction);
-    // Re-place tiles that now belong to the new segment.
+    // Terrain classification depends on the corner distance, so rebuild the road ahead.
+    this.rebuildTilesAhead();
     this.ensureTiles();
   }
 
@@ -462,6 +481,7 @@ export class Game {
     turn.next = 9 + 12 * Math.max(1, Math.round((turn.next + length - 9) / 12));
     setHint('漂亮的转弯！');
     sfx.play('swish', { rate: 1.15 });
+    this.rebuildTilesAhead();
     this.ensureTiles();
   }
 
@@ -490,9 +510,40 @@ export class Game {
     }
     const slide = this.world.require(this.runnerEntity, Slide);
     if (slide.remaining > 0) slide.remaining = Math.max(0, slide.remaining - dt);
+    // Collapsed-lane sections: leaving the surviving lane drops the runner into the canyon.
+    const narrow = narrowAt(trackPos.distance, this.path);
+    if (narrow) {
+      if (!this.narrowWarned) {
+        this.narrowWarned = true;
+        setHint(`窄路 · 靠${narrow.keep === 0 ? '左' : narrow.keep === 2 ? '右' : '中'}侧！`);
+      }
+      if (lane.index !== narrow.keep) {
+        this.die('踩空坠下悬崖', 'fall');
+        return;
+      }
+    } else if (this.narrowWarned) {
+      this.narrowWarned = false;
+    this.lastMilestone = 0;
+    this.invincibleUntil = 0;
+    this.reviveUsed = false;
+    }
+    this.updateFootsteps(trackPos.distance, currentSpeed);
     const stats = this.world.require(this.runnerEntity, RunStats);
     stats.distance = trackPos.distance;
-    stats.multiplier = Math.min(5, 1 + Math.floor(trackPos.distance / 600));
+    if (stats.comboTimer > 0) {
+      stats.comboTimer -= dt;
+      if (stats.comboTimer <= 0) {
+        stats.combo = 0;
+        stats.multiplier = 1;
+      }
+    }
+    stats.score = Math.floor(trackPos.distance) + stats.coins * 10 * stats.multiplier + stats.gems * 100;
+    const milestone = Math.floor(trackPos.distance / 500);
+    if (milestone > 0 && milestone !== this.lastMilestone) {
+      this.lastMilestone = milestone;
+      setHint(`里程碑 ${milestone * 500} m！`);
+      sfx.play('jingle', { gain: 0.8 });
+    }
     mutateUi.distance = Math.floor(trackPos.distance);
     mutateUi.speed = currentSpeed;
     mutateUi.jump = jump.y;
@@ -501,13 +552,27 @@ export class Game {
     mutateUi.multiplier = stats.multiplier;
   }
 
+  /** Drop generated tiles ahead (their layout depends on the path/turn positions). */
+  private rebuildTilesAhead(): void {
+    for (const [index, entity] of [...this.tiles]) {
+      const tile = this.world.require(entity, Tile);
+      if (tile.distance > this.distance + 4) {
+        if (tile.object) this.bundle.scene.remove(tile.object);
+        this.world.destroyEntity(entity);
+        this.tiles.delete(index);
+      }
+    }
+  }
+
   private ensureTiles(): void {
     const from = Math.floor((this.distance - 24) / TILE);
     const to = Math.floor((this.distance + 130) / TILE);
     for (let index = from; index <= to; index++) {
       if (this.tiles.has(index)) continue;
       const distance = index * TILE;
-      const group = buildTile(this.bundle.assets, index, distance);
+      const terrain = terrainAt(distance, this.path);
+      const narrow = narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
+      const group = buildTile(this.bundle.assets, index, distance, terrain, narrow);
       const point = this.path.at(distance);
       group.position.set(point.x, 0, point.z);
       group.rotation.y = point.heading;
@@ -541,7 +606,16 @@ export class Game {
         this.nextSpawn += 12;
         continue;
       }
+      const narrow = narrowAt(base, this.path) ?? narrowAt(base + 6, this.path) ?? narrowAt(base + 14, this.path);
       const roll = Math.random();
+      if (narrow) {
+        // Single-lane stretch: everything stays on the surviving lane, height obstacles only.
+        const kinds: ObstacleKind[] = ['hurdle', 'arch', 'fire'];
+        this.spawnObstacle(kinds[Math.floor(Math.random() * kinds.length)], narrow.keep, base);
+        for (let i = 0; i < 6; i++) this.spawnCoin(narrow.keep, base - 7 - i * 2.0, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.5);
+        this.nextSpawn += 22 + Math.random() * 6;
+        continue;
+      }
       if (roll < 0.42) {
         const kinds: ObstacleKind[] = ['hurdle', 'arch', 'gap', 'fire'];
         const kind = kinds[Math.floor(Math.random() * kinds.length)];
@@ -567,6 +641,78 @@ export class Game {
       this.spawnPickup(kinds[Math.floor(Math.random() * kinds.length)], Math.floor(Math.random() * 3), this.nextPickup);
       this.nextPickup += 110 + Math.random() * 90;
     }
+  }
+
+  private updateFootsteps(distance: number, speed: number): void {
+    const terrain = terrainAt(distance, this.path);
+    const loop = terrain === 'bridge' ? 'stepPlank' : terrain === 'cliff' ? 'stepCliff' : 'stepTemple';
+    if (loop !== this.stepLoop) {
+      if (this.stepLoop) sfx.stopLoop(this.stepLoop, 0.18);
+      sfx.startLoop(loop, { gain: 0.55 });
+      this.stepLoop = loop;
+      if (terrain === 'bridge') sfx.setAmbience('water', 0.4);
+      else sfx.setAmbience(null, 0.3);
+      sfx.setHallReverb(terrain === 'hall');
+    }
+    sfx.setLoopRate(loop, 0.82 + Math.max(0, speed - RUN_SPEED_MIN) * 0.028);
+  }
+
+  private spawnMonkey(distance: number): void {
+    if (this.monkeyGroup) return;
+    const group = new THREE.Group();
+    const fur = new THREE.MeshStandardMaterial({ color: 0x6b4a2a, roughness: 0.95 });
+    const body = new THREE.Mesh(new THREE.SphereGeometry(0.42, 10, 8), fur);
+    body.position.y = 0.85;
+    group.add(body);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 10, 8), fur);
+    head.position.set(0, 1.3, -0.12);
+    group.add(head);
+    const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.9, 6), fur);
+    tail.position.set(0, 1.0, 0.42);
+    tail.rotation.x = -0.9;
+    group.add(tail);
+    this.bundle.scene.add(group);
+    this.monkeyGroup = group;
+    this.monkeyTimer = 5.5;
+    sfx.play('monkey', { gain: 0.8 });
+    setHint('猴子出现了！小心金币');
+    void distance;
+  }
+
+  /** The temple monkey runs beside you for a few seconds, then steals a handful of coins. */
+  private updateMonkey(dt: number): void {
+    if (!this.monkeyGroup) {
+      if (this.distance > 260 && Math.random() < dt * 0.02) this.spawnMonkey(this.distance + 12);
+      return;
+    }
+    this.monkeyTimer -= dt;
+    const side = LANES[1] + Math.sin(this.world.elapsed * 2.4) * 1.4;
+    const point = this.path.at(this.distance + 2.5, side, true);
+    this.monkeyGroup.position.set(point.x, 0, point.z);
+    this.monkeyGroup.rotation.y = point.heading + Math.PI;
+    this.monkeyGroup.scale.setScalar(1 + Math.sin(this.world.elapsed * 9) * 0.03);
+    if (this.monkeyTimer <= 0) {
+      const stats = this.world.require(this.runnerEntity, RunStats);
+      const stolen = Math.min(3, stats.coins);
+      if (stolen > 0) {
+        stats.coins -= stolen;
+        setHint(`猴子偷走了 ${stolen} 金币！`);
+        sfx.play('monkey', { gain: 0.9 });
+      }
+      this.bundle.scene.remove(this.monkeyGroup);
+      this.monkeyGroup = null;
+    }
+  }
+
+  /** Energy bar full: hand out one of the four classic boosts. */
+  private grantPower(): void {
+    const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
+    const kind = kinds[Math.floor(Math.random() * kinds.length)];
+    const power = this.world.require(this.runnerEntity, Power);
+    power.kind = kind;
+    power.until = this.world.elapsed + (kind === 'magnet' ? 8 : kind === 'boost' ? 5 : 10);
+    setHint(kind === 'magnet' ? '能量满！磁铁启动' : kind === 'shield' ? '能量满！护盾就绪' : kind === 'boost' ? '能量满！加速' : '能量满！金币加成');
+    sfx.play('meterFull', { gain: 0.8 });
   }
 
   private spawnObstacle(kind: ObstacleKind, lane: number, distance: number): void {
@@ -671,8 +817,14 @@ export class Game {
   }
 
   private stumbleCooldown = 0;
+  private narrowWarned = false;
+  private lastMilestone = 0;
+  private stepLoop: string | null = null;
+  private monkeyTimer = 0;
+  private monkeyGroup: THREE.Group | null = null;
 
   private stumble(): void {
+    if (this.world.elapsed < this.invincibleUntil) return;
     const chase = this.world.require(this.runnerEntity, Chase);
     if (this.stumbleCooldown > 0) {
       chase.gap = 1.2;
@@ -707,14 +859,24 @@ export class Game {
       if (!pickup.taken && close && ahead > -3 && ahead < 3) {
         pickup.taken = true;
         if (pickup.kind === 'coin') {
-          stats.coins += 1;
+          stats.coins += Math.max(1, Math.round(coinMultiplier()));
+          stats.combo += 1;
+          stats.comboTimer = 3;
+          stats.multiplier = Math.min(5, 1 + Math.floor(stats.combo / 8));
+          stats.charge = Math.min(100, stats.charge + 4);
+          stats.score += 10 * stats.multiplier;
+          if (stats.charge >= 100) {
+            stats.charge = 0;
+            this.grantPower();
+          }
           sfx.play('coin', { gain: 0.8 });
         } else if (pickup.kind === 'gem') {
           stats.gems += 1;
+          stats.score += 100;
           sfx.play('shimmer', { gain: 0.8 });
         } else {
           power.kind = pickup.kind;
-          power.until = this.world.elapsed + (pickup.kind === 'magnet' ? 8 : pickup.kind === 'boost' ? 5 : 10);
+          power.until = this.world.elapsed + (pickup.kind === 'magnet' ? 8 + magnetBonusSeconds() : pickup.kind === 'boost' ? 5 : 10);
           setHint(
             pickup.kind === 'magnet' ? '磁铁激活！' : pickup.kind === 'shield' ? '护盾 · 就绪' : pickup.kind === 'boost' ? '加速！' : '金币加成！',
           );
@@ -760,6 +922,7 @@ export class Game {
     this.bundle.camera.fov = THREE.MathUtils.damp(this.bundle.camera.fov, (this.canvas.clientWidth / this.canvas.clientHeight < 0.7 ? 65 : 58) + Math.max(0, speed - RUN_SPEED) * 0.22, 6, dt);
     this.bundle.camera.updateProjectionMatrix();
     const target = this.distance;
+    this.bundle.sky.position.copy(this.cameraPos);
     this.bundle.sun.position.set(this.cameraPos.x - 12, 22, this.cameraPos.z - 24);
     this.bundle.sun.target.position.set(this.cameraPos.x, 0, this.cameraPos.z - 18);
     this.bundle.sun.target.updateMatrixWorld();
@@ -771,6 +934,8 @@ export class Game {
     const power = this.world.require(this.runnerEntity, Power);
     mutateUi.coins = stats.coins;
     mutateUi.gems = stats.gems;
+    mutateUi.score = stats.score;
+    mutateUi.charge = stats.charge;
     mutateUi.power = power.kind && this.world.elapsed < power.until ? power.kind : null;
     mutateUi.powerRemaining = Math.max(0, power.until - this.world.elapsed);
     mutateUi.multiplier = stats.multiplier;
@@ -831,8 +996,16 @@ export class Game {
     }
   }
 
+  private invincibleUntil = 0;
+  private reviveUsed = false;
+
   private die(reason: string, kind: 'impact' | 'fall' | 'caught' | 'missed'): void {
     if (mutateUi.phase !== 'playing') return;
+    if (this.world.elapsed < this.invincibleUntil) return;
+    if (this.stepLoop) {
+      sfx.stopLoop(this.stepLoop, 0.15);
+      this.stepLoop = null;
+    }
     mutateUi.deathReason = reason;
     mutateUi.phase = 'dying';
     this.deathTimer = 1.25;
@@ -842,10 +1015,42 @@ export class Game {
 
   private finishDeath(): void {
     const stats = this.world.require(this.runnerEntity, RunStats);
-    recordRun(stats.distance, stats.coins);
+    recordRun(stats.distance, stats.coins, stats.gems, stats.score);
+    syncBanks();
     mutateUi.phase = 'ended';
+    mutateUi.reviveAvailable = !this.reviveUsed && progress.gems >= mutateUi.reviveCost;
     setPhase('ended');
     sfx.pauseMusic();
+  }
+
+  /** Spend gems to get back up on the same run. */
+  revive(): void {
+    if (mutateUi.phase !== 'ended' || !mutateUi.reviveAvailable) return;
+    if (progress.gems < mutateUi.reviveCost) return;
+    progress.gems -= mutateUi.reviveCost;
+    saveProgress();
+    syncBanks();
+    this.reviveUsed = true;
+    mutateUi.reviveAvailable = false;
+    // Clear the road immediately around the player so the revive is not an instant re-death.
+    for (let i = this.obstacles.length - 1; i >= 0; i--) {
+      const entity = this.obstacles[i];
+      const obstacle = this.world.require(entity, Obstacle);
+      if (obstacle.distance > this.distance - 4 && obstacle.distance < this.distance + 34) {
+        if (obstacle.object) this.bundle.scene.remove(obstacle.object);
+        this.world.destroyEntity(entity);
+        this.obstacles.splice(i, 1);
+      }
+    }
+    const chase = this.world.require(this.runnerEntity, Chase);
+    chase.gap = CHASE_GAP_MAX;
+    chase.cooldown = 0;
+    this.stumbleCooldown = 0;
+    this.invincibleUntil = this.world.elapsed + 3;
+    this.deathTimer = 0;
+    setPhase('playing');
+    sfx.startMusic('theme');
+    setHint('复活！短暂无敌');
   }
 
   toMenuAfterDeath(): void {

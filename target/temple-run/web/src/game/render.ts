@@ -4,6 +4,7 @@ import { repairObjNormals } from '../objNormals.js';
 import { LANES, PLAYER_Z, TILE } from './config';
 import type { ObstacleKind, PickupKind } from './components';
 import type { TrackPath } from './path';
+import type { NarrowSection, TerrainKind } from './terrain';
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (name: string): string => `${BASE}assets/apk/${name}`;
@@ -29,6 +30,7 @@ export interface SceneBundle {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   sun: THREE.DirectionalLight;
+  sky: THREE.Mesh;
   assets: Assets;
   material: Record<string, THREE.Material>;
 }
@@ -96,6 +98,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
         'gl_FragColor = vec4(c, 1.0); }',
     }),
   );
+  sky.frustumCulled = false;
   scene.add(sky);
 
   // Jungle floor far below the corridor: gives the scenery something to sit on.
@@ -168,6 +171,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     scene,
     camera,
     sun,
+    sky,
     material,
     assets: {
       texture: { wall, tree, leaf, flame, spark, coinFace },
@@ -213,11 +217,168 @@ function lightsMaterial(): THREE.MeshStandardMaterial {
   return cachedLightMat;
 }
 
+const cropCache = new Map<string, THREE.Texture>();
+
+/** Crop one square out of an atlas and tile it, so columns don't show the atlas artwork. */
+function croppedTexture(base: THREE.Texture, sx: number, sy: number, size: number, rx: number, ry: number): THREE.Texture {
+  const key = `${base.uuid}:${sx}:${sy}:${size}:${rx}:${ry}`;
+  const cached = cropCache.get(key);
+  if (cached) return cached;
+  const image = base.image as CanvasImageSource & { width: number; height: number };
+  const canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  canvas.getContext('2d')?.drawImage(image, sx, sy, size, size, 0, 0, size, size);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(rx, ry);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  cropCache.set(key, texture);
+  return texture;
+}
+
+/** Procedural plank deck texture, tinted from the tree atlas so bridges match the palette. */
+function plankMaterial(assets: Assets): THREE.MeshStandardMaterial {
+  const texture = assets.texture.tree.clone();
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(1.1, 7);
+  texture.needsUpdate = true;
+  return new THREE.MeshStandardMaterial({ map: texture, color: 0xb98453, roughness: 0.94 });
+}
+
+function ropeMaterial(): THREE.MeshStandardMaterial {
+  return new THREE.MeshStandardMaterial({ color: 0x6b5334, roughness: 0.9 });
+}
+
+const LANE_SIDE = [-1.3, 0, 1.3] as const;
+
+/** Muddy plank bridge: deck, rope rails, lantern posts and the gorge underneath. */
+function buildBridgeDeck(assets: Assets, group: THREE.Group): void {
+  const deck = new THREE.Mesh(new THREE.PlaneGeometry(8.4, TILE + 0.2), plankMaterial(assets));
+  deck.rotation.x = -Math.PI / 2;
+  deck.position.y = 0.02;
+  deck.receiveShadow = true;
+  group.add(deck);
+  const water = new THREE.Mesh(
+    new THREE.PlaneGeometry(30, TILE + 1),
+    new THREE.MeshStandardMaterial({ color: 0x8fd0bd, map: assets.texture.leaf, transparent: true, opacity: 0.9, roughness: 0.3, metalness: 0.15 }),
+  );
+  water.rotation.x = -Math.PI / 2;
+  water.position.y = -1.35;
+  group.add(water);
+  for (const side of [-1, 1] as const) {
+    for (const z of [-4.5, -1.5, 1.5, 4.5]) {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 1.9, 8), lightsMaterial());
+      post.position.set(side * 4.1, 0.95, z);
+      post.castShadow = true;
+      group.add(post);
+      for (const y of [1.15, 1.65]) {
+        const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 3.0, 5), ropeMaterial());
+        rope.rotation.x = Math.PI / 2;
+        rope.position.set(side * 4.1, y, z + 1.5);
+        group.add(rope);
+      }
+    }
+    for (const z of [-3, 3]) {
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 2.0, 8), lightsMaterial());
+      pole.position.set(side * 3.9, 1.0, z);
+      group.add(pole);
+      const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.5, 0.38), new THREE.MeshStandardMaterial({ color: 0xffdc9a, emissive: 0xffb43a, emissiveIntensity: 1.1 }));
+      lamp.position.set(side * 3.9, 2.25, z);
+      group.add(lamp);
+    }
+  }
+}
+
+/** Colonnade hall: columns, overhead beams, red carpet. */
+function buildHallInterior(assets: Assets, group: THREE.Group): void {
+  const columnMat = new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 256, 0, 256, 3, 2), color: 0xd8c8a8, roughness: 0.9, metalness: 0.02 });
+  const carpet = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.6, TILE),
+    new THREE.MeshStandardMaterial({ color: 0x8e2f2a, roughness: 0.95, emissive: 0x2a0806, emissiveIntensity: 0.4 }),
+  );
+  carpet.rotation.x = -Math.PI / 2;
+  carpet.position.y = 0.03;
+  group.add(carpet);
+  for (const side of [-1, 1] as const) {
+    for (const z of [-4, 0, 4]) {
+      const column = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.5, 6.4, 12), columnMat);
+      column.position.set(side * 3.62, 3.2, z);
+      column.castShadow = true;
+      group.add(column);
+      const base = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 0.8), columnMat);
+      base.position.set(side * 3.62, 0.2, z);
+      group.add(base);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.36, 0.78), columnMat);
+      cap.position.set(side * 3.62, 6.35, z);
+      group.add(cap);
+    }
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(8.2, 0.55, 0.8), columnMat);
+    beam.position.set(0, 6.62, side * 2.5);
+    beam.castShadow = true;
+    group.add(beam);
+  }
+  // Warm chandelier glow so the hall reads differently from the open corridor.
+  const light = new THREE.PointLight(0xffc777, 0.9, 18, 2);
+  light.position.set(0, 5.2, 0);
+  group.add(light);
+}
+
+/** Canyon: broken slab edges, mist, no walls — the drop is the point. */
+function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
+  for (const side of [-1, 1] as const) {
+    for (let i = 0; i < 5; i++) {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.22, 1.6), assets.material.stone);
+      slab.position.set(side * 4.15, 0.08, -4.8 + i * 2.4);
+      slab.rotation.y = side * (0.1 + i * 0.05);
+      group.add(slab);
+    }
+    if (assets.roadTile === null) continue;
+    const abyss = new THREE.Mesh(new THREE.PlaneGeometry(16, TILE + 1), assets.material.void);
+    abyss.rotation.x = -Math.PI / 2;
+    abyss.position.set(side * 12.2, -2.6, 0);
+    group.add(abyss);
+  }
+}
+
+/** Collapsed lanes in a narrow section: black void, chipped lips, keep-lane arrows. */
+function buildNarrowOverlay(assets: Assets, group: THREE.Group, keep: number, firstTile: boolean): void {
+  for (const lane of [0, 1, 2]) {
+    if (lane === keep) continue;
+    const hole = new THREE.Mesh(new THREE.PlaneGeometry(1.35, TILE), assets.material.void);
+    hole.rotation.x = -Math.PI / 2;
+    hole.position.set(LANE_SIDE[lane], 0.05, 0);
+    group.add(hole);
+    for (let i = 0; i < 4; i++) {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.18, 0.8), assets.material.stone);
+      slab.position.set(LANE_SIDE[lane] * 1.05 + (i % 2 ? 0.5 : -0.5), 0.08, -4.5 + i * 3);
+      slab.rotation.y = i * 0.4;
+      group.add(slab);
+    }
+  }
+  if (!firstTile) return;
+  for (let i = 0; i < 3; i++) {
+    const arrow = new THREE.Mesh(
+      new THREE.ConeGeometry(0.4, 0.9, 3),
+      new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.8 }),
+    );
+    arrow.rotation.x = Math.PI / 2;
+    arrow.position.set(LANE_SIDE[keep], 0.12, -3.5 + i * 1.4);
+    group.add(arrow);
+  }
+}
+
 /** One 12 m road tile with its walls, torches and jungle dressing. */
-export function buildTile(assets: Assets, index: number, distance: number): THREE.Group {
+export function buildTile(
+  assets: Assets,
+  index: number,
+  distance: number,
+  terrain: TerrainKind = 'temple',
+  narrow: NarrowSection | null = null,
+): THREE.Group {
   const group = new THREE.Group();
   group.position.z = -distance;
   group.userData.tileIndex = index;
+  group.userData.terrain = terrain;
 
   if (assets.roadTile) {
     const road = assets.roadTile.clone(true);
@@ -234,7 +395,13 @@ export function buildTile(assets: Assets, index: number, distance: number): THRE
     group.add(paving);
   }
 
-  if (assets.wall) {
+  if (terrain === 'bridge') {
+    buildBridgeDeck(assets, group);
+  } else if (terrain === 'hall') {
+    buildHallInterior(assets, group);
+  } else if (terrain === 'cliff') {
+    buildCanyonEdges(assets, group);
+  } else if (assets.wall) {
     for (const side of [-1, 1] as const) {
       const wall = assets.wall.clone(true);
       wall.scale.setScalar(WALL_SCALE);
@@ -245,25 +412,31 @@ export function buildTile(assets: Assets, index: number, distance: number): THRE
     }
   }
 
-  // Jungle fringing the ruin wall. Two rows of low canopy keep the corridor enclosed
-  // without tree trunks leaning over the running lane.
-  for (const side of [-1, 1] as const) {
-    for (let i = 0; i < 3; i++) {
-      const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
-      bush.scale.set(1.4 + i * 0.2, 0.65, 1.2);
-      bush.position.set(side * (7.8 + i * 0.6), 1.35 + (i % 2) * 0.4, -4 + i * 3.4);
-      bush.castShadow = false;
-      group.add(bush);
-    }
-    for (let i = 0; i < 2; i++) {
-      const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 6, 4), assets.material.tree);
-      bush.scale.set(3.2 + i, 1.6, 2.6);
-      bush.position.set(side * (14 + i * 3), 0.4, -3 + i * 5);
-      group.add(bush);
+  // Jungle fringing the ruin wall (skipped on bridges, where the gorge opens up).
+  if (terrain !== 'bridge') {
+    for (const side of [-1, 1] as const) {
+      for (let i = 0; i < 3; i++) {
+        const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
+        bush.scale.set(1.4 + i * 0.2, 0.65, 1.2);
+        bush.position.set(side * (7.8 + i * 0.6), 1.35 + (i % 2) * 0.4, -4 + i * 3.4);
+        bush.castShadow = false;
+        group.add(bush);
+      }
+      for (let i = 0; i < 2; i++) {
+        const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 6, 4), assets.material.tree);
+        bush.scale.set(3.2 + i, 1.6, 2.6);
+        bush.position.set(side * (14 + i * 3), 0.4, -3 + i * 5);
+        group.add(bush);
+      }
     }
   }
 
-  if (assets.gate && index % 5 === 2) {
+  if (narrow) {
+    const firstTile = index === Math.floor((narrow.from + 9) / TILE);
+    buildNarrowOverlay(assets, group, narrow.keep, firstTile);
+  }
+
+  if (assets.gate && index % 5 === 2 && terrain === 'temple') {
     const gate = assets.gate.clone(true);
     gate.scale.setScalar(0.2);
     gate.position.set(0, 0, -TILE / 2);
