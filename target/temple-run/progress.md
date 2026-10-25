@@ -1439,3 +1439,12 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 结算面板接入 4 张原版死亡插画（坠崖/被吃/撞树/滑铲），按死亡类型切换。
 - 设置新增“倾斜转向”（DeviceOrientation，±18° 阈值、280ms 节流、iOS 权限请求）。
 - 验证：根路径与 legacy.html 均无 console error；类型检查/构建通过。
+
+2026-10-25（重构第四轮）：商店 3D 预览、首次教学、皮肤速度与逐项验收。
+- `StorePreview.vue`：独立 WebGL 渲染器 + 转台 + 拖动旋转 + 自动旋转，实时预览选中角色（复用 `runnerRig` + `normalizeRigHeight`）。
+- 商店改为“选中预览 → 装备/解锁”流程，价格/币种/已拥有状态都在预览下方展示。
+- 首次进入显示滑动/按键教学（localStorage 记忆），确认后开跑。
+- 转弯平台加金环、翼墙与地面金色箭头（方向随转弯方向）。
+- 皮肤速度差异接入（狼人 0.8、Scarlett 1.09 等），与旧版 CHAR.p 一致。
+- 修复调试接口 `setSkin` 未透传 `force` 导致换肤无效的问题。
+- 验收：四个角色（宇航员/狼人/血鬼/稻草人）在 v2 中跑动正常；坑洞在 v2 中可见（黑坑+水光+断石+火把）；面板全流程、购买、复活、目标、教学均通过；v2 bot 2344 m / 30 转弯仍在跑；typecheck/build/preview 通过。

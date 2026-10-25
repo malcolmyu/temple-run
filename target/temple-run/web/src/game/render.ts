@@ -489,12 +489,27 @@ export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath
     const flame = group.children[group.children.length - 1] as THREE.Sprite;
     flame.position.set(x, 2.05, z);
   }
-  // Chevrons pointing into the corner.
+  // Low wing walls frame the corner without blocking the view.
+  const wallMat = new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 256, 0, 256, 3, 1), color: 0xcbb693, roughness: 0.95 });
+  for (const side of [-1, 1] as const) {
+    for (const z of [-3.4, 3.4]) {
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.1, 2.6), wallMat);
+      wall.position.set(side * 3.9, 0.55, z);
+      wall.castShadow = true;
+      group.add(wall);
+    }
+  }
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.06, 6, 40), new THREE.MeshStandardMaterial({ color: 0xd9b36a, metalness: 0.6, roughness: 0.35, emissive: 0x3a2a10, emissiveIntensity: 0.4 }));
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = 0.04;
+  group.add(ring);
+
+  // Flat golden chevrons across the approach, pointing into the turn.
+  const arrowMat = new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.7, roughness: 0.4, metalness: 0.3 });
   for (let i = 0; i < 3; i++) {
-    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.5, 1.1, 3), new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.7 }));
-    arrow.rotation.x = Math.PI / 2;
+    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.85, 3), arrowMat);
     arrow.rotation.z = direction > 0 ? -Math.PI / 2 : Math.PI / 2;
-    arrow.position.set(direction * 0.4, 0.06, -1.5 + i * 1.2);
+    arrow.position.set(0, 0.09, 2.2 - i * 1.3);
     group.add(arrow);
   }
   return group;

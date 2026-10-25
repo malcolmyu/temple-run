@@ -21,6 +21,7 @@ const showSettings = shallowRef(false);
 const showStats = shallowRef(false);
 const showObjectives = shallowRef(false);
 const showUpgrades = shallowRef(false);
+const showTutorial = shallowRef(false);
 
 onMounted(async () => {
   if (!canvas.value) return;
@@ -37,6 +38,21 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   getGame()?.dispose();
 });
+
+/** First run shows the swipe/keyboard primer, like the original's "You're ready" screen. */
+function startRun(): void {
+  if (!localStorage.getItem('temple.v2.tutorial')) {
+    showTutorial.value = true;
+    return;
+  }
+  getGame()?.start();
+}
+
+function dismissTutorial(): void {
+  localStorage.setItem('temple.v2.tutorial', '1');
+  showTutorial.value = false;
+  getGame()?.start();
+}
 </script>
 
 <template>
@@ -49,7 +65,7 @@ onBeforeUnmount(() => {
       <MenuOverlay
         v-if="ui.phase === 'menu'"
         :ready="ui.ready"
-        @start="getGame()?.start()"
+        @start="startRun"
         @store="showStore = true"
         @stats="showStats = true"
         @objectives="showObjectives = true"
@@ -87,6 +103,20 @@ onBeforeUnmount(() => {
       <ObjectivesOverlay v-if="showObjectives" @close="showObjectives = false" />
       <UpgradesOverlay v-if="showUpgrades" @close="showUpgrades = false" />
       <SettingsOverlay v-if="showSettings" @close="showSettings = false" />
+
+      <section v-if="showTutorial" class="overlay tutorial-overlay">
+        <div class="card tutorial-card">
+          <p class="kicker">YOU'RE READY</p>
+          <h2 class="title">准备出发</h2>
+          <div class="tutorial-grid">
+            <div><span>← →</span><small>换道 / 路口转弯</small></div>
+            <div><span>↑</span><small>跳跃</small></div>
+            <div><span>↓</span><small>滑铲</small></div>
+          </div>
+          <p class="lead">手机可用滑动操作：左右滑动换道，上滑跳跃，下滑滑铲。</p>
+          <button class="primary" @click="dismissTutorial"><span>开始奔跑</span><em>↗</em></button>
+        </div>
+      </section>
 
       <div v-if="loading" class="loading">
         <div class="loading-card">

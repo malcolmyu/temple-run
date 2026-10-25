@@ -130,7 +130,7 @@ export class Game {
       spawnObstacle: (kind: ObstacleKind, ahead = 16) => this.spawnObstacle(kind, Math.floor(Math.random() * 3), this.distance + ahead),
       advance: (ms: number) => this.advance(ms),
       press: (action: Action) => this.input.push(action),
-      setSkin: (id: string) => this.setSkin(id),
+      setSkin: (id: string, force = false) => this.setSkin(id, force),
       skins: SKIN_IDS,
       camera: () => this.bundle.camera.position.toArray(),
       runner: () => ({
@@ -492,7 +492,8 @@ export class Game {
     speed.value = RUN_SPEED_MIN + Math.min(RUN_SPEED_MAX - RUN_SPEED_MIN, distance * SPEED_GROWTH);
     const power = this.world.require(this.runnerEntity, Power);
     const boost = power.kind === 'boost' && this.world.elapsed < power.until;
-    const currentSpeed = speed.value * (boost ? 1.35 : 1);
+    // Skins carry the same speed flavour as the original store (werewolf lumbers, Scarlett sprints).
+    const currentSpeed = speed.value * skinById(progress.equipped).speed * (boost ? 1.35 : 1);
     const trackPos = this.world.require(this.runnerEntity, TrackPos);
     trackPos.distance += currentSpeed * dt;
     const lane = this.world.require(this.runnerEntity, Lane);

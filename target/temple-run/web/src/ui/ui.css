@@ -221,10 +221,23 @@ body { min-width: 320px; background: radial-gradient(circle at 50% 12%, #354b3e 
 .objective .reward { display: flex; justify-content: space-between; margin: 6px 0 0; font-size: 10.5px; color: #c2b58d; }
 .objective .reward em { font-style: normal; color: #f0c878; }
 .mini { border: 1px solid #e8c47c88; background: #2a3a28dd; color: #f6e3ad; border-radius: 8px; padding: 3px 10px; font-size: 10px; cursor: pointer; }
+.tutorial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 12px; }
+.tutorial-grid div { padding: 10px 6px; border-radius: 12px; background: #16241bcc; border: 1px solid #c9b98744; }
+.tutorial-grid span { display: block; font-size: 20px; color: #ffe9b8; }
+.tutorial-grid small { display: block; font-size: 10px; color: #a29a7c; margin-top: 4px; }
 .stat-list { display: grid; gap: 2px; margin: 6px 0 16px; }
 .stat-list div { display: flex; justify-content: space-between; padding: 9px 2px; border-bottom: 1px solid #ffffff12; font-size: 12.5px; color: #cdbf98; }
 .stat-list strong { color: #ffe3a2; }
-.store-card { max-height: calc(100% - 30px); }
+.store-card { max-height: calc(100% - 24px); }
+.store-preview { position: relative; height: 188px; border-radius: 16px; overflow: hidden; background: radial-gradient(circle at 50% 30%, #24413a 0, #101c16 78%); margin: 6px 0 8px; }
+.store-preview canvas { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+.store-preview canvas:active { cursor: grabbing; }
+.preview-hint { position: absolute; right: 10px; bottom: 8px; font-size: 9px; letter-spacing: .16em; color: #8fa98c; }
+.preview-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; margin-bottom: 8px; }
+.preview-meta strong { display: block; font-size: 15px; color: #ffe9b8; }
+.preview-meta small { display: block; font-size: 10px; color: #a29a7c; margin-top: 2px; }
+.preview-meta em { font-style: normal; font-size: 11px; color: #f0c878; }
+.store-action { min-height: 44px; font-size: 14px; margin-bottom: 10px; }
 .skin-grid { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
 .skin img { width: 44px; height: 44px; }
 .skin-name { font-size: 11px; }
