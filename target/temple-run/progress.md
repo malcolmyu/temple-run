@@ -1422,3 +1422,4 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
    - 修：`runnerRig.js` 新增“按骨骼朝向重定向”（`retargetClipWorld` + `pickAimChild` + `buildAimTable`）：对每根骨骼，把它在静止姿态下指向目标子骨骼的方向，用四元数旋到源骨架当前帧的同一方向，再回解局部旋转。只匹配方向、不匹配世界旋转，因此不受水平/局部轴向差异影响；`loadRunnerRig` 检测到非 Bip01 命名的骨架时自动丢弃其烘焙轨道走该路径。宇航员 / 狼人 / 吸血鬼 / 稻草人现在的跑步、跳跃、滑铲姿势均正常（rig-preview 与游戏内截图核对）。
 3) 重构启动：新增 `web/next.html` + `web/src/game/**`（TypeScript + 手写 ECS + three.js 渲染层）+ `web/src/ui/**`（Vue 3 SFC）。ECS 用组件 store + 显式 order 的系统调度；`config.ts` / `path.ts` 承载数值与 90° 弯道数学；`state.ts` 作为 Vue 的单一响应式数据源；`game.ts` 已有轨道生成、转弯、跳跃滑铲、五类障碍判定、金币/宝石/道具、追逐者、相机、死亡结算与调试接口。`npm run temple:typecheck` 通过，`npm run temple:build` 同时产出两个入口，`vite preview` 下 next.html 可正常开跑。
    - 待补：地貌变体、能量条/连击、猴子、里程碑、目标/升级/统计、复活、脚步与环境音、横屏/安全区。
+   - 补：`normalizeRigHeight()` 从旧版提到 runnerRig.js 共用，v2 换肤后按 2.55 世界高度归一化，修复 v2 里 Selene 等皮肤明显变小的问题。

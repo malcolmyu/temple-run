@@ -119,6 +119,8 @@ export class Game {
       jumpTo: (distance: number) => this.jumpTo(distance),
       start: () => this.start(),
       restart: () => this.restart(),
+      toMenu: () => this.toMenu(),
+      pause: () => this.togglePause(),
       attemptTurn: (dir: 1 | -1) => this.queueTurn(dir),
       setNextTurn: (distance: number) => {
         const turn = this.world.require(this.runnerEntity, Turn);
