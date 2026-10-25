@@ -539,3 +539,31 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
   return buildRunnerRig(data, { ...options, texture, fallbackClips, fallbackRig, forceFallbackClips });
 }
 
+
+// Different APK prefabs were authored at very different unit scales (raw rest heights range
+// 1.2-10.8). Normalise a freshly built rig to the same on-screen height and drop its feet
+// onto y = 0 so swapping skins never changes the apparent size. Shared by both entries.
+export function normalizeRigHeight(rig, targetH = 2.55) {
+  try {
+    if (rig.update) rig.update(0, 0);
+    const o = rig.object;
+    o.updateWorldMatrix(true, true);
+    let box = new THREE.Box3().setFromObject(o);
+    let size = box.getSize(new THREE.Vector3());
+    // Some prefabs are authored lying flat (huge XZ, thin Y): stand them upright first.
+    if (size.y > 1e-3 && Math.max(size.x, size.z) > size.y * 1.6) {
+      o.rotation.x -= Math.PI / 2;
+      o.updateWorldMatrix(true, true);
+      box = new THREE.Box3().setFromObject(o);
+      size = box.getSize(new THREE.Vector3());
+    }
+    const height = box.max.y - box.min.y;
+    if (height > 1e-3 && Math.abs(height - targetH) > 0.02) o.scale.multiplyScalar(targetH / height);
+    o.updateWorldMatrix(true, true);
+    box = new THREE.Box3().setFromObject(o);
+    o.position.y -= box.min.y;
+  } catch (error) {
+    console.warn('rig normalize failed', error);
+  }
+  return rig;
+}

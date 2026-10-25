@@ -38,7 +38,7 @@ import {
 import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { recordRun, resetHud, setHint, setPhase, setSkin, mutableUi as mutateUi } from './state';
-import { loadRunnerRig } from '../runnerRig.js';
+import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.js';
 import * as sfx from '../sfx.js';
 
 const SKINS: Record<string, { rig: string; texture: string }> = {
@@ -295,6 +295,7 @@ export class Game {
         },
       );
       if (token !== this.rigToken || this.disposed) return;
+      normalizeRigHeight(rig, 2.55);
       this.runnerRig = rig;
       this.runnerGroup.add(rig.object);
     } catch (error) {

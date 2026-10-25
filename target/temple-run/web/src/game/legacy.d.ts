@@ -14,6 +14,7 @@ declare module '*/runnerRig.js' {
   }
   export function loadRunnerRig(url: string, textureUrl: string, options?: Record<string, unknown>): Promise<RunnerRig>;
   export function buildRunnerRig(data: unknown, options?: Record<string, unknown>): RunnerRig;
+  export function normalizeRigHeight(rig: RunnerRig, targetH?: number): RunnerRig;
 }
 
 declare module '*/sfx.js' {
