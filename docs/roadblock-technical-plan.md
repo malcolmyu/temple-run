@@ -220,8 +220,8 @@ web/src/game/obstacles/
 - ✅ M3 spawner：`obstacles/spawner.ts`，72 m 间距、双障碍 0、窄路只允许 jump/slide、seed RNG。
 - ✅ 自动验证：`npm run temple:test:spawner`，10,000 seed、23/23 OBJ、8 个可玩定义全部通过。
 - ✅ bot：2,000 m 仍 playing，0 console error。
-- ⏳ M4：视觉逐项校准（right/vert 变体已加载，转弯区仍不使用 vert）。
-- ⏳ 图结构：T 侧分支/side path 仍 pending。
+- 🟡 M4：right/vert/narrow 变体已加载；新增整幅火墙、长段 stone/wood、left-right fork；视觉逐项校准仍继续。
+- 🟡 图结构：已做车道级 left/right fork（两侧可走、中间缺口）；真正的 TrackGraph/T 汇合仍 pending。
 
 ## 10. 不做假对齐
 

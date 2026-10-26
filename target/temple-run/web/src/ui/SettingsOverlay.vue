@@ -4,11 +4,13 @@ import { mutableUi as ui, setAudioSettings } from '../game/state';
 import { progress } from '../game/progress';
 import * as sfx from '../sfx.js';
 import { getGame } from '../game/boot';
+import { getDifficulty, setDifficulty, type DifficultyName } from '../game/difficulty';
 
 const emit = defineEmits<{ close: [] }>();
 const music = ref(progress.music);
 const sound = ref(progress.sound);
 const tilt = ref(false);
+const difficulty = ref<DifficultyName>(getDifficulty().name);
 
 function toggleMusic(): void {
   music.value = !music.value;
@@ -25,6 +27,12 @@ async function toggleTilt(): Promise<void> {
   }
   const ok = await getGame()?.input.enableTilt();
   tilt.value = !!ok;
+}
+
+function toggleDifficulty(): void {
+  difficulty.value = difficulty.value === 'challenge' ? 'classic' : 'challenge';
+  setDifficulty(difficulty.value);
+  sfx.play('click', { gain: 0.6 });
 }
 
 function toggleSound(): void {
@@ -47,6 +55,10 @@ function toggleSound(): void {
       <button class="switch-row" @click="toggleSound">
         <span>音效<small>金币 / 跳跃 / 转弯</small></span>
         <em :class="{ on: sound }">{{ sound ? '开' : '关' }}</em>
+      </button>
+      <button class="switch-row" @click="toggleDifficulty">
+        <span>难度<small>{{ difficulty === 'challenge' ? '挑战：路障更密、时机更紧、速度更快' : '经典：原版 6 space / 双障碍 0' }}</small></span>
+        <em :class="{ on: difficulty === 'challenge' }">{{ difficulty === 'challenge' ? '挑战' : '经典' }}</em>
       </button>
       <button class="switch-row" @click="toggleTilt">
         <span>倾斜转向<small>左右倾斜手机换道 / 转弯（需授权）</small></span>

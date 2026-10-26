@@ -150,3 +150,14 @@
 ## 8. APK 素材结论补充
 
 APK 没有可复用的模块化路面/T 岔路/木板 mesh；`templeT*`、`plankT*`、`templeToPlankCap*` 只是 prefab 名，几何是运行时生成。可用的只有墙/门/岩石/树和 `wallTexture.webp` atlas。左右道路、右侧残缺路面、石头/木板整段路面都必须程序化实现，详见 [50-video-differences.md](50-video-differences.md)。
+
+
+## 9. 本轮已落地（2026-10-26）
+
+- 长段 SurfaceSegment：stone 168 m / wood 144 m 交替，带 cap；wood 用 wallTexture atlas 的真实木板区域；
+- 左侧/右侧 fork：两侧 lane 0/2 可走、中间缺口坠落，带金币引导；
+- 整幅 low fire wall 障碍定义；
+- classic/challenge 难度档，默认 challenge，可在 Options 切换；
+- 转弯区清空、路障连续碰撞、72m classic / 38m challenge。
+
+剩余重点：TrackGraph/T 真分支、树冠/藤蔓密度、右侧破口进一步美术化、M4 全变体截图。

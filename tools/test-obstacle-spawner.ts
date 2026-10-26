@@ -2,12 +2,20 @@ import { ASSET_DEFS, DEFS, PLAYABLE_DEFS } from '../target/temple-run/web/src/ga
 import { ORIGINAL_SPAWNER_CONFIG, pickObstacle } from '../target/temple-run/web/src/game/obstacles/spawner';
 import { SeededRandom } from '../target/temple-run/web/src/game/obstacles/rng';
 import { existsSync } from 'node:fs';
+import { surfaceAt } from '../target/temple-run/web/src/game/surface';
+import { sidePathAt } from '../target/temple-run/web/src/game/sidePath';
 import { resolve } from 'node:path';
 
 const issues: string[] = [];
+if (surfaceAt(0).kind !== 'stone') issues.push('surface 0 should be stone');
+if (surfaceAt(168).kind !== 'wood') issues.push('surface 168 should be wood');
+if (surfaceAt(312).kind !== 'stone') issues.push('surface 312 should be stone');
+if (surfaceAt(456).kind !== 'wood') issues.push('surface 456 should be wood');
+const fork = sidePathAt(180);
+if (!fork || fork.safe.join(',') !== '0,2') issues.push('side path at 180 should expose lanes 0 and 2');
 const assets = Object.keys(ASSET_DEFS);
 if (assets.length !== 23) issues.push(`expected 23 OBJ mappings, got ${assets.length}`);
-if (PLAYABLE_DEFS.length !== 8) issues.push(`expected 8 playable definitions, got ${PLAYABLE_DEFS.length}`);
+if (PLAYABLE_DEFS.length !== 9) issues.push(`expected 9 playable definitions, got ${PLAYABLE_DEFS.length}`);
 const assetRoot = resolve('target/temple-run/web/public/assets/obstacles');
 for (const asset of assets) {
   if (!existsSync(resolve(assetRoot, `${asset}.obj`))) issues.push(`missing OBJ: ${asset}`);
@@ -47,4 +55,4 @@ if (issues.length) {
   console.error(`${issues.length} issues`);
   process.exit(1);
 }
-console.log('M1/M3 OK: 23 OBJ files present, all variants mapped, 8 playable defs, 10000 seeds');
+console.log('M1/M3 OK: 23 OBJ files present, all variants mapped, 9 playable defs, 10000 seeds');

@@ -10,6 +10,8 @@ export interface RunnerCollisionState {
   lastJumpAt: number;
   lastSlideAt: number;
   now: number;
+  jumpWindow: number;
+  slideWindow: number;
 }
 
 export interface ObstacleCollisionState {
@@ -39,10 +41,10 @@ export function actionEscapes(def: ObstacleDef, state: RunnerCollisionState): bo
     case 'jump':
       // Gaps need any positive clearance; roots need the feet above the root top.
       return top <= 0.1
-        ? state.jumpY > 0.1 || state.jumpV > 0 || state.now - state.lastJumpAt < 1.0
-        : state.jumpY > top - 0.04 || state.now - state.lastJumpAt < 1.0;
+        ? state.jumpY > 0.1 || state.jumpV > 0 || state.now - state.lastJumpAt < state.jumpWindow
+        : state.jumpY > top - 0.04 || state.now - state.lastJumpAt < state.jumpWindow;
     case 'slide':
-      return state.slideRemaining > 0.02 || state.now - state.lastSlideAt < 0.75;
+      return state.slideRemaining > 0.02 || state.now - state.lastSlideAt < state.slideWindow;
     case 'dodge':
       return false; // a blocked lane is a hit; free lanes are filtered by the caller
     case 'run':

@@ -7,6 +7,7 @@ import type { ObstacleKind, PickupKind } from './components';
 import type { TrackPath } from './path';
 import type { NarrowSection, TerrainKind } from './terrain';
 import type { ObstacleDef } from './obstacles/types';
+import type { SurfaceKind } from './surface';
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (name: string): string => `${BASE}assets/apk/${name}`;
@@ -321,11 +322,10 @@ function croppedTexture(base: THREE.Texture, sx: number, sy: number, size: numbe
 
 /** Procedural plank deck texture, tinted from the tree atlas so bridges match the palette. */
 function plankMaterial(assets: Assets): THREE.MeshStandardMaterial {
-  const texture = assets.texture.tree.clone();
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(1.1, 7);
-  texture.needsUpdate = true;
-  return new THREE.MeshStandardMaterial({ map: texture, color: 0xb98453, roughness: 0.94 });
+  // The APK has no plank floor mesh, but its single wall atlas contains a real wood
+  // plank region. Crop that region instead of tinting tree foliage.
+  const crop = croppedTexture(assets.texture.wall, 8, 252, 280, 1.4, 7.5);
+  return new THREE.MeshStandardMaterial({ map: crop, color: 0xb98453, roughness: 0.94 });
 }
 
 function ropeMaterial(): THREE.MeshStandardMaterial {
@@ -468,7 +468,10 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
   const edge = 0.55 * dir;
   const width = 3.6;
   const center = edge + (dir * width) / 2;
-  const hole = new THREE.Mesh(new THREE.PlaneGeometry(width, TILE + 0.02), assets.material.void);
+  // Dark teal water/abyss rather than a flat black rectangle; the video's broken
+  // right edge reads as depth, not a missing texture.
+  const abyss = new THREE.MeshBasicMaterial({ color: 0x08221e });
+  const hole = new THREE.Mesh(new THREE.PlaneGeometry(width, TILE + 0.02), abyss);
   hole.rotation.x = -Math.PI / 2;
   hole.position.set(center, 0.062, 0);
   group.add(hole);
@@ -497,6 +500,36 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
   }
 }
 
+/** Broken centre of a left/right fork: both outer lanes survive, middle falls. */
+export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean): void {
+  const gap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, TILE + 0.02), assets.material.water);
+  gap.rotation.x = -Math.PI / 2;
+  gap.position.set(0, 0.065, 0);
+  group.add(gap);
+  const face = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.4, TILE + 0.02), assets.material.stone);
+  face.position.set(0, -1.15, 0);
+  group.add(face);
+  for (const side of [-1, 1] as const) {
+    for (let i = 0; i < 4; i++) {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.18, 0.62), assets.material.stone);
+      slab.position.set(side * (0.66 + (i % 2) * 0.08), 0.08, -4.2 + i * 2.8);
+      slab.rotation.set(0, side * 0.18, side * (i % 2 ? 0.2 : -0.14));
+      group.add(slab);
+    }
+  }
+  if (!first) return;
+  for (const side of [-1, 1] as const) {
+    const arrow = new THREE.Mesh(
+      new THREE.ConeGeometry(0.3, 0.7, 3),
+      new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.8 }),
+    );
+    arrow.rotation.x = Math.PI / 2;
+    arrow.rotation.z = side > 0 ? -Math.PI / 2 : Math.PI / 2;
+    arrow.position.set(side * 1.25, 0.13, -3.0);
+    group.add(arrow);
+  }
+}
+
 /** One 12 m road tile with its walls, torches and jungle dressing. */
 export function buildTile(
   assets: Assets,
@@ -505,18 +538,22 @@ export function buildTile(
   terrain: TerrainKind = 'temple',
   narrow: NarrowSection | null = null,
   clearScenery = false,
+  surface: SurfaceKind = 'stone',
+  sidePath = false,
+  surfaceFirst = false,
+  surfaceLast = false,
 ): THREE.Group {
   const group = new THREE.Group();
   group.position.z = -distance;
   group.userData.tileIndex = index;
   group.userData.terrain = terrain;
 
-  if (assets.roadTile) {
+  if (surface === 'stone' && assets.roadTile) {
     const road = assets.roadTile.clone(true);
     road.position.y = ROAD_TILE_LIFT;
     road.scale.x = 0.84;
     group.add(road);
-  } else {
+  } else if (surface === 'stone') {
     const slab = new THREE.Mesh(new THREE.BoxGeometry(7.0, 0.65, TILE + 0.1), lightsMaterial());
     slab.position.y = -0.38;
     slab.receiveShadow = true;
@@ -527,7 +564,7 @@ export function buildTile(
     group.add(paving);
   }
 
-  if (terrain === 'bridge') {
+  if (surface === 'wood') {
     buildBridgeDeck(assets, group);
   } else if (terrain === 'hall') {
     buildHallInterior(assets, group);
@@ -581,10 +618,24 @@ export function buildTile(
     }
   }
 
+  if (surfaceFirst || surfaceLast) {
+    // A short threshold makes the long surface switch read as a built transition,
+    // not a texture pop between two 12 m tiles.
+    const capMat = surface === 'wood' ? assets.material.stone : plankMaterial(assets);
+    const z = surfaceFirst ? -TILE / 2 + 0.45 : TILE / 2 - 0.45;
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(7.22, 0.14, 0.9), capMat);
+    cap.position.set(0, 0.075, z);
+    cap.receiveShadow = true;
+    group.add(cap);
+    const trim = new THREE.Mesh(new THREE.BoxGeometry(7.24, 0.05, 0.12), assets.material.gold);
+    trim.position.set(0, 0.15, z);
+    group.add(trim);
+  }
   if (narrow) {
     const firstTile = index === Math.floor((narrow.from + 9) / TILE);
     buildNarrowOverlay(assets, group, narrow.side, firstTile);
   }
+  if (sidePath) buildSidePathOverlay(assets, group, index === -1);
 
   if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 7 === 3 && !clearScenery) {
     const tower = assets.obstacles['tower-arch'].clone(true);
@@ -708,6 +759,17 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
     const clone = prefab.clone(true);
     if (kind === 'gap' || kind === 'gapLong') clone.position.y = 0.05;
     group.add(clone);
+    if (def.id === 'fireWall') {
+      const base = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.2, 1.4), assets.material.stone);
+      base.position.y = 0.08;
+      group.add(base);
+      for (let i = 0; i < 8; i++) {
+        const flame = flameSprite(assets, 1.0 + (i % 3) * 0.08);
+        flame.position.set(-3.15 + i * 0.9, 1.1, 0);
+        group.add(flame);
+      }
+      return group;
+    }
     if (kind === 'fire') {
       // The APK flame is a particle system (no mesh); put the two jets on the real pedestals.
       for (const x of [-2.75, 2.75] as const) {

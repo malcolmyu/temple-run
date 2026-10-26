@@ -98,6 +98,18 @@ export const DEFS = {
     weight: 1,
     note: 'HoleLongB: wide rim; jump.',
   },
+  fireWall: {
+    id: 'fireWall',
+    kind: 'fire',
+    action: 'jump',
+    lanes: 'all',
+    hitbox: box(FULL_X, [0, 1.25], [-1.4, 1.4]),
+    kill: true,
+    prefabs: ['flame-tower'],
+    placement: 'straight',
+    weight: 1,
+    note: 'Video-style full-width low fire wall; jump. Uses the flame tower base + a row of jets.',
+  },
   stonePedestal: {
     id: 'stonePedestal',
     kind: 'block',
@@ -210,6 +222,7 @@ export const PLAYABLE_DEFS: readonly ObstacleDef[] = [
   DEFS.pitLongA,
   DEFS.pitLongB,
   DEFS.stonePedestal,
+  DEFS.fireWall,
 ];
 
 export const KIND_TO_DEF: Record<string, DefId> = {

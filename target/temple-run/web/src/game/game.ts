@@ -38,6 +38,9 @@ import {
 import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
+import { surfaceAt, type SurfaceKind } from './surface';
+import { sidePathAt } from './sidePath';
+import { getDifficulty, type DifficultyConfig } from './difficulty';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
 import { coinMultiplier, magnetBonusSeconds } from './upgrades';
@@ -93,6 +96,7 @@ export class Game {
   private pickupPools = new Map<PickupKind, THREE.Object3D[]>();
   private nextSpawn = 80;
   private obstacleRng = new SeededRandom(0x51ed270b);
+  private difficulty: DifficultyConfig = getDifficulty();
   private lastObstacleDistance = 0;
   private nextPickup = MIN_BONUS_ITEM_SPACING;
   private deathTimer = 0;
@@ -194,6 +198,7 @@ export class Game {
       scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length }),
       terrain: (d: number) => terrainAt(d, this.path),
       narrow: (d: number) => narrowAt(d, this.path),
+      sidePath: (d: number) => sidePathAt(d, this.path),
     };
   }
 
@@ -299,6 +304,7 @@ export class Game {
     this.chaserGroup.clear();
     this.path.segments.length = 0;
     this.path.segments.push({ start: 0, end: Infinity, x: 0, z: 3, heading: 0 });
+    this.difficulty = getDifficulty();
     this.nextSpawn = 80;
     this.nextPickup = MIN_BONUS_ITEM_SPACING;
     this.lastObstacleDistance = 0;
@@ -306,6 +312,7 @@ export class Game {
     this.deathTimer = 0;
     this.hintCooldown = 0;
     this.narrowWarned = false;
+    this.sideWarned = false;
     this.lastMilestone = 0;
     this.invincibleUntil = 0;
     this.reviveUsed = false;
@@ -583,7 +590,7 @@ export class Game {
     turn.lastDirection = turn.direction;
     turn.lastTurnDistance = turn.next;
     turn.direction = 0;
-    const length = MIN_TURN_SPACING + 12 + Math.floor(Math.random() * 3) * 12;
+    const length = this.difficulty.turnMin + 12 + Math.floor(Math.random() * 3) * 12;
     turn.next = 9 + 12 * Math.max(1, Math.round((turn.next + length - 9) / 12));
     setHint('漂亮的转弯！');
     sfx.play('swish', { rate: 1.15 });
@@ -594,7 +601,7 @@ export class Game {
   private updateRunner(dt: number): void {
     const distance = this.distance;
     const speed = this.world.require(this.runnerEntity, Speed);
-    speed.value = RUN_SPEED_MIN + Math.min(RUN_SPEED_MAX - RUN_SPEED_MIN, distance * SPEED_GROWTH);
+    speed.value = RUN_SPEED_MIN + Math.min(this.difficulty.speedMax - RUN_SPEED_MIN, distance * this.difficulty.speedGrowth);
     const power = this.world.require(this.runnerEntity, Power);
     const boost = power.kind === 'boost' && this.world.elapsed < power.until;
     // Skins carry the same speed flavour as the original store (werewolf lumbers, Scarlett sprints).
@@ -619,8 +626,10 @@ export class Game {
     if (slide.remaining > 0) slide.remaining = Math.max(0, slide.remaining - dt);
     // Collapsed-lane sections: leaving the surviving lane drops the runner into the canyon.
     const narrow = narrowAt(trackPos.distance, this.path);
+    const activeSide = sidePathAt(trackPos.distance, this.path);
     // Warn before the slab ends: the one surviving lane needs an early lane change.
-    if (!narrow && !this.narrowWarned) {
+    // A side-path fork owns the warning slot while it is active.
+    if (!narrow && !activeSide && !this.narrowWarned) {
       const ahead = narrowAt(trackPos.distance + 32, this.path);
       if (ahead) {
         this.narrowWarned = true;
@@ -638,6 +647,22 @@ export class Game {
       }
     } else if (this.narrowWarned) {
       this.narrowWarned = false;
+    }
+    const side = sidePathAt(trackPos.distance, this.path);
+    if (side) {
+      if (!this.sideWarned) {
+        this.sideWarned = true;
+        setHint('左右分路 · 选一边！');
+      }
+      if (lane.index === 1) {
+        this.die('踩空坠下分路缺口', 'fall');
+        return;
+      }
+    } else if (this.sideWarned) {
+      this.sideWarned = false;
+    } else if (!this.narrowWarned) {
+      const ahead = sidePathAt(trackPos.distance + 24, this.path);
+      if (ahead) setHint('前方左右分路 · 选一边！');
     }
     this.updateFootsteps(trackPos.distance, currentSpeed);
     const stats = this.world.require(this.runnerEntity, RunStats);
@@ -681,21 +706,21 @@ export class Game {
    * Reuse a pooled 12 m tile instance when possible. The prototype / merged geometry is
    * shared; the pool avoids recreating the Object3D tree every 12 m (a steady GC stutter).
    */
-  private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null, clearScenery = false): THREE.Group {
+  private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null, clearScenery = false, surface: SurfaceKind = 'stone', sidePath = false, surfaceFirst = false, surfaceLast = false): THREE.Group {
     const firstTile = narrow ? index === Math.floor((narrow.from + 9) / TILE) : false;
     const gate = Boolean(this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple' && !clearScenery);
     const narrowKey = narrow ? `${narrow.side}:${firstTile ? 1 : 0}` : 'none';
-    const key = `${terrain}:${clearScenery ? 1 : 0}:${gate ? 1 : 0}:${narrowKey}`;
+    const key = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${clearScenery ? 1 : 0}:${gate ? 1 : 0}:${narrowKey}`;
     const pooled = this.tilePools.get(key)?.pop();
     if (pooled) {
       pooled.visible = true;
       pooled.userData.tileIndex = index;
       return pooled;
     }
-    const prototypeKey = `${terrain}:${clearScenery ? 1 : 0}`;
+    const prototypeKey = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${clearScenery ? 1 : 0}`;
     let prototype = this.tilePrototypes.get(prototypeKey);
     if (!prototype) {
-      prototype = buildTile(this.bundle.assets, -1, 0, terrain, null, clearScenery);
+      prototype = buildTile(this.bundle.assets, -1, 0, terrain, null, clearScenery, surface, sidePath, surfaceFirst, surfaceLast);
       mergeStaticMeshes(prototype);
       this.tilePrototypes.set(prototypeKey, prototype);
     }
@@ -809,10 +834,12 @@ export class Game {
         continue;
       }
       if (this.tiles.has(index)) continue;
-      const terrain = terrainAt(distance, this.path);
+      const surface = surfaceAt(distance);
+      const terrain = surface.kind === 'wood' ? 'bridge' : terrainAt(distance, this.path);
       const narrow = narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
+      const side = sidePathAt(distance, this.path) ?? sidePathAt(distance + TILE * 0.5, this.path);
       const clearScenery = this.path.nearTurn(distance, 26);
-      const group = this.acquireTile(index, terrain, narrow, clearScenery);
+      const group = this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), surface.first, surface.last);
       const point = this.path.at(distance);
       group.position.set(point.x, 0, point.z);
       group.rotation.y = point.heading;
@@ -849,7 +876,13 @@ export class Game {
         continue;
       }
       const narrow = narrowAt(base, this.path) ?? narrowAt(base + 6, this.path) ?? narrowAt(base + 14, this.path);
-      const plan = pickObstacle({ nearTurn: false, narrow }, this.obstacleRng, ORIGINAL_SPAWNER_CONFIG);
+      const side = sidePathAt(base, this.path) ?? sidePathAt(base + 6, this.path);
+      const plan = pickObstacle({ nearTurn: false, narrow, sidePath: side }, this.obstacleRng, {
+        minGap: this.difficulty.minGap,
+        gapJitter: this.difficulty.gapJitter,
+        maxBackToBack: 2,
+        doubleChance: this.difficulty.doubleChance,
+      });
       if (!plan) {
         this.nextSpawn += 12;
         continue;
@@ -861,6 +894,12 @@ export class Game {
         : this.obstacleRng.int(3);
       for (let i = 0; i < MAX_COINS_PER_RUN; i++) {
         this.spawnCoin(coinLane, base - 8 - i * 2.0, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.5);
+      }
+      if (side) {
+        // Guide both outer lanes: each gets a short coin run and a dodge cue.
+        for (let i = 0; i < 3; i++) {
+          for (const lane of side.safe) this.spawnCoin(lane, base - 2 - i * 2.0, COIN_Y);
+        }
       }
       if (this.obstacleRng.next() > 0.86) this.spawnGem(this.obstacleRng.int(3), base + 24);
       this.nextSpawn = base + plan.gap;
@@ -1038,6 +1077,8 @@ export class Game {
             lastJumpAt: jump.lastJumpAt,
             lastSlideAt: slide.lastSlideAt,
             now,
+            jumpWindow: this.difficulty.jumpWindow,
+            slideWindow: this.difficulty.slideWindow,
           },
         );
         if (hit) {
@@ -1079,6 +1120,7 @@ export class Game {
 
   private stumbleCooldown = 0;
   private narrowWarned = false;
+  private sideWarned = false;
   private lastMilestone = 0;
   private stepLoop: string | null = null;
   private monkeyTimer = 0;

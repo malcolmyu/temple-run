@@ -1553,3 +1553,10 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 2026-10-26（M1 完成）：
 - 23/23 OBJ 文件存在、23/23 ASSET_DEFS 映射、8 个可玩定义、所有 prefab 变体引用可解析。
 - `npm run temple:test:spawner` 输出 M1/M3 OK；typecheck/build 通过。
+
+2026-10-26（P0 首轮实现）：
+- 长段 SurfaceSegment：stone/wood 整段（168/144m）交替 + cap，wood 改用 wallTexture 的木板区域。
+- left/right fork：lane0/2 可走、中间缺口坠落，左右金币引导；side path 提示优先于窄路。
+- 整幅火墙 fireWall 障碍；数据 catalog 9 个可玩定义。
+- classic/challenge 难度档，默认 challenge，Options 可切；classic=72m/双障碍0/宽窗口，challenge=38m/紧窗口/速度22。
+- 测试新增 surface/fork 校验；typecheck/build 通过，bot challenge 409m 0 error（仍需继续调）。
