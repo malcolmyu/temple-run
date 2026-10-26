@@ -34,7 +34,7 @@ export function surfaceAt(distance: number): SurfaceSection {
         index: i,
         from: start,
         to: end,
-        first: wrapped < 12,
+        first: wrapped - start < 12,
         last: end - wrapped <= 12,
       };
     }
