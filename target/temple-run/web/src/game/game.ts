@@ -581,6 +581,14 @@ export class Game {
     if (slide.remaining > 0) slide.remaining = Math.max(0, slide.remaining - dt);
     // Collapsed-lane sections: leaving the surviving lane drops the runner into the canyon.
     const narrow = narrowAt(trackPos.distance, this.path);
+    // Warn before the slab ends: the one surviving lane needs an early lane change.
+    if (!narrow && !this.narrowWarned) {
+      const ahead = narrowAt(trackPos.distance + 24, this.path);
+      if (ahead) {
+        this.narrowWarned = true;
+        setHint(`前方半边路 · 靠${ahead.side === 'left' ? '左' : '右'}！`);
+      }
+    }
     if (narrow) {
       if (!this.narrowWarned) {
         this.narrowWarned = true;
