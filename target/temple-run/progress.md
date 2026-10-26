@@ -1538,3 +1538,7 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 新增 pathRules.ts：6 space=72m；转弯/障碍间距、金币 5 枚、双障碍关闭。
 - 首个转弯保留 57m；completeTurn 最小 84m；bot 1165m 0 error。
 - 图结构级（T 侧分支/真正 side path）明确 pending，需要 TrackPath 改图。
+
+2026-10-26（地图参数收尾）：
+- 奖励道具间距从 110–200 m 对齐到原版 sMinSpacesBetweenBonusItems=50 space=600 m；金币/障碍/转弯均已按 6 space 参数。
+- bot 2042 m 仍 playing，0 console error。

@@ -64,6 +64,7 @@
 - 障碍最小间距：72 m（`sMinSpaceBetweenObstacles=6`）；
 - 连续障碍上限：2；默认双障碍概率 0；
 - 金币段最少 72 m，单段最多 5 枚；
+- 奖励道具（bonus item）最小间距 50 space = 600 m；
 - 初始等级 Temple，等级切换不连续相同。
 
 未严格对齐：

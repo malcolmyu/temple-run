@@ -41,7 +41,7 @@ import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
 import { coinMultiplier, magnetBonusSeconds } from './upgrades';
-import { DOUBLE_OBSTACLE_CHANCE, MAX_COINS_PER_RUN, MIN_OBSTACLE_SPACING, MIN_TURN_SPACING } from './pathRules';
+import { DOUBLE_OBSTACLE_CHANCE, MAX_COINS_PER_RUN, MIN_BONUS_ITEM_SPACING, MIN_OBSTACLE_SPACING, MIN_TURN_SPACING } from './pathRules';
 import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById } from './skins';
 import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.js';
 import * as sfx from '../sfx.js';
@@ -87,7 +87,7 @@ export class Game {
   private obstaclePools = new Map<ObstacleKind, THREE.Object3D[]>();
   private pickupPools = new Map<PickupKind, THREE.Object3D[]>();
   private nextSpawn = 80;
-  private nextPickup = 60;
+  private nextPickup = MIN_BONUS_ITEM_SPACING;
   private deathTimer = 0;
   private lastFrame = 0;
   private raf = 0;
@@ -293,7 +293,7 @@ export class Game {
     this.path.segments.length = 0;
     this.path.segments.push({ start: 0, end: Infinity, x: 0, z: 3, heading: 0 });
     this.nextSpawn = 80;
-    this.nextPickup = 60;
+    this.nextPickup = MIN_BONUS_ITEM_SPACING;
     this.deathTimer = 0;
     this.hintCooldown = 0;
     this.narrowWarned = false;
@@ -866,7 +866,7 @@ export class Game {
     while (this.nextPickup < this.distance + 90) {
       const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
       this.spawnPickup(kinds[Math.floor(Math.random() * kinds.length)], Math.floor(Math.random() * 3), this.nextPickup);
-      this.nextPickup += 110 + Math.random() * 90;
+      this.nextPickup += MIN_BONUS_ITEM_SPACING + Math.random() * 240;
     }
   }
 
@@ -1354,7 +1354,7 @@ export class Game {
     this.obstacles = [];
     this.pickups = [];
     this.nextSpawn = distance + 90;
-    this.nextPickup = distance + 80;
+    this.nextPickup = distance + MIN_BONUS_ITEM_SPACING;
     this.ensureTiles();
     this.syncRunnerObject();
     this.updateCamera(0.05);
