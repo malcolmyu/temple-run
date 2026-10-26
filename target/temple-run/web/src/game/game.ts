@@ -889,6 +889,10 @@ export class Game {
       }
       plan.distance = base;
       this.spawnPlan(plan);
+      if (!narrow && !side && plan.def.lanes === 'one' && this.obstacleRng.next() < this.difficulty.doubleChance) {
+        const other = (plan.lane + 1 + this.obstacleRng.int(2)) % 3;
+        this.spawnDef(DEFS.stonePedestal, other, base + 8);
+      }
       const coinLane = narrow
         ? narrow.safe[this.obstacleRng.int(narrow.safe.length)]
         : this.obstacleRng.int(3);
@@ -1217,9 +1221,9 @@ export class Game {
     const lane = this.world.require(this.runnerEntity, Lane);
     const jump = this.world.require(this.runnerEntity, Jump);
     const distance = this.distance;
-    const back = this.path.at(distance - 5.9, lane.x * 0.45, true);
+    const back = this.path.at(distance - 5.6, lane.x * 0.45, true);
     const ahead = this.path.at(distance + 8.5, lane.x * 0.7, true);
-    this.cameraPos.lerp(new THREE.Vector3(back.x, 4.75 + jump.y * 0.18, back.z), 1 - Math.exp(-8 * dt));
+    this.cameraPos.lerp(new THREE.Vector3(back.x, 4.55 + jump.y * 0.18, back.z), 1 - Math.exp(-8 * dt));
     this.cameraLook.lerp(new THREE.Vector3(ahead.x, 1.15 + jump.y * 0.25, ahead.z), 1 - Math.exp(-10 * dt));
     this.bundle.camera.position.copy(this.cameraPos);
     this.bundle.camera.lookAt(this.cameraLook);

@@ -1560,3 +1560,9 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 整幅火墙 fireWall 障碍；数据 catalog 9 个可玩定义。
 - classic/challenge 难度档，默认 challenge，Options 可切；classic=72m/双障碍0/宽窗口，challenge=38m/紧窗口/速度22。
 - 测试新增 surface/fork 校验；typecheck/build 通过，bot challenge 409m 0 error（仍需继续调）。
+
+2026-10-26（P0 继续：密度/右破口/挑战）：
+- 增加树冠/垂藤/树叶簇与侧向 tree 模板；60fps、78 draw calls。
+- 半边路右侧改为深水/崖面 + 断口石板，wood 表面用断木板。
+- challenge 增加双石墩（15%）并收紧镜头；classic 保持 0。
+- 新增右侧残缺截图；side path/wood 截图已在验收页。

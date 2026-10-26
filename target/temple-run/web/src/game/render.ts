@@ -463,14 +463,14 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
 }
 
 /** Half-road: one side of the slab has fallen into the canyon, leaving a ragged lip. */
-export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean): void {
+export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean, surface: SurfaceKind = 'stone'): void {
   const dir = side === 'left' ? 1 : -1; // missing half is on this side (+1 = right)
   const edge = 0.55 * dir;
   const width = 3.6;
   const center = edge + (dir * width) / 2;
   // Dark teal water/abyss rather than a flat black rectangle; the video's broken
   // right edge reads as depth, not a missing texture.
-  const abyss = new THREE.MeshBasicMaterial({ color: 0x08221e });
+  const abyss = new THREE.MeshBasicMaterial({ color: 0x06241f });
   const hole = new THREE.Mesh(new THREE.PlaneGeometry(width, TILE + 0.02), abyss);
   hole.rotation.x = -Math.PI / 2;
   hole.position.set(center, 0.062, 0);
@@ -479,9 +479,16 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
   const face = new THREE.Mesh(new THREE.BoxGeometry(0.35, 3.6, TILE + 0.02), assets.material.stone);
   face.position.set(edge, -1.8, 0);
   group.add(face);
-  // Broken paving slabs tumbling off the edge.
+  const deep = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.3, TILE + 3), new THREE.MeshBasicMaterial({ color: 0x0b3b34 }));
+  deep.rotation.x = -Math.PI / 2;
+  deep.position.set(center, -2.1, 0);
+  group.add(deep);
+  // Broken paving/planks tumbling off the edge.
   for (let i = 0; i < 6; i++) {
-    const slab = new THREE.Mesh(new THREE.BoxGeometry(0.55 + (i % 2) * 0.25, 0.2, 0.75), assets.material.stone);
+    const slab = new THREE.Mesh(
+      new THREE.BoxGeometry(surface === 'wood' ? 0.75 + (i % 2) * 0.25 : 0.55 + (i % 2) * 0.25, surface === 'wood' ? 0.12 : 0.2, 0.75),
+      surface === 'wood' ? plankMaterial(assets) : assets.material.stone,
+    );
     slab.position.set(edge + dir * (0.25 + (i % 3) * 0.32), 0.07 - (i % 2) * 0.06, -4.6 + i * 1.9);
     slab.rotation.set((i % 2 ? 0.12 : -0.08), i * 0.37, (i % 2 ? 0.18 : -0.12));
     group.add(slab);
@@ -603,17 +610,28 @@ export function buildTile(
   // Dark canopy and hanging vines, matching the reference video's enclosed jungle.
   if (terrain !== 'hall' && !clearScenery) {
     for (const side of [-1, 1] as const) {
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 4; i++) {
         const canopy = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
         canopy.scale.set(3.1 + i * 0.35, 0.75, 2.4);
-        canopy.position.set(side * (6.8 + i * 0.4), 7.6 + (i % 2) * 0.5, -4.5 + i * 3.6);
+        canopy.position.set(side * (6.8 + i * 0.4), 7.6 + (i % 2) * 0.5, -5.5 + i * 3.2);
         group.add(canopy);
       }
-      for (let i = 0; i < 2; i++) {
-        const vine = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 4.6, 5), assets.material.moss);
-        vine.position.set(side * (5.1 + i * 0.45), 4.2, -3.2 + i * 4.3);
+      for (let i = 0; i < 4; i++) {
+        const vine = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 4.6 + i * 0.5, 5), assets.material.moss);
+        vine.position.set(side * (5.0 + i * 0.35), 4.2 - i * 0.25, -5.0 + i * 3.4);
         vine.rotation.z = side * (0.06 + i * 0.04);
         group.add(vine);
+        const leaves = new THREE.Mesh(new THREE.SphereGeometry(1, 5, 4), assets.material.leaf);
+        leaves.scale.set(0.55, 0.35, 0.5);
+        leaves.position.set(side * (5.1 + i * 0.35), 6.2 - i * 0.25, -5.0 + i * 3.4);
+        group.add(leaves);
+      }
+      if (assets.tree && index % 3 === 0) {
+        const tree = assets.tree.clone(true);
+        tree.scale.setScalar(0.09);
+        tree.position.set(side * 9.6, 0, -2.5);
+        tree.rotation.y = side > 0 ? Math.PI : 0;
+        group.add(tree);
       }
     }
   }
@@ -633,7 +651,7 @@ export function buildTile(
   }
   if (narrow) {
     const firstTile = index === Math.floor((narrow.from + 9) / TILE);
-    buildNarrowOverlay(assets, group, narrow.side, firstTile);
+    buildNarrowOverlay(assets, group, narrow.side, firstTile, surface);
   }
   if (sidePath) buildSidePathOverlay(assets, group, index === -1);
 
