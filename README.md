@@ -1,5 +1,7 @@
 # Temple Run · Web Edition
 
+[![CI](https://github.com/malcolmyu/temple-run/actions/workflows/ci.yml/badge.svg)](https://github.com/malcolmyu/temple-run/actions/workflows/ci.yml)
+
 用 Three.js 复刻的原版 Temple Run 1.39（Unity）网页版，并保留工程内的原版资源（骨骼角色、路面/转角/障碍 mesh、UI 图集、音效等）。
 
 - 玩法：三条石径奔跑，左右换道 / 上下跳跃滑铲 / 路口转弯，收集金币与宝石，磁铁 / 加速 / 护盾 / 金币加成、金币倍率、断桥窄路坠崖、猴子偷金币、追逐者等原版机制。
@@ -73,6 +75,8 @@ npm run temple:dev -- --port 5173   # / = v2，/legacy.html = 旧版
 npm run temple:typecheck            # vue-tsc 严格模式
 npm run temple:build                # 同时产出 index.html 与 legacy.html
 ```
+
+首次打开 v2 会自动迁移旧版存档（`atb_temple_run_best` / `_chars` / `_stats` / `_settings`），只写一次 `temple.v2.progress`。
 
 v2 与旧版的主要差异：转弯路口改用预铺的 12 m 广场补缝（不再让跨路口的瓦片斜穿另一条路）、里程碑恢复原版 NICE JOB / HIGH SCORE 图、新增动态局域网二维码（开发服务器 `/__lan-url` 提供 LAN 地址）。逐项对照与已知差异见 [target/temple-run/README.md](target/temple-run/README.md)。
 

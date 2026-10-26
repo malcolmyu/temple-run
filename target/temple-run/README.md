@@ -8,6 +8,8 @@
 
 发布：`tools/deploy-pages.sh` 构建并 force-push `gh-pages`，GitHub Pages 从该分支部署。
 
+**存档迁移**：首次进入 v2 会读取旧版的 `atb_temple_run_best` / `atb_temple_run_chars` / `atb_temple_run_stats` / `atb_temple_run_settings`，映射最远距离、金币/宝石、已解锁角色、升级与音乐/音效设置，写入 `temple.v2.progress` 后不再重复迁移。
+
 ## 运行
 
 在仓库根目录执行：

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { repairObjNormals } from '../objNormals.js';
 import { LANES, PLAYER_Z, TILE } from './config';
 import type { ObstacleKind, PickupKind } from './components';
@@ -55,9 +56,12 @@ const loadObj = (url: string): Promise<THREE.Group | null> =>
   });
 
 export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundle> {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.shadowMap.enabled = true;
+  // Mobile GPUs are fill-rate bound: lower the render resolution and skip the shadow pass.
+  // Desktop keeps the full-quality path. The game loop can lower the ratio further if FPS dips.
+  const mobile = window.matchMedia('(pointer: coarse)').matches || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2));
+  renderer.shadowMap.enabled = !mobile;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -70,7 +74,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   scene.add(new THREE.HemisphereLight(0xfff2da, 0x3a2c1e, 2.05));
   const sun = new THREE.DirectionalLight(0xffe6b0, 3.15);
   sun.position.set(-12, 22, -24);
-  sun.castShadow = true;
+  sun.castShadow = !mobile;
   sun.shadow.mapSize.set(1024, 1024);
   sun.shadow.camera.left = -24;
   sun.shadow.camera.right = 24;
@@ -274,6 +278,46 @@ function ropeMaterial(): THREE.MeshStandardMaterial {
   return new THREE.MeshStandardMaterial({ color: 0x6b5334, roughness: 0.9 });
 }
 
+
+/**
+ * Merge a static group's meshes by material. Tiles and junctions repeat the same few
+ * materials dozens of times; without this each bush/torch is its own draw call. Merged
+ * geometry is shared by every clone of the prototype.
+ */
+export function mergeStaticMeshes(root: THREE.Object3D): void {
+  root.updateMatrixWorld(true);
+  const inverse = root.matrixWorld.clone().invert();
+  const byMaterial = new Map<THREE.Material, THREE.Mesh[]>();
+  root.traverse((object) => {
+    const mesh = object as THREE.Mesh;
+    if (!mesh.isMesh || Array.isArray(mesh.material)) return;
+    const list = byMaterial.get(mesh.material) ?? [];
+    list.push(mesh);
+    byMaterial.set(mesh.material, list);
+  });
+  for (const [material, meshes] of byMaterial) {
+    if (meshes.length < 2) continue;
+    const geometries: THREE.BufferGeometry[] = [];
+    let castShadow = false;
+    const matrix = new THREE.Matrix4();
+    for (const mesh of meshes) {
+      const geometry = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone();
+      matrix.multiplyMatrices(inverse, mesh.matrixWorld);
+      geometry.applyMatrix4(matrix);
+      geometries.push(geometry);
+      castShadow ||= mesh.castShadow;
+    }
+    const merged = mergeGeometries(geometries, false);
+    for (const geometry of geometries) geometry.dispose();
+    if (!merged) continue;
+    const mergedMesh = new THREE.Mesh(merged, material);
+    mergedMesh.castShadow = castShadow;
+    mergedMesh.receiveShadow = true;
+    root.add(mergedMesh);
+    for (const mesh of meshes) mesh.removeFromParent();
+  }
+}
+
 const LANE_SIDE = [-1.3, 0, 1.3] as const;
 
 /** Muddy plank bridge: deck, rope rails, lantern posts and the gorge underneath. */
@@ -342,10 +386,9 @@ function buildHallInterior(assets: Assets, group: THREE.Group): void {
     beam.castShadow = true;
     group.add(beam);
   }
-  // Warm chandelier glow so the hall reads differently from the open corridor.
-  const light = new THREE.PointLight(0xffc777, 0.9, 18, 2);
-  light.position.set(0, 5.2, 0);
-  group.add(light);
+  // A per-tile PointLight used to make the hall glow, but cloned tiles turned that into
+  // several dynamic lights and a shader cost on every material. The warm palette is already
+  // in the emissive/hemisphere lighting, so keep the hall light-free.
 }
 
 /** Canyon: broken slab edges, mist, no walls — the drop is the point. */

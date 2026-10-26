@@ -35,7 +35,7 @@ import {
   TURN_PREBUILD_DISTANCE,
   laneX,
 } from './config';
-import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, type Assets, type SceneBundle } from './render';
+import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
@@ -95,10 +95,13 @@ export class Game {
   private cameraLook = new THREE.Vector3(0, 1.15, -10);
   private disposed = false;
   private fpsSamples: number[] = [];
+  private maxPixelRatio = 2;
+  private qualityCheckAt = 0;
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
     this.canvas = canvas;
     this.bundle = await createWorld(canvas);
+    this.maxPixelRatio = this.bundle.renderer.getPixelRatio();
     this.bundle.scene.add(this.runnerGroup);
     this.bundle.scene.add(this.chaserGroup);
     this.input.attach(window, canvas);
@@ -185,6 +188,7 @@ export class Game {
     return {
       phase: mutateUi.phase,
       distance: Math.floor(this.distance),
+      fps: mutateUi.fps,
       coins: stats.coins,
       gems: stats.gems,
       lane: this.world.require(this.runnerEntity, Lane).index,
@@ -629,6 +633,7 @@ export class Game {
     let prototype = this.tilePrototypes.get(terrain);
     if (!prototype) {
       prototype = buildTile(this.bundle.assets, -1, 0, terrain, null);
+      mergeStaticMeshes(prototype);
       this.tilePrototypes.set(terrain, prototype);
     }
     const group = prototype.clone(true);
@@ -660,6 +665,7 @@ export class Game {
     let prototype = this.junctionPrototypes.get(direction);
     if (!prototype) {
       prototype = buildJunction(this.bundle.assets, direction, new TrackPath(), 0);
+      mergeStaticMeshes(prototype);
       this.junctionPrototypes.set(direction, prototype);
     }
     const group = prototype.clone(true);
@@ -672,7 +678,11 @@ export class Game {
 
   private acquireObstacle(kind: ObstacleKind): THREE.Object3D {
     const pool = this.obstaclePools.get(kind);
-    const object = pool?.pop() ?? buildObstacle(this.bundle.assets, kind);
+    let object = pool?.pop();
+    if (!object) {
+      object = buildObstacle(this.bundle.assets, kind);
+      mergeStaticMeshes(object);
+    }
     object.visible = true;
     this.bundle.scene.add(object);
     return object;
@@ -687,7 +697,11 @@ export class Game {
 
   private acquirePickup(kind: PickupKind): THREE.Object3D {
     const pool = this.pickupPools.get(kind);
-    const object = pool?.pop() ?? (kind === 'coin' ? buildCoin(this.bundle.assets) : kind === 'gem' ? buildGem() : buildPower(kind));
+    let object = pool?.pop();
+    if (!object) {
+      object = kind === 'coin' ? buildCoin(this.bundle.assets) : kind === 'gem' ? buildGem() : buildPower(kind);
+      mergeStaticMeshes(object);
+    }
     object.visible = true;
     this.bundle.scene.add(object);
     return object;
@@ -1141,13 +1155,8 @@ export class Game {
       pickup.object.position.set(point.x, pickup.baseY + Math.sin(this.world.elapsed * 3 + pickup.distance) * 0.08, point.z);
       pickup.object.rotation.y = point.heading + this.world.elapsed * 2.4;
     }
-    for (const entity of this.tiles.values()) {
-      const tile = this.world.require(entity, Tile);
-      if (!tile.object) continue;
-      const point = this.path.at(tile.distance);
-      tile.object.position.set(point.x, 0, point.z);
-      tile.object.rotation.y = point.heading;
-    }
+    // Tiles are placed once in ensureTiles (and rebuilt ahead of a new turn); re-running
+    // path.at() for every live tile each frame was pure GC churn.
   }
 
   private invincibleUntil = 0;
@@ -1282,7 +1291,20 @@ export class Game {
     this.fpsSamples.push(dt);
     if (this.fpsSamples.length > 40) this.fpsSamples.shift();
     const avg = this.fpsSamples.reduce((a, b) => a + b, 0) / this.fpsSamples.length;
-    mutateUi.fps = Math.round(1 / Math.max(0.001, avg));
+    const fps = 1 / Math.max(0.001, avg);
+    mutateUi.fps = Math.round(fps);
+    // Cheap adaptive resolution: only touch the drawing buffer every few seconds, so a
+    // transient loading hitch does not make the whole game blurry.
+    const now = performance.now();
+    if (now - this.qualityCheckAt < 3000) return;
+    const ratio = this.bundle.renderer.getPixelRatio();
+    if (fps < 45 && ratio > 1) {
+      this.bundle.renderer.setPixelRatio(Math.max(1, ratio - 0.25));
+      this.qualityCheckAt = now;
+    } else if (fps > 58 && ratio < this.maxPixelRatio) {
+      this.bundle.renderer.setPixelRatio(Math.min(this.maxPixelRatio, ratio + 0.25));
+      this.qualityCheckAt = now;
+    }
   }
 
   dispose(): void {

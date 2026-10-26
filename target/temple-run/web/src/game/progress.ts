@@ -20,6 +20,62 @@ export interface Progress {
 
 const KEY = 'temple.v2.progress';
 
+/** One-time import of the legacy (pre-v2) keys, so existing players keep their progress. */
+function migrateLegacy(defaults: Progress): Progress | null {
+  const charsRaw = localStorage.getItem('atb_temple_run_chars');
+  const bestRaw = localStorage.getItem('atb_temple_run_best');
+  const statsRaw = localStorage.getItem('atb_temple_run_stats');
+  const settingsRaw = localStorage.getItem('atb_temple_run_settings');
+  if (!charsRaw && !bestRaw && !statsRaw && !settingsRaw) return null;
+  const parse = (raw: string | null): Record<string, unknown> => {
+    if (!raw) return {};
+    try {
+      const value = JSON.parse(raw) as unknown;
+      return value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
+    } catch {
+      return {};
+    }
+  };
+  const chars = parse(charsRaw);
+  const stats = parse(statsRaw);
+  const settings = parse(settingsRaw);
+  const num = (value: unknown): number => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+  const owned = Array.isArray(chars.owned)
+    ? [...new Set(chars.owned.filter((id): id is string => typeof id === 'string' && SKINS.some((skin) => skin.id === id)))]
+    : [];
+  if (!owned.includes(SKINS[0].id)) owned.unshift(SKINS[0].id);
+  const equipped = typeof chars.equipped === 'string' && owned.includes(chars.equipped) ? chars.equipped : SKINS[0].id;
+  const upgrades = (chars.upgrades ?? {}) as Record<string, unknown>;
+  const migrated: Progress = {
+    ...defaults,
+    coins: num(chars.bank),
+    gems: num(chars.gems),
+    runs: num(stats.runs),
+    bestDistance: num(bestRaw),
+    totalDistance: num(stats.totalDistance),
+    lifetimeCoins: num(stats.totalCoins),
+    bestScore: 0,
+    owned,
+    equipped,
+    claimed: [],
+    upgrades: {
+      magnet: Math.max(0, Math.min(3, num(upgrades.magnet))),
+      coin: Math.max(0, Math.min(3, num(upgrades.coin))),
+    },
+    music: settings.music !== false,
+    sound: settings.sfx !== false,
+  };
+  try {
+    localStorage.setItem(KEY, JSON.stringify(migrated));
+  } catch {
+    // Storage disabled: still use the migrated values for this session.
+  }
+  return migrated;
+}
+
 function load(): Progress {
   const defaults: Progress = {
     coins: 0,
@@ -38,7 +94,7 @@ function load(): Progress {
   };
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return defaults;
+    if (!raw) return migrateLegacy(defaults) ?? defaults;
     const saved = JSON.parse(raw) as Partial<Progress>;
     return {
       ...defaults,
