@@ -65,15 +65,17 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   renderer.shadowMap.enabled = !mobile;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.18;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xb9d6e4, 55, 175);
+  scene.fog = new THREE.Fog(0x193b31, 30, 145);
 
   const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 190);
   camera.position.set(0, 5.25, PLAYER_Z + 7.5);
 
-  scene.add(new THREE.HemisphereLight(0xfff2da, 0x3a2c1e, 2.05));
-  const sun = new THREE.DirectionalLight(0xffe6b0, 3.15);
+  scene.add(new THREE.HemisphereLight(0xb8d6bc, 0x0b1712, 1.55));
+  const sun = new THREE.DirectionalLight(0xc8d6ae, 2.55);
   sun.position.set(-12, 22, -24);
   sun.castShadow = !mobile;
   sun.shadow.mapSize.set(1024, 1024);
@@ -85,17 +87,17 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   sun.shadow.camera.far = 80;
   scene.add(sun);
   scene.add(sun.target);
-  const fill = new THREE.DirectionalLight(0x86b3c4, 0.85);
+  const fill = new THREE.DirectionalLight(0x3f6f62, 0.35);
   fill.position.set(10, 8, 8);
   scene.add(fill);
 
-  // Blue sky gradient, like the reference build.
+  // Dark jungle canopy light: the reference video is teal-green, not blue daylight.
   const sky = new THREE.Mesh(
     new THREE.SphereGeometry(160, 24, 16),
     new THREE.ShaderMaterial({
       side: THREE.BackSide,
       depthWrite: false,
-      uniforms: { top: { value: new THREE.Color(0x2f7fc4) }, mid: { value: new THREE.Color(0x8fc4e2) }, bottom: { value: new THREE.Color(0xe6eff2) } },
+      uniforms: { top: { value: new THREE.Color(0x143b33) }, mid: { value: new THREE.Color(0x275345) }, bottom: { value: new THREE.Color(0x0a1512) } },
       vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
       fragmentShader:
         'varying vec3 vP; uniform vec3 top; uniform vec3 mid; uniform vec3 bottom;' +
@@ -110,7 +112,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   // Jungle floor far below the corridor: gives the scenery something to sit on.
   const ground = new THREE.Mesh(
     new THREE.BoxGeometry(260, 3, 260),
-    new THREE.MeshStandardMaterial({ map: null, color: 0x2b4a3a, roughness: 0.95 }),
+    new THREE.MeshStandardMaterial({ map: null, color: 0x13241b, roughness: 0.98 }),
   );
   ground.position.y = -3.4;
   scene.add(ground);
@@ -128,29 +130,29 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   const material: Record<string, THREE.Material> = {
     road: new THREE.MeshStandardMaterial({
       map: wall,
-      color: 0xfff0d8,
+      color: 0xd8c394,
       side: THREE.DoubleSide,
       roughness: 0.95,
-      emissive: 0x3a2c15,
-      emissiveIntensity: 0.5,
+      emissive: 0x5a3f1c,
+      emissiveIntensity: 0.85,
     }),
     facade: new THREE.MeshStandardMaterial({
       map: wall,
-      color: 0xe8d4b2,
+      color: 0x9d9179,
       side: THREE.DoubleSide,
       roughness: 0.95,
       emissive: 0x3a2f1e,
       emissiveIntensity: 0.6,
     }),
     tree: new THREE.MeshStandardMaterial({ color: 0x26331f, side: THREE.DoubleSide, roughness: 0.98, emissive: 0x0d1409, emissiveIntensity: 0.6 }),
-    leaf: new THREE.MeshStandardMaterial({ map: leaf, color: 0x86a877, side: THREE.DoubleSide, roughness: 0.9, emissive: 0x1c2e1a, emissiveIntensity: 0.55 }),
-    stone: new THREE.MeshStandardMaterial({ color: 0xd8c8a8, map: wall, roughness: 0.92 }),
-    wood: new THREE.MeshStandardMaterial({ map: tree, color: 0xc9b795, roughness: 0.95 }),
+    leaf: new THREE.MeshStandardMaterial({ map: leaf, color: 0x4f7057, side: THREE.DoubleSide, roughness: 0.95, emissive: 0x0d1a11, emissiveIntensity: 0.55 }),
+    stone: new THREE.MeshStandardMaterial({ color: 0x9f947c, map: wall, roughness: 0.95 }),
+    wood: new THREE.MeshStandardMaterial({ map: tree, color: 0x8e7b5e, roughness: 0.97 }),
     gold: new THREE.MeshStandardMaterial({ color: 0xf5bb43, metalness: 0.72, roughness: 0.25, emissive: 0x6b4309, emissiveIntensity: 0.3 }),
     moss: new THREE.MeshStandardMaterial({ color: 0x496f4c, roughness: 0.9 }),
     fire: new THREE.MeshStandardMaterial({ color: 0xff7a24, emissive: 0xff5a12, emissiveIntensity: 1.15 }),
     void: new THREE.MeshBasicMaterial({ color: 0x05070a }),
-    water: new THREE.MeshBasicMaterial({ color: 0x123f3d, transparent: true, opacity: 0.55 }),
+    water: new THREE.MeshBasicMaterial({ color: 0x0b2b27, transparent: true, opacity: 0.72 }),
   };
 
   const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture] = await Promise.all([
@@ -254,7 +256,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
 
 const ROAD_TILE_LIFT = 1.36;
 const WALL_SCALE = 0.2;
-const WALL_X = 6.4;
+const WALL_X = 4.0;
 const LOW_WALL_SINK = -6.0;
 
 function flameSprite(assets: Assets, scale: number, color = 0xffb066): THREE.Sprite {
@@ -361,7 +363,7 @@ const LANE_SIDE = [-1.3, 0, 1.3] as const;
 
 /** Muddy plank bridge: deck, rope rails, lantern posts and the gorge underneath. */
 function buildBridgeDeck(assets: Assets, group: THREE.Group): void {
-  const deck = new THREE.Mesh(new THREE.PlaneGeometry(8.4, TILE + 0.2), plankMaterial(assets));
+  const deck = new THREE.Mesh(new THREE.PlaneGeometry(7.2, TILE + 0.2), plankMaterial(assets));
   deck.rotation.x = -Math.PI / 2;
   deck.position.y = 0.02;
   deck.receiveShadow = true;
@@ -376,22 +378,22 @@ function buildBridgeDeck(assets: Assets, group: THREE.Group): void {
   for (const side of [-1, 1] as const) {
     for (const z of [-4.5, -1.5, 1.5, 4.5]) {
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 1.9, 8), lightsMaterial());
-      post.position.set(side * 4.1, 0.95, z);
+      post.position.set(side * 3.5, 0.95, z);
       post.castShadow = true;
       group.add(post);
       for (const y of [1.15, 1.65]) {
-        const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 3.0, 5), ropeMaterial());
+        const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.5, 5), ropeMaterial());
         rope.rotation.x = Math.PI / 2;
-        rope.position.set(side * 4.1, y, z + 1.5);
+        rope.position.set(side * 3.5, y, z + 1.5);
         group.add(rope);
       }
     }
     for (const z of [-3, 3]) {
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 2.0, 8), lightsMaterial());
-      pole.position.set(side * 3.9, 1.0, z);
+      pole.position.set(side * 3.2, 1.0, z);
       group.add(pole);
       const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.5, 0.38), new THREE.MeshStandardMaterial({ color: 0xffdc9a, emissive: 0xffb43a, emissiveIntensity: 1.1 }));
-      lamp.position.set(side * 3.9, 2.25, z);
+      lamp.position.set(side * 3.2, 2.25, z);
       group.add(lamp);
     }
   }
@@ -410,17 +412,17 @@ function buildHallInterior(assets: Assets, group: THREE.Group): void {
   for (const side of [-1, 1] as const) {
     for (const z of [-4, 0, 4]) {
       const column = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.5, 6.4, 12), columnMat);
-      column.position.set(side * 3.62, 3.2, z);
+      column.position.set(side * 3.3, 3.2, z);
       column.castShadow = true;
       group.add(column);
       const base = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 0.8), columnMat);
-      base.position.set(side * 3.62, 0.2, z);
+      base.position.set(side * 3.3, 0.2, z);
       group.add(base);
       const cap = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.36, 0.78), columnMat);
-      cap.position.set(side * 3.62, 6.35, z);
+      cap.position.set(side * 3.3, 6.35, z);
       group.add(cap);
     }
-    const beam = new THREE.Mesh(new THREE.BoxGeometry(8.2, 0.55, 0.8), columnMat);
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.55, 0.8), columnMat);
     beam.position.set(0, 6.62, side * 2.5);
     beam.castShadow = true;
     group.add(beam);
@@ -435,7 +437,7 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
   for (const side of [-1, 1] as const) {
     for (let i = 0; i < 5; i++) {
       const slab = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.22, 1.6), assets.material.stone);
-      slab.position.set(side * 4.15, 0.08, -4.8 + i * 2.4);
+      slab.position.set(side * 3.7, 0.08, -4.8 + i * 2.4);
       slab.rotation.y = side * (0.1 + i * 0.05);
       group.add(slab);
     }
@@ -451,7 +453,7 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
 export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean): void {
   const dir = side === 'left' ? 1 : -1; // missing half is on this side (+1 = right)
   const edge = 0.12 * dir;
-  const width = 4.05;
+  const width = 3.15;
   const center = edge + (dir * width) / 2;
   const hole = new THREE.Mesh(new THREE.PlaneGeometry(width, TILE + 0.02), assets.material.void);
   hole.rotation.x = -Math.PI / 2;
@@ -498,13 +500,14 @@ export function buildTile(
   if (assets.roadTile) {
     const road = assets.roadTile.clone(true);
     road.position.y = ROAD_TILE_LIFT;
+    road.scale.x = 0.84;
     group.add(road);
   } else {
-    const slab = new THREE.Mesh(new THREE.BoxGeometry(8.3, 0.65, TILE + 0.1), lightsMaterial());
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(7.0, 0.65, TILE + 0.1), lightsMaterial());
     slab.position.y = -0.38;
     slab.receiveShadow = true;
     group.add(slab);
-    const paving = new THREE.Mesh(new THREE.PlaneGeometry(8.05, TILE), new THREE.MeshStandardMaterial({ map: assets.texture.wall, color: 0xb59c76, roughness: 0.96 }));
+    const paving = new THREE.Mesh(new THREE.PlaneGeometry(6.9, TILE), new THREE.MeshStandardMaterial({ map: assets.texture.wall, color: 0xb59c76, roughness: 0.96 }));
     paving.rotation.x = -Math.PI / 2;
     paving.position.y = -0.03;
     group.add(paving);
@@ -523,7 +526,7 @@ export function buildTile(
       wall.position.set(side * WALL_X, LOW_WALL_SINK, 0);
       wall.rotation.y = side > 0 ? 0 : Math.PI;
       group.add(wall);
-      for (const z of [-3.3, 3.3]) torch(group, assets, side * 4.1, z);
+      for (const z of [-3.3, 3.3]) torch(group, assets, side * 3.05, z);
     }
   }
 
@@ -546,14 +549,32 @@ export function buildTile(
     }
   }
 
+  // Dark canopy and hanging vines, matching the reference video's enclosed jungle.
+  if (terrain !== 'hall') {
+    for (const side of [-1, 1] as const) {
+      for (let i = 0; i < 3; i++) {
+        const canopy = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
+        canopy.scale.set(3.1 + i * 0.35, 0.75, 2.4);
+        canopy.position.set(side * (6.8 + i * 0.4), 7.6 + (i % 2) * 0.5, -4.5 + i * 3.6);
+        group.add(canopy);
+      }
+      for (let i = 0; i < 2; i++) {
+        const vine = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 4.6, 5), assets.material.moss);
+        vine.position.set(side * (5.1 + i * 0.45), 4.2, -3.2 + i * 4.3);
+        vine.rotation.z = side * (0.06 + i * 0.04);
+        group.add(vine);
+      }
+    }
+  }
+
   if (narrow) {
     const firstTile = index === Math.floor((narrow.from + 9) / TILE);
     buildNarrowOverlay(assets, group, narrow.side, firstTile);
   }
 
-  if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 23 === 11) {
+  if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 7 === 3) {
     const tower = assets.obstacles['tower-arch'].clone(true);
-    tower.scale.setScalar(0.1);
+    tower.scale.setScalar(0.07);
     group.add(tower);
   }
   if (terrain === 'anniversary') {
@@ -561,10 +582,10 @@ export function buildTile(
     const bannerMat = new THREE.MeshStandardMaterial({ color: 0x8e2f2a, side: THREE.DoubleSide, roughness: 0.9, emissive: 0x2a0806, emissiveIntensity: 0.35 });
     for (const side of [-1, 1] as const) {
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 4.4, 6), assets.material.gold);
-      pole.position.set(side * 4.15, 2.2, 0);
+      pole.position.set(side * 3.25, 2.2, 0);
       group.add(pole);
       const banner = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 2.7), bannerMat);
-      banner.position.set(side * 3.55, 3.15, 0);
+      banner.position.set(side * 2.8, 3.15, 0);
       banner.rotation.y = side * Math.PI / 2;
       group.add(banner);
     }

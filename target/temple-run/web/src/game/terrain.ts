@@ -8,7 +8,8 @@ const tileIndex = (distance: number): number => Math.floor((distance + 9) / TILE
 /** Muddy plank bridge over the gorge, every 36 tiles for 3 tiles. */
 export function isBridgeTile(distance: number, path?: TrackPath): boolean {
   const index = tileIndex(distance);
-  return ((index % 36) + 36) % 36 < 3 && !(path?.nearTurn(distance, 24) ?? false);
+  const m = ((index % 36) + 36) % 36;
+  return m >= 12 && m < 15 && !(path?.nearTurn(distance, 24) ?? false);
 }
 
 /** Colonnade hall, every 60 tiles for 3 tiles. */

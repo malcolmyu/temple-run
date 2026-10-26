@@ -1109,9 +1109,9 @@ export class Game {
     const lane = this.world.require(this.runnerEntity, Lane);
     const jump = this.world.require(this.runnerEntity, Jump);
     const distance = this.distance;
-    const back = this.path.at(distance - 6.5, lane.x * 0.45, true);
-    const ahead = this.path.at(distance + 9, lane.x * 0.7, true);
-    this.cameraPos.lerp(new THREE.Vector3(back.x, 5.2 + jump.y * 0.18, back.z), 1 - Math.exp(-8 * dt));
+    const back = this.path.at(distance - 5.9, lane.x * 0.45, true);
+    const ahead = this.path.at(distance + 8.5, lane.x * 0.7, true);
+    this.cameraPos.lerp(new THREE.Vector3(back.x, 4.75 + jump.y * 0.18, back.z), 1 - Math.exp(-8 * dt));
     this.cameraLook.lerp(new THREE.Vector3(ahead.x, 1.15 + jump.y * 0.25, ahead.z), 1 - Math.exp(-10 * dt));
     this.bundle.camera.position.copy(this.cameraPos);
     this.bundle.camera.lookAt(this.cameraLook);
