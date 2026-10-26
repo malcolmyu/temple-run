@@ -4,7 +4,7 @@
 - 标题：神庙逃亡（Temple Run）1亿分达成
 - 时长：1:02:24；cid 40713866
 - 采样：用 Chrome 播放器 canvas 抓帧，0–60 s 每 2 s，之后 150/180/240/300/420/600/900/1200/1800/2400/3000/3600 s
-- 原始帧与拼图：`docs/screenshots/ref-video/`（`contact-close.jpg` 是 0–60 s 拼图）
+- 原始帧与拼图：`docs/screenshots/ref-video/`（`contact-close.jpg` 是 0–60 s，`contact-mid-0/1.jpg` 是 60–1200 s）
 
 ## 先给结论：这是 mod / 加速跑，不是干净原版
 
@@ -15,6 +15,14 @@
 - **不能**把 63×、1 亿分、7500 m 后停滞、永久翅膀当作原版机制/数值；
 - **可以**把画面、场景、道路形态、障碍物外观当作视觉参考；
 - 机制清单仍应以 XAPK prefab / IL2CPP 字段为准（见 [original-map-catalog.md](original-map-catalog.md)）。
+
+## 60–1200 s 追加抽帧（每 10 s）
+
+![60–600 s 拼图](screenshots/ref-video/contact-mid-0.jpg)
+
+![660–1200 s 拼图](screenshots/ref-video/contact-mid-1.jpg)
+
+这段更能说明问题：20 min 内基本是**单车道直线**，没有正常的 90° 转弯、三车道换道或半边路坠落；角色蓝翼常驻，分数从 9800 万涨到 1.95 亿，路径由石桥/木桥/树根隧道/石拱交替组成。它更像**单车道直跑 + 永久翼 + 高倍率的 mod/改版**，不是原版完整关卡循环。
 
 ## 画面里能确认到的内容
 
