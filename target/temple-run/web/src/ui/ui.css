@@ -312,8 +312,8 @@ body { min-width: 320px; background: radial-gradient(circle at 50% 12%, #354b3e 
   flex-direction: row;
   align-items: center;
   gap: 7px;
-  max-width: 62%;
-  padding: 6px 12px 6px 8px;
+  max-width: 50%;
+  padding: 6px 11px 6px 8px;
   border-radius: 999px;
   background: #101a14e8;
   border: 1px solid #d9b375cc;
@@ -322,13 +322,13 @@ body { min-width: 320px; background: radial-gradient(circle at 50% 12%, #354b3e 
   animation: msToast .22s ease-out both;
 }
 .hud .milestone .nj-art {
-  height: 26px;
+  height: 22px;
   width: auto;
   flex: 0 0 auto;
   filter: drop-shadow(0 2px 0 #3a230e) drop-shadow(0 3px 8px #0008);
 }
 .hud .milestone .ms-text {
-  font: 800 14px/1 Georgia, serif;
+  font: 800 12px/1 Georgia, serif;
   color: #ffe6a3;
   letter-spacing: .03em;
   white-space: nowrap;
@@ -341,7 +341,7 @@ body { min-width: 320px; background: radial-gradient(circle at 50% 12%, #354b3e 
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 @media (max-width: 850px) {
-  .hud .milestone { top: calc(74px + env(safe-area-inset-top)); max-width: 68%; }
-  .hud .milestone .nj-art { height: 22px; }
-  .hud .milestone .ms-text { font-size: 12px; }
+  .hud .milestone { top: calc(74px + env(safe-area-inset-top)); max-width: 56%; }
+  .hud .milestone .nj-art { height: 20px; }
+  .hud .milestone .ms-text { font-size: 11px; }
 }
