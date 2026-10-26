@@ -109,9 +109,10 @@ let milestoneSeq = 0;
 export function showMilestone(value: number, unit: string, art: 'nicejob' | 'highscore' = 'nicejob'): void {
   state.milestone = { id: ++milestoneSeq, value, unit, art };
   window.clearTimeout(milestoneTimer);
+  const duration = art === 'highscore' ? 1500 : 1200;
   milestoneTimer = window.setTimeout(() => {
     state.milestone = null;
-  }, 2000);
+  }, duration);
 }
 
 export function clearMilestone(): void {

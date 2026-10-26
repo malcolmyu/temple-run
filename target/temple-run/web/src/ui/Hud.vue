@@ -63,7 +63,7 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
       <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
     </div>
 
-    <div v-if="ui.milestone" :key="ui.milestone.id" class="milestone">
+    <div v-if="ui.milestone" :key="ui.milestone.id" class="milestone" :class="ui.milestone.art">
       <img class="nj-art" :src="uiAsset(`${ui.milestone.art}.png`)" alt="NICE JOB" />
       <span class="ms-text">{{ ui.milestone.value }}<em>{{ ui.milestone.unit }}</em></span>
     </div>
