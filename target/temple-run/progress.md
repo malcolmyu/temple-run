@@ -1464,3 +1464,10 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 复核 9.6 m 方案时发现：真正把路口盖成“石阵”的不是铺装尺寸，而是中心落在转弯点 6 m 内的 12 m 瓦片——它整体按新朝向旋转，墙体斜穿另一条路，铺装再大也盖不住。
 - 修：`ensureTiles` 跳过跨转弯点的瓦片（已有瓦片一并移除），路口用 12 m 铺装广场 + 20 m 垫层补洞；铺装仍按进入方向对齐，并抬到 -0.012 贴近路面。
 - 验证：105 m 神庙左转、436 m 木桥左转前后截图，转弯处无斜穿墙体/露缝；typecheck 0 error；build 通过；桌面 1280×657 与移动 390×844 均检查。
+
+2026-10-26（v2 独立 code review）：修复阻塞一局游戏的状态机/时钟问题。
+- 审查报告 `docs/review-v2.md`。对照 legacy 逐项走查，并用 `__templeGame` 驱动确定性 bot 实跑 1.7 km。
+- P0：死亡后卡在 `dying`（结算/复活永不出现）；ECS 时钟从未推进导致复活永久无敌、道具不过期、跳跃窗口恒真；窄路出口误重置 `reviveUsed/invincibleUntil/lastMilestone`。
+- P1：复活后旧转弯未复位会秒杀；复活后同一局金币重复入账；重开只销毁实体不摘场景对象；Esc/P/Enter 键盘完全无效；金币 +25% 升级被逐枚取整吞掉。
+- P2：关闭音乐后开始/复活仍播放；LAN 二维码可能取到 VPN 地址。
+- 验证：typecheck 0 error、build 双入口通过；bot 1747 m / 21 转弯 0 console error；键盘、复活、结算、单次入账均实测；GPU 审计 geometries 451→4202（1.2 km），已记录为待办。

@@ -8,12 +8,22 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 
 /** Dev-only helper: the side-panel QR needs the LAN address, not localhost. */
 function lanAddress() {
-  for (const nic of Object.values(os.networkInterfaces())) {
+  const candidates = [];
+  for (const [name, nic] of Object.entries(os.networkInterfaces())) {
     for (const net of nic ?? []) {
-      if (net.family === 'IPv4' && !net.internal) return net.address;
+      if (net.family !== 'IPv4' || net.internal) continue;
+      // Skip benchmark / link-local / CGNAT addresses used by VPNs and containers.
+      if (/^(198\.1[89]\.|169\.254\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(net.address)) continue;
+      let score = 3;
+      if (net.address.startsWith('192.168.')) score = 0;
+      else if (net.address.startsWith('10.')) score = 1;
+      else if (/^172\.(1[6-9]|2\d|3[01])\./.test(net.address)) score = 2;
+      if (name === 'en0') score -= 0.5;
+      candidates.push({ address: net.address, score });
     }
   }
-  return null;
+  candidates.sort((a, b) => a.score - b.score);
+  return candidates[0]?.address ?? null;
 }
 
 function lanUrlPlugin() {

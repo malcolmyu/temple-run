@@ -82,6 +82,8 @@ export class Game {
   private paused = false;
   private hintCooldown = 0;
   private stepAccumulator = 0;
+  /** Fractional coin value, so the +25% upgrade is not rounded away coin by coin. */
+  private coinValueAcc = 0;
   private cameraPos = new THREE.Vector3(0, 5.25, 10);
   private cameraLook = new THREE.Vector3(0, 1.15, -10);
   private disposed = false;
@@ -93,10 +95,6 @@ export class Game {
     this.bundle.scene.add(this.runnerGroup);
     this.bundle.scene.add(this.chaserGroup);
     this.input.attach(window, canvas);
-    this.input.onAction((action) => {
-      if (action === 'pause') this.togglePause();
-      if (action === 'start' && (mutateUi.phase === 'menu' || mutateUi.phase === 'ended')) this.start();
-    });
     this.resize();
     window.addEventListener('resize', this.resize);
     await this.setSkin(isOwned(progress.equipped) ? progress.equipped : 'jhony');
@@ -120,6 +118,12 @@ export class Game {
       progress: () => ({ ...progress }),
       spawnMonkey: () => this.spawnMonkey(this.distance + 10),
       audio: () => sfx.stats(),
+      gpu: () => ({
+        geometries: this.bundle.renderer.info.memory.geometries,
+        textures: this.bundle.renderer.info.memory.textures,
+        calls: this.bundle.renderer.info.render.calls,
+        triangles: this.bundle.renderer.info.render.triangles,
+      }),
       enableTilt: () => this.input.enableTilt(),
       stepLoop: () => this.stepLoop,
       chaserInfo: () => {
@@ -215,6 +219,17 @@ export class Game {
     this.bundle.camera.updateProjectionMatrix();
   };
 
+  /** Remove an entity's 3D object from the scene before dropping the entity. */
+  private removeEntityObject(entity: Entity): void {
+    const obstacle = this.world.get(entity, Obstacle);
+    if (obstacle?.object) this.bundle.scene.remove(obstacle.object);
+    const pickup = this.world.get(entity, Pickup);
+    if (pickup?.object) this.bundle.scene.remove(pickup.object);
+    const tile = this.world.get(entity, Tile);
+    if (tile?.object) this.bundle.scene.remove(tile.object);
+    this.world.destroyEntity(entity);
+  }
+
   private createRunner(): void {
     this.runnerEntity = this.world.createEntity();
     this.world.add(this.runnerEntity, TrackPos, { distance: 0, side: 0, smooth: true });
@@ -230,8 +245,10 @@ export class Game {
   }
 
   private resetWorld(): void {
-    for (const entity of [...this.obstacles, ...this.pickups, ...[...this.tiles.values()]]) this.world.destroyEntity(entity);
-    for (const entity of this.world.query(Obstacle)) this.world.destroyEntity(entity);
+    if (this.runnerEntity) this.world.destroyEntity(this.runnerEntity);
+    if (this.chaserEntity) this.world.destroyEntity(this.chaserEntity);
+    for (const entity of [...this.obstacles, ...this.pickups, ...[...this.tiles.values()]]) this.removeEntityObject(entity);
+    for (const entity of this.world.query(Obstacle)) this.removeEntityObject(entity);
     this.obstacles = [];
     this.pickups = [];
     this.tiles.clear();
@@ -261,6 +278,8 @@ export class Game {
     this.invincibleUntil = 0;
     this.reviveUsed = false;
     this.stepAccumulator = 0;
+    this.coinValueAcc = 0;
+    this.runCommitted = false;
     this.createRunner();
     const chaser = this.world.createEntity();
     this.world.add(chaser, TrackPos, { distance: -6, side: 0, smooth: true });
@@ -276,12 +295,13 @@ export class Game {
   }
 
   start(): void {
+    if (mutateUi.phase === 'ended') this.commitRun();
     this.resetWorld();
     mutateUi.phase = 'playing';
     mutateUi.speed = RUN_SPEED;
     setPhase('playing');
     sfx.unlockAudio();
-    sfx.startMusic('theme');
+    if (progress.music) sfx.startMusic('theme');
     this.paused = false;
     this.startLoop();
   }
@@ -298,7 +318,7 @@ export class Game {
     } else if (mutateUi.phase === 'paused') {
       this.paused = false;
       setPhase('playing');
-      sfx.startMusic('theme');
+      if (progress.music) sfx.startMusic('theme');
     }
   }
 
@@ -306,11 +326,12 @@ export class Game {
     if (mutateUi.phase === 'paused') {
       this.paused = false;
       setPhase('playing');
-      sfx.startMusic('theme');
+      if (progress.music) sfx.startMusic('theme');
     }
   }
 
   toMenu(): void {
+    if (mutateUi.phase === 'ended') this.commitRun();
     setPhase('menu');
     this.paused = true;
     this.resetWorld();
@@ -362,8 +383,12 @@ export class Game {
   }
 
   private frame(dt: number): void {
+    // Menus need input too: Enter starts a run and Escape pauses without a simulation tick.
+    this.drainInput();
     if (mutateUi.phase === 'playing') {
       this.tick(dt);
+    } else if (mutateUi.phase === 'dying') {
+      this.updateDeath(dt);
     }
     this.syncObjects(dt);
     this.renderOnce();
@@ -372,6 +397,9 @@ export class Game {
 
   /** One deterministic simulation step (also used by the regression bot). */
   tick(dt: number): void {
+    // Advance the ECS clock: gameplay timers (invincibility, powers, jump windows) all read
+    // world.elapsed, so without this the whole run freezes at t=0.
+    this.world.update(dt);
     this.drainInput();
     this.updateTurnCue();
     this.updateRunner(dt);
@@ -383,18 +411,21 @@ export class Game {
     this.updateMonkey(dt);
     this.updateCamera(dt);
     this.syncHud(dt);
-    if (mutateUi.phase === 'dying') {
-      this.deathTimer -= dt;
-      if (this.deathTimer <= 0) this.finishDeath();
-    }
+  }
+
+  /** The death beat: keep the world frozen, then hand control to the result screen. */
+  private updateDeath(dt: number): void {
+    this.deathTimer -= dt;
+    if (this.deathTimer <= 0) this.finishDeath();
   }
 
   advance(ms: number): void {
     const steps = Math.max(1, Math.ceil(ms / 25));
     const dt = Math.min(0.05, ms / steps / 1000);
     for (let i = 0; i < steps; i++) {
-      if (mutateUi.phase !== 'playing' && mutateUi.phase !== 'dying') break;
-      this.tick(dt);
+      if (mutateUi.phase === 'playing') this.tick(dt);
+      else if (mutateUi.phase === 'dying') this.updateDeath(dt);
+      else break;
     }
   }
 
@@ -404,6 +435,8 @@ export class Game {
       else if (action === 'right') this.move(1);
       else if (action === 'jump') this.jump();
       else if (action === 'slide') this.slide();
+      else if (action === 'pause') this.togglePause();
+      else if (action === 'start' && (mutateUi.phase === 'menu' || mutateUi.phase === 'ended')) this.start();
     }
   }
 
@@ -545,9 +578,6 @@ export class Game {
       }
     } else if (this.narrowWarned) {
       this.narrowWarned = false;
-    this.lastMilestone = 0;
-    this.invincibleUntil = 0;
-    this.reviveUsed = false;
     }
     this.updateFootsteps(trackPos.distance, currentSpeed);
     const stats = this.world.require(this.runnerEntity, RunStats);
@@ -895,7 +925,10 @@ export class Game {
       if (!pickup.taken && close && ahead > -3 && ahead < 3) {
         pickup.taken = true;
         if (pickup.kind === 'coin') {
-          stats.coins += Math.max(1, Math.round(coinMultiplier()));
+          this.coinValueAcc += coinMultiplier();
+          const whole = Math.floor(this.coinValueAcc);
+          this.coinValueAcc -= whole;
+          stats.coins += Math.max(1, whole);
           stats.combo += 1;
           stats.comboTimer = 3;
           stats.multiplier = Math.min(5, 1 + Math.floor(stats.combo / 8));
@@ -1040,6 +1073,7 @@ export class Game {
 
   private invincibleUntil = 0;
   private reviveUsed = false;
+  private runCommitted = false;
 
   private die(reason: string, kind: 'impact' | 'fall' | 'caught' | 'missed'): void {
     if (mutateUi.phase !== 'playing') return;
@@ -1056,12 +1090,23 @@ export class Game {
     void kind;
   }
 
-  private finishDeath(): void {
+  /** Bank the run exactly once: after a revive the same run would otherwise be counted twice. */
+  private commitRun(): void {
+    if (this.runCommitted) return;
     const stats = this.world.require(this.runnerEntity, RunStats);
+    if (stats.distance <= 0) return;
     recordRun(stats.distance, stats.coins, stats.gems, stats.score);
     syncBanks();
+    this.runCommitted = true;
+  }
+
+  private finishDeath(): void {
+    const stats = this.world.require(this.runnerEntity, RunStats);
     mutateUi.phase = 'ended';
-    mutateUi.reviveAvailable = !this.reviveUsed && progress.gems >= mutateUi.reviveCost;
+    mutateUi.best = Math.max(progress.bestDistance, Math.floor(stats.distance));
+    // Gems picked up this run are not banked until the run is committed, but the original
+    // lets you spend them on a revive, so count both pools here.
+    mutateUi.reviveAvailable = !this.reviveUsed && progress.gems + stats.gems >= mutateUi.reviveCost;
     setPhase('ended');
     sfx.pauseMusic();
   }
@@ -1069,8 +1114,12 @@ export class Game {
   /** Spend gems to get back up on the same run. */
   revive(): void {
     if (mutateUi.phase !== 'ended' || !mutateUi.reviveAvailable) return;
-    if (progress.gems < mutateUi.reviveCost) return;
-    progress.gems -= mutateUi.reviveCost;
+    const stats = this.world.require(this.runnerEntity, RunStats);
+    const cost = mutateUi.reviveCost;
+    if (progress.gems + stats.gems < cost) return;
+    const fromRun = Math.min(stats.gems, cost);
+    stats.gems -= fromRun;
+    progress.gems -= cost - fromRun;
     saveProgress();
     syncBanks();
     this.reviveUsed = true;
@@ -1089,10 +1138,26 @@ export class Game {
     chase.gap = CHASE_GAP_MAX;
     chase.cooldown = 0;
     this.stumbleCooldown = 0;
+    // If the death was a missed corner, the old turn is already behind the runner. Leaving
+    // it armed makes updateTurnCue kill the revived run as soon as invincibility ends.
+    const turn = this.world.require(this.runnerEntity, Turn);
+    if (turn.direction !== 0 && this.distance >= turn.next) {
+      turn.direction = 0;
+      turn.queued = false;
+      turn.cueShown = false;
+      turn.next = 9 + 12 * Math.max(1, Math.round((this.distance + 72 - 9) / 12));
+    }
+    // Falling in a collapsed-lane section: put the runner back on the surviving lane.
+    const narrow = narrowAt(this.distance, this.path);
+    if (narrow) {
+      const lane = this.world.require(this.runnerEntity, Lane);
+      lane.index = narrow.keep;
+      lane.x = laneX(narrow.keep);
+    }
     this.invincibleUntil = this.world.elapsed + 3;
     this.deathTimer = 0;
     setPhase('playing');
-    sfx.startMusic('theme');
+    if (progress.music) sfx.startMusic('theme');
     setHint('复活！短暂无敌');
   }
 
