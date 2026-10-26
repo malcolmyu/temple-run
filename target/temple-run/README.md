@@ -2,6 +2,12 @@
 
 基于用户提供的 `temple-run.xapk` 制作的可玩 3D 网页版。使用从 APK 中导出的默认探险者和追逐者网格、皮肤，以及石墙和树木图集。跑道会弯曲，路口有实际的 90° 转角；绊倒后追逐者靠近，再次绊倒会被抓住。跑道生成、障碍、物理、人物动作和追逐机制由 Web 实现；它不是原版 Unity 游戏的完整移植。
 
+## 在线版
+
+<https://malcolmyu.github.io/temple-run/>（v2；旧版 <https://malcolmyu.github.io/temple-run/legacy.html>）
+
+发布：`tools/deploy-pages.sh` 构建并 force-push `gh-pages`，GitHub Pages 从该分支部署。
+
 ## 运行
 
 在仓库根目录执行：

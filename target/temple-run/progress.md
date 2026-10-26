@@ -1471,3 +1471,10 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - P1：复活后旧转弯未复位会秒杀；复活后同一局金币重复入账；重开只销毁实体不摘场景对象；Esc/P/Enter 键盘完全无效；金币 +25% 升级被逐枚取整吞掉。
 - P2：关闭音乐后开始/复活仍播放；LAN 二维码可能取到 VPN 地址。
 - 验证：typecheck 0 error、build 双入口通过；bot 1747 m / 21 转弯 0 console error；键盘、复活、结算、单次入账均实测；GPU 审计 geometries 451→4202（1.2 km），已记录为待办。
+
+2026-10-26（GPU 对象池 + GitHub Pages）：
+- 瓦片按地形、路口按方向做共享原型，实例只 clone；障碍/金币/宝石/道具按 kind 池化，移除时回收。`resetWorld` 同时摘除旧场景对象与旧 runner/chaser 实体。
+- GPU 审计：修前 1.2 km `geometries` 451→4202；修后 2.3 km 109→484，`textures` 10→12，draw calls 210→252。
+- 为 Pages 准备：legacy.html/style.css/动态图标改相对路径；QrCard 用当前页面目录而不是 origin，保留 `/temple-run/` 子路径；静态构建在本地 `/temple-run/` 子路径下验证 0 404。
+- 部署：GitHub Pages 已启用，源为 `gh-pages` 分支；`tools/deploy-pages.sh` 构建后 force-push。线上 <https://malcolmyu.github.io/temple-run/> 与 `/legacy.html` 均 200，实跑 v2 无 console error。
+- 备注：GitHub Actions 的 `npm ci` 在当前 runner 上安装失败（本地 npm ci 正常），因此改为本地预构建 + gh-pages 分支部署，未保留会失败的 Pages workflow。

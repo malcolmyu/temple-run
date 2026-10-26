@@ -25,6 +25,17 @@ npm run temple:dev -- --port 5173
 npm run temple:build   # 产物在 target/temple-run/dist
 ```
 
+## 在线版
+
+- v2（TypeScript + ECS + Vue）：<https://malcolmyu.github.io/temple-run/>
+- 旧版对照：<https://malcolmyu.github.io/temple-run/legacy.html>
+
+GitHub Pages 使用 `gh-pages` 分支（Deploy from a branch）。重新发布：
+
+```bash
+tools/deploy-pages.sh   # 构建后 force-push 到 gh-pages
+```
+
 ## 操作
 
 | 输入 | 动作 |

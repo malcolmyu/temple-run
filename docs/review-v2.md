@@ -3,6 +3,7 @@
 - 日期：2026-10-26
 - 范围：`target/temple-run/web/src`（TypeScript + ECS + Vue 重构版 `index.html`），以 `legacy.html`（`src/main.js`）为行为基线
 - 方法：静态对照旧版逻辑、`vue-tsc` 严格模式、无头 Chrome 实跑、`window.__templeGame` 驱动的确定性 bot（150 ms/步，自动转弯/跳跃/滑铲/窄路换道）
+- 在线验收：<https://malcolmyu.github.io/temple-run/>（旧版 `/legacy.html`）
 - 结论：功能覆盖已经接近旧版，但“状态机、ECS 时钟、资源生命周期”三类基础问题会直接破坏一局游戏。本轮修复了 9 个 P0/P1 和 2 个 P2；剩余的存档迁移、数值/手感差异与死亡表现归入 P2/P3。
 
 ## 已修复
