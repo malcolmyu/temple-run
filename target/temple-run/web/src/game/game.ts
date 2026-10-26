@@ -398,15 +398,14 @@ export class Game {
     this.wingsGroup.clear();
     this.wingSprites = [];
     if (!texture) return;
-    for (const side of [-1, 1] as const) {
-      const material = new THREE.SpriteMaterial({ map: texture, color: 0x8fc6ff, transparent: true, opacity: 0.92, depthWrite: false });
-      const wing = new THREE.Sprite(material);
-      wing.scale.set(1.15, 1.55, 1);
-      wing.position.set(side * 0.62, 1.6, 0.34);
-      wing.renderOrder = 3;
-      this.wingSprites.push(wing);
-      this.wingsGroup.add(wing);
-    }
+    // wings.png is one complete pair, not a single wing; use one billboard behind the runner.
+    const material = new THREE.SpriteMaterial({ map: texture, transparent: true, opacity: 0.9, depthWrite: false });
+    const wing = new THREE.Sprite(material);
+    wing.scale.set(2.0, 1.25, 1);
+    wing.position.set(0, 1.7, 0.36);
+    wing.renderOrder = 3;
+    this.wingSprites.push(wing);
+    this.wingsGroup.add(wing);
     this.wingsGroup.visible = false;
     this.runnerGroup.add(this.wingsGroup);
   }
@@ -1192,10 +1191,10 @@ export class Game {
     const wingsOn = shield.kind === 'shield' && this.world.elapsed < shield.until;
     this.wingsGroup.visible = wingsOn;
     if (wingsOn) {
-      const flap = Math.sin(this.world.elapsed * 9) * 0.12;
-      this.wingSprites.forEach((wing, i) => {
-        wing.scale.y = 1.55 + flap;
-        wing.rotation.z = (i === 0 ? -1 : 1) * (0.12 + flap * 0.4);
+      const flap = Math.sin(this.world.elapsed * 9) * 0.08;
+      this.wingSprites.forEach((wing) => {
+        wing.scale.y = 1.25 + flap;
+        wing.rotation.z = flap * 0.3;
       });
     }
     if (this.runnerRig) {

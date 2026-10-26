@@ -1514,3 +1514,8 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 加载 ui/wings.png，作为 shield 道具激活时的角色翼特效；复位/换皮肤后重新挂载，避免 resetWorld 清掉。
 - 视频里的永久翼是 mod 效果，不照搬；护盾翼既补视觉又不改机制。
 - 新增 debug power(kind) 便于验收护盾视觉。
+
+2026-10-26（短窄路 + 护盾翼单张修正）：
+- 新增 NarrowSmall：每 12 tile 一次、1 tile 长的单车道半边路，复用同一坠落/预警逻辑。
+- 护盾翼改为单张完整翼对 billboard（wings.png 是一对翅膀，之前挂两张会变四翼）。
+- 文档同步短窄路状态；T 路口完整侧分支仍是唯一 pending 的轨道玩法。

@@ -62,6 +62,18 @@ export interface NarrowSection {
 export function narrowAt(distance: number, path?: TrackPath): NarrowSection | null {
   const index = tileIndex(distance);
   if (index < 8) return null;
+  // Short narrow (NarrowSmall): a single 12 m tile every 12 tiles. It uses the same
+  // one-lane fall rule but ends before the player has time to relax.
+  const short = ((index % 12) + 12) % 12;
+  if (short === 6) {
+    const from = index * TILE - 9;
+    const to = from + TILE;
+    if (isBridgeTile(from + 1, path) || isHallTile(from + 1, path) || isAnniversaryTile(from + 1, path)) return null;
+    if (path?.nearTurn(from, 18) || path?.nearTurn(to, 18)) return null;
+    const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
+    const safe = side === 'left' ? [0] : [2];
+    return { from, to, side, safe, startIdx: index };
+  }
   const phase = ((index % 8) + 8) % 8;
   if (phase >= 3) return null;
   const startIdx = index - phase;

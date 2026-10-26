@@ -25,7 +25,7 @@ track-tile prefab 按 path 节点程序化拼接，因此“场景”= 地形主
 | 90° 弯 | `templeTurnA-D`, `plankTurnA-D`, `cliffTurnA-D` | 路口按方向转弯 |
 | T 路口 | `templeTLeft/TRight/TUp/TDown`（plank/cliff 同） | 分叉/汇入，原版用侧路径扩展 |
 | 长窄路 | `templeStraightNarrowLongLeft/Right/Up/Down`（含 A/B） | 只剩半边路，必须移到存活侧，否则坠崖 |
-| 短窄路 | `templeStraightNarrowSmallLeft/Right/Up/Down` | 短距离收窄/矮墙 |
+| 短窄路 | `templeStraightNarrowSmallLeft/Right/Up/Down` | 短距离收窄/矮墙 | 已接入 1 tile 短半边路 |
 | 短坑 | `templeStraightHoleHorz/Vert` | 跳过 |
 | 长坑 A/B | `templeStraightHoleLongA/BHorz/Vert` | 更宽的坑 | 已接入 gapLong |
 | 火塔 | `templeStraightFlameTowerHighHorz/Vert` | 两侧火盆，中间可穿过（不用跳） |
@@ -58,7 +58,8 @@ track-tile prefab 按 path 节点程序化拼接，因此“场景”= 地形主
 - ⏳ T 路口分叉：当前仍是 90° 弯 + 侧向装饰，没有可选的完整侧分支路径；原版 `templeT*` 资源已导出，可继续做。
 - ✅ 长坑 A/B 已接入 `gapLong`（原版 `pit-long-a/b`）。
 - ✅ 树根绊倒已接入 `trip`（原版 `tree-trip-left`）。
-- ⏳ 短窄路（`narrow-beam`）、T 路口完整侧分支：资源已导出，生成器尚未全部接入。
+- ✅ 短窄路已接入 1 tile 短半边路（每 12 tile 一次）。
+- ⏳ T 路口完整侧分支：资源已导出，生成器尚未接入。
 
 ## 5. 后续优先级
 
