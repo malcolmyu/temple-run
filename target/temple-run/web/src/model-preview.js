@@ -4,7 +4,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0x647869);scene.f
 const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,180);camera.position.set(0,8,18);camera.lookAt(0,1,-15);
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);document.body.append(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0x6d604c,3));const sun=new THREE.DirectionalLight(0xffe2a7,3);sun.position.set(-12,20,8);scene.add(sun);
-const texture=window.texture=new THREE.TextureLoader().load('/assets/apk/wallTexture.png');texture.colorSpace=THREE.SRGBColorSpace;
+const texture=window.texture=new THREE.TextureLoader().load('/assets/apk/wallTexture.webp');texture.colorSpace=THREE.SRGBColorSpace;
 new OBJLoader().load('/assets/apk/temple-straight-vert.obj',mesh=>{
  mesh.traverse(p=>{if(p.isMesh)p.material=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})});
  mesh.position.set(-559.952209,-1335.349731,30);

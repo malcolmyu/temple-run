@@ -15,7 +15,7 @@ document.body.append(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff, 0x6d604c, 2.6));
 const sun = new THREE.DirectionalLight(0xffe2a7, 2.6); sun.position.set(-14, 30, 16); scene.add(sun);
 scene.add(new THREE.GridHelper(120, 60, 0x6b8f74, 0x35503f));
-const tex = new THREE.TextureLoader().load('/assets/apk/wallTexture.png'); tex.colorSpace = THREE.SRGBColorSpace;
+const tex = new THREE.TextureLoader().load('/assets/apk/wallTexture.webp'); tex.colorSpace = THREE.SRGBColorSpace;
 const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: .95, side: THREE.DoubleSide });
 const loader = new OBJLoader();
 const stats = {};

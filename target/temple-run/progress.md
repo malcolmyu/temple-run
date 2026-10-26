@@ -1484,3 +1484,8 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 性能：移动端 DPR 上限 1.5、关闭 AA/阴影、按 FPS 自适应降低 DPR；移除每片 hall 瓦片的 PointLight；移除每帧对所有存活瓦片重算 `path.at`；瓦片/路口/障碍/拾取物按材质合并静态网格；保留共享原型与对象池。
 - 实测（390×844 模拟 / M4）：FPS 56→60，draw calls 峰值 410→179；2.3 km geometries 109→484。
 - CI：lockfile 中 65 条 `resolved` 从内网 `npm.corp.kuaishou.com` 改写为 `registry.npmjs.org`，GitHub Actions 的 `npm ci` 恢复；`ci.yml` 执行 typecheck + build 并已变绿（Node 20 + npm 10.8.2）。
+
+2026-10-26（继续优化）：瓦片实例池 + 启动纹理 WebP。
+- 瓦片不再每 12 m `clone(true)`：按 `terrain/gate/narrow` 组合池化，所有移除路径（越过 / 跨路口 / reset / jumpTo）都回池，Object3D 树复用。
+- 启动纹理 `wallTexture` / `treeTexture` / `leafTexture` / `enemyTexture` 转 WebP（q88-90），3.8 MB → 1.0 MB；v2、legacy、调试页引用同步，构建产物 51 MB → 48 MB。
+- 复核：FPS 60，draw calls 峰值约 179；转弯/门/窄路截图正常，0 console error。

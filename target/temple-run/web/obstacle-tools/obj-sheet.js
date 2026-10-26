@@ -19,8 +19,8 @@ renderer.setScissorTest(true);
 document.body.appendChild(renderer.domElement);
 
 const texLoader = new THREE.TextureLoader();
-const texWall = texLoader.load('/assets/apk/wallTexture.png');
-const texTree = texLoader.load('/assets/apk/treeTexture.png');
+const texWall = texLoader.load('/assets/apk/wallTexture.webp');
+const texTree = texLoader.load('/assets/apk/treeTexture.webp');
 texTree.colorSpace = THREE.SRGBColorSpace;
 
 const objLoader = new OBJLoader();

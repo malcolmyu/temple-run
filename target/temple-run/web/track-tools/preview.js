@@ -49,9 +49,9 @@ scene.add(grid);
 
 // ---------------------------------------------------------------------------
 const texLoader = new THREE.TextureLoader();
-const wallTex = texLoader.load('/assets/apk/wallTexture.png');
+const wallTex = texLoader.load('/assets/apk/wallTexture.webp');
 wallTex.colorSpace = THREE.SRGBColorSpace;
-const treeTex = texLoader.load('/assets/apk/treeTexture.png');
+const treeTex = texLoader.load('/assets/apk/treeTexture.webp');
 treeTex.colorSpace = THREE.SRGBColorSpace;
 
 const matWall = new THREE.MeshLambertMaterial({ map: wallTex, side: THREE.DoubleSide });

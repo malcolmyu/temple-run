@@ -115,9 +115,9 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   scene.add(ground);
 
   const [wall, tree, leaf, flame, spark, coinFace] = await Promise.all([
-    loadTexture(asset('wallTexture.png')),
-    loadTexture(asset('treeTexture.png')),
-    loadTexture(asset('leafTexture.png')),
+    loadTexture(asset('wallTexture.webp')),
+    loadTexture(asset('treeTexture.webp')),
+    loadTexture(asset('leafTexture.webp')),
     loadTexture(`${BASE}assets/ui/fx-flame.png`),
     loadTexture(`${BASE}assets/ui/fx-spark.png`),
     loadTexture(`${BASE}assets/ui/coin-face.png`),
@@ -158,7 +158,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadObj(`${BASE}assets/track/decor-tree-a.obj`),
     loadObj(`${BASE}assets/track/track-gate-a.obj`),
     loadObj(asset('mesh-96-enemy.obj')),
-    loadTexture(asset('texture-53-enemyTexture.png')).catch(() => null),
+    loadTexture(asset('texture-53-enemyTexture.webp')).catch(() => null),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;

@@ -28,8 +28,8 @@ const key = new THREE.DirectionalLight(0xfff2d0, 1.5); key.position.set(0.5, 0.8
 const fill = new THREE.DirectionalLight(0x9fb8d0, 0.55); fill.position.set(-1, -0.4, 0.6); scene.add(fill);
 
 const tl = new THREE.TextureLoader();
-const texWall = tl.load('/assets/apk/wallTexture.png');
-const texTree = tl.load('/assets/apk/treeTexture.png');
+const texWall = tl.load('/assets/apk/wallTexture.webp');
+const texTree = tl.load('/assets/apk/treeTexture.webp');
 for (const t of [texWall, texTree]) { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.wrapS = t.wrapT = THREE.RepeatWrapping; }
 texTree.premultiplyAlpha = false;
 

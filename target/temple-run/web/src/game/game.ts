@@ -76,6 +76,7 @@ export class Game {
   // Shared prototypes and pools: an endless runner must not allocate new GPU geometry per
   // tile/coin/obstacle. Clones share geometry and materials; only instances are created.
   private tilePrototypes = new Map<TerrainKind, THREE.Group>();
+  private tilePools = new Map<string, THREE.Group[]>();
   private narrowOverlays = new Map<string, THREE.Group>();
   private junctionPrototypes = new Map<1 | -1, THREE.Group>();
   private obstaclePools = new Map<ObstacleKind, THREE.Object3D[]>();
@@ -237,7 +238,7 @@ export class Game {
     const pickup = this.world.get(entity, Pickup);
     if (pickup?.object) this.releasePickup(pickup.kind, pickup.object);
     const tile = this.world.get(entity, Tile);
-    if (tile?.object) this.bundle.scene.remove(tile.object);
+    if (tile?.object) this.releaseTile(tile.object);
     this.world.destroyEntity(entity);
   }
 
@@ -621,15 +622,28 @@ export class Game {
     for (const [index, entity] of [...this.tiles]) {
       const tile = this.world.require(entity, Tile);
       if (tile.distance > this.distance + 4) {
-        if (tile.object) this.bundle.scene.remove(tile.object);
+        if (tile.object) this.releaseTile(tile.object);
         this.world.destroyEntity(entity);
         this.tiles.delete(index);
       }
     }
   }
 
-  /** Clone a cached 12 m tile prototype; mesh geometry/materials are shared, not rebuilt. */
+  /**
+   * Reuse a pooled 12 m tile instance when possible. The prototype / merged geometry is
+   * shared; the pool avoids recreating the Object3D tree every 12 m (a steady GC stutter).
+   */
   private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null): THREE.Group {
+    const firstTile = narrow ? index === Math.floor((narrow.from + 9) / TILE) : false;
+    const gate = Boolean(this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple');
+    const narrowKey = narrow ? `${narrow.keep}:${firstTile ? 1 : 0}` : 'none';
+    const key = `${terrain}:${gate ? 1 : 0}:${narrowKey}`;
+    const pooled = this.tilePools.get(key)?.pop();
+    if (pooled) {
+      pooled.visible = true;
+      pooled.userData.tileIndex = index;
+      return pooled;
+    }
     let prototype = this.tilePrototypes.get(terrain);
     if (!prototype) {
       prototype = buildTile(this.bundle.assets, -1, 0, terrain, null);
@@ -639,25 +653,34 @@ export class Game {
     const group = prototype.clone(true);
     group.userData.tileIndex = index;
     group.userData.terrain = terrain;
-    if (this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple') {
-      const gate = this.bundle.assets.gate.clone(true);
-      gate.scale.setScalar(0.2);
-      gate.position.set(0, 0, -TILE / 2);
-      gate.rotation.y = Math.PI;
-      group.add(gate);
+    group.userData.poolKey = key;
+    if (gate && this.bundle.assets.gate) {
+      const gateGroup = this.bundle.assets.gate.clone(true);
+      gateGroup.scale.setScalar(0.2);
+      gateGroup.position.set(0, 0, -TILE / 2);
+      gateGroup.rotation.y = Math.PI;
+      group.add(gateGroup);
     }
     if (narrow) {
-      const firstTile = index === Math.floor((narrow.from + 9) / TILE);
-      const key = `${narrow.keep}:${firstTile ? 1 : 0}`;
-      let overlay = this.narrowOverlays.get(key);
+      const overlayKey = `${narrow.keep}:${firstTile ? 1 : 0}`;
+      let overlay = this.narrowOverlays.get(overlayKey);
       if (!overlay) {
         overlay = new THREE.Group();
         buildNarrowOverlay(this.bundle.assets, overlay, narrow.keep, firstTile);
-        this.narrowOverlays.set(key, overlay);
+        this.narrowOverlays.set(overlayKey, overlay);
       }
       group.add(overlay.clone(true));
     }
     return group;
+  }
+
+  private releaseTile(object: THREE.Object3D): void {
+    this.bundle.scene.remove(object);
+    const key = typeof object.userData.poolKey === 'string' ? object.userData.poolKey : null;
+    if (!key) return;
+    const pool = this.tilePools.get(key) ?? [];
+    pool.push(object as THREE.Group);
+    this.tilePools.set(key, pool);
   }
 
   /** Clone a cached junction; pad, walls, torches and arrows share their GPU resources. */
@@ -726,7 +749,7 @@ export class Game {
         const stale = this.tiles.get(index);
         if (stale) {
           const tile = this.world.require(stale, Tile);
-          if (tile.object) this.bundle.scene.remove(tile.object);
+          if (tile.object) this.releaseTile(tile.object);
           this.world.destroyEntity(stale);
           this.tiles.delete(index);
         }
@@ -748,7 +771,7 @@ export class Game {
     for (const [index, entity] of [...this.tiles]) {
       const tile = this.world.require(entity, Tile);
       if (tile.distance < this.distance - 40) {
-        if (tile.object) this.bundle.scene.remove(tile.object);
+        if (tile.object) this.releaseTile(tile.object);
         this.world.destroyEntity(entity);
         this.tiles.delete(index);
       }

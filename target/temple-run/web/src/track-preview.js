@@ -14,7 +14,7 @@ scene.add(new THREE.HemisphereLight(0xffffff, 0x6d604c, 2.4));
 const sun = new THREE.DirectionalLight(0xffe2a7, 2.9); sun.position.set(-12, 24, 10); scene.add(sun);
 const fill = new THREE.DirectionalLight(0xbfd8c0, 1.1); fill.position.set(14, 10, -18); scene.add(fill);
 scene.add(new THREE.GridHelper(60, 30, 0x6b8f74, 0x35503f));
-const texture = new THREE.TextureLoader().load('/assets/apk/wallTexture.png');
+const texture = new THREE.TextureLoader().load('/assets/apk/wallTexture.webp');
 texture.colorSpace = THREE.SRGBColorSpace;
 const mat = new THREE.MeshStandardMaterial({ map: texture, roughness: .95, metalness: 0, side: THREE.DoubleSide });
 new OBJLoader().load('/assets/track/temple-road-tile.obj', (obj) => {

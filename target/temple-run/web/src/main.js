@@ -67,15 +67,15 @@ const mats = {
 };
 const textureLoader=new THREE.TextureLoader();
 // Mossy foliage crop from the original tree atlas, used to break up the flat-green canopy blobs.
-const leafAtlas=textureLoader.load(asset('leafTexture.png'));leafAtlas.colorSpace=THREE.SRGBColorSpace;
+const leafAtlas=textureLoader.load(asset('leafTexture.webp'));leafAtlas.colorSpace=THREE.SRGBColorSpace;
 leafAtlas.wrapS=leafAtlas.wrapT=THREE.RepeatWrapping;leafAtlas.repeat.set(1.6,1.6);
 mats.leaf.map=leafAtlas;mats.leaf.color.set(0x86a877);mats.leaf.emissive=new THREE.Color(0x1c2e1a);mats.leaf.emissiveIntensity=.55;mats.leaf.needsUpdate=true;
 mats.darkLeaf.map=leafAtlas;mats.darkLeaf.color.set(0x4d6f52);mats.darkLeaf.emissive=new THREE.Color(0x14241a);mats.darkLeaf.emissiveIntensity=.6;mats.darkLeaf.needsUpdate=true;
 // Faceted canopy clumps read as leaves rather than smooth green balloons.
 for(const m of [mats.leaf,mats.darkLeaf]){m.flatShading=true;m.needsUpdate=true}
-const roadAtlas=textureLoader.load(asset('wallTexture.png'));roadAtlas.colorSpace=THREE.SRGBColorSpace;
+const roadAtlas=textureLoader.load(asset('wallTexture.webp'));roadAtlas.colorSpace=THREE.SRGBColorSpace;
 roadAtlas.offset.set(0,.755);roadAtlas.repeat.set(.5,.235);
-const wallStoneAtlas=textureLoader.load(asset('wallTexture.png'));wallStoneAtlas.colorSpace=THREE.SRGBColorSpace;
+const wallStoneAtlas=textureLoader.load(asset('wallTexture.webp'));wallStoneAtlas.colorSpace=THREE.SRGBColorSpace;
 wallStoneAtlas.offset.set(.5,.755);wallStoneAtlas.repeat.set(.24,.235);
 const roadTextureMat=material(0xffffff,{map:roadAtlas,side:THREE.DoubleSide});
 const ancientStone=material(0xe3d6b7,{map:wallStoneAtlas});
@@ -85,7 +85,7 @@ let pavementTexture=null;
 function updatePavementRepeat(){if(pavementTexture)pavementTexture.repeat.set(8.4/4,8.4/12);}
 const junctionWallMat=material(0xa89b80,{side:THREE.DoubleSide});
 // Crop one brick cell out of the original wallTexture atlas and tile it (avoids atlas wrap bleeding).
-new THREE.TextureLoader().load(asset('wallTexture.png'),tex=>{
+new THREE.TextureLoader().load(asset('wallTexture.webp'),tex=>{
   const brickCanvas=document.createElement('canvas');brickCanvas.width=brickCanvas.height=256;
   brickCanvas.getContext('2d').drawImage(tex.image,256,0,256,256,0,0,256,256);
   const map=new THREE.CanvasTexture(brickCanvas);
@@ -103,18 +103,18 @@ new THREE.TextureLoader().load(asset('wallTexture.png'),tex=>{
   junctionPavingMat.map=paveMap;junctionPavingMat.needsUpdate=true;
   if(typeof updatePavementRepeat==='function')updatePavementRepeat();
 },undefined,()=>{});
-const barkAtlas=textureLoader.load(asset('treeTexture.png'));barkAtlas.colorSpace=THREE.SRGBColorSpace;
+const barkAtlas=textureLoader.load(asset('treeTexture.webp'));barkAtlas.colorSpace=THREE.SRGBColorSpace;
 barkAtlas.offset.set(.72,.53);barkAtlas.repeat.set(.25,.45);
 const originalBark=material(0xc6b597,{map:barkAtlas});
 // Original road tile extracted from the APK scene (8 x 12 units, baked Y-up, top at y=0).
-const roadTileTexture=textureLoader.load(asset('wallTexture.png'));roadTileTexture.colorSpace=THREE.SRGBColorSpace;
+const roadTileTexture=textureLoader.load(asset('wallTexture.webp'));roadTileTexture.colorSpace=THREE.SRGBColorSpace;
 const roadTileMat=material(0xfff0d8,{map:roadTileTexture,side:THREE.DoubleSide,emissive:0x3a2c15,emissiveIntensity:.5});
 const ROAD_TILE_LIFT=1.36; // baked tile top (=parapet rim) is 1.38 above the paving plane
 let roadTileTemplate=null;
-const obstacleStoneAtlas=textureLoader.load(asset('wallTexture.png'));obstacleStoneAtlas.colorSpace=THREE.SRGBColorSpace;
+const obstacleStoneAtlas=textureLoader.load(asset('wallTexture.webp'));obstacleStoneAtlas.colorSpace=THREE.SRGBColorSpace;
 obstacleStoneAtlas.offset.set(.25,.5);obstacleStoneAtlas.repeat.set(.5,.5);
 const obstacleStone=material(0xd8c8a8,{map:obstacleStoneAtlas});
-const obstacleWoodAtlas=textureLoader.load(asset('treeTexture.png'));obstacleWoodAtlas.colorSpace=THREE.SRGBColorSpace;
+const obstacleWoodAtlas=textureLoader.load(asset('treeTexture.webp'));obstacleWoodAtlas.colorSpace=THREE.SRGBColorSpace;
 obstacleWoodAtlas.offset.set(.72,.53);obstacleWoodAtlas.repeat.set(.5,.5);
 const obstacleWood=material(0xc9b795,{map:obstacleWoodAtlas});
 const fireCore=material(0xffd894,{emissive:0xffa62a,emissiveIntensity:1.1,transparent:true,opacity:.72,depthWrite:false});
@@ -203,9 +203,9 @@ function updateSparks(dt){
     p.sp.material.opacity=Math.max(0,p.life/p.max)*.95;
   }
 }
-const facadeTexture=textureLoader.load(asset('wallTexture.png'));facadeTexture.colorSpace=THREE.SRGBColorSpace;
+const facadeTexture=textureLoader.load(asset('wallTexture.webp'));facadeTexture.colorSpace=THREE.SRGBColorSpace;
 const facadeMat=new THREE.MeshStandardMaterial({map:facadeTexture,color:0xe8d4b2,side:THREE.DoubleSide,roughness:.95,metalness:0,emissive:0x3a2f1e,emissiveIntensity:.6});
-const treeTexture=textureLoader.load(asset('treeTexture.png'));treeTexture.colorSpace=THREE.SRGBColorSpace;
+const treeTexture=textureLoader.load(asset('treeTexture.webp'));treeTexture.colorSpace=THREE.SRGBColorSpace;
 const treeMat=new THREE.MeshStandardMaterial({color:0x26331f,side:THREE.DoubleSide,roughness:.98,metalness:0,emissive:0x0d1409,emissiveIntensity:.6});
 const rockMat=new THREE.MeshStandardMaterial({map:treeTexture,color:0x5b4a35,side:THREE.DoubleSide,roughness:.95,metalness:0});
 let treeTemplate=null,rockTemplate=null;
@@ -891,7 +891,7 @@ function refreshRoadSurface(){
   });
 }
 refreshRoadSurface();
-const floorWater=textureLoader.load(asset('leafTexture.png'));floorWater.colorSpace=THREE.SRGBColorSpace;
+const floorWater=textureLoader.load(asset('leafTexture.webp'));floorWater.colorSpace=THREE.SRGBColorSpace;
 floorWater.wrapS=floorWater.wrapT=THREE.RepeatWrapping;floorWater.repeat.set(22,20);
 const undergrowth=mesh(scene,geo.box,new THREE.MeshStandardMaterial({map:floorWater,color:0x27564b,roughness:.42,metalness:.12}),0,-2,-60,190,2,180);undergrowth.receiveShadow=true;
 const junction=new THREE.Group();junction.visible=false;scene.add(junction);
@@ -1088,7 +1088,7 @@ for(const side of [-1,1]){
   mesh(enemyFallback,geo.sphere,mats.fire,side*.65+.15,2.12,.23,.07,.08,.04);
 }
 new OBJLoader().load(asset('mesh-96-enemy.obj'),model=>{
-  const tex=textureLoader.load(asset('texture-53-enemyTexture.png'));tex.colorSpace=THREE.SRGBColorSpace;tex.flipY=false;
+  const tex=textureLoader.load(asset('texture-53-enemyTexture.webp'));tex.colorSpace=THREE.SRGBColorSpace;tex.flipY=false;
   model.traverse(part=>{if(part.isMesh){part.material=new THREE.MeshStandardMaterial({map:tex,color:0x9c7a66,emissiveMap:tex,emissive:0x8a5a3a,emissiveIntensity:.85,roughness:.95,side:THREE.DoubleSide});part.castShadow=true}});
   repairObjNormals(model);
   model.rotation.x=-Math.PI/2;model.scale.set(.085,.085,.12);

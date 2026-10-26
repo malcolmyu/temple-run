@@ -19,8 +19,8 @@ document.body.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0e1216);
 
-const texWall = new THREE.TextureLoader().load('/assets/apk/wallTexture.png', () => { window.__READY__ = true; });
-const texTree = new THREE.TextureLoader().load('/assets/apk/treeTexture.png');
+const texWall = new THREE.TextureLoader().load('/assets/apk/wallTexture.webp', () => { window.__READY__ = true; });
+const texTree = new THREE.TextureLoader().load('/assets/apk/treeTexture.webp');
 texTree.colorSpace = THREE.SRGBColorSpace;
 texWall.colorSpace = THREE.SRGBColorSpace;
 const matCache = new Map();

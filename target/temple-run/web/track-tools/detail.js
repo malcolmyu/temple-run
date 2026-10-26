@@ -15,8 +15,8 @@ document.body.appendChild(renderer.domElement);
 renderer.domElement.style.cssText = 'position:absolute;left:0;top:0';
 
 const tl = new THREE.TextureLoader();
-const texWall = tl.load('/assets/apk/wallTexture.png');
-const texTree = tl.load('/assets/apk/treeTexture.png');
+const texWall = tl.load('/assets/apk/wallTexture.webp');
+const texTree = tl.load('/assets/apk/treeTexture.webp');
 for (const t of [texWall, texTree]) { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; }
 const data = await fetch('/track-tools/mesh-data.json').then(r => r.json());
 const byName = new Map(data.map(d => [d.name, d]));
