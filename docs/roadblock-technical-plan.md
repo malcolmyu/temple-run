@@ -215,7 +215,7 @@ web/src/game/obstacles/
 
 ## 9. 实施进度
 
-- ✅ M1 catalog：`obstacles/catalog.ts`，23 个 OBJ 全部映射；8 个可玩定义 + 塔门 scenery + 4 个 narrow 边缘定义。
+- ✅ M1 catalog：`obstacles/catalog.ts`，23 个 OBJ 全部映射；8 个可玩定义 + 塔门 scenery + 4 个 narrow 边缘定义。23 个 OBJ 文件存在性已纳入自动测试。
 - ✅ M2 hitbox/resolver：`obstacles/collision.ts`，swept z + lane region + jump/slide/dodge；动作窗口按可玩性放宽。
 - ✅ M3 spawner：`obstacles/spawner.ts`，72 m 间距、双障碍 0、窄路只允许 jump/slide、seed RNG。
 - ✅ 自动验证：`npm run temple:test:spawner`，10,000 seed、23/23 OBJ、8 个可玩定义全部通过。

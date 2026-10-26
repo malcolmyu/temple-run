@@ -1549,3 +1549,7 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 新增 spawner.ts + rng.ts：72m 间距、双障碍 0、窄路只允许跳/滑、seed 可复现。
 - 新增 tools/test-obstacle-spawner.ts 和 npm run temple:test:spawner：10000 seed 通过，23/23 OBJ。
 - bot 2000m playing，0 console error。图结构 T/side path 仍 pending。
+
+2026-10-26（M1 完成）：
+- 23/23 OBJ 文件存在、23/23 ASSET_DEFS 映射、8 个可玩定义、所有 prefab 变体引用可解析。
+- `npm run temple:test:spawner` 输出 M1/M3 OK；typecheck/build 通过。
