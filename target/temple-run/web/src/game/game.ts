@@ -41,6 +41,7 @@ import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
 import { coinMultiplier, magnetBonusSeconds } from './upgrades';
+import { DOUBLE_OBSTACLE_CHANCE, MAX_COINS_PER_RUN, MIN_OBSTACLE_SPACING, MIN_TURN_SPACING } from './pathRules';
 import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById } from './skins';
 import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.js';
 import * as sfx from '../sfx.js';
@@ -541,7 +542,7 @@ export class Game {
       turn.cueShown = true;
       sfx.play('whoosh', { gain: 0.8 });
       // Coins arc through the corner so the turn reads clearly.
-      for (let i = 0; i < 6; i++) this.spawnCoin(1, turn.next - 5 + i * 2.2, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.4);
+      for (let i = 0; i < MAX_COINS_PER_RUN; i++) this.spawnCoin(1, turn.next - 5 + i * 2.2, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.4);
     }
     const remaining = Math.max(0, Math.ceil(turn.next - distance));
     mutateUi.turnDirection = turn.direction;
@@ -573,7 +574,7 @@ export class Game {
     turn.lastDirection = turn.direction;
     turn.lastTurnDistance = turn.next;
     turn.direction = 0;
-    const length = 60 + Math.floor(Math.random() * 4) * 12;
+    const length = MIN_TURN_SPACING + 12 + Math.floor(Math.random() * 3) * 12;
     turn.next = 9 + 12 * Math.max(1, Math.round((turn.next + length - 9) / 12));
     setHint('漂亮的转弯！');
     sfx.play('swish', { rate: 1.15 });
@@ -838,8 +839,8 @@ export class Game {
         // Single-lane stretch: everything stays on the surviving lane, height obstacles only.
         const kinds: ObstacleKind[] = ['hurdle', 'arch', 'fire'];
         this.spawnObstacle(kinds[Math.floor(Math.random() * kinds.length)], narrow.safe[Math.floor(Math.random() * narrow.safe.length)], base);
-        for (let i = 0; i < 6; i++) this.spawnCoin(narrow.safe[i % narrow.safe.length], base - 7 - i * 2.0, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.5);
-        this.nextSpawn += 26 + Math.random() * 8;
+        for (let i = 0; i < MAX_COINS_PER_RUN; i++) this.spawnCoin(narrow.safe[i % narrow.safe.length], base - 7 - i * 2.0, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.5);
+        this.nextSpawn += MIN_OBSTACLE_SPACING + Math.random() * 12;
         continue;
       }
       if (roll < 0.42) {
@@ -850,7 +851,7 @@ export class Game {
         const lane = Math.floor(Math.random() * 3);
         this.spawnObstacle('block', lane, base);
         const other = (lane + 1 + Math.floor(Math.random() * 2)) % 3;
-        if (Math.random() < 0.25) this.spawnObstacle('block', other, base + 8);
+        if (Math.random() < DOUBLE_OBSTACLE_CHANCE) this.spawnObstacle('block', other, base + 8);
       } else {
         const lane = Math.floor(Math.random() * 3);
         this.spawnObstacle('hurdle', lane, base);
@@ -858,9 +859,9 @@ export class Game {
       }
       // Coin line on a clear lane.
       const coinLane = Math.floor(Math.random() * 3);
-      for (let i = 0; i < 6; i++) this.spawnCoin(coinLane, base - 8 - i * 2.0, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.5);
+      for (let i = 0; i < MAX_COINS_PER_RUN; i++) this.spawnCoin(coinLane, base - 8 - i * 2.0, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.5);
       if (Math.random() > 0.86) this.spawnGem(Math.floor(Math.random() * 3), base + 24);
-      this.nextSpawn += 26 + Math.random() * 14;
+      this.nextSpawn += MIN_OBSTACLE_SPACING + Math.random() * 24;
     }
     while (this.nextPickup < this.distance + 90) {
       const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];

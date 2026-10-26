@@ -1531,3 +1531,10 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 半边路恢复半幅 2 lane 安全区（左 0/1、右 1/2），最外侧 lane 坠崖；提示 32 m。
 - 转弯区 26 m 清装饰、前后 42/32 m 无路障；速度上限 20、间距 26–40、双石墩 25%。
 - bot 验证：2011 m 仍在 playing，0 console error；此前 95/281 m 即死。
+
+2026-10-26（地图生成规则逆向 + 参数级严格对齐）：
+- 用 Il2CppDumper 还原 PathElement/GameController，Ghidra 反汇编关键方法；记录于 docs/map-generation-rules.md。
+- 恢复原版默认：sMinSpaceBetweenTurns=6、sMaxBackToBackObstacles=2、sMinSpaceBetweenObstacles=6、sDoubleObstaclePercent=0、sMinSpacesBetweenCoinRuns=6、sMaxCoinsPerRun=5、sMinSpacesBetweenBonusItems=50。
+- 新增 pathRules.ts：6 space=72m；转弯/障碍间距、金币 5 枚、双障碍关闭。
+- 首个转弯保留 57m；completeTurn 最小 84m；bot 1165m 0 error。
+- 图结构级（T 侧分支/真正 side path）明确 pending，需要 TrackPath 改图。
