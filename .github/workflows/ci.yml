@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        shell: bash
+        run: |
+          set +e
+          npm ci --no-audit --no-fund > /tmp/npm.log 2>&1
+          status=$?
+          if [ $status -ne 0 ]; then
+            message="$(tail -c 1500 /tmp/npm.log | tr '\n' ' ' | sed 's/%/%25/g')"
+            echo "::error title=npm-ci::$message"
+            exit $status
+          fi
+      - name: Typecheck
+        run: npm run temple:typecheck
+      - name: Build
+        run: npm run temple:build
