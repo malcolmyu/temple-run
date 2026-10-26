@@ -1509,3 +1509,8 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 相机更近更低（back 5.9 / y 4.75），角色占比接近参考视频；木桥主题从开局移到 12–15 tile，开局为石路。
 - 半边路收敛为单存活车道（左 0 / 右 2），提前 24m 预警；分帧记录见 docs/reference-video-notes.md。
 - 注意：视频为 mod，63×/永久翅膀不复制；翅膀只作为护盾/复活/稀有道具方向。
+
+2026-10-26（A 方向收尾：护盾翼）：
+- 加载 ui/wings.png，作为 shield 道具激活时的角色翼特效；复位/换皮肤后重新挂载，避免 resetWorld 清掉。
+- 视频里的永久翼是 mod 效果，不照搬；护盾翼既补视觉又不改机制。
+- 新增 debug power(kind) 便于验收护盾视觉。

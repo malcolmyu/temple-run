@@ -18,6 +18,7 @@ export interface Assets {
     flame: THREE.Texture;
     spark: THREE.Texture;
     coinFace: THREE.Texture;
+    wings: THREE.Texture | null;
   };
   material: Record<string, THREE.Material>;
   roadTile: THREE.Group | null;
@@ -117,13 +118,14 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   ground.position.y = -3.4;
   scene.add(ground);
 
-  const [wall, tree, leaf, flame, spark, coinFace] = await Promise.all([
+  const [wall, tree, leaf, flame, spark, coinFace, wingsTexture] = await Promise.all([
     loadTexture(asset('wallTexture.webp')),
     loadTexture(asset('treeTexture.webp')),
     loadTexture(asset('leafTexture.webp')),
     loadTexture(`${BASE}assets/ui/fx-flame.png`),
     loadTexture(`${BASE}assets/ui/fx-spark.png`),
     loadTexture(`${BASE}assets/ui/coin-face.png`),
+    loadTexture(`${BASE}assets/ui/wings.png`).catch(() => null),
   ]);
   leaf.wrapS = leaf.wrapT = THREE.RepeatWrapping;
 
@@ -242,7 +244,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     sky,
     material,
     assets: {
-      texture: { wall, tree, leaf, flame, spark, coinFace },
+      texture: { wall, tree, leaf, flame, spark, coinFace, wings: wingsTexture },
       material,
       roadTile: paint(roadTile, material.road, false),
       wall: paint(wallTemplate, material.facade, true),

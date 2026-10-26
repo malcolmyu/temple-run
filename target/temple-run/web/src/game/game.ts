@@ -69,6 +69,8 @@ export class Game {
   private chaserEntity: Entity = 0;
   private runnerRig: { setClip(name: string, restart?: boolean): void; update(dt: number, timeScale?: number): void; object: THREE.Object3D } | null = null;
   private runnerGroup = new THREE.Group();
+  private wingsGroup = new THREE.Group();
+  private wingSprites: THREE.Sprite[] = [];
   private chaserGroup = new THREE.Group();
   private rigToken = 0;
   private tiles = new Map<number, Entity>();
@@ -166,6 +168,11 @@ export class Game {
       },
       spawnObstacle: (kind: ObstacleKind, ahead = 16) => this.spawnObstacle(kind, Math.floor(Math.random() * 3), this.distance + ahead),
       advance: (ms: number) => this.advance(ms),
+      power: (kind: PickupKind) => {
+        const power = this.world.require(this.runnerEntity, Power);
+        power.kind = kind;
+        power.until = this.world.elapsed + 10;
+      },
       press: (action: Action) => this.input.push(action),
       setSkin: (id: string, force = false) => this.setSkin(id, force),
       skins: SKIN_IDS,
@@ -280,6 +287,7 @@ export class Game {
     }
     this.runnerGroup.clear();
     if (this.runnerRig) this.runnerGroup.add(this.runnerRig.object);
+    this.installWings();
     this.chaserGroup.clear();
     this.path.segments.length = 0;
     this.path.segments.push({ start: 0, end: Infinity, x: 0, z: 3, heading: 0 });
@@ -373,13 +381,34 @@ export class Game {
       normalizeRigHeight(rig, 2.55);
       this.runnerRig = rig;
       this.runnerGroup.add(rig.object);
+      this.installWings();
     } catch (error) {
       console.warn('runner rig unavailable, using proxy', error);
       const proxy = new THREE.Mesh(new THREE.CapsuleGeometry(0.35, 1.1, 4, 8), new THREE.MeshStandardMaterial({ color: 0xd6b388 }));
       proxy.position.y = 1.1;
       this.runnerGroup.add(proxy);
       this.runnerRig = null;
+      this.installWings();
     }
+  }
+
+  /** Blue wings are the visual for the shield power-up, not a permanent mod skin. */
+  private installWings(): void {
+    const texture = this.bundle.assets.texture.wings;
+    this.wingsGroup.clear();
+    this.wingSprites = [];
+    if (!texture) return;
+    for (const side of [-1, 1] as const) {
+      const material = new THREE.SpriteMaterial({ map: texture, color: 0x8fc6ff, transparent: true, opacity: 0.92, depthWrite: false });
+      const wing = new THREE.Sprite(material);
+      wing.scale.set(1.15, 1.55, 1);
+      wing.position.set(side * 0.62, 1.6, 0.34);
+      wing.renderOrder = 3;
+      this.wingSprites.push(wing);
+      this.wingsGroup.add(wing);
+    }
+    this.wingsGroup.visible = false;
+    this.runnerGroup.add(this.wingsGroup);
   }
 
   private startLoop(): void {
@@ -1159,6 +1188,16 @@ export class Game {
     this.runnerGroup.position.y = jump.y;
     const squash = slide.remaining > 0 ? 0.55 : 1;
     this.runnerGroup.scale.set(1, squash, 1);
+    const shield = this.world.require(this.runnerEntity, Power);
+    const wingsOn = shield.kind === 'shield' && this.world.elapsed < shield.until;
+    this.wingsGroup.visible = wingsOn;
+    if (wingsOn) {
+      const flap = Math.sin(this.world.elapsed * 9) * 0.12;
+      this.wingSprites.forEach((wing, i) => {
+        wing.scale.y = 1.55 + flap;
+        wing.rotation.z = (i === 0 ? -1 : 1) * (0.12 + flap * 0.4);
+      });
+    }
     if (this.runnerRig) {
       this.runnerRig.setClip(slide.remaining > 0 ? 'slide' : jump.y > 0 || jump.v > 0 ? 'jump' : 'run');
       this.runnerRig.update(dt, THREE.MathUtils.clamp(this.speed / RUN_SPEED, 0.65, 1.55));
