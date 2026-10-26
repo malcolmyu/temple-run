@@ -591,8 +591,21 @@ export class Game {
     const from = Math.floor((this.distance - 24) / TILE);
     const to = Math.floor((this.distance + 130) / TILE);
     for (let index = from; index <= to; index++) {
-      if (this.tiles.has(index)) continue;
       const distance = index * TILE;
+      // A 12 m tile that straddles a corner cannot be rotated to both headings: its walls
+      // cut across the other leg. Drop it and let the paved junction plaza fill the gap.
+      const crossesTurn = this.path.segments.some((segment, segmentIndex) => segmentIndex > 0 && Math.abs(segment.start - distance) < TILE / 2 - 0.01);
+      if (crossesTurn) {
+        const stale = this.tiles.get(index);
+        if (stale) {
+          const tile = this.world.require(stale, Tile);
+          if (tile.object) this.bundle.scene.remove(tile.object);
+          this.world.destroyEntity(stale);
+          this.tiles.delete(index);
+        }
+        continue;
+      }
+      if (this.tiles.has(index)) continue;
       const terrain = terrainAt(distance, this.path);
       const narrow = narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
       const group = buildTile(this.bundle.assets, index, distance, terrain, narrow);

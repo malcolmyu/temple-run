@@ -480,20 +480,20 @@ export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath
   const heading = path.at(Math.max(0, at - 0.05)).heading;
   group.position.set(point.x, 0, point.z);
   group.rotation.y = heading;
-  // One 9.6 m paving square covers the corner joint; a larger apron sits just underneath so
-  // any hairline between the 12 m road tiles and the pad shows paving instead of the gorge.
+  // The 12 m tile that straddles the turn is skipped, so one 12 m paving square covers the
+  // hole; a larger apron sits underneath so any hairline shows paving instead of the gorge.
   const pad = new THREE.Mesh(
-    new THREE.PlaneGeometry(9.6, 9.6),
-    new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 516, 6, 250, 2.4, 0.8), color: 0xb59c76, roughness: 0.96 }),
+    new THREE.PlaneGeometry(12, 12),
+    new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 516, 6, 250, 3, 1), color: 0xb59c76, roughness: 0.96 }),
   );
   pad.rotation.x = -Math.PI / 2;
   pad.position.y = -0.012;
   pad.receiveShadow = true;
   group.add(pad);
   const apron = new THREE.Mesh(
-    new THREE.PlaneGeometry(16, 16),
+    new THREE.PlaneGeometry(20, 20),
     new THREE.MeshStandardMaterial({
-      map: croppedTexture(assets.texture.wall, 516, 6, 250, 4, 1.34),
+      map: croppedTexture(assets.texture.wall, 516, 6, 250, 5, 1.67),
       color: 0x9e8f6e,
       roughness: 0.96,
       side: THREE.DoubleSide,

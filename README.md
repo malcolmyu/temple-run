@@ -38,13 +38,32 @@ npm run temple:build   # 产物在 target/temple-run/dist
 ## 仓库结构
 
 ```
-target/temple-run/      # 游戏本体（web 前端 + 分析脚本/素材清单）
-target/temple-run/web/  # 页面与源码：src/main.js、runnerRig.js、sfx.js、style.css
-target/temple-run/analysis/  # APK 逆向产物（rig json、贴图、清单、报告）
-apk/                    # 原版 temple-run.xapk（分片，见 apk/README.md）
-src/                    # 另一款小游戏「咩咩登峰」（Three.js 小羊登山）
-docs/screenshots/       # 截图
+target/temple-run/            # 游戏本体（web 前端 + 分析脚本/素材清单）
+target/temple-run/web/
+  index.html                  # v2 入口：TypeScript + ECS + Vue 3
+  legacy.html                 # 旧版入口：完整玩法对照（src/main.js）
+  src/main.ts                 # Vue 挂载
+  src/game/                   # TS + ECS：world / components / game / path / render / terrain
+  src/ui/                     # Vue SFC：HUD / 菜单 / 暂停 / 结算 / 商店 / 设置 / 二维码
+  src/main.js                 # 旧版游戏逻辑（legacy 入口）
+  src/runnerRig.js, sfx.js    # 两版共用：骨骼动画重定向、原版音效
+target/temple-run/analysis/   # APK 逆向产物（rig json、贴图、清单、报告）
+apk/                          # 原版 temple-run.xapk（分片，见 apk/README.md）
+src/                          # 另一款小游戏「咩咩登峰」（Three.js 小羊登山）
+docs/screenshots/             # 截图
 ```
+
+## v2 重构（TypeScript + ECS + Vue）
+
+默认入口 `web/index.html` 已切到重构版：Three.js 负责 3D 渲染，手写 ECS（组件 store + 显式系统调度）驱动玩法，Vue 3 渲染 HUD 与全部面板。旧版完整保留在 `legacy.html` 便于对照。
+
+```bash
+npm run temple:dev -- --port 5173   # / = v2，/legacy.html = 旧版
+npm run temple:typecheck            # vue-tsc 严格模式
+npm run temple:build                # 同时产出 index.html 与 legacy.html
+```
+
+v2 与旧版的主要差异：转弯路口改用预铺的 12 m 广场补缝（不再让跨路口的瓦片斜穿另一条路）、里程碑恢复原版 NICE JOB / HIGH SCORE 图、新增动态局域网二维码（开发服务器 `/__lan-url` 提供 LAN 地址）。逐项对照与已知差异见 [target/temple-run/README.md](target/temple-run/README.md)。
 
 ## 原版安装包
 
