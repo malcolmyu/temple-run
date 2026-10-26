@@ -16,24 +16,26 @@ function render(url: string): void {
 }
 
 onMounted(async () => {
+  // Keep the GitHub Pages subpath (/temple-run/) when building the fallback URL.
+  const pageBase = new URL('.', location.href).href;
   if (!['localhost', '127.0.0.1', '::1'].includes(location.hostname)) {
-    render(`${location.origin}/`);
+    render(pageBase);
     return;
   }
   // The desktop page is usually opened on localhost; ask the dev server for the LAN URL
   // so the QR can actually be scanned by a phone on the same Wi-Fi.
   try {
-    const response = await fetch('/__lan-url', { headers: { accept: 'application/json' } });
+    const response = await fetch(new URL('__lan-url', pageBase), { headers: { accept: 'application/json' } });
     const data = (await response.json()) as { url?: string | null };
     if (data.url) {
       render(data.url);
       return;
     }
   } catch {
-    // Static build or preview: fall through to the current origin.
+    // Static build or preview: fall through to the current page base.
   }
   note.value = '手机请把 localhost 换成电脑的局域网 IP';
-  render(`${location.origin}/`);
+  render(pageBase);
 });
 
 async function copy(): Promise<void> {

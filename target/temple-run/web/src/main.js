@@ -1946,7 +1946,7 @@ function dampAngle(current,target,lambda,dt){const delta=((target-current+Math.P
 function updateTurnCue(){
   if(turnDirection===0)return;
   const remain=Math.max(0,Math.ceil(nextTurn-distance));
-  $('turnArrow').src=turnDirection<0?'/assets/ui/arrow-left.png':'/assets/ui/arrow-right.png';
+  $('turnArrow').src=`${import.meta.env.BASE_URL}assets/ui/${turnDirection<0?'arrow-left':'arrow-right'}.png`;
   $('turnText').textContent=turnQueued?'转弯已确认':`${turnDirection<0?'前方左转':'前方右转'} · ${remain} m`;
   $('turnCue').classList.toggle('ready',turnQueued);
   // Big edge-of-screen arrow once the junction is close (extra clarity on phones).
@@ -1954,7 +1954,7 @@ function updateTurnCue(){
     const near=remain<=18;
     edge.classList.toggle('left',turnDirection<0);edge.classList.toggle('right',turnDirection>0);
     edge.classList.toggle('ready',turnQueued);edge.classList.toggle('hidden',!near);edge.classList.toggle('show',near);edge.classList.toggle('urgent',near&&!turnQueued&&remain<=6);
-    $('turnEdgeImg').src=turnDirection<0?'/assets/ui/arrow-left.png':'/assets/ui/arrow-right.png';
+    $('turnEdgeImg').src=`${import.meta.env.BASE_URL}assets/ui/${turnDirection<0?'arrow-left':'arrow-right'}.png`;
     $('turnEdgeTxt').textContent=turnQueued?'已确认':`${turnDirection<0?'左转':'右转'} · ${remain}m`;
   }
 }

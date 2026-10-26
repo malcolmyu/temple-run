@@ -366,7 +366,7 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
 }
 
 /** Collapsed lanes in a narrow section: black void, chipped lips, keep-lane arrows. */
-function buildNarrowOverlay(assets: Assets, group: THREE.Group, keep: number, firstTile: boolean): void {
+export function buildNarrowOverlay(assets: Assets, group: THREE.Group, keep: number, firstTile: boolean): void {
   for (const lane of [0, 1, 2]) {
     if (lane === keep) continue;
     const hole = new THREE.Mesh(new THREE.PlaneGeometry(1.35, TILE), assets.material.void);

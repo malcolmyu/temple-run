@@ -35,9 +35,9 @@ import {
   TURN_PREBUILD_DISTANCE,
   laneX,
 } from './config';
-import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, type Assets, type SceneBundle } from './render';
+import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
-import { narrowAt, terrainAt } from './terrain';
+import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
 import { coinMultiplier, magnetBonusSeconds } from './upgrades';
@@ -73,6 +73,13 @@ export class Game {
   private junctions = new Map<number, THREE.Group>();
   private obstacles: Entity[] = [];
   private pickups: Entity[] = [];
+  // Shared prototypes and pools: an endless runner must not allocate new GPU geometry per
+  // tile/coin/obstacle. Clones share geometry and materials; only instances are created.
+  private tilePrototypes = new Map<TerrainKind, THREE.Group>();
+  private narrowOverlays = new Map<string, THREE.Group>();
+  private junctionPrototypes = new Map<1 | -1, THREE.Group>();
+  private obstaclePools = new Map<ObstacleKind, THREE.Object3D[]>();
+  private pickupPools = new Map<PickupKind, THREE.Object3D[]>();
   private nextSpawn = 80;
   private nextPickup = 60;
   private deathTimer = 0;
@@ -222,9 +229,9 @@ export class Game {
   /** Remove an entity's 3D object from the scene before dropping the entity. */
   private removeEntityObject(entity: Entity): void {
     const obstacle = this.world.get(entity, Obstacle);
-    if (obstacle?.object) this.bundle.scene.remove(obstacle.object);
+    if (obstacle?.object) this.releaseObstacle(obstacle.kind, obstacle.object);
     const pickup = this.world.get(entity, Pickup);
-    if (pickup?.object) this.bundle.scene.remove(pickup.object);
+    if (pickup?.object) this.releasePickup(pickup.kind, pickup.object);
     const tile = this.world.get(entity, Tile);
     if (tile?.object) this.bundle.scene.remove(tile.object);
     this.world.destroyEntity(entity);
@@ -515,7 +522,7 @@ export class Game {
     const direction: 1 | -1 = Math.random() > 0.5 ? 1 : -1;
     turn.direction = direction;
     const segment = this.path.turn(turn.next, direction);
-    const junction = buildJunction(this.bundle.assets, direction, this.path, turn.next);
+    const junction = this.acquireJunction(direction, turn.next);
     this.bundle.scene.add(junction);
     this.junctions.set(turn.next, junction);
     // Terrain classification depends on the corner distance, so rebuild the road ahead.
@@ -617,6 +624,82 @@ export class Game {
     }
   }
 
+  /** Clone a cached 12 m tile prototype; mesh geometry/materials are shared, not rebuilt. */
+  private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null): THREE.Group {
+    let prototype = this.tilePrototypes.get(terrain);
+    if (!prototype) {
+      prototype = buildTile(this.bundle.assets, -1, 0, terrain, null);
+      this.tilePrototypes.set(terrain, prototype);
+    }
+    const group = prototype.clone(true);
+    group.userData.tileIndex = index;
+    group.userData.terrain = terrain;
+    if (this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple') {
+      const gate = this.bundle.assets.gate.clone(true);
+      gate.scale.setScalar(0.2);
+      gate.position.set(0, 0, -TILE / 2);
+      gate.rotation.y = Math.PI;
+      group.add(gate);
+    }
+    if (narrow) {
+      const firstTile = index === Math.floor((narrow.from + 9) / TILE);
+      const key = `${narrow.keep}:${firstTile ? 1 : 0}`;
+      let overlay = this.narrowOverlays.get(key);
+      if (!overlay) {
+        overlay = new THREE.Group();
+        buildNarrowOverlay(this.bundle.assets, overlay, narrow.keep, firstTile);
+        this.narrowOverlays.set(key, overlay);
+      }
+      group.add(overlay.clone(true));
+    }
+    return group;
+  }
+
+  /** Clone a cached junction; pad, walls, torches and arrows share their GPU resources. */
+  private acquireJunction(direction: 1 | -1, at: number): THREE.Group {
+    let prototype = this.junctionPrototypes.get(direction);
+    if (!prototype) {
+      prototype = buildJunction(this.bundle.assets, direction, new TrackPath(), 0);
+      this.junctionPrototypes.set(direction, prototype);
+    }
+    const group = prototype.clone(true);
+    const point = this.path.at(at);
+    const heading = this.path.at(Math.max(0, at - 0.05)).heading;
+    group.position.set(point.x, 0, point.z);
+    group.rotation.y = heading;
+    return group;
+  }
+
+  private acquireObstacle(kind: ObstacleKind): THREE.Object3D {
+    const pool = this.obstaclePools.get(kind);
+    const object = pool?.pop() ?? buildObstacle(this.bundle.assets, kind);
+    object.visible = true;
+    this.bundle.scene.add(object);
+    return object;
+  }
+
+  private releaseObstacle(kind: ObstacleKind, object: THREE.Object3D): void {
+    this.bundle.scene.remove(object);
+    const pool = this.obstaclePools.get(kind) ?? [];
+    pool.push(object);
+    this.obstaclePools.set(kind, pool);
+  }
+
+  private acquirePickup(kind: PickupKind): THREE.Object3D {
+    const pool = this.pickupPools.get(kind);
+    const object = pool?.pop() ?? (kind === 'coin' ? buildCoin(this.bundle.assets) : kind === 'gem' ? buildGem() : buildPower(kind));
+    object.visible = true;
+    this.bundle.scene.add(object);
+    return object;
+  }
+
+  private releasePickup(kind: PickupKind, object: THREE.Object3D): void {
+    this.bundle.scene.remove(object);
+    const pool = this.pickupPools.get(kind) ?? [];
+    pool.push(object);
+    this.pickupPools.set(kind, pool);
+  }
+
   private ensureTiles(): void {
     const from = Math.floor((this.distance - 24) / TILE);
     const to = Math.floor((this.distance + 130) / TILE);
@@ -638,7 +721,7 @@ export class Game {
       if (this.tiles.has(index)) continue;
       const terrain = terrainAt(distance, this.path);
       const narrow = narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
-      const group = buildTile(this.bundle.assets, index, distance, terrain, narrow);
+      const group = this.acquireTile(index, terrain, narrow);
       const point = this.path.at(distance);
       group.position.set(point.x, 0, point.z);
       group.rotation.y = point.heading;
@@ -784,8 +867,7 @@ export class Game {
   private spawnObstacle(kind: ObstacleKind, lane: number, distance: number): void {
     const full = kind === 'hurdle' || kind === 'arch' || kind === 'gap' || kind === 'fire';
     const entity = this.world.createEntity();
-    const group = buildObstacle(this.bundle.assets, kind);
-    this.bundle.scene.add(group);
+    const group = this.acquireObstacle(kind);
     this.world.add(entity, Obstacle, { kind, lane, distance, full, passed: false, warned: false, object: group });
     this.obstacles.push(entity);
   }
@@ -793,24 +875,21 @@ export class Game {
   private spawnCoin(lane: number, distance: number, y = COIN_Y): void {
     if (distance < 4) return;
     const entity = this.world.createEntity();
-    const group = buildCoin(this.bundle.assets);
-    this.bundle.scene.add(group);
+    const group = this.acquirePickup('coin');
     this.world.add(entity, Pickup, { kind: 'coin', lane, distance, baseY: y, taken: false, object: group });
     this.pickups.push(entity);
   }
 
   private spawnGem(lane: number, distance: number): void {
     const entity = this.world.createEntity();
-    const group = buildGem();
-    this.bundle.scene.add(group);
+    const group = this.acquirePickup('gem');
     this.world.add(entity, Pickup, { kind: 'gem', lane, distance, baseY: 1.15, taken: false, object: group });
     this.pickups.push(entity);
   }
 
   private spawnPickup(kind: PickupKind, lane: number, distance: number): void {
     const entity = this.world.createEntity();
-    const group = buildPower(kind);
-    this.bundle.scene.add(group);
+    const group = this.acquirePickup(kind);
     this.world.add(entity, Pickup, { kind, lane, distance, baseY: 1.35, taken: false, object: group });
     this.pickups.push(entity);
   }
@@ -874,7 +953,7 @@ export class Game {
         cue = obstacle.kind;
       }
       if (obstacle.distance < distance - 24) {
-        if (obstacle.object) this.bundle.scene.remove(obstacle.object);
+        if (obstacle.object) this.releaseObstacle(obstacle.kind, obstacle.object);
         this.world.destroyEntity(entity);
         this.obstacles.splice(i, 1);
       }
@@ -951,7 +1030,7 @@ export class Game {
           );
           sfx.play('shimmer', { gain: 0.9 });
         }
-        if (pickup.object) this.bundle.scene.remove(pickup.object);
+        if (pickup.object) this.releasePickup(pickup.kind, pickup.object);
         this.world.destroyEntity(entity);
         this.pickups.splice(i, 1);
         mutateUi.coins = stats.coins;
@@ -959,7 +1038,7 @@ export class Game {
         continue;
       }
       if (pickup.distance < distance - 16) {
-        if (pickup.object) this.bundle.scene.remove(pickup.object);
+        if (pickup.object) this.releasePickup(pickup.kind, pickup.object);
         this.world.destroyEntity(entity);
         this.pickups.splice(i, 1);
       }
@@ -1129,7 +1208,7 @@ export class Game {
       const entity = this.obstacles[i];
       const obstacle = this.world.require(entity, Obstacle);
       if (obstacle.distance > this.distance - 4 && obstacle.distance < this.distance + 34) {
-        if (obstacle.object) this.bundle.scene.remove(obstacle.object);
+        if (obstacle.object) this.releaseObstacle(obstacle.kind, obstacle.object);
         this.world.destroyEntity(entity);
         this.obstacles.splice(i, 1);
       }
@@ -1181,8 +1260,8 @@ export class Game {
     for (const entity of [...this.obstacles, ...this.pickups]) {
       const obstacle = this.world.get(entity, Obstacle);
       const pickup = this.world.get(entity, Pickup);
-      const object = obstacle?.object ?? pickup?.object;
-      if (object) this.bundle.scene.remove(object);
+      if (obstacle?.object) this.releaseObstacle(obstacle.kind, obstacle.object);
+      if (pickup?.object) this.releasePickup(pickup.kind, pickup.object);
       this.world.destroyEntity(entity);
     }
     this.obstacles = [];
