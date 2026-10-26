@@ -232,7 +232,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     // is the road. Do NOT re-centre on the bounding box; a tree's canopy would move into
     // the running lane. Just match the player scale.
     obj.rotation.y = Math.PI;
-    obj.scale.setScalar(0.18);
+    obj.scale.setScalar(name.startsWith('tree') ? 0.14 : 0.18);
     obstacles[name] = obj;
   }
 
@@ -493,6 +493,7 @@ export function buildTile(
   distance: number,
   terrain: TerrainKind = 'temple',
   narrow: NarrowSection | null = null,
+  clearScenery = false,
 ): THREE.Group {
   const group = new THREE.Group();
   group.position.z = -distance;
@@ -533,7 +534,7 @@ export function buildTile(
   }
 
   // Jungle fringing the ruin wall (skipped on bridges, where the gorge opens up).
-  if (terrain !== 'bridge') {
+  if (terrain !== 'bridge' && !clearScenery) {
     for (const side of [-1, 1] as const) {
       for (let i = 0; i < 3; i++) {
         const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
@@ -552,7 +553,7 @@ export function buildTile(
   }
 
   // Dark canopy and hanging vines, matching the reference video's enclosed jungle.
-  if (terrain !== 'hall') {
+  if (terrain !== 'hall' && !clearScenery) {
     for (const side of [-1, 1] as const) {
       for (let i = 0; i < 3; i++) {
         const canopy = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
@@ -574,12 +575,12 @@ export function buildTile(
     buildNarrowOverlay(assets, group, narrow.side, firstTile);
   }
 
-  if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 7 === 3) {
+  if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 7 === 3 && !clearScenery) {
     const tower = assets.obstacles['tower-arch'].clone(true);
     tower.scale.setScalar(0.07);
     group.add(tower);
   }
-  if (terrain === 'anniversary') {
+  if (terrain === 'anniversary' && !clearScenery) {
     // Golden anniversary set-piece: banners and braziers frame the surviving corridor.
     const bannerMat = new THREE.MeshStandardMaterial({ color: 0x8e2f2a, side: THREE.DoubleSide, roughness: 0.9, emissive: 0x2a0806, emissiveIntensity: 0.35 });
     for (const side of [-1, 1] as const) {

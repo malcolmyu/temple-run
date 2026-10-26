@@ -79,7 +79,7 @@ export class Game {
   private pickups: Entity[] = [];
   // Shared prototypes and pools: an endless runner must not allocate new GPU geometry per
   // tile/coin/obstacle. Clones share geometry and materials; only instances are created.
-  private tilePrototypes = new Map<TerrainKind, THREE.Group>();
+  private tilePrototypes = new Map<string, THREE.Group>();
   private tilePools = new Map<string, THREE.Group[]>();
   private narrowOverlays = new Map<string, THREE.Group>();
   private junctionPrototypes = new Map<1 | -1, THREE.Group>();
@@ -548,7 +548,7 @@ export class Game {
     mutateUi.turnRemaining = remaining;
     mutateUi.turnQueued = turn.queued;
     if (turn.queued && distance >= turn.next) this.completeTurn();
-    if (!turn.queued && distance > turn.next + 2.5) this.die('错过路口', 'missed');
+    if (!turn.queued && distance > turn.next + 4.0) this.die('错过路口', 'missed');
   }
 
   private prebuildTurn(): void {
@@ -671,22 +671,23 @@ export class Game {
    * Reuse a pooled 12 m tile instance when possible. The prototype / merged geometry is
    * shared; the pool avoids recreating the Object3D tree every 12 m (a steady GC stutter).
    */
-  private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null): THREE.Group {
+  private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null, clearScenery = false): THREE.Group {
     const firstTile = narrow ? index === Math.floor((narrow.from + 9) / TILE) : false;
-    const gate = Boolean(this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple');
+    const gate = Boolean(this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple' && !clearScenery);
     const narrowKey = narrow ? `${narrow.side}:${firstTile ? 1 : 0}` : 'none';
-    const key = `${terrain}:${gate ? 1 : 0}:${narrowKey}`;
+    const key = `${terrain}:${clearScenery ? 1 : 0}:${gate ? 1 : 0}:${narrowKey}`;
     const pooled = this.tilePools.get(key)?.pop();
     if (pooled) {
       pooled.visible = true;
       pooled.userData.tileIndex = index;
       return pooled;
     }
-    let prototype = this.tilePrototypes.get(terrain);
+    const prototypeKey = `${terrain}:${clearScenery ? 1 : 0}`;
+    let prototype = this.tilePrototypes.get(prototypeKey);
     if (!prototype) {
-      prototype = buildTile(this.bundle.assets, -1, 0, terrain, null);
+      prototype = buildTile(this.bundle.assets, -1, 0, terrain, null, clearScenery);
       mergeStaticMeshes(prototype);
-      this.tilePrototypes.set(terrain, prototype);
+      this.tilePrototypes.set(prototypeKey, prototype);
     }
     const group = prototype.clone(true);
     group.userData.tileIndex = index;
@@ -796,7 +797,8 @@ export class Game {
       if (this.tiles.has(index)) continue;
       const terrain = terrainAt(distance, this.path);
       const narrow = narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
-      const group = this.acquireTile(index, terrain, narrow);
+      const clearScenery = this.path.nearTurn(distance, 26);
+      const group = this.acquireTile(index, terrain, narrow, clearScenery);
       const point = this.path.at(distance);
       group.position.set(point.x, 0, point.z);
       group.rotation.y = point.heading;
@@ -826,7 +828,7 @@ export class Game {
     while (this.nextSpawn < this.distance + 95) {
       const base = this.nextSpawn;
       const turn = this.world.require(this.runnerEntity, Turn);
-      if (Math.abs(base - turn.next) < 30 || Math.abs(base - turn.lastTurnDistance) < 24) {
+      if (Math.abs(base - turn.next) < 42 || Math.abs(base - turn.lastTurnDistance) < 32) {
         this.nextSpawn += 12;
         continue;
       }
@@ -837,7 +839,7 @@ export class Game {
         const kinds: ObstacleKind[] = ['hurdle', 'arch', 'fire'];
         this.spawnObstacle(kinds[Math.floor(Math.random() * kinds.length)], narrow.safe[Math.floor(Math.random() * narrow.safe.length)], base);
         for (let i = 0; i < 6; i++) this.spawnCoin(narrow.safe[i % narrow.safe.length], base - 7 - i * 2.0, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.5);
-        this.nextSpawn += 22 + Math.random() * 6;
+        this.nextSpawn += 26 + Math.random() * 8;
         continue;
       }
       if (roll < 0.42) {
@@ -848,7 +850,7 @@ export class Game {
         const lane = Math.floor(Math.random() * 3);
         this.spawnObstacle('block', lane, base);
         const other = (lane + 1 + Math.floor(Math.random() * 2)) % 3;
-        if (Math.random() < 0.5) this.spawnObstacle('block', other, base + 6);
+        if (Math.random() < 0.25) this.spawnObstacle('block', other, base + 8);
       } else {
         const lane = Math.floor(Math.random() * 3);
         this.spawnObstacle('hurdle', lane, base);
@@ -858,7 +860,7 @@ export class Game {
       const coinLane = Math.floor(Math.random() * 3);
       for (let i = 0; i < 6; i++) this.spawnCoin(coinLane, base - 8 - i * 2.0, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.5);
       if (Math.random() > 0.86) this.spawnGem(Math.floor(Math.random() * 3), base + 24);
-      this.nextSpawn += 20 + Math.random() * 12;
+      this.nextSpawn += 26 + Math.random() * 14;
     }
     while (this.nextPickup < this.distance + 90) {
       const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
@@ -1026,7 +1028,8 @@ export class Game {
           }
         }
       }
-      if (!isGapKind(obstacle.kind) && obstacle.full && ahead > 0 && ahead < 12 && ahead < cueAhead) {
+      const blockThreat = obstacle.kind === 'block' && obstacle.lane === lane.index;
+      if (!isGapKind(obstacle.kind) && (obstacle.full || blockThreat) && ahead > 0 && ahead < 12 && ahead < cueAhead) {
         cueAhead = ahead;
         cue = obstacle.kind;
       }
