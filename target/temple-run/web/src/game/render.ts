@@ -454,8 +454,8 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
 /** Half-road: one side of the slab has fallen into the canyon, leaving a ragged lip. */
 export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean): void {
   const dir = side === 'left' ? 1 : -1; // missing half is on this side (+1 = right)
-  const edge = 0.12 * dir;
-  const width = 3.15;
+  const edge = 0.55 * dir;
+  const width = 3.6;
   const center = edge + (dir * width) / 2;
   const hole = new THREE.Mesh(new THREE.PlaneGeometry(width, TILE + 0.02), assets.material.void);
   hole.rotation.x = -Math.PI / 2;

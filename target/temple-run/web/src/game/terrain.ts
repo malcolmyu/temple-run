@@ -49,7 +49,7 @@ export interface NarrowSection {
   to: number;
   /** Which half of the road survived. The other half is an open cliff. */
   side: 'left' | 'right';
-  /** Lanes that are on the surviving slab (left: 0, right: 2). */
+  /** Lanes on the surviving half (left: 0/1, right: 1/2). */
   safe: readonly number[];
   startIdx: number;
 }
@@ -69,19 +69,19 @@ export function narrowAt(distance: number, path?: TrackPath): NarrowSection | nu
     const from = index * TILE - 9;
     const to = from + TILE;
     if (isBridgeTile(from + 1, path) || isHallTile(from + 1, path) || isAnniversaryTile(from + 1, path)) return null;
-    if (path?.nearTurn(from, 18) || path?.nearTurn(to, 18)) return null;
+    if (path?.nearTurn(from, 24) || path?.nearTurn(to, 24)) return null;
     const side: 'left' | 'right' = index % 2 === 0 ? 'left' : 'right';
-    const safe = side === 'left' ? [0] : [2];
+    const safe = side === 'left' ? [0, 1] : [1, 2];
     return { from, to, side, safe, startIdx: index };
   }
   const phase = ((index % 8) + 8) % 8;
-  if (phase >= 3) return null;
+  if (phase >= 2) return null;
   const startIdx = index - phase;
   const from = startIdx * TILE - 9;
-  const to = from + 36;
+  const to = from + 24;
   if (isBridgeTile(from + 1, path) || isHallTile(from + 1, path) || isAnniversaryTile(from + 1, path)) return null;
   if (path?.nearTurn(from, 18) || path?.nearTurn(to, 18)) return null;
   const side: 'left' | 'right' = ((startIdx / 3) | 0) % 2 === 0 ? 'left' : 'right';
-  const safe = side === 'left' ? [0] : [2];
+  const safe = side === 'left' ? [0, 1] : [1, 2];
   return { from, to, side, safe, startIdx };
 }

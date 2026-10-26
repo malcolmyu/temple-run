@@ -611,7 +611,7 @@ export class Game {
     const narrow = narrowAt(trackPos.distance, this.path);
     // Warn before the slab ends: the one surviving lane needs an early lane change.
     if (!narrow && !this.narrowWarned) {
-      const ahead = narrowAt(trackPos.distance + 24, this.path);
+      const ahead = narrowAt(trackPos.distance + 32, this.path);
       if (ahead) {
         this.narrowWarned = true;
         setHint(`前方半边路 · 靠${ahead.side === 'left' ? '左' : '右'}！`);
