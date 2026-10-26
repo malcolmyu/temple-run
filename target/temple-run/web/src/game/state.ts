@@ -3,6 +3,13 @@ import { progress, recordRun as recordProgressRun, saveProgress } from './progre
 import type { ObstacleKind, PickupKind } from './components';
 import type { Phase } from './components';
 
+export interface MilestoneState {
+  id: number;
+  value: number;
+  unit: string;
+  art: 'nicejob' | 'highscore';
+}
+
 export interface HudState {
   phase: Phase;
   ready: boolean;
@@ -26,6 +33,7 @@ export interface HudState {
   powerRemaining: number;
   nextCue: ObstacleKind | null;
   hint: string;
+  milestone: MilestoneState | null;
   deathReason: string;
   deathKind: 'impact' | 'fall' | 'caught' | 'missed' | '';
   fps: number;
@@ -62,6 +70,7 @@ const defaults = (): HudState => ({
   powerRemaining: 0,
   nextCue: null,
   hint: '',
+  milestone: null,
   deathReason: '',
   deathKind: '',
   fps: 60,
@@ -92,6 +101,22 @@ export function setHint(text: string): void {
   }, 1400);
 }
 let hintTimer = 0;
+let milestoneTimer = 0;
+let milestoneSeq = 0;
+
+/** Gold milestone plaque using the original NICE JOB / HIGH SCORE artwork. */
+export function showMilestone(value: number, unit: string, art: 'nicejob' | 'highscore' = 'nicejob'): void {
+  state.milestone = { id: ++milestoneSeq, value, unit, art };
+  window.clearTimeout(milestoneTimer);
+  milestoneTimer = window.setTimeout(() => {
+    state.milestone = null;
+  }, 2000);
+}
+
+export function clearMilestone(): void {
+  window.clearTimeout(milestoneTimer);
+  state.milestone = null;
+}
 
 export function recordRun(distance: number, coins: number, gems: number, score: number): void {
   recordProgressRun(distance, coins, gems, score);
@@ -121,6 +146,7 @@ export function setAudioSettings(music: boolean, sound: boolean): void {
 }
 
 export function resetHud(): void {
+  clearMilestone();
   const keep = {
     best: state.best,
     totalCoins: state.totalCoins,

@@ -12,6 +12,7 @@ import SettingsOverlay from './SettingsOverlay.vue';
 import StatsOverlay from './StatsOverlay.vue';
 import ObjectivesOverlay from './ObjectivesOverlay.vue';
 import UpgradesOverlay from './UpgradesOverlay.vue';
+import QrCard from './QrCard.vue';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const loading = shallowRef(true);
@@ -140,6 +141,7 @@ function dismissTutorial(): void {
         <div><span>金币 / 宝石</span><strong>{{ progress.coins }} / {{ progress.gems }}</strong></div>
         <div><span>帧率</span><strong>{{ ui.fps }} fps</strong></div>
       </div>
+      <QrCard />
       <p class="edition">TYPESCRIPT · ECS · VUE 3 · THREE.JS</p>
     </aside>
   </div>

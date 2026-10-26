@@ -1453,3 +1453,9 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 根因：`runnerRig` 的 holder 自带 `rotation.y = Math.PI`，v2 又把跑者组额外转了 180°，合计 360°，导致模型正面朝相机、看起来倒着跑。改为跑者组只用路径朝向；追踪者同样修正。
 - 追踪者：按原版逻辑放在 `distance - chaseGap` 并抬高/放大（原偏移会落到相机视锥下方），绊倒后能像旧版一样出现在跑者侧后方。
 - 复核：四个特殊皮肤、跳跃、滑铲、追踪者、商店 3D 预览均确认朝向正确；typecheck/build 通过。
+
+2026-10-26（重构第五轮）：局域网二维码、里程碑金牌、路口接缝。
+- `QrCard.vue`：浏览器端用 `qrcode-generator` 生成 SVG 二维码；`vite.config.js` 增加 dev-only `/__lan-url` 中间件（读取网卡 IPv4），桌面上直接给出可扫描的局域网地址，点击地址可复制。
+- 里程碑改用原版 `nicejob.png` / `highscore.png` 金牌（`state.showMilestone` + HUD 弹窗，2 s 自动消失）。
+- 路口铺装改为按“进入方向”旋转的 9.6 m 方形 + 16 m 垫层，消除 90° 转角处露出的峡谷缝隙。
+- 验证：`/__lan-url` 返回 `http://192.168.1.3:5173/`；页面二维码 SVG 正常；里程碑弹窗实测出现；typecheck/build 通过。

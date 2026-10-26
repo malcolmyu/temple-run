@@ -38,7 +38,7 @@ import {
 import { createWorld, buildTile, buildJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt } from './terrain';
-import { recordRun, resetHud, setHint, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
+import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
 import { coinMultiplier, magnetBonusSeconds } from './upgrades';
 import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById } from './skins';
@@ -563,7 +563,8 @@ export class Game {
     const milestone = Math.floor(trackPos.distance / 500);
     if (milestone > 0 && milestone !== this.lastMilestone) {
       this.lastMilestone = milestone;
-      setHint(`里程碑 ${milestone * 500} m！`);
+      const reached = milestone * 500;
+      showMilestone(reached, 'm', reached >= Math.max(1000, progress.bestDistance) ? 'highscore' : 'nicejob');
       sfx.play('jingle', { gain: 0.8 });
     }
     mutateUi.distance = Math.floor(trackPos.distance);

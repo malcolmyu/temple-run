@@ -5,6 +5,7 @@ import { getGame } from '../game/boot';
 
 const emit = defineEmits<{ pause: [] }>();
 defineProps<{ disabled?: boolean }>();
+const uiAsset = (file: string): string => `${import.meta.env.BASE_URL}assets/ui/${file}`;
 
 const turnLabel = computed(() => (ui.turnDirection < 0 ? '前方左转' : ui.turnDirection > 0 ? '前方右转' : ''));
 const powerLabel = computed(() => {
@@ -60,6 +61,11 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
     <div v-if="turnLabel && ui.turnRemaining <= 18" class="turn-edge" :class="ui.turnDirection < 0 ? 'left' : 'right'">
       <span>{{ ui.turnQueued ? '已确认' : ui.turnDirection < 0 ? '← 左转' : '右转 →' }}</span>
       <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
+    </div>
+
+    <div v-if="ui.milestone" :key="ui.milestone.id" class="milestone">
+      <img class="nj-art" :src="uiAsset(`${ui.milestone.art}.png`)" alt="NICE JOB" />
+      <span class="ms-text">{{ ui.milestone.value }}<em>{{ ui.milestone.unit }}</em></span>
     </div>
 
     <div v-if="ui.hint" class="hint">{{ ui.hint }}</div>

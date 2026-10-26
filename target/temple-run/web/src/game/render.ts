@@ -475,11 +475,34 @@ export function buildTile(
 export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath, at: number): THREE.Group {
   const group = new THREE.Group();
   const point = path.at(at);
-  group.position.set(point.x, -0.035, point.z);
-  group.rotation.y = point.heading;
-  const pad = new THREE.Mesh(new THREE.PlaneGeometry(8.2, 8.2), new THREE.MeshStandardMaterial({ map: assets.texture.wall, color: 0xb59c76, roughness: 0.96 }));
+  // Rotate to the incoming heading: the corner paving belongs to the approach side.
+  // Using the outgoing heading turns the pad 90° and leaves a wedge-shaped seam at the bend.
+  const heading = path.at(Math.max(0, at - 0.05)).heading;
+  group.position.set(point.x, 0, point.z);
+  group.rotation.y = heading;
+  // One 9.6 m paving square covers the corner joint; a larger apron sits just underneath so
+  // any hairline between the 12 m road tiles and the pad shows paving instead of the gorge.
+  const pad = new THREE.Mesh(
+    new THREE.PlaneGeometry(9.6, 9.6),
+    new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 516, 6, 250, 2.4, 0.8), color: 0xb59c76, roughness: 0.96 }),
+  );
   pad.rotation.x = -Math.PI / 2;
+  pad.position.y = -0.012;
+  pad.receiveShadow = true;
   group.add(pad);
+  const apron = new THREE.Mesh(
+    new THREE.PlaneGeometry(16, 16),
+    new THREE.MeshStandardMaterial({
+      map: croppedTexture(assets.texture.wall, 516, 6, 250, 4, 1.34),
+      color: 0x9e8f6e,
+      roughness: 0.96,
+      side: THREE.DoubleSide,
+    }),
+  );
+  apron.rotation.x = -Math.PI / 2;
+  apron.position.y = -0.03;
+  apron.receiveShadow = true;
+  group.add(apron);
   for (const [x, z] of [[-4.2, 4.2], [4.2, 4.2], [-4.2, -4.2], [4.2, -4.2]] as const) {
     const post = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 1.8, 8), cachedLightMat ?? lightsMaterial());
     post.position.set(x, 0.9, z);
