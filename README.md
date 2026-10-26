@@ -89,7 +89,7 @@ v2 与旧版的主要差异：转弯路口改用预铺的 12 m 广场补缝（�
 - **主题**：神庙 / 木桥 / 断崖 / 柱廊 / 周年神庙；周年神庙带金色旗帜，神庙段有塔门地标。
 - **视觉**：按参考视频改为暗绿丛林、藤蔓/树冠、石拱、窄石道；主路视觉收窄，石路单独打暖光。护盾激活时角色显示蓝翼（视频里的永久翼是 mod，不照搬）。
 
-完整 prefab 清单与实现状态见 [docs/original-map-catalog.md](docs/original-map-catalog.md)；路障清单见 [docs/roadblocks.md](docs/roadblocks.md)；地图生成规则见 [docs/map-generation-rules.md](docs/map-generation-rules.md)；路障技术方案见 [docs/roadblock-technical-plan.md](docs/roadblock-technical-plan.md)；视频差距与工作重点见 [docs/video-gap-and-work-plan.md](docs/video-gap-and-work-plan.md)；参考视频分帧与 mod 说明见 [docs/reference-video-notes.md](docs/reference-video-notes.md)。
+完整 prefab 清单与实现状态见 [docs/original-map-catalog.md](docs/original-map-catalog.md)；路障清单见 [docs/roadblocks.md](docs/roadblocks.md)；地图生成规则见 [docs/map-generation-rules.md](docs/map-generation-rules.md)；路障技术方案见 [docs/roadblock-technical-plan.md](docs/roadblock-technical-plan.md)；视频差距与工作重点见 [docs/video-gap-and-work-plan.md](docs/video-gap-and-work-plan.md)；50+ 差异清单见 [docs/50-video-differences.md](docs/50-video-differences.md)；参考视频分帧与 mod 说明见 [docs/reference-video-notes.md](docs/reference-video-notes.md)。
 
 ## 原版安装包
 
