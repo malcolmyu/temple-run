@@ -88,7 +88,7 @@ v2 与旧版的主要差异：转弯路口改用预铺的 12 m 广场补缝（�
 - **原版障碍**：树根、倒木、火塔、短坑/长坑、石墩改用 APK 导出 OBJ；火塔中间车道安全，只能换道，不能跳。
 - **主题**：神庙 / 木桥 / 断崖 / 柱廊 / 周年神庙；周年神庙带金色旗帜，神庙段有塔门地标。
 
-完整 prefab 清单与实现状态见 [docs/original-map-catalog.md](docs/original-map-catalog.md)。
+完整 prefab 清单与实现状态见 [docs/original-map-catalog.md](docs/original-map-catalog.md)；参考视频分帧与 mod 说明见 [docs/reference-video-notes.md](docs/reference-video-notes.md)。
 
 ## 原版安装包
 

@@ -1496,3 +1496,9 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 障碍：v2 从程序化锥体改为 APK OBJ（tree-jump/trip/slide、flame-tower、pit、pit-long、tower-arch、stone-pedestal）；火塔中间安全、两侧需换道；坑口加黑幕；新增 gapLong/trip 类型。
 - 主题：新增 anniversary 神庙（金色旗帜/火盆）；神庙段加入 tower-arch 地标；长坑、半边路、火塔进入生成器。
 - 验证：typecheck/build 通过；半边路左右截图、左侧外侧坠崖、火塔中/侧车道、长坑、周年神庙截图；bot 964 m / console 0 error。
+
+2026-10-26（参考视频分帧）：
+- 参考 BV1GW411N794（1:02:24）按 2s/关键点抽帧，记录于 docs/reference-video-notes.md + docs/screenshots/ref-video/。
+- 判定视频是 1 亿分 mod/加速跑：37m 时 63×、永久蓝翼、5min 9800 万+、10min 后卡在 7500m；数值/机制不能当原版基准。
+- 可用视觉参考：暗绿丛林、单车道石桥、密集石拱、藤蔓/树冠、树根隧道、木桥；当前最大差异是亮蓝天空+宽三车道路面。
+- 已把半边路收敛为单存活车道（左 0 / 右 2）并提前 24m 提示；其余视觉重做待方向确认。
