@@ -1,5 +1,6 @@
 import type { Object3D } from 'three';
 import { defineComponent } from './ecs/world';
+import type { Hitbox, LaneMask, ObstacleAction } from './obstacles/types';
 
 export type ObstacleKind = 'hurdle' | 'trip' | 'arch' | 'gap' | 'gapLong' | 'fire' | 'block';
 export type PickupKind = 'coin' | 'gem' | 'magnet' | 'shield' | 'boost' | 'bonus';
@@ -53,6 +54,11 @@ export const Turn = defineComponent<{
 
 export const Obstacle = defineComponent<{
   kind: ObstacleKind;
+  defId: string;
+  action: ObstacleAction;
+  lanes: LaneMask;
+  hitbox: Hitbox;
+  kill: boolean;
   lane: number;
   distance: number;
   full: boolean;
@@ -61,6 +67,11 @@ export const Obstacle = defineComponent<{
   object: Object3D | null;
 }>('Obstacle', () => ({
   kind: 'hurdle',
+  defId: 'treeJump',
+  action: 'jump',
+  lanes: 'all',
+  hitbox: { x: [-3.6, 3.6], y: [0, 1.35], z: [-3.4, 3.4] },
+  kill: false,
   lane: 1,
   distance: 0,
   full: true,

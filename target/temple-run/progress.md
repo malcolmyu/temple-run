@@ -1542,3 +1542,10 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 2026-10-26（地图参数收尾）：
 - 奖励道具间距从 110–200 m 对齐到原版 sMinSpacesBetweenBonusItems=50 space=600 m；金币/障碍/转弯均已按 6 space 参数。
 - bot 2042 m 仍 playing，0 console error。
+
+2026-10-26（路障 M1–M3）：
+- 新增 obstacles/catalog.ts：23 个 OBJ 全映射，8 个可玩定义；right/vert/narrow 资产全部加载。
+- 新增 collision.ts：swept z + lane region + jump/slide/dodge；动作窗口按可玩性放宽。
+- 新增 spawner.ts + rng.ts：72m 间距、双障碍 0、窄路只允许跳/滑、seed 可复现。
+- 新增 tools/test-obstacle-spawner.ts 和 npm run temple:test:spawner：10000 seed 通过，23/23 OBJ。
+- bot 2000m playing，0 console error。图结构 T/side path 仍 pending。

@@ -8,7 +8,8 @@
     "build": "vite build",
     "temple:dev": "vite --config target/temple-run/vite.config.js --host 0.0.0.0",
     "temple:build": "vite build --config target/temple-run/vite.config.js",
-    "temple:typecheck": "vue-tsc --noEmit -p target/temple-run/web/tsconfig.json"
+    "temple:typecheck": "vue-tsc --noEmit -p target/temple-run/web/tsconfig.json",
+    "temple:test:spawner": "esbuild tools/test-obstacle-spawner.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-spawner-test.mjs >/dev/null && node /tmp/temple-spawner-test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

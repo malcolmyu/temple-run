@@ -6,6 +6,7 @@ import { LANES, PLAYER_Z, TILE } from './config';
 import type { ObstacleKind, PickupKind } from './components';
 import type { TrackPath } from './path';
 import type { NarrowSection, TerrainKind } from './terrain';
+import type { ObstacleDef } from './obstacles/types';
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (name: string): string => `${BASE}assets/apk/${name}`;
@@ -206,17 +207,27 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   const obstacleNames = [
     'tree-jump-left',
     'tree-jump-right',
+    'tree-jump-left-vert',
+    'tree-jump-right-vert',
     'tree-trip-left',
     'tree-trip-right',
+    'tree-trip-left-vert',
+    'tree-trip-right-vert',
     'tree-slide',
+    'tree-slide-vert',
     'flame-tower',
+    'flame-tower-vert',
     'pit',
+    'pit-vert',
     'pit-long-a',
     'pit-long-b',
     'tower-arch',
-    'stone-pedestal',
+    'tower-arch-vert',
     'narrow-wall-left',
     'narrow-wall-right',
+    'narrow-beam-left',
+    'narrow-beam-right',
+    'stone-pedestal',
   ];
   const obstacleObjects = await Promise.all(obstacleNames.map((name) => loadObj(`${BASE}assets/obstacles/${name}.obj`)));
   const obstacles: Record<string, THREE.Group | null> = {};
@@ -679,20 +690,12 @@ function contactShadow(group: THREE.Group, radius: number): void {
   group.add(shadow);
 }
 
-export function buildObstacle(assets: Assets, kind: ObstacleKind): THREE.Group {
+export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: string): THREE.Group {
   const group = new THREE.Group();
-  // Use the actual APK prefab when available. These are track-tile prefabs, so their origin
-  // is the tile centre and y=0 is the road surface (already baked by the asset exporter).
-  const prefabName: string | undefined = ({
-    hurdle: 'tree-jump-left',
-    trip: 'tree-trip-left',
-    arch: 'tree-slide',
-    gap: 'pit',
-    gapLong: 'pit-long-a',
-    fire: 'flame-tower',
-    block: 'stone-pedestal',
-  } as Record<string, string>)[kind];
-  const prefab = prefabName ? assets.obstacles[prefabName] : null;
+  const kind = def.kind as ObstacleKind;
+  // Use the actual APK prefab. The exporter baked the prefab-root frame: origin is the
+  // track-tile centre and y=0 is the road surface.
+  const prefab = assets.obstacles[prefabName] ?? null;
   if (prefab) {
     if (kind === 'gap' || kind === 'gapLong') {
       // The APK pit is an open shaft, but the web tile underneath still has a stone top.

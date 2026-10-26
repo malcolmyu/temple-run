@@ -32,5 +32,7 @@ jobs:
           fi
       - name: Typecheck
         run: npm run temple:typecheck
+      - name: Obstacle spawner test
+        run: npm run temple:test:spawner
       - name: Build
         run: npm run temple:build

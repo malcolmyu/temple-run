@@ -14,7 +14,7 @@ const powerLabel = computed(() => {
   return `${names[ui.power] ?? ui.power} ${Math.ceil(ui.powerRemaining)}s`;
 });
 const cueLabel = computed(() => {
-  const map: Record<string, string> = { hurdle: '↑ 跳过', trip: '↑ 跳过', arch: '↓ 滑铲', gap: '↑ 跳过', gapLong: '↑ 长坑', fire: '↔ 换道', block: '↔ 换道' };
+  const map: Record<string, string> = { jump: '↑ 跳过', slide: '↓ 滑铲', dodge: '↔ 换道', run: '' };
   return ui.nextCue ? map[ui.nextCue] ?? '' : '';
 });
 

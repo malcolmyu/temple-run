@@ -1,6 +1,7 @@
 import { reactive, readonly } from 'vue';
 import { progress, recordRun as recordProgressRun, saveProgress } from './progress';
-import type { ObstacleKind, PickupKind } from './components';
+import type { PickupKind } from './components';
+import type { ObstacleAction } from './obstacles/types';
 import type { Phase } from './components';
 
 export interface MilestoneState {
@@ -31,7 +32,7 @@ export interface HudState {
   chaseGap: number;
   power: PickupKind | null;
   powerRemaining: number;
-  nextCue: ObstacleKind | null;
+  nextCue: ObstacleAction | null;
   hint: string;
   milestone: MilestoneState | null;
   deathReason: string;

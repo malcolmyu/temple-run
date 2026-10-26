@@ -41,7 +41,12 @@ import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
 import { coinMultiplier, magnetBonusSeconds } from './upgrades';
-import { DOUBLE_OBSTACLE_CHANCE, MAX_COINS_PER_RUN, MIN_BONUS_ITEM_SPACING, MIN_OBSTACLE_SPACING, MIN_TURN_SPACING } from './pathRules';
+import { MAX_COINS_PER_RUN, MIN_BONUS_ITEM_SPACING, MIN_TURN_SPACING } from './pathRules';
+import { DEFS, KIND_TO_DEF, type DefId } from './obstacles/catalog';
+import type { ObstacleAction, ObstacleDef, ObstaclePlan } from './obstacles/types';
+import { pickObstacle, defForKind, ORIGINAL_SPAWNER_CONFIG } from './obstacles/spawner';
+import { collisionWouldHit, laneIsBlocked } from './obstacles/collision';
+import { SeededRandom } from './obstacles/rng';
 import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById } from './skins';
 import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.js';
 import * as sfx from '../sfx.js';
@@ -84,9 +89,11 @@ export class Game {
   private tilePools = new Map<string, THREE.Group[]>();
   private narrowOverlays = new Map<string, THREE.Group>();
   private junctionPrototypes = new Map<1 | -1, THREE.Group>();
-  private obstaclePools = new Map<ObstacleKind, THREE.Object3D[]>();
+  private obstaclePools = new Map<string, THREE.Object3D[]>();
   private pickupPools = new Map<PickupKind, THREE.Object3D[]>();
   private nextSpawn = 80;
+  private obstacleRng = new SeededRandom(0x51ed270b);
+  private lastObstacleDistance = 0;
   private nextPickup = MIN_BONUS_ITEM_SPACING;
   private deathTimer = 0;
   private lastFrame = 0;
@@ -244,7 +251,7 @@ export class Game {
   /** Remove an entity's 3D object from the scene before dropping the entity. */
   private removeEntityObject(entity: Entity): void {
     const obstacle = this.world.get(entity, Obstacle);
-    if (obstacle?.object) this.releaseObstacle(obstacle.kind, obstacle.object);
+    if (obstacle?.object) this.releaseObstacle(obstacle.object);
     const pickup = this.world.get(entity, Pickup);
     if (pickup?.object) this.releasePickup(pickup.kind, pickup.object);
     const tile = this.world.get(entity, Tile);
@@ -294,6 +301,8 @@ export class Game {
     this.path.segments.push({ start: 0, end: Infinity, x: 0, z: 3, heading: 0 });
     this.nextSpawn = 80;
     this.nextPickup = MIN_BONUS_ITEM_SPACING;
+    this.lastObstacleDistance = 0;
+    this.obstacleRng = new SeededRandom((Date.now() ^ 0x9e3779b9) >>> 0);
     this.deathTimer = 0;
     this.hintCooldown = 0;
     this.narrowWarned = false;
@@ -739,23 +748,27 @@ export class Game {
     return group;
   }
 
-  private acquireObstacle(kind: ObstacleKind): THREE.Object3D {
-    const pool = this.obstaclePools.get(kind);
+  private acquireObstacle(def: ObstacleDef, prefab: string): THREE.Object3D {
+    const key = `${def.id}:${prefab}`;
+    const pool = this.obstaclePools.get(key);
     let object = pool?.pop();
     if (!object) {
-      object = buildObstacle(this.bundle.assets, kind);
+      object = buildObstacle(this.bundle.assets, def, prefab);
       mergeStaticMeshes(object);
     }
     object.visible = true;
+    object.userData.poolKey = key;
     this.bundle.scene.add(object);
     return object;
   }
 
-  private releaseObstacle(kind: ObstacleKind, object: THREE.Object3D): void {
+  private releaseObstacle(object: THREE.Object3D): void {
     this.bundle.scene.remove(object);
-    const pool = this.obstaclePools.get(kind) ?? [];
+    const key = typeof object.userData.poolKey === 'string' ? object.userData.poolKey : null;
+    if (!key) return;
+    const pool = this.obstaclePools.get(key) ?? [];
     pool.push(object);
-    this.obstaclePools.set(kind, pool);
+    this.obstaclePools.set(key, pool);
   }
 
   private acquirePickup(kind: PickupKind): THREE.Object3D {
@@ -829,45 +842,61 @@ export class Game {
     while (this.nextSpawn < this.distance + 95) {
       const base = this.nextSpawn;
       const turn = this.world.require(this.runnerEntity, Turn);
+      // The turn is prebuilt only within TURN_PREBUILD_DISTANCE, so use the Turn component
+      // rather than path.segments for this exclusion.
       if (Math.abs(base - turn.next) < 42 || Math.abs(base - turn.lastTurnDistance) < 32) {
         this.nextSpawn += 12;
         continue;
       }
       const narrow = narrowAt(base, this.path) ?? narrowAt(base + 6, this.path) ?? narrowAt(base + 14, this.path);
-      const roll = Math.random();
-      if (narrow) {
-        // Single-lane stretch: everything stays on the surviving lane, height obstacles only.
-        const kinds: ObstacleKind[] = ['hurdle', 'arch', 'fire'];
-        this.spawnObstacle(kinds[Math.floor(Math.random() * kinds.length)], narrow.safe[Math.floor(Math.random() * narrow.safe.length)], base);
-        for (let i = 0; i < MAX_COINS_PER_RUN; i++) this.spawnCoin(narrow.safe[i % narrow.safe.length], base - 7 - i * 2.0, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.5);
-        this.nextSpawn += MIN_OBSTACLE_SPACING + Math.random() * 12;
+      const plan = pickObstacle({ nearTurn: false, narrow }, this.obstacleRng, ORIGINAL_SPAWNER_CONFIG);
+      if (!plan) {
+        this.nextSpawn += 12;
         continue;
       }
-      if (roll < 0.42) {
-        const kinds: ObstacleKind[] = ['hurdle', 'trip', 'arch', 'gap', 'gapLong', 'fire'];
-        const kind = kinds[Math.floor(Math.random() * kinds.length)];
-        this.spawnObstacle(kind, 1, base);
-      } else if (roll < 0.78) {
-        const lane = Math.floor(Math.random() * 3);
-        this.spawnObstacle('block', lane, base);
-        const other = (lane + 1 + Math.floor(Math.random() * 2)) % 3;
-        if (Math.random() < DOUBLE_OBSTACLE_CHANCE) this.spawnObstacle('block', other, base + 8);
-      } else {
-        const lane = Math.floor(Math.random() * 3);
-        this.spawnObstacle('hurdle', lane, base);
-        this.spawnObstacle('block', (lane + 2) % 3, base + 5);
+      plan.distance = base;
+      this.spawnPlan(plan);
+      const coinLane = narrow
+        ? narrow.safe[this.obstacleRng.int(narrow.safe.length)]
+        : this.obstacleRng.int(3);
+      for (let i = 0; i < MAX_COINS_PER_RUN; i++) {
+        this.spawnCoin(coinLane, base - 8 - i * 2.0, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.5);
       }
-      // Coin line on a clear lane.
-      const coinLane = Math.floor(Math.random() * 3);
-      for (let i = 0; i < MAX_COINS_PER_RUN; i++) this.spawnCoin(coinLane, base - 8 - i * 2.0, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.5);
-      if (Math.random() > 0.86) this.spawnGem(Math.floor(Math.random() * 3), base + 24);
-      this.nextSpawn += MIN_OBSTACLE_SPACING + Math.random() * 24;
+      if (this.obstacleRng.next() > 0.86) this.spawnGem(this.obstacleRng.int(3), base + 24);
+      this.nextSpawn = base + plan.gap;
     }
     while (this.nextPickup < this.distance + 90) {
       const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
-      this.spawnPickup(kinds[Math.floor(Math.random() * kinds.length)], Math.floor(Math.random() * 3), this.nextPickup);
-      this.nextPickup += MIN_BONUS_ITEM_SPACING + Math.random() * 240;
+      this.spawnPickup(kinds[this.obstacleRng.int(kinds.length)], this.obstacleRng.int(3), this.nextPickup);
+      this.nextPickup += MIN_BONUS_ITEM_SPACING + this.obstacleRng.next() * 240;
     }
+  }
+
+  private spawnPlan(plan: ObstaclePlan): void {
+    const def = plan.def;
+    const lane = def.lanes === 'all' || def.action === 'dodge' ? (def.id === 'stonePedestal' ? plan.lane : 1) : plan.lane;
+    this.spawnDef(def, lane, plan.distance);
+  }
+
+  private spawnDef(def: ObstacleDef, lane: number, distance: number): void {
+    const prefab = def.prefabs[this.obstacleRng.int(def.prefabs.length)];
+    const object = this.acquireObstacle(def, prefab);
+    const entity = this.world.createEntity();
+    this.world.add(entity, Obstacle, {
+      kind: def.kind as ObstacleKind,
+      defId: def.id,
+      action: def.action,
+      lanes: def.lanes,
+      hitbox: def.hitbox,
+      kill: def.kill,
+      lane,
+      distance,
+      full: def.lanes === 'all',
+      passed: false,
+      warned: false,
+      object,
+    });
+    this.obstacles.push(entity);
   }
 
   private updateFootsteps(distance: number, speed: number): void {
@@ -943,11 +972,8 @@ export class Game {
   }
 
   private spawnObstacle(kind: ObstacleKind, lane: number, distance: number): void {
-    const full = kind === 'hurdle' || kind === 'trip' || kind === 'arch' || isGapKind(kind) || kind === 'fire';
-    const entity = this.world.createEntity();
-    const group = this.acquireObstacle(kind);
-    this.world.add(entity, Obstacle, { kind, lane, distance, full, passed: false, warned: false, object: group });
-    this.obstacles.push(entity);
+    const def = defForKind(kind);
+    this.spawnDef(def, def.lanes === 'one' ? lane : 1, distance);
   }
 
   private spawnCoin(lane: number, distance: number, y = COIN_Y): void {
@@ -974,72 +1000,80 @@ export class Game {
 
   private updateObstacles(dt: number): void {
     const distance = this.distance;
+    const previous = this.lastObstacleDistance;
     const lane = this.world.require(this.runnerEntity, Lane);
     const jump = this.world.require(this.runnerEntity, Jump);
     const slide = this.world.require(this.runnerEntity, Slide);
     const power = this.world.require(this.runnerEntity, Power);
     const now = this.world.elapsed;
-    let cue: ObstacleKind | null = null;
+    let cue: ObstacleAction | null = null;
     let cueAhead = Infinity;
 
     for (let i = this.obstacles.length - 1; i >= 0; i--) {
       const entity = this.obstacles[i];
       const obstacle = this.world.require(entity, Obstacle);
+      const def = DEFS[obstacle.defId as DefId] ?? defForKind(obstacle.kind);
       const ahead = obstacle.distance - distance;
       if (obstacle.object) {
-        const point = this.path.at(obstacle.distance, obstacle.full ? 0 : LANES[obstacle.lane]);
+        const x = def.lanes === 'one' ? LANES[obstacle.lane] : 0;
+        const point = this.path.at(obstacle.distance, x);
         obstacle.object.position.set(point.x, 0, point.z);
         obstacle.object.rotation.y = point.heading;
-        if (isGapKind(obstacle.kind) && !obstacle.warned && ahead > 3.5 && ahead < 12) {
+        if ((def.kind === 'gap' || def.kind === 'gapLong') && !obstacle.warned && ahead > 3.5 && ahead < 12) {
           obstacle.warned = true;
           setHint('前方坑洞 · 向上跳！');
         }
       }
-      if (!obstacle.passed && Math.abs(ahead) < (isGapKind(obstacle.kind) ? 2 : obstacle.full ? 0.6 : 1.0)) {
-        if (!isGapKind(obstacle.kind)) obstacle.passed = true;
-        else if (distance > obstacle.distance + 2) obstacle.passed = true;
-        const fireSafe = obstacle.kind === 'fire' && lane.index === 1;
-        if (!fireSafe && (obstacle.full || obstacle.lane === lane.index)) {
-          const justJump = now - jump.lastJumpAt < 0.42;
-          const justSlide = now - slide.lastSlideAt < 0.42;
-          const escaped =
-            isGapKind(obstacle.kind)
-              ? jump.y > 0.12 || jump.v > 0 || justJump
-              : obstacle.kind === 'fire'
-                ? false
-                : obstacle.kind === 'hurdle' || obstacle.kind === 'trip'
-                  ? jump.y > 0.45 || jump.v > 0.2 || justJump
-                  : obstacle.kind === 'arch'
-                    ? slide.remaining > 0.03 || justSlide
-                    : false;
-          if (!escaped) {
-            if (power.kind === 'boost' && now < power.until) {
-              setHint('冲撞！');
-            } else if (power.kind === 'shield' && now < power.until) {
-              power.kind = null;
-              power.until = 0;
-              setHint('护盾抵挡了一次撞击');
-              sfx.play('shimmer', { gain: 0.9 });
-              this.stumbleCooldown = 4;
-            } else if (isGapKind(obstacle.kind)) {
-              this.die('掉进了断桥', 'fall');
-            } else {
-              this.stumble();
-            }
+
+      if (!obstacle.passed) {
+        const hit = collisionWouldHit(
+          { def, lane: obstacle.lane, distance: obstacle.distance },
+          {
+            prevDistance: previous,
+            distance,
+            laneIndex: lane.index,
+            jumpY: jump.y,
+            jumpV: jump.v,
+            slideRemaining: slide.remaining,
+            lastJumpAt: jump.lastJumpAt,
+            lastSlideAt: slide.lastSlideAt,
+            now,
+          },
+        );
+        if (hit) {
+          obstacle.passed = true;
+          if (power.kind === 'boost' && now < power.until) {
+            setHint('冲撞！');
+          } else if (power.kind === 'shield' && now < power.until) {
+            power.kind = null;
+            power.until = 0;
+            setHint('护盾抵挡了一次撞击');
+            sfx.play('shimmer', { gain: 0.9 });
+            this.stumbleCooldown = 4;
+          } else if (def.kill) {
+            this.die(def.kind === 'gap' || def.kind === 'gapLong' ? '掉进了断桥' : '撞上了路障', 'fall');
+          } else {
+            this.stumble();
           }
+        } else if (distance > obstacle.distance + def.hitbox.z[1] + 0.5) {
+          obstacle.passed = true;
         }
       }
-      const blockThreat = obstacle.kind === 'block' && obstacle.lane === lane.index;
-      if (!isGapKind(obstacle.kind) && (obstacle.full || blockThreat) && ahead > 0 && ahead < 12 && ahead < cueAhead) {
+
+      const blocked = laneIsBlocked(def, obstacle.lane, lane.index);
+      const threatens = def.action === 'jump' || def.action === 'slide' || (def.action === 'dodge' && blocked);
+      if (threatens && ahead > 0 && ahead < 12 && ahead < cueAhead) {
         cueAhead = ahead;
-        cue = obstacle.kind;
+        cue = def.action;
       }
+
       if (obstacle.distance < distance - 24) {
-        if (obstacle.object) this.releaseObstacle(obstacle.kind, obstacle.object);
+        if (obstacle.object) this.releaseObstacle(obstacle.object);
         this.world.destroyEntity(entity);
         this.obstacles.splice(i, 1);
       }
     }
+    this.lastObstacleDistance = distance;
     mutateUi.nextCue = cue;
   }
 
@@ -1295,7 +1329,7 @@ export class Game {
       const entity = this.obstacles[i];
       const obstacle = this.world.require(entity, Obstacle);
       if (obstacle.distance > this.distance - 4 && obstacle.distance < this.distance + 34) {
-        if (obstacle.object) this.releaseObstacle(obstacle.kind, obstacle.object);
+        if (obstacle.object) this.releaseObstacle(obstacle.object);
         this.world.destroyEntity(entity);
         this.obstacles.splice(i, 1);
       }
@@ -1347,7 +1381,7 @@ export class Game {
     for (const entity of [...this.obstacles, ...this.pickups]) {
       const obstacle = this.world.get(entity, Obstacle);
       const pickup = this.world.get(entity, Pickup);
-      if (obstacle?.object) this.releaseObstacle(obstacle.kind, obstacle.object);
+      if (obstacle?.object) this.releaseObstacle(obstacle.object);
       if (pickup?.object) this.releasePickup(pickup.kind, pickup.object);
       this.world.destroyEntity(entity);
     }
@@ -1355,6 +1389,7 @@ export class Game {
     this.pickups = [];
     this.nextSpawn = distance + 90;
     this.nextPickup = distance + MIN_BONUS_ITEM_SPACING;
+    this.lastObstacleDistance = distance;
     this.ensureTiles();
     this.syncRunnerObject();
     this.updateCamera(0.05);

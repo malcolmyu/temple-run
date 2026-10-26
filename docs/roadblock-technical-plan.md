@@ -213,7 +213,17 @@ web/src/game/obstacles/
 5. **窄路墙**：`narrow-wall` / `narrow-beam` 是作为真实障碍，还是只做半边路视觉边缘？
 6. **T/侧路径**：本轮只做路障，还是同时启动 TrackPath 图结构改造？我建议先路障，再图结构。
 
-## 9. 不做假对齐
+## 9. 实施进度
+
+- ✅ M1 catalog：`obstacles/catalog.ts`，23 个 OBJ 全部映射；8 个可玩定义 + 塔门 scenery + 4 个 narrow 边缘定义。
+- ✅ M2 hitbox/resolver：`obstacles/collision.ts`，swept z + lane region + jump/slide/dodge；动作窗口按可玩性放宽。
+- ✅ M3 spawner：`obstacles/spawner.ts`，72 m 间距、双障碍 0、窄路只允许 jump/slide、seed RNG。
+- ✅ 自动验证：`npm run temple:test:spawner`，10,000 seed、23/23 OBJ、8 个可玩定义全部通过。
+- ✅ bot：2,000 m 仍 playing，0 console error。
+- ⏳ M4：视觉逐项校准（right/vert 变体已加载，转弯区仍不使用 vert）。
+- ⏳ 图结构：T 侧分支/side path 仍 pending。
+
+## 10. 不做假对齐
 
 原版 `GetRandomPathElementForSide` 的**精确类型权重**没有从反汇编中完整恢复；本方案会使用
 “满足约束的候选集 + 可配置权重”，并把配置写进 `catalog.ts`/`spawner.ts`，而不是声称
