@@ -96,13 +96,34 @@ function load(): Progress {
     const raw = localStorage.getItem(KEY);
     if (!raw) return migrateLegacy(defaults) ?? defaults;
     const saved = JSON.parse(raw) as Partial<Progress>;
-    return {
+    const merged: Progress = {
       ...defaults,
       ...saved,
       owned: Array.isArray(saved.owned) && saved.owned.length ? saved.owned : defaults.owned,
       claimed: Array.isArray(saved.claimed) ? saved.claimed : [],
       upgrades: { magnet: 0, coin: 0, ...(saved.upgrades ?? {}) },
     };
+    // Earlier v2 builds could create the new key with defaults before the player ever ran.
+    // In that case still import the legacy save instead of treating the empty v2 key as real.
+    const meaningful =
+      Number(saved.bestDistance) > 0 ||
+      Number(saved.coins) > 0 ||
+      Number(saved.gems) > 0 ||
+      Number(saved.runs) > 0 ||
+      Number(saved.totalDistance) > 0 ||
+      (Array.isArray(saved.owned) && saved.owned.length > 1) ||
+      (Array.isArray(saved.claimed) && saved.claimed.length > 0);
+    if (!meaningful) {
+      const legacy = migrateLegacy(defaults);
+      if (legacy) {
+        return {
+          ...legacy,
+          music: saved.music ?? legacy.music,
+          sound: saved.sound ?? legacy.sound,
+        };
+      }
+    }
+    return merged;
   } catch {
     return defaults;
   }

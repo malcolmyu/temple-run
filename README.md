@@ -76,7 +76,7 @@ npm run temple:typecheck            # vue-tsc 严格模式
 npm run temple:build                # 同时产出 index.html 与 legacy.html
 ```
 
-首次打开 v2 会自动迁移旧版存档（`atb_temple_run_best` / `_chars` / `_stats` / `_settings`），只写一次 `temple.v2.progress`。
+首次打开 v2（或 v2 存档仍为默认值）会自动迁移旧版存档（`atb_temple_run_best` / `_chars` / `_stats` / `_settings`），只写一次 `temple.v2.progress`。
 
 v2 与旧版的主要差异：转弯路口改用预铺的 12 m 广场补缝（不再让跨路口的瓦片斜穿另一条路）、里程碑恢复原版 NICE JOB / HIGH SCORE 图、新增动态局域网二维码（开发服务器 `/__lan-url` 提供 LAN 地址）。逐项对照与已知差异见 [target/temple-run/README.md](target/temple-run/README.md)。
 
