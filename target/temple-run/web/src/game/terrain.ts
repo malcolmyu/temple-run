@@ -1,7 +1,7 @@
 import { TILE } from './config';
 import type { TrackPath } from './path';
 
-export type TerrainKind = 'temple' | 'bridge' | 'hall' | 'cliff';
+export type TerrainKind = 'temple' | 'bridge' | 'hall' | 'cliff' | 'anniversary';
 
 const tileIndex = (distance: number): number => Math.floor((distance + 9) / TILE);
 
@@ -27,36 +27,48 @@ export function isCliffTile(distance: number, path?: TrackPath): boolean {
   return m >= 6 && m < 10 && !(path?.nearTurn(distance, 24) ?? false);
 }
 
+/** Rare golden temple set-piece (anniversary_temple in the APK), every 48 tiles. */
+export function isAnniversaryTile(distance: number, path?: TrackPath): boolean {
+  if (isBridgeTile(distance, path) || isHallTile(distance, path)) return false;
+  const index = tileIndex(distance);
+  const m = ((index % 48) + 48) % 48;
+  return m >= 40 && m < 43 && !(path?.nearTurn(distance, 24) ?? false);
+}
+
 export function terrainAt(distance: number, path?: TrackPath): TerrainKind {
   if (isBridgeTile(distance, path)) return 'bridge';
   if (isHallTile(distance, path)) return 'hall';
   if (isCliffTile(distance, path)) return 'cliff';
+  if (isAnniversaryTile(distance, path)) return 'anniversary';
   return 'temple';
 }
 
 export interface NarrowSection {
   from: number;
   to: number;
-  keep: number;
+  /** Which half of the road survived. The other half is an open cliff. */
+  side: 'left' | 'right';
+  /** Lanes that are on the surviving slab (left: 0/1, right: 1/2). */
+  safe: readonly number[];
   startIdx: number;
 }
 
 /**
- * Single-lane stretch: the other lanes have collapsed into the canyon. Starts at 120 m,
- * repeats every 10 tiles for 3 tiles. A lane is dropped for good, so stepping off the
- * surviving lane is a fall.
+ * Half-road stretch: one side of the slab has collapsed into the canyon. Starts at 96 m,
+ * repeats every 8 tiles for 3 tiles. The surviving half is 2 lanes wide; the outer lane on
+ * the missing side is a fall, so the player must shift to the named side.
  */
 export function narrowAt(distance: number, path?: TrackPath): NarrowSection | null {
-  if (distance < 120) return null;
   const index = tileIndex(distance);
-  if (index < 20) return null;
-  const phase = ((index % 10) + 10) % 10;
+  if (index < 8) return null;
+  const phase = ((index % 8) + 8) % 8;
   if (phase >= 3) return null;
   const startIdx = index - phase;
   const from = startIdx * TILE - 9;
   const to = from + 36;
-  if (isBridgeTile(from + 1, path) || isCliffTile(from + 1, path) || isHallTile(from + 1, path)) return null;
-  if (path?.nearTurn(from, 26) || path?.nearTurn(to, 26)) return null;
-  const keep = ((startIdx * 7 + 3) % 3 + 3) % 3;
-  return { from, to, keep, startIdx };
+  if (isBridgeTile(from + 1, path) || isHallTile(from + 1, path) || isAnniversaryTile(from + 1, path)) return null;
+  if (path?.nearTurn(from, 18) || path?.nearTurn(to, 18)) return null;
+  const side: 'left' | 'right' = ((startIdx / 3) | 0) % 2 === 0 ? 'left' : 'right';
+  const safe = side === 'left' ? [0, 1] : [1, 2];
+  return { from, to, side, safe, startIdx };
 }

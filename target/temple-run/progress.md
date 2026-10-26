@@ -1489,3 +1489,10 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 瓦片不再每 12 m `clone(true)`：按 `terrain/gate/narrow` 组合池化，所有移除路径（越过 / 跨路口 / reset / jumpTo）都回池，Object3D 树复用。
 - 启动纹理 `wallTexture` / `treeTexture` / `leafTexture` / `enemyTexture` 转 WebP（q88-90），3.8 MB → 1.0 MB；v2、legacy、调试页引用同步，构建产物 51 MB → 48 MB。
 - 复核：FPS 60，draw calls 峰值约 179；转弯/门/窄路截图正常，0 console error。
+
+2026-10-26（原版地图逆向与场景集中实现）：
+- 清单：从 XAPK 135 个 prefab 根节点整理出神庙/木桥/断崖/柱廊/周年神庙五类主题，直道 Horz2-5、Turn A-D、T Left/Right/Up/Down、NarrowLong Left/Right、NarrowSmall、Hole/LongA/LongB、FlameTower、Tower、TreeJump/Trip/Slide、主题过渡帽，以及 23 个障碍 OBJ；记录于 docs/original-map-catalog.md。
+- 半边路：`narrowAt` 由单车道改为 `side: left/right`，左侧安全 0/1、右侧 1/2；缺失半幅覆盖黑色深渊、竖向崖面与断口石板，外侧车道坠崖；首个半边路 87–123 m，仅左侧。
+- 障碍：v2 从程序化锥体改为 APK OBJ（tree-jump/trip/slide、flame-tower、pit、pit-long、tower-arch、stone-pedestal）；火塔中间安全、两侧需换道；坑口加黑幕；新增 gapLong/trip 类型。
+- 主题：新增 anniversary 神庙（金色旗帜/火盆）；神庙段加入 tower-arch 地标；长坑、半边路、火塔进入生成器。
+- 验证：typecheck/build 通过；半边路左右截图、左侧外侧坠崖、火塔中/侧车道、长坑、周年神庙截图；bot 964 m / console 0 error。

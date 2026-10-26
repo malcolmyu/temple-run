@@ -80,6 +80,16 @@ npm run temple:build                # 同时产出 index.html 与 legacy.html
 
 v2 与旧版的主要差异：转弯路口改用预铺的 12 m 广场补缝（不再让跨路口的瓦片斜穿另一条路）、里程碑恢复原版 NICE JOB / HIGH SCORE 图、新增动态局域网二维码（开发服务器 `/__lan-url` 提供 LAN 地址）。逐项对照与已知差异见 [target/temple-run/README.md](target/temple-run/README.md)。
 
+## 地图场景（原版逆向）
+
+按 XAPK 的 135 个 prefab 根节点还原地图族：神庙 / 木桥 / 断崖 / 柱廊 / 周年神庙；直道、A-D 弯、T 路口、半边路（NarrowLongLeft/Right）、长坑 A/B、火塔、塔门、树根跳/绊/滑铲、主题过渡帽。当前已接入：
+
+- **半边路**：仅左侧或右侧半幅路面，缺失侧是深渊；左侧安全道 0/1、右侧 1/2，外侧车道会坠崖，首个半边路在 87 m。
+- **原版障碍**：树根、倒木、火塔、短坑/长坑、石墩改用 APK 导出 OBJ；火塔中间车道安全，只能换道，不能跳。
+- **主题**：神庙 / 木桥 / 断崖 / 柱廊 / 周年神庙；周年神庙带金色旗帜，神庙段有塔门地标。
+
+完整 prefab 清单与实现状态见 [docs/original-map-catalog.md](docs/original-map-catalog.md)。
+
 ## 原版安装包
 
 GitHub 单文件上限 100 MB，`temple-run.xapk` 以 75 MB 分片存放在 `apk/`，重组方式见 [apk/README.md](apk/README.md)。

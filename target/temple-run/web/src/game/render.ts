@@ -25,6 +25,7 @@ export interface Assets {
   tree: THREE.Group | null;
   gate: THREE.Group | null;
   enemy: THREE.Group | null;
+  obstacles: Record<string, THREE.Group | null>;
 }
 
 export interface SceneBundle {
@@ -194,6 +195,43 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     return obj;
   };
 
+  // Original obstacle prefabs, exported from the APK. Keep their authored origin (road at
+  // y=0) and use the same 0.18 player-matched scale the APK analysis recommends.
+  const obstacleTreeMat = new THREE.MeshStandardMaterial({ map: tree, side: THREE.DoubleSide, roughness: 0.95, alphaTest: 0.4 });
+  const obstacleStoneMat = new THREE.MeshStandardMaterial({ map: wall, color: 0xd8c8a8, side: THREE.DoubleSide, roughness: 0.95 });
+  const obstacleNames = [
+    'tree-jump-left',
+    'tree-jump-right',
+    'tree-trip-left',
+    'tree-trip-right',
+    'tree-slide',
+    'flame-tower',
+    'pit',
+    'pit-long-a',
+    'pit-long-b',
+    'tower-arch',
+    'stone-pedestal',
+    'narrow-wall-left',
+    'narrow-wall-right',
+  ];
+  const obstacleObjects = await Promise.all(obstacleNames.map((name) => loadObj(`${BASE}assets/obstacles/${name}.obj`)));
+  const obstacles: Record<string, THREE.Group | null> = {};
+  for (let i = 0; i < obstacleNames.length; i++) {
+    const name = obstacleNames[i];
+    const obj = obstacleObjects[i];
+    if (!obj) {
+      obstacles[name] = null;
+      continue;
+    }
+    paint(obj, name.startsWith('tree') ? obstacleTreeMat : obstacleStoneMat, !name.startsWith('pit'));
+    // The exporter baked the prefab-root frame: origin is the track-tile centre and y=0
+    // is the road. Do NOT re-centre on the bounding box; a tree's canopy would move into
+    // the running lane. Just match the player scale.
+    obj.rotation.y = Math.PI;
+    obj.scale.setScalar(0.18);
+    obstacles[name] = obj;
+  }
+
   return {
     renderer,
     scene,
@@ -209,6 +247,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       tree: paint(treeTemplate, material.tree, false),
       gate: paint(gateTemplate, material.facade, false),
       enemy: enemyMesh,
+      obstacles,
     },
   };
 }
@@ -408,29 +447,37 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
   }
 }
 
-/** Collapsed lanes in a narrow section: black void, chipped lips, keep-lane arrows. */
-export function buildNarrowOverlay(assets: Assets, group: THREE.Group, keep: number, firstTile: boolean): void {
-  for (const lane of [0, 1, 2]) {
-    if (lane === keep) continue;
-    const hole = new THREE.Mesh(new THREE.PlaneGeometry(1.35, TILE), assets.material.void);
-    hole.rotation.x = -Math.PI / 2;
-    hole.position.set(LANE_SIDE[lane], 0.05, 0);
-    group.add(hole);
-    for (let i = 0; i < 4; i++) {
-      const slab = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.18, 0.8), assets.material.stone);
-      slab.position.set(LANE_SIDE[lane] * 1.05 + (i % 2 ? 0.5 : -0.5), 0.08, -4.5 + i * 3);
-      slab.rotation.y = i * 0.4;
-      group.add(slab);
-    }
+/** Half-road: one side of the slab has fallen into the canyon, leaving a ragged lip. */
+export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean): void {
+  const dir = side === 'left' ? 1 : -1; // missing half is on this side (+1 = right)
+  const edge = 0.55 * dir;
+  const width = 3.8;
+  const center = edge + (dir * width) / 2;
+  const hole = new THREE.Mesh(new THREE.PlaneGeometry(width, TILE + 0.02), assets.material.void);
+  hole.rotation.x = -Math.PI / 2;
+  hole.position.set(center, 0.062, 0);
+  group.add(hole);
+  // Vertical cliff face under the broken lip.
+  const face = new THREE.Mesh(new THREE.BoxGeometry(0.35, 3.6, TILE + 0.02), assets.material.stone);
+  face.position.set(edge, -1.8, 0);
+  group.add(face);
+  // Broken paving slabs tumbling off the edge.
+  for (let i = 0; i < 6; i++) {
+    const slab = new THREE.Mesh(new THREE.BoxGeometry(0.55 + (i % 2) * 0.25, 0.2, 0.75), assets.material.stone);
+    slab.position.set(edge + dir * (0.25 + (i % 3) * 0.32), 0.07 - (i % 2) * 0.06, -4.6 + i * 1.9);
+    slab.rotation.set((i % 2 ? 0.12 : -0.08), i * 0.37, (i % 2 ? 0.18 : -0.12));
+    group.add(slab);
   }
   if (!firstTile) return;
+  // Gold chevrons on the surviving slab, pointing to the safe side.
   for (let i = 0; i < 3; i++) {
     const arrow = new THREE.Mesh(
       new THREE.ConeGeometry(0.4, 0.9, 3),
       new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.8 }),
     );
     arrow.rotation.x = Math.PI / 2;
-    arrow.position.set(LANE_SIDE[keep], 0.12, -3.5 + i * 1.4);
+    arrow.rotation.z = dir * Math.PI / 2;
+    arrow.position.set(-dir * 2.25, 0.13, -3.5 + i * 1.4);
     group.add(arrow);
   }
 }
@@ -501,10 +548,28 @@ export function buildTile(
 
   if (narrow) {
     const firstTile = index === Math.floor((narrow.from + 9) / TILE);
-    buildNarrowOverlay(assets, group, narrow.keep, firstTile);
+    buildNarrowOverlay(assets, group, narrow.side, firstTile);
   }
 
-  if (assets.gate && index % 5 === 2 && terrain === 'temple') {
+  if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 23 === 11) {
+    const tower = assets.obstacles['tower-arch'].clone(true);
+    tower.scale.setScalar(0.1);
+    group.add(tower);
+  }
+  if (terrain === 'anniversary') {
+    // Golden anniversary set-piece: banners and braziers frame the surviving corridor.
+    const bannerMat = new THREE.MeshStandardMaterial({ color: 0x8e2f2a, side: THREE.DoubleSide, roughness: 0.9, emissive: 0x2a0806, emissiveIntensity: 0.35 });
+    for (const side of [-1, 1] as const) {
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 4.4, 6), assets.material.gold);
+      pole.position.set(side * 4.15, 2.2, 0);
+      group.add(pole);
+      const banner = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 2.7), bannerMat);
+      banner.position.set(side * 3.55, 3.15, 0);
+      banner.rotation.y = side * Math.PI / 2;
+      group.add(banner);
+    }
+  }
+  if (assets.gate && index % 5 === 2 && (terrain === 'temple' || terrain === 'anniversary')) {
     const gate = assets.gate.clone(true);
     gate.scale.setScalar(0.2);
     gate.position.set(0, 0, -TILE / 2);
@@ -592,6 +657,40 @@ function contactShadow(group: THREE.Group, radius: number): void {
 
 export function buildObstacle(assets: Assets, kind: ObstacleKind): THREE.Group {
   const group = new THREE.Group();
+  // Use the actual APK prefab when available. These are track-tile prefabs, so their origin
+  // is the tile centre and y=0 is the road surface (already baked by the asset exporter).
+  const prefabName: string | undefined = ({
+    hurdle: 'tree-jump-left',
+    trip: 'tree-trip-left',
+    arch: 'tree-slide',
+    gap: 'pit',
+    gapLong: 'pit-long-a',
+    fire: 'flame-tower',
+    block: 'stone-pedestal',
+  } as Record<string, string>)[kind];
+  const prefab = prefabName ? assets.obstacles[prefabName] : null;
+  if (prefab) {
+    if (kind === 'gap' || kind === 'gapLong') {
+      // The APK pit is an open shaft, but the web tile underneath still has a stone top.
+      // Cover that top with void so the hole reads as a hole, not a painted road.
+      const mouth = new THREE.Mesh(new THREE.PlaneGeometry(kind === 'gapLong' ? 8.4 : 7.6, kind === 'gapLong' ? 11 : 9.4), assets.material.void);
+      mouth.rotation.x = -Math.PI / 2;
+      mouth.position.y = 0.046;
+      group.add(mouth);
+    }
+    const clone = prefab.clone(true);
+    if (kind === 'gap' || kind === 'gapLong') clone.position.y = 0.05;
+    group.add(clone);
+    if (kind === 'fire') {
+      // The APK flame is a particle system (no mesh); put the two jets on the real pedestals.
+      for (const x of [-2.75, 2.75] as const) {
+        const flame = flameSprite(assets, 1.15);
+        flame.position.set(x, 2.5, 0);
+        group.add(flame);
+      }
+    }
+    return group;
+  }
   const cutMat = new THREE.MeshStandardMaterial({ color: 0xd8b97e, roughness: 0.85 });
 
   if (kind === 'hurdle') {

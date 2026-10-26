@@ -48,6 +48,8 @@ import * as sfx from '../sfx.js';
 export const SKIN_IDS = SKIN_CATALOG.map((skin) => skin.id);
 export const DEFAULT_SKIN_URL = DEFAULT_RIG_URL;
 
+const isGapKind = (kind: ObstacleKind): boolean => kind === 'gap' || kind === 'gapLong';
+
 const BASE = import.meta.env.BASE_URL;
 
 interface ObstacleSpawn {
@@ -582,9 +584,9 @@ export class Game {
     if (narrow) {
       if (!this.narrowWarned) {
         this.narrowWarned = true;
-        setHint(`窄路 · 靠${narrow.keep === 0 ? '左' : narrow.keep === 2 ? '右' : '中'}侧！`);
+        setHint(`半边路 · 靠${narrow.side === 'left' ? '左' : '右'}侧！`);
       }
-      if (lane.index !== narrow.keep) {
+      if (!narrow.safe.includes(lane.index)) {
         this.die('踩空坠下悬崖', 'fall');
         return;
       }
@@ -636,7 +638,7 @@ export class Game {
   private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null): THREE.Group {
     const firstTile = narrow ? index === Math.floor((narrow.from + 9) / TILE) : false;
     const gate = Boolean(this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple');
-    const narrowKey = narrow ? `${narrow.keep}:${firstTile ? 1 : 0}` : 'none';
+    const narrowKey = narrow ? `${narrow.side}:${firstTile ? 1 : 0}` : 'none';
     const key = `${terrain}:${gate ? 1 : 0}:${narrowKey}`;
     const pooled = this.tilePools.get(key)?.pop();
     if (pooled) {
@@ -662,11 +664,11 @@ export class Game {
       group.add(gateGroup);
     }
     if (narrow) {
-      const overlayKey = `${narrow.keep}:${firstTile ? 1 : 0}`;
+      const overlayKey = `${narrow.side}:${firstTile ? 1 : 0}`;
       let overlay = this.narrowOverlays.get(overlayKey);
       if (!overlay) {
         overlay = new THREE.Group();
-        buildNarrowOverlay(this.bundle.assets, overlay, narrow.keep, firstTile);
+        buildNarrowOverlay(this.bundle.assets, overlay, narrow.side, firstTile);
         this.narrowOverlays.set(overlayKey, overlay);
       }
       group.add(overlay.clone(true));
@@ -797,13 +799,13 @@ export class Game {
       if (narrow) {
         // Single-lane stretch: everything stays on the surviving lane, height obstacles only.
         const kinds: ObstacleKind[] = ['hurdle', 'arch', 'fire'];
-        this.spawnObstacle(kinds[Math.floor(Math.random() * kinds.length)], narrow.keep, base);
-        for (let i = 0; i < 6; i++) this.spawnCoin(narrow.keep, base - 7 - i * 2.0, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.5);
+        this.spawnObstacle(kinds[Math.floor(Math.random() * kinds.length)], narrow.safe[Math.floor(Math.random() * narrow.safe.length)], base);
+        for (let i = 0; i < 6; i++) this.spawnCoin(narrow.safe[i % narrow.safe.length], base - 7 - i * 2.0, COIN_Y + Math.sin(i / 5 * Math.PI) * 0.5);
         this.nextSpawn += 22 + Math.random() * 6;
         continue;
       }
       if (roll < 0.42) {
-        const kinds: ObstacleKind[] = ['hurdle', 'arch', 'gap', 'fire'];
+        const kinds: ObstacleKind[] = ['hurdle', 'trip', 'arch', 'gap', 'gapLong', 'fire'];
         const kind = kinds[Math.floor(Math.random() * kinds.length)];
         this.spawnObstacle(kind, 1, base);
       } else if (roll < 0.78) {
@@ -902,7 +904,7 @@ export class Game {
   }
 
   private spawnObstacle(kind: ObstacleKind, lane: number, distance: number): void {
-    const full = kind === 'hurdle' || kind === 'arch' || kind === 'gap' || kind === 'fire';
+    const full = kind === 'hurdle' || kind === 'trip' || kind === 'arch' || isGapKind(kind) || kind === 'fire';
     const entity = this.world.createEntity();
     const group = this.acquireObstacle(kind);
     this.world.add(entity, Obstacle, { kind, lane, distance, full, passed: false, warned: false, object: group });
@@ -949,25 +951,28 @@ export class Game {
         const point = this.path.at(obstacle.distance, obstacle.full ? 0 : LANES[obstacle.lane]);
         obstacle.object.position.set(point.x, 0, point.z);
         obstacle.object.rotation.y = point.heading;
-        if (obstacle.kind === 'gap' && !obstacle.warned && ahead > 3.5 && ahead < 12) {
+        if (isGapKind(obstacle.kind) && !obstacle.warned && ahead > 3.5 && ahead < 12) {
           obstacle.warned = true;
           setHint('前方坑洞 · 向上跳！');
         }
       }
-      if (!obstacle.passed && Math.abs(ahead) < (obstacle.kind === 'gap' ? 2 : obstacle.full ? 0.6 : 1.0)) {
-        if (obstacle.kind !== 'gap') obstacle.passed = true;
+      if (!obstacle.passed && Math.abs(ahead) < (isGapKind(obstacle.kind) ? 2 : obstacle.full ? 0.6 : 1.0)) {
+        if (!isGapKind(obstacle.kind)) obstacle.passed = true;
         else if (distance > obstacle.distance + 2) obstacle.passed = true;
-        if (obstacle.full || obstacle.lane === lane.index) {
+        const fireSafe = obstacle.kind === 'fire' && lane.index === 1;
+        if (!fireSafe && (obstacle.full || obstacle.lane === lane.index)) {
           const justJump = now - jump.lastJumpAt < 0.42;
           const justSlide = now - slide.lastSlideAt < 0.42;
           const escaped =
-            obstacle.kind === 'gap'
+            isGapKind(obstacle.kind)
               ? jump.y > 0.12 || jump.v > 0 || justJump
-              : obstacle.kind === 'hurdle' || obstacle.kind === 'fire'
-                ? jump.y > 0.45 || jump.v > 0.2 || justJump
-                : obstacle.kind === 'arch'
-                  ? slide.remaining > 0.03 || justSlide
-                  : false;
+              : obstacle.kind === 'fire'
+                ? false
+                : obstacle.kind === 'hurdle' || obstacle.kind === 'trip'
+                  ? jump.y > 0.45 || jump.v > 0.2 || justJump
+                  : obstacle.kind === 'arch'
+                    ? slide.remaining > 0.03 || justSlide
+                    : false;
           if (!escaped) {
             if (power.kind === 'boost' && now < power.until) {
               setHint('冲撞！');
@@ -977,7 +982,7 @@ export class Game {
               setHint('护盾抵挡了一次撞击');
               sfx.play('shimmer', { gain: 0.9 });
               this.stumbleCooldown = 4;
-            } else if (obstacle.kind === 'gap') {
+            } else if (isGapKind(obstacle.kind)) {
               this.die('掉进了断桥', 'fall');
             } else {
               this.stumble();
@@ -985,7 +990,7 @@ export class Game {
           }
         }
       }
-      if (obstacle.kind !== 'gap' && obstacle.full && ahead > 0 && ahead < 12 && ahead < cueAhead) {
+      if (!isGapKind(obstacle.kind) && obstacle.full && ahead > 0 && ahead < 12 && ahead < cueAhead) {
         cueAhead = ahead;
         cue = obstacle.kind;
       }
@@ -1262,8 +1267,8 @@ export class Game {
     const narrow = narrowAt(this.distance, this.path);
     if (narrow) {
       const lane = this.world.require(this.runnerEntity, Lane);
-      lane.index = narrow.keep;
-      lane.x = laneX(narrow.keep);
+      lane.index = narrow.side === 'left' ? 0 : 2;
+      lane.x = laneX(lane.index);
     }
     this.invincibleUntil = this.world.elapsed + 3;
     this.deathTimer = 0;

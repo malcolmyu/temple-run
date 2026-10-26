@@ -1,7 +1,7 @@
 import type { Object3D } from 'three';
 import { defineComponent } from './ecs/world';
 
-export type ObstacleKind = 'hurdle' | 'arch' | 'gap' | 'fire' | 'block';
+export type ObstacleKind = 'hurdle' | 'trip' | 'arch' | 'gap' | 'gapLong' | 'fire' | 'block';
 export type PickupKind = 'coin' | 'gem' | 'magnet' | 'shield' | 'boost' | 'bonus';
 export type Phase = 'menu' | 'playing' | 'paused' | 'dying' | 'ended';
 
