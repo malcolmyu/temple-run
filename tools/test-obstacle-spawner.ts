@@ -3,7 +3,7 @@ import { ORIGINAL_SPAWNER_CONFIG, pickObstacle } from '../target/temple-run/web/
 import { SeededRandom } from '../target/temple-run/web/src/game/obstacles/rng';
 import { existsSync } from 'node:fs';
 import { surfaceAt } from '../target/temple-run/web/src/game/surface';
-import { sidePathAt } from '../target/temple-run/web/src/game/sidePath';
+import { sidePathAt, branchSurfaceOffsets } from '../target/temple-run/web/src/game/sidePath';
 import { TrackGraph } from '../target/temple-run/web/src/game/trackGraph';
 import { resolve } from 'node:path';
 
@@ -25,6 +25,10 @@ const base = graph.active.clone();
 base.lateral = 0;
 graph.merge(base);
 if (graph.active.lateral !== 0) issues.push('merge did not restore centerline');
+const bothBranches = branchSurfaceOffsets(0);
+if (bothBranches[0] !== -1.9 || bothBranches[1] !== 1.9) issues.push('both branch surfaces not exposed');
+const activeLeft = branchSurfaceOffsets(-1.9);
+if (activeLeft[0] !== 0 || Math.abs(activeLeft[1] - 3.8) > 0.01) issues.push('inactive branch surface offset wrong');
 const fork = sidePathAt(180);
 if (!fork || fork.safe.join(',') !== '0,2') issues.push('side path at 180 should expose lanes 0 and 2');
 const assets = Object.keys(ASSET_DEFS);

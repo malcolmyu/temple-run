@@ -8,6 +8,7 @@ import type { TrackPath } from './path';
 import type { NarrowSection, TerrainKind } from './terrain';
 import type { ObstacleDef } from './obstacles/types';
 import type { SurfaceKind } from './surface';
+import { branchSurfaceOffsets } from './sidePath';
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (name: string): string => `${BASE}assets/apk/${name}`;
@@ -532,8 +533,26 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
 }
 
 /** Broken centre of a left/right fork: both outer lanes survive, middle falls. */
-export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean, last = false): void {
+export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean, last = false, activeLateral = 0, surface: SurfaceKind = 'stone'): void {
   const gap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, TILE + 0.02), assets.material.water);
+  // Render the non-active branch too. The opposite branch is a real TrackPath clone
+  // with its own lateral offset; without this its surface disappears from the scene.
+  const offsets = branchSurfaceOffsets(activeLateral);
+  for (const offset of offsets) {
+    if (Math.abs(offset) < 0.01) continue;
+    const branchSurface = new THREE.Mesh(
+      new THREE.PlaneGeometry(3.3, TILE + 0.02),
+      surface === 'wood' ? plankMaterial(assets) : assets.material.stone,
+    );
+    branchSurface.rotation.x = -Math.PI / 2;
+    branchSurface.position.set(offset, 0.064, 0);
+    group.add(branchSurface);
+    for (const z of [-4.8, 4.8]) {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 1.0, 6), assets.material.wood);
+      post.position.set(offset + (offset > 0 ? -1.5 : 1.5), 0.5, z);
+      group.add(post);
+    }
+  }
   if (first) {
     // A visible crossbar makes the lane split read as a T junction, not a random hole.
     const crossbar = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 1.2), assets.material.stone);
@@ -589,6 +608,7 @@ export function buildTile(
   surface: SurfaceKind = 'stone',
   sidePath = false,
   sidePathLast = false,
+  branchOffset = 0,
   surfaceFirst = false,
   surfaceLast = false,
 ): THREE.Group {
@@ -696,7 +716,7 @@ export function buildTile(
     const short = narrow.to - narrow.from <= TILE + 1;
     buildNarrowOverlay(assets, group, narrow.side, firstTile, surface, short);
   }
-  if (sidePath) buildSidePathOverlay(assets, group, index === -1, sidePathLast);
+  if (sidePath) buildSidePathOverlay(assets, group, index === -1, sidePathLast, branchOffset, surface);
 
   if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 7 === 3 && !clearScenery) {
     const tower = assets.obstacles['tower-arch'].clone(true);

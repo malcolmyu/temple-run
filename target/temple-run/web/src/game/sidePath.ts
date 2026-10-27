@@ -29,3 +29,10 @@ export function sidePathAt(distance: number, path?: TrackPath): SidePathSection 
   if (narrowAt(from + 1, path)) return null;
   return { from, to, startIdx, first: phase === 15, last: phase === 17, safe: [0, 2] };
 }
+
+
+/** Local x offsets of the two branch surfaces relative to the active branch centre. */
+export function branchSurfaceOffsets(activeLateral: number, separation = 1.9): readonly [number, number] {
+  if (Math.abs(activeLateral) < 0.001) return [-separation, separation];
+  return [0, -activeLateral * 2];
+}
