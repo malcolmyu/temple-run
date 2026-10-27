@@ -521,6 +521,16 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
 /** Broken centre of a left/right fork: both outer lanes survive, middle falls. */
 export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean, last = false): void {
   const gap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, TILE + 0.02), assets.material.water);
+  if (first) {
+    // A visible crossbar makes the lane split read as a T junction, not a random hole.
+    const crossbar = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 1.2), assets.material.stone);
+    crossbar.rotation.x = -Math.PI / 2;
+    crossbar.position.set(0, 0.058, -TILE / 2 + 0.6);
+    group.add(crossbar);
+    const gold = new THREE.Mesh(new THREE.BoxGeometry(7.24, 0.04, 0.12), assets.material.gold);
+    gold.position.set(0, 0.08, -TILE / 2 + 1.1);
+    group.add(gold);
+  }
   gap.rotation.x = -Math.PI / 2;
   gap.position.set(0, 0.065, 0);
   group.add(gap);
