@@ -483,6 +483,15 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
   deep.rotation.x = -Math.PI / 2;
   deep.position.set(center, -2.1, 0);
   group.add(deep);
+  // APK narrow-wall prefab as the surviving broken lip, rather than a generic box.
+  const lipName = side === 'left' ? 'narrow-wall-right' : 'narrow-wall-left';
+  const lip = assets.obstacles[lipName];
+  if (lip) {
+    const edge = lip.clone(true);
+    edge.position.set(dir * 3.05, 0, 0);
+    edge.rotation.y = dir > 0 ? Math.PI : 0;
+    group.add(edge);
+  }
   // Broken paving/planks tumbling off the edge.
   for (let i = 0; i < 6; i++) {
     const slab = new THREE.Mesh(
