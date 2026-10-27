@@ -671,6 +671,7 @@ export class Game {
       this.sideFork = this.graph.forkLateral(side.from, 1.9);
       this.sideBranch = lane.index === 0 ? 'left' : 'right';
       this.graph.choose(this.sideFork, this.sideBranch);
+      sfx.play('branchChime');
       this.rebuildTilesAhead();
     } else if (side && this.sideFork && lane.index !== 1) {
       const wanted = lane.index === 0 ? 'left' : 'right';

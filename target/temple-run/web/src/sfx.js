@@ -41,6 +41,7 @@ const CLIPS = {
   shimmer: { file: 'shimmer.mp3', gain: 0.85 },
   boostLoop: { file: 'boostLoop.mp3', gain: 1.1, loop: true },
   meterFull: { file: 'bonusMeterFull.wav', gain: .85 },
+  branchChime: { file: 'branchChime.wav', gain: 0.9 },
 };
 
 /* ---- original background music (looping, streamed via <audio>) ---- */
