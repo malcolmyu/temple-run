@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { World, type Entity } from './ecs/world';
 import { TrackPath } from './path';
+import { TrackGraph } from './trackGraph';
 import {
   Chase,
   Chaser,
@@ -70,7 +71,8 @@ interface ObstacleSpawn {
 
 export class Game {
   readonly world = new World();
-  readonly path = new TrackPath();
+  readonly graph = new TrackGraph();
+  get path(): TrackPath { return this.graph.active; }
   readonly input = new Input();
   bundle!: SceneBundle;
   private canvas!: HTMLCanvasElement;
