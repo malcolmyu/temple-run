@@ -463,7 +463,7 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
 }
 
 /** Half-road: one side of the slab has fallen into the canyon, leaving a ragged lip. */
-export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean, surface: SurfaceKind = 'stone'): void {
+export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean, surface: SurfaceKind = 'stone', short = false): void {
   const dir = side === 'left' ? 1 : -1; // missing half is on this side (+1 = right)
   const edge = 0.55 * dir;
   const width = 3.6;
@@ -484,7 +484,9 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
   deep.position.set(center, -2.1, 0);
   group.add(deep);
   // APK narrow-wall prefab as the surviving broken lip, rather than a generic box.
-  const lipName = side === 'left' ? 'narrow-wall-right' : 'narrow-wall-left';
+  const lipName = short
+    ? side === 'left' ? 'narrow-beam-right' : 'narrow-beam-left'
+    : side === 'left' ? 'narrow-wall-right' : 'narrow-wall-left';
   const lip = assets.obstacles[lipName];
   if (lip) {
     const edge = lip.clone(true);
@@ -668,7 +670,8 @@ export function buildTile(
   }
   if (narrow) {
     const firstTile = index === Math.floor((narrow.from + 9) / TILE);
-    buildNarrowOverlay(assets, group, narrow.side, firstTile, surface);
+    const short = narrow.to - narrow.from <= TILE + 1;
+    buildNarrowOverlay(assets, group, narrow.side, firstTile, surface, short);
   }
   if (sidePath) buildSidePathOverlay(assets, group, index === -1, sidePathLast);
 
