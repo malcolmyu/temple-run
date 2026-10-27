@@ -575,7 +575,11 @@ export class Game {
     if (turn.direction !== 0) return;
     const direction: 1 | -1 = Math.random() > 0.5 ? 1 : -1;
     turn.direction = direction;
-    const segment = this.path.turn(turn.next, direction);
+    // Route through TrackGraph rather than mutating the only path object. The chosen
+    // branch becomes the active path; the other branch is retained in the fork for the
+    // T/choice implementation in the next milestone.
+    const fork = this.graph.fork(turn.next);
+    this.graph.choose(fork, direction > 0 ? 'right' : 'left');
     const junction = this.acquireJunction(direction, turn.next);
     this.bundle.scene.add(junction);
     this.junctions.set(turn.next, junction);
