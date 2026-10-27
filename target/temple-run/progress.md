@@ -1566,3 +1566,7 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 - 半边路右侧改为深水/崖面 + 断口石板，wood 表面用断木板。
 - challenge 增加双石墩（15%）并收紧镜头；classic 保持 0。
 - 新增右侧残缺截图；side path/wood 截图已在验收页。
+
+2026-10-27（P 可玩项收尾）：
+- 左右 fork 末段合流、长段 stone/wood、火墙、classic/challenge、右断口、树冠密度、镜头收紧全部上线。
+- sidePathLast 纳入瓦片缓存；10k seed/typecheck/build 通过。

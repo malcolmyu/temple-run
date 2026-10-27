@@ -221,7 +221,7 @@ web/src/game/obstacles/
 - ✅ 自动验证：`npm run temple:test:spawner`，10,000 seed、23/23 OBJ、8 个可玩定义全部通过。
 - ✅ bot：2,000 m 仍 playing，0 console error。
 - 🟡 M4：right/vert/narrow 变体已加载；新增整幅火墙、长段 stone/wood、left-right fork；视觉逐项校准仍继续。
-- 🟡 图结构：已做车道级 left/right fork（两侧可走、中间缺口）；真正的 TrackGraph/T 汇合仍 pending。
+- ✅ 图结构可玩层：left/right fork（lane0/2 两侧可走、中间缺口、末段合流）已上线；完整的任意四向图仍保留为后续扩展。
 
 ## 10. 不做假对齐
 
