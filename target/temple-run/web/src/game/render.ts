@@ -74,7 +74,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x193b31, 30, 145);
 
-  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 190);
+  const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 190);
   camera.position.set(0, 5.25, PLAYER_Z + 7.5);
 
   scene.add(new THREE.HemisphereLight(0xb8d6bc, 0x0b1712, 1.55));
