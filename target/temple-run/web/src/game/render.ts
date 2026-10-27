@@ -508,7 +508,7 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
 }
 
 /** Broken centre of a left/right fork: both outer lanes survive, middle falls. */
-export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean): void {
+export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean, last = false): void {
   const gap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, TILE + 0.02), assets.material.water);
   gap.rotation.x = -Math.PI / 2;
   gap.position.set(0, 0.065, 0);
@@ -523,6 +523,13 @@ export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: 
       slab.rotation.set(0, side * 0.18, side * (i % 2 ? 0.2 : -0.14));
       group.add(slab);
     }
+  }
+  if (last) {
+    // The two roads merge back into the normal corridor at the end of the fork.
+    const merge = new THREE.Mesh(new THREE.PlaneGeometry(1.08, 2.2), assets.material.stone);
+    merge.rotation.x = -Math.PI / 2;
+    merge.position.set(0, 0.07, TILE / 2 - 1.0);
+    group.add(merge);
   }
   if (!first) return;
   for (const side of [-1, 1] as const) {
@@ -547,6 +554,7 @@ export function buildTile(
   clearScenery = false,
   surface: SurfaceKind = 'stone',
   sidePath = false,
+  sidePathLast = false,
   surfaceFirst = false,
   surfaceLast = false,
 ): THREE.Group {
@@ -653,7 +661,7 @@ export function buildTile(
     const firstTile = index === Math.floor((narrow.from + 9) / TILE);
     buildNarrowOverlay(assets, group, narrow.side, firstTile, surface);
   }
-  if (sidePath) buildSidePathOverlay(assets, group, index === -1);
+  if (sidePath) buildSidePathOverlay(assets, group, index === -1, sidePathLast);
 
   if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 7 === 3 && !clearScenery) {
     const tower = assets.obstacles['tower-arch'].clone(true);

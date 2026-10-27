@@ -706,21 +706,21 @@ export class Game {
    * Reuse a pooled 12 m tile instance when possible. The prototype / merged geometry is
    * shared; the pool avoids recreating the Object3D tree every 12 m (a steady GC stutter).
    */
-  private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null, clearScenery = false, surface: SurfaceKind = 'stone', sidePath = false, surfaceFirst = false, surfaceLast = false): THREE.Group {
+  private acquireTile(index: number, terrain: TerrainKind, narrow: ReturnType<typeof narrowAt> | null, clearScenery = false, surface: SurfaceKind = 'stone', sidePath = false, sidePathLast = false, surfaceFirst = false, surfaceLast = false): THREE.Group {
     const firstTile = narrow ? index === Math.floor((narrow.from + 9) / TILE) : false;
     const gate = Boolean(this.bundle.assets.gate && index % 5 === 2 && terrain === 'temple' && !clearScenery);
     const narrowKey = narrow ? `${narrow.side}:${firstTile ? 1 : 0}` : 'none';
-    const key = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${clearScenery ? 1 : 0}:${gate ? 1 : 0}:${narrowKey}`;
+    const key = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${sidePathLast ? 1 : 0}:${clearScenery ? 1 : 0}:${gate ? 1 : 0}:${narrowKey}`;
     const pooled = this.tilePools.get(key)?.pop();
     if (pooled) {
       pooled.visible = true;
       pooled.userData.tileIndex = index;
       return pooled;
     }
-    const prototypeKey = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${clearScenery ? 1 : 0}`;
+    const prototypeKey = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${sidePathLast ? 1 : 0}:${clearScenery ? 1 : 0}`;
     let prototype = this.tilePrototypes.get(prototypeKey);
     if (!prototype) {
-      prototype = buildTile(this.bundle.assets, -1, 0, terrain, null, clearScenery, surface, sidePath, surfaceFirst, surfaceLast);
+      prototype = buildTile(this.bundle.assets, -1, 0, terrain, null, clearScenery, surface, sidePath, sidePathLast, surfaceFirst, surfaceLast);
       mergeStaticMeshes(prototype);
       this.tilePrototypes.set(prototypeKey, prototype);
     }
@@ -839,7 +839,7 @@ export class Game {
       const narrow = narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
       const side = sidePathAt(distance, this.path) ?? sidePathAt(distance + TILE * 0.5, this.path);
       const clearScenery = this.path.nearTurn(distance, 26);
-      const group = this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), surface.first, surface.last);
+      const group = this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last);
       const point = this.path.at(distance);
       group.position.set(point.x, 0, point.z);
       group.rotation.y = point.heading;

@@ -7,6 +7,7 @@ export interface SidePathSection {
   to: number;
   startIdx: number;
   first: boolean;
+  last: boolean;
   /** Both outer lanes survive; the middle is a broken gap. */
   safe: readonly number[];
 }
@@ -26,5 +27,5 @@ export function sidePathAt(distance: number, path?: TrackPath): SidePathSection 
   const to = from + TILE * 2;
   if (path?.nearTurn(from, 24) || path?.nearTurn(to, 24)) return null;
   if (narrowAt(from + 1, path)) return null;
-  return { from, to, startIdx, first: phase === 15, safe: [0, 2] };
+  return { from, to, startIdx, first: phase === 15, last: phase === 16, safe: [0, 2] };
 }
