@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { World, type Entity } from './ecs/world';
 import { TrackPath } from './path';
-import { TrackGraph } from './trackGraph';
+import { TrackGraph, type TrackGraphFork } from './trackGraph';
 import {
   Chase,
   Chaser,
@@ -100,6 +100,9 @@ export class Game {
   private obstacleRng = new SeededRandom(0x51ed270b);
   private difficulty: DifficultyConfig = getDifficulty();
   private lastObstacleDistance = 0;
+  private sideFork: TrackGraphFork | null = null;
+  private sideBranch: 'left' | 'right' | null = null;
+  private basePath: TrackPath | null = null;
   private nextPickup = MIN_BONUS_ITEM_SPACING;
   private deathTimer = 0;
   private lastFrame = 0;
@@ -316,6 +319,9 @@ export class Game {
     this.hintCooldown = 0;
     this.narrowWarned = false;
     this.sideWarned = false;
+    this.sideFork = null;
+    this.sideBranch = null;
+    this.basePath = null;
     this.lastMilestone = 0;
     this.invincibleUntil = 0;
     this.reviveUsed = false;
@@ -656,6 +662,22 @@ export class Game {
       this.narrowWarned = false;
     }
     const side = sidePathAt(trackPos.distance, this.path);
+    if (side && !this.sideFork && lane.index !== 1) {
+      // Enter a real lateral branch: both branches are parallel paths with their own
+      // active distance; the player's lane chooses which one drives camera/obstacles.
+      this.basePath = this.path.clone();
+      this.sideFork = this.graph.forkLateral(side.from, 1.9);
+      this.sideBranch = lane.index === 0 ? 'left' : 'right';
+      this.graph.choose(this.sideFork, this.sideBranch);
+      this.rebuildTilesAhead();
+    } else if (side && this.sideFork && lane.index !== 1) {
+      const wanted = lane.index === 0 ? 'left' : 'right';
+      if (wanted !== this.sideBranch) {
+        this.sideBranch = wanted;
+        this.graph.choose(this.sideFork, wanted);
+        this.rebuildTilesAhead();
+      }
+    }
     if (side) {
       if (!this.sideWarned) {
         this.sideWarned = true;
@@ -667,6 +689,13 @@ export class Game {
       }
     } else if (this.sideWarned) {
       this.sideWarned = false;
+      if (this.sideFork) {
+        this.sideFork = null;
+        this.sideBranch = null;
+        if (this.basePath) this.graph.merge(this.basePath);
+        this.basePath = null;
+        this.rebuildTilesAhead();
+      }
     } else if (!this.narrowWarned) {
       const ahead = sidePathAt(trackPos.distance + 24, this.path);
       if (ahead) setHint('前方左右分路 · 选一边！');

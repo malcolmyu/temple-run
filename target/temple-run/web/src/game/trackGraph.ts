@@ -32,6 +32,17 @@ export class TrackGraph {
     return fork;
   }
 
+  /** Parallel left/right branches at the same distance; used by a T side-road fork. */
+  forkLateral(at: number, separation: number): TrackGraphFork {
+    const left = this.active.clone();
+    const right = this.active.clone();
+    left.lateral = -separation;
+    right.lateral = separation;
+    const fork = { at, left, right, chosen: null };
+    this.forks.push(fork);
+    return fork;
+  }
+
   choose(fork: TrackGraphFork, side: BranchSide): TrackPath {
     fork.chosen = side;
     this.active = side === 'left' ? fork.left : fork.right;

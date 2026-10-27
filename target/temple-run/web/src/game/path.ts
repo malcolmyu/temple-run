@@ -22,6 +22,8 @@ export const normAngle = (a: number): number => ((a + Math.PI) % (Math.PI * 2) +
  */
 export class TrackPath {
   readonly segments: PathSegment[] = [{ start: 0, end: Infinity, x: 0, z: PLAYER_Z, heading: 0 }];
+  /** Lateral offset of a branch path from the main centerline. */
+  lateral = 0;
 
   /** World position and heading at a distance. `smooth` rounds the corner for actors. */
   at(distance: number, side = 0, smooth = false): PathPoint {
@@ -45,15 +47,15 @@ export class TrackPath {
         const k = e * e * (3 - 2 * e);
         const heading = prev.heading + normAngle(segment.heading - prev.heading) * k;
         return {
-          x: px + (bx - px) * k + Math.cos(heading) * side,
-          z: pz + (bz - pz) * k - Math.sin(heading) * side,
+          x: px + (bx - px) * k + Math.cos(heading) * (this.lateral + side),
+          z: pz + (bz - pz) * k - Math.sin(heading) * (this.lateral + side),
           heading,
         };
       }
     }
     return {
-      x: bx + Math.cos(segment.heading) * side,
-      z: bz - Math.sin(segment.heading) * side,
+      x: bx + Math.cos(segment.heading) * (this.lateral + side),
+      z: bz - Math.sin(segment.heading) * (this.lateral + side),
       heading: segment.heading,
     };
   }
@@ -77,6 +79,7 @@ export class TrackPath {
   /** Deep copy; used by TrackGraph branches so a fork can own its own segments. */
   clone(): TrackPath {
     const copy = new TrackPath();
+    copy.lateral = this.lateral;
     copy.segments.length = 0;
     for (const segment of this.segments) copy.segments.push({ ...segment });
     return copy;
