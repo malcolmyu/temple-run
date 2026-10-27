@@ -201,6 +201,7 @@ export class Game {
       terrain: (d: number) => terrainAt(d, this.path),
       narrow: (d: number) => narrowAt(d, this.path),
       sidePath: (d: number) => sidePathAt(d, this.path),
+      graph: () => ({ forks: this.graph.forks.map((f) => ({ at: f.at, chosen: f.chosen })), activeSegments: this.graph.active.segments.length }),
     };
   }
 
