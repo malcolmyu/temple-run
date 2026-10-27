@@ -74,6 +74,14 @@ export class TrackPath {
     return segment;
   }
 
+  /** Deep copy; used by TrackGraph branches so a fork can own its own segments. */
+  clone(): TrackPath {
+    const copy = new TrackPath();
+    copy.segments.length = 0;
+    for (const segment of this.segments) copy.segments.push({ ...segment });
+    return copy;
+  }
+
   /** Segment that contains a distance (used by scenery systems). */
   segmentAt(distance: number): PathSegment {
     for (let i = this.segments.length - 1; i >= 0; i--) {
