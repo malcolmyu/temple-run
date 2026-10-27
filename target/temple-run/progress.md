@@ -1570,3 +1570,11 @@ Validation: `npm run temple:build` passed. Playwright 验证：菜单、直道�
 2026-10-27（P 可玩项收尾）：
 - 左右 fork 末段合流、长段 stone/wood、火墙、classic/challenge、右断口、树冠密度、镜头收紧全部上线。
 - sidePathLast 纳入瓦片缓存；10k seed/typecheck/build 通过。
+
+2026-10-27（TrackGraph 分支落地）：
+- TrackPath.lateral/clone，TrackGraph.forkLateral/choose/merge。
+- side path 按 lane 切换 active branch，branch 结束 merge 回中心线；相机/障碍/金币走 active path。
+- narrowAt 与 side path 互斥，覆盖 3 tile 分路避免 183 m 误判。
+- 同时渲染 active/inactive 两条 branch 路面（wood/stone + posts）。
+- 测试：横向分支间距、merge 中心线、两侧 branch surface offsets；10k seed/typecheck/build 通过。
+- main cf4ad3d；线上 assets/main-BUDacxjN.js（已验证与 dist 一致）。
