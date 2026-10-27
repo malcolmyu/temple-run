@@ -21,11 +21,11 @@ export function sidePathAt(distance: number, path?: TrackPath): SidePathSection 
   const index = Math.floor((distance + 9) / TILE);
   if (index < 12) return null;
   const phase = ((index % 24) + 24) % 24;
-  if (phase !== 15 && phase !== 16) return null;
+  if (phase !== 15 && phase !== 16 && phase !== 17) return null;
   const startIdx = index - (phase - 15);
   const from = startIdx * TILE - 9;
-  const to = from + TILE * 2;
+  const to = from + TILE * 3;
   if (path?.nearTurn(from, 24) || path?.nearTurn(to, 24)) return null;
   if (narrowAt(from + 1, path)) return null;
-  return { from, to, startIdx, first: phase === 15, last: phase === 16, safe: [0, 2] };
+  return { from, to, startIdx, first: phase === 15, last: phase === 17, safe: [0, 2] };
 }

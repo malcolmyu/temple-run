@@ -205,6 +205,7 @@ export class Game {
       narrow: (d: number) => narrowAt(d, this.path),
       sidePath: (d: number) => sidePathAt(d, this.path),
       graph: () => ({ forks: this.graph.forks.map((f) => ({ at: f.at, chosen: f.chosen })), activeSegments: this.graph.active.segments.length }),
+      death: () => ({ reason: mutateUi.deathReason, kind: mutateUi.deathKind }),
     };
   }
 
@@ -638,8 +639,9 @@ export class Game {
     const slide = this.world.require(this.runnerEntity, Slide);
     if (slide.remaining > 0) slide.remaining = Math.max(0, slide.remaining - dt);
     // Collapsed-lane sections: leaving the surviving lane drops the runner into the canyon.
-    const narrow = narrowAt(trackPos.distance, this.path);
+    // A side-road fork owns the whole width; narrow must not overlap its branch lanes.
     const activeSide = sidePathAt(trackPos.distance, this.path);
+    const narrow = activeSide ? null : narrowAt(trackPos.distance, this.path);
     // Warn before the slab ends: the one surviving lane needs an early lane change.
     // A side-path fork owns the warning slot while it is active.
     if (!narrow && !activeSide && !this.narrowWarned) {
@@ -872,8 +874,8 @@ export class Game {
       if (this.tiles.has(index)) continue;
       const surface = surfaceAt(distance);
       const terrain = surface.kind === 'wood' ? 'bridge' : terrainAt(distance, this.path);
-      const narrow = narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
       const side = sidePathAt(distance, this.path) ?? sidePathAt(distance + TILE * 0.5, this.path);
+      const narrow = side ? null : narrowAt(distance, this.path) ?? narrowAt(distance + TILE * 0.5, this.path);
       const clearScenery = this.path.nearTurn(distance, 26);
       const group = this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last);
       const point = this.path.at(distance);
