@@ -120,6 +120,19 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   ground.position.y = -3.4;
   scene.add(ground);
 
+  // Sparse firefly/ember points in the jungle layer; cheap and non-colliding.
+  const flyPositions = new Float32Array(180 * 3);
+  for (let i = 0; i < 180; i++) {
+    flyPositions[i * 3] = (Math.random() - 0.5) * 30;
+    flyPositions[i * 3 + 1] = 1 + Math.random() * 7;
+    flyPositions[i * 3 + 2] = -80 + Math.random() * 90;
+  }
+  const flyGeo = new THREE.BufferGeometry();
+  flyGeo.setAttribute('position', new THREE.BufferAttribute(flyPositions, 3));
+  const fireflies = new THREE.Points(flyGeo, new THREE.PointsMaterial({ color: 0xb9e08a, size: 0.08, transparent: true, opacity: 0.7, depthWrite: false, blending: THREE.AdditiveBlending }));
+  fireflies.frustumCulled = false;
+  scene.add(fireflies);
+
   const [wall, tree, leaf, flame, spark, coinFace, wingsTexture] = await Promise.all([
     loadTexture(asset('wallTexture.webp')),
     loadTexture(asset('treeTexture.webp')),
