@@ -12,7 +12,7 @@ type Handler = (action: Action) => void;
 export class Input {
   private queue: Action[] = [];
   private handlers: Handler[] = [];
-  private touchStart: { x: number; y: number } | null = null;
+  private touchStart: { x: number; y: number; id: number } | null = null;
 
   push(action: Action): void {
     this.queue.push(action);
@@ -83,6 +83,10 @@ export class Input {
   }
 
   attach(windowTarget: Window, canvas: HTMLCanvasElement): void {
+    const clearPointer=():void=>{
+      const start=this.touchStart;this.touchStart=null;
+      if(start&&canvas.hasPointerCapture?.(start.id))canvas.releasePointerCapture(start.id);
+    };
     windowTarget.addEventListener('keydown', (event) => {
       if (event.repeat) return;
       if(this.classicControls&&(event.code==='KeyA'||event.code==='KeyD')){
@@ -115,16 +119,20 @@ export class Input {
       if(event.code==='KeyA')this.leanLeft=false;
       if(event.code==='KeyD')this.leanRight=false;
     });
-    windowTarget.addEventListener('blur',()=>{this.leanLeft=false;this.leanRight=false;});
+    windowTarget.addEventListener('blur',()=>{this.leanLeft=false;this.leanRight=false;clearPointer();});
 
     canvas.addEventListener('pointerdown', (event) => {
-      this.touchStart = { x: event.clientX, y: event.clientY };
+      if(event.button!==0||this.touchStart)return;
+      this.touchStart = { x: event.clientX, y: event.clientY, id:event.pointerId };
+      // Keep mouse/pen swipes bound when they leave the canvas. Synthetic test
+      // pointers have no active browser pointer and may reject capture.
+      try { canvas.setPointerCapture?.(event.pointerId); } catch { /* no active pointer */ }
     });
     canvas.addEventListener('pointerup', (event) => {
-      if (!this.touchStart) return;
+      if (event.button!==0||!this.touchStart||this.touchStart.id!==event.pointerId) return;
       const dx = event.clientX - this.touchStart.x;
       const dy = event.clientY - this.touchStart.y;
-      this.touchStart = null;
+      clearPointer();
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
       if (Math.max(absX, absY) < 18) {
@@ -134,8 +142,11 @@ export class Input {
       if (absX > absY) this.push(dx > 0 ? 'right' : 'left');
       else this.push(dy > 0 ? 'slide' : 'jump');
     });
-    canvas.addEventListener('pointercancel', () => {
-      this.touchStart = null;
+    canvas.addEventListener('pointercancel', event => {
+      if(this.touchStart?.id===event.pointerId)clearPointer();
+    });
+    canvas.addEventListener('lostpointercapture', event => {
+      if(this.touchStart?.id===event.pointerId)this.touchStart=null;
     });
   }
 }

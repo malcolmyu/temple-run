@@ -60,10 +60,24 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
 .result-metrics dd { margin:0; color:#ffe95b; letter-spacing:1px; }
 .result-actions { position:absolute; bottom:5cqh; left:13%; width:74%; display:grid; gap:9px; }
 .result-actions button { border:0; font-family:inherit; cursor:pointer; }
-.result-restart { animation:result-button-in .25s .75s both; min-height:42px; aspect-ratio:535/118; background-color:transparent; background-size:100% 100%; color:#f5d68a; font-size:20px; text-shadow:0 2px #3c2514; }
-.result-revive { animation:result-button-in .25s .75s both; padding:6px; background:#574525; color:#f4dfa1; }
-.result-links { animation:result-button-in .25s 1s both; display:flex; justify-content:space-between; }
+.result-restart { min-height:42px; aspect-ratio:535/118; background-color:transparent; background-size:100% 100%; color:#f5d68a; font-size:20px; text-shadow:0 2px #3c2514; }
+.result-revive { padding:6px; background:#574525; color:#f4dfa1; }
+.result-links { display:flex; justify-content:space-between; }
 .result-links button { background:transparent; color:#eee0b0; font-size:14px; padding:7px 2px; }
 @keyframes result-button-in { from { visibility:hidden; transform:translateY(100cqh); } to { visibility:visible; transform:translateY(0); } }
 .result-actions button:focus-visible { outline:2px solid #fff1bb; outline-offset:3px; }
+</style>
+
+<style scoped>
+/* Short screens need normal flow so an extra revive action cannot cover metrics. */
+@media (max-height: 700px) {
+  .result-scroll { width:84%; padding:37cqh 10% 18px; box-sizing:border-box; }
+  .result-illustration { top:5cqh; width:72%; left:14%; }
+  .result-message { top:27cqh; font-size:12px; }
+  .result-summary { position:relative; top:auto; left:auto; width:100%; }
+  .result-summary h2 { font-size:24px; }
+  .result-metrics { margin:12px 0 0; font-size:12px; }
+  .result-metrics > div { margin-bottom:8px; }
+  .result-actions { position:relative; bottom:auto; left:auto; width:100%; margin-top:14px; gap:7px; }
+}
 </style>

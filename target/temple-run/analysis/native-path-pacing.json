@@ -1,0 +1,114 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "counterFields": {
+    "SpacesSinceLastTurn": "0x78",
+    "SpacesSinceLastObstacle": "0x7c",
+    "BackToBackObstacleCount": "0x80"
+  },
+  "decodedPackedValues": {
+    "stage500": [
+      4,
+      0.05000000074505806
+    ],
+    "stage1500": [
+      3,
+      0.10000000149011612
+    ],
+    "stage2000": [
+      0.15000000596046448,
+      6
+    ],
+    "stage3250": [
+      0.17499999701976776,
+      6
+    ]
+  },
+  "gridWorldMetres": 12,
+  "normalMonotonicRunStages": [
+    {
+      "fromProgress": 0,
+      "toProgressExclusive": 250,
+      "minTurnSpaces": 12,
+      "minObstacleSpaces": 6,
+      "minCoinRunSpaces": 12,
+      "doubleObstaclePercent": 0
+    },
+    {
+      "fromProgress": 250,
+      "toProgressExclusive": 500,
+      "minTurnSpaces": 10,
+      "minObstacleSpaces": 5,
+      "minCoinRunSpaces": 10,
+      "doubleObstaclePercent": 0
+    },
+    {
+      "fromProgress": 500,
+      "toProgressExclusive": 1000,
+      "minTurnSpaces": 8,
+      "minObstacleSpaces": 4,
+      "minCoinRunSpaces": 9,
+      "doubleObstaclePercent": 0.05
+    },
+    {
+      "fromProgress": 1000,
+      "toProgressExclusive": 1500,
+      "minTurnSpaces": 6,
+      "minObstacleSpaces": 4,
+      "minCoinRunSpaces": 8,
+      "doubleObstaclePercent": 0.05
+    },
+    {
+      "fromProgress": 1500,
+      "toProgressExclusive": 2000,
+      "minTurnSpaces": 5,
+      "minObstacleSpaces": 3,
+      "minCoinRunSpaces": 7,
+      "doubleObstaclePercent": 0.1
+    },
+    {
+      "fromProgress": 2000,
+      "toProgressExclusive": 3250,
+      "minTurnSpaces": 4,
+      "minObstacleSpaces": 3,
+      "minCoinRunSpaces": 6,
+      "doubleObstaclePercent": 0.15
+    },
+    {
+      "fromProgress": 3250,
+      "toProgressExclusive": 4500,
+      "minTurnSpaces": 3,
+      "minObstacleSpaces": 3,
+      "minCoinRunSpaces": 6,
+      "doubleObstaclePercent": 0.175
+    }
+  ],
+  "spacingGate": "turns enabled AND SpacesSinceLastTurn>=sMinSpaceBetweenTurns; obstacle gate requires SpacesSinceLastTurn!=1 and BackToBackObstacleCount<sMaxBackToBackObstacles(2); if gap<minimum retain only when Range(0,1000)<doublePercent*1000",
+  "candidateChoice": "Range(0,eligibleCount) at12e44e8; eligible list is built first, not a fixed global weight table",
+  "limits": [
+    "Some later stage entries inherit values set by earlier normal-run stages.",
+    "At4500+ control branches past these writes; fast-turn sections, remote overrides and full candidate filtering remain unaudited.",
+    "Minimum spacing is not a fixed road-length distribution.",
+    "Current CoursePlan coverage bag,144/168/192 groups, theme cadence and T25% remain explicit web assumptions."
+  ],
+  "instructionChecks": {
+    "0x12e3f74": "0xb9402d29",
+    "0x12e3f7c": "0x1a9fb7fd",
+    "0x12e3fb8": "0xb940314b",
+    "0x12e3fc0": "0x1a9fa7eb",
+    "0x12e3fe0": "0x6b0902ff",
+    "0x12e3fe4": "0x540002aa",
+    "0x12e3fe8": "0x52807d01",
+    "0x12e4028": "0x1e220800",
+    "0x12e4030": "0x54000048",
+    "0x12e44e0": "0x2a1803e1",
+    "0x12e44e8": "0x94473e80",
+    "0x126ebf0": "0xb9002d2d",
+    "0x126ec38": "0xb9002d2a",
+    "0x126ec3c": "0xb900352b",
+    "0x126ec88": "0xb9002d2b",
+    "0x126ec94": "0xf803412d",
+    "0x126edf4": "0xb9002d2b",
+    "0x126ee4c": "0xb9002d2c",
+    "0x126eecc": "0xb9002d2b"
+  }
+}

@@ -316,6 +316,11 @@ export class Game {
         const turn = this.world.require(this.runnerEntity, Turn);
         turn.next = distance;
       },
+      spawnObstacleDef: (id: string, lane=1, ahead=12) => {
+        if(!Object.hasOwn(DEFS,id))return null;
+        this.spawnDef(DEFS[id as DefId],lane,this.distance+ahead);
+        return {id,lane,ahead};
+      },
       spawnObstacle: (kind: ObstacleKind, ahead = 16) => this.spawnObstacle(kind, Math.floor(Math.random() * 3), this.distance + ahead),
       spawnCoin: (lane = 1, ahead = 6, height = COIN_Y) => this.spawnCoin(lane, this.distance + ahead, height),
       spawnPickup: (kind: PickupKind, lane = 1, ahead = 6, height = 1.35) => this.spawnPickup(kind, lane, this.distance + ahead, height),
@@ -670,8 +675,10 @@ export class Game {
     const skin = skinById(id);
     if (!force && !isOwned(id)) return;
     setSkin(id);
-    progress.equipped = id;
-    saveProgress();
+    if(progress.equipped!==id){
+      progress.equipped = id;
+      saveProgress();
+    }
     const token = ++this.rigToken;
     try {
       const rig = await loadRunnerRig(

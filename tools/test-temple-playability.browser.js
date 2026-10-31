@@ -2,6 +2,7 @@
 // Preserve temple.v2.progress before running and restore it afterwards.
 (() => {
   const originalUrl=location.href;const referenceUrl=new URL(location.href);referenceUrl.searchParams.set('route','reference');history.replaceState(null,'',referenceUrl);
+  try {
   const g = window.__templeGame;
   const checks = [];
   const check = (name, condition) => { checks.push({name, passed: !!condition}); if (!condition) throw new Error(name); };
@@ -39,6 +40,13 @@
   while(g.state().phase==='playing' && g.state().distanceExact<5500 && ticks++<8000){
     const s=g.state();
     if(s.nextTurn-s.distanceExact<5 && !s.turnQueued)key(s.turnDirection===-1?'ArrowLeft':'ArrowRight');
+    else if(s.nextTurn-s.distanceExact>10){
+      const safe=g.groundSupport(24);
+      if(safe.some(Boolean)&&!safe[s.lane]){
+        const target=safe.findIndex(Boolean);
+        for(let i=0;i<Math.abs(target-s.lane);i++)key(target<s.lane?'ArrowLeft':'ArrowRight');
+      }
+    }
     const obstacle=s.obstacles.find(o=>o.ahead>0 && o.ahead<10);
     if(obstacle && !s.airborne && !s.sliding)key(obstacle.kind==='arch'||obstacle.kind==='fire'?'ArrowDown':'ArrowUp');
     if([1320,2244,4308,4908].some(b=>s.distanceExact>b-20 && s.distanceExact<b-10) && !s.airborne)key('ArrowUp');
@@ -51,5 +59,6 @@
   prep();key('ArrowLeft');until(149);g.advance(700);
   check('missed corner still fails',g.state().phase==='dying' && g.death().kind==='missed');
   g.advance(6000);check('failure reaches results',g.state().phase==='ended');
-  const result={checks, longRun, final:g.state()};history.replaceState(null,'',originalUrl);return result;
+  const result={checks, longRun, final:g.state()};return result;
+  } finally { history.replaceState(null,'',originalUrl); }
 })()

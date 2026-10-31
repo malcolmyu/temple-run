@@ -1,0 +1,134 @@
+{
+  "checks": [
+    {
+      "name": "trusted touch swipe leaving canvas changes right without collision",
+      "passed": true
+    },
+    {
+      "name": "trusted upward swipe jumps",
+      "passed": true
+    },
+    {
+      "name": "trusted downward swipe slides",
+      "passed": true
+    },
+    {
+      "name": "trusted left swipe changes lane while sliding",
+      "passed": true
+    },
+    {
+      "name": "trusted two-finger contact preserves first right swipe",
+      "passed": true
+    },
+    {
+      "name": "trusted touch cancellation produces no movement/jump",
+      "passed": true
+    },
+    {
+      "name": "375px pause stops simulation",
+      "passed": true
+    },
+    {
+      "name": "375px actual results restart returns to fresh play",
+      "passed": true
+    },
+    {
+      "name": "375px upgrades bottom action reachable by scrolling",
+      "passed": true
+    },
+    {
+      "name": "375px store last character preview and return reachable",
+      "passed": true
+    },
+    {
+      "name": "320px trusted left swipe survives without wall/stumble",
+      "passed": true
+    },
+    {
+      "name": "320px results restart button operates",
+      "passed": true
+    },
+    {
+      "name": "375px result controls have no delayed entrance",
+      "passed": true
+    },
+    {
+      "name": "375px immediate result restart works after delay removal",
+      "passed": true
+    },
+    {
+      "name": "320px revive actions do not cover score metrics",
+      "passed": true
+    },
+    {
+      "name": "320px revive button operates and deducts2 gems",
+      "passed": true
+    },
+    {
+      "name": "reloading equipped character does not rewrite progression",
+      "passed": true
+    }
+  ],
+  "passed": 17,
+  "total": 17,
+  "touchEvidence": {
+    "events": [
+      {
+        "id": 6,
+        "trusted": true,
+        "type": "pointerup",
+        "x": 140
+      },
+      {
+        "id": 7,
+        "trusted": true,
+        "type": "pointerdown",
+        "x": 100
+      },
+      {
+        "id": 8,
+        "trusted": true,
+        "type": "pointerdown",
+        "x": 250
+      },
+      {
+        "id": 7,
+        "trusted": true,
+        "type": "gotpointercapture",
+        "x": 200
+      },
+      {
+        "id": 7,
+        "trusted": true,
+        "type": "pointerup",
+        "x": 200
+      },
+      {
+        "id": 8,
+        "trusted": true,
+        "type": "gotpointercapture",
+        "x": 250
+      },
+      {
+        "id": 8,
+        "trusted": true,
+        "type": "pointerup",
+        "x": 250
+      }
+    ],
+    "lane": 1,
+    "phase": "playing"
+  },
+  "layout": {
+    "actionsTop": 381.015625,
+    "noOverlap": true,
+    "scrollHeight": 568,
+    "summaryBottom": 367.015625
+  },
+  "upgradeScroll": {
+    "overflow": true,
+    "scrollTop": 215.5,
+    "text": true
+  },
+  "note": "Chrome trusted touch events and viewport emulation; not physical-device QA"
+}

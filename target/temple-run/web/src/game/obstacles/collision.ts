@@ -90,6 +90,7 @@ export function collisionWouldHit(
   obstacle: ObstacleCollisionState,
   state: RunnerCollisionState,
 ): boolean {
+  if(obstacle.def.action==='run')return false;
   const gap=obstacle.def.kind==='gap'||obstacle.def.kind==='gapLong';
   if(gap) {
     // Native holes test current ground support. Landing beyond the far rim is
@@ -108,6 +109,6 @@ export function collisionWouldHit(
       : obstacle.def.lanes.some(lane => overlaps(laneX(lane) - .65, laneX(lane) + .65));
     if (!blocked) return false;
   }
-  if (obstacle.def.action === 'dodge' || obstacle.def.action === 'run') return true;
+  if (obstacle.def.action === 'dodge') return true;
   return !actionEscapes(obstacle.def, state);
 }
