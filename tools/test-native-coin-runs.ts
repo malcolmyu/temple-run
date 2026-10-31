@@ -43,5 +43,26 @@ console.log('Flame native Range(0,2),jump-enable gate,both seeded variants and10
 const {nativeParallelCoinSide}=await import('../target/temple-run/web/src/game/nativeCoinRuns');
 for(const level of [1,2,3])for(const row of [0,1,2]as const){const side=nativeParallelCoinSide(row,level);const lane=row===0?1:row===1?0:2;assert.ok(nativePickupWithinReach('coin',1,side-(lane-1)*1.3,.6,0));assert.ok(Math.abs(side)<=1.4);if(level===3)assert.ok(Math.abs(side)<=1.12);}
 assert.equal(nativeParallelCoinSide(1,2),-1.4);assert.equal(nativeParallelCoinSide(2,2),1.4);
-const lanes=new Set<number>();for(let seed=1;seed<=100;seed++){const plan=new CoursePlan(seed,489);plan.features.splice(0,plan.features.length,{kind:'cliffStraight',from:489,to:3000,surface:'stone',pathLevel:3,generatedAtProgress:0});plan.obstacles.splice(0);const coins=new CourseCoinDirector().takeThrough(730,plan);assert.equal(coins.length,25);for(const c of coins)assert.equal(c.side,coins[0].side);lanes.add(coins[0].lane);}
-assert.deepEqual([...lanes].sort(),[0,1,2]);console.log('Parallel coin rows:left/centre/right reachable,authored offsets/cliff scale,original pickup bounds and25-coin continuity pass');
+const lanes=new Set<number>();for(let seed=1;seed<=100;seed++){const plan=new CoursePlan(seed,489);plan.features.splice(0,plan.features.length,{kind:'cliffStraight',from:489,to:3000,surface:'stone',pathLevel:3,generatedAtProgress:0});plan.obstacles.splice(0);const coins=new CourseCoinDirector().takeThrough(730,plan);assert.equal(coins.length,25);for(let i=5;i<coins.length;i+=5)assert.ok(Math.abs(coins[i].side-coins[i-1].side)<.1);lanes.add(coins[0].lane);}
+assert.deepEqual([...lanes].sort(),[0,1,2]);console.log('Parallel coin rows:left/centre/right reachable,authored offsets/cliff scale,original pickup bounds and25-coin endpoint continuity pass');
+
+const {nativeCoinRowCandidates,nativeCoinRowSides,nativeCoinRowEnd}=await import('../target/temple-run/web/src/game/nativeCoinRows');
+assert.deepEqual(nativeCoinRowCandidates(null),[0,1,2,3,4,5,6]);assert.deepEqual(nativeCoinRowCandidates(1),[0,3,5]);assert.deepEqual(nativeCoinRowCandidates(2),[1,6]);assert.deepEqual(nativeCoinRowCandidates(3),[2,4]);
+const allPatterns=new Set<number>();for(let seed=1;seed<=100;seed++){const plan=new CoursePlan(seed,489);plan.features.splice(0,plan.features.length,{kind:'cliffStraight',from:489,to:3000,surface:'stone',pathLevel:3,generatedAtProgress:0});plan.obstacles.splice(0);const coins=new CourseCoinDirector().takeThrough(2000,plan);for(const c of coins)allPatterns.add(c.pattern);for(let i=0;i<coins.length;i+=5){const row=coins.slice(i,i+5);assert.deepEqual(row.map(c=>c.side),nativeCoinRowSides(row[0].pattern,3));if(i&&row[0].distance-coins[i-1].distance<3)assert.ok(nativeCoinRowCandidates(nativeCoinRowEnd(coins[i-1].pattern)).includes(row[0].pattern));}}
+assert.deepEqual([...allPatterns].sort(),[0,1,2,3,4,5,6]);console.log('All7 native rows,endpoint candidate sets,exact float tables,cliff scaling and100-seed slant reachability pass');
+
+const {TrackPath}=await import('../target/temple-run/web/src/game/path');
+let cornerCount=0;
+for(let seed=1;seed<=100;seed++)for(const direction of [-1,1]as const){
+ const p=new CoursePlan(seed,489);p.features.splice(0,p.features.length,{kind:'cliffStraight',from:489,to:705,surface:'stone',pathLevel:3,generatedAtProgress:0},{kind:'cliffStraight',from:705,to:3000,surface:'stone',pathLevel:3,generatedAtProgress:0});p.obstacles.splice(0);p.turns.splice(0,p.turns.length,{distance:705,direction,junction:'corner'});
+ const all=new CourseCoinDirector().takeThrough(800,p),split=new CourseCoinDirector();assert.deepEqual([...split.takeThrough(700,p),...split.takeThrough(800,p)],all);
+ const corner=all.filter(c=>c.pattern===7);if(!corner.length)continue;cornerCount++;assert.deepEqual(corner.map(c=>c.distance),[700,702.5,705,707.5,710]);
+ const path=new TrackPath();path.turn(705,direction);const pivot=path.at(705);for(const c of corner){const pos=path.at(c.distance,c.side);if(c.distance<=705)assert.ok(Math.abs(pos.x-pivot.x)<1e-8);else{assert.ok(Math.abs(pos.z-pivot.z)<1e-8);assert.ok((pos.x-pivot.x)*direction>0);}}
+ p.turns[0].junction='tee';assert.equal(new CourseCoinDirector().takeThrough(800,p).filter(c=>c.pattern===7).length,0);
+}
+assert.ok(cornerCount>0);console.log('Corner native5-point L geometry,both directions,centre predecessor/counter eligibility,T exclusion and streaming order pass');
+
+const {nativePathTypeAllowsCoins}=await import('../target/temple-run/web/src/game/nativeCoinEligibility');
+for(const type of [7,8,9,10])assert.equal(nativePathTypeAllowsCoins(type),false);
+for(const type of [1,2,3,4,5,6,11,12,13,35,36])assert.equal(nativePathTypeAllowsCoins(type),true);
+console.log('Native T coin exclusion:four metadata-backed path types rejected;other eligibility remains separate');

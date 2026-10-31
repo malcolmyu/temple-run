@@ -416,7 +416,7 @@ export class Game {
       pickupDetails: () => this.pickups.map(entity=>{
         const p=this.world.require(entity,Pickup),o=p.object;
         const bounds=o?new THREE.Box3().setFromObject(o,true):null;
-        return {kind:p.kind,value:p.value,lane:p.lane,side:p.side,distance:p.distance,baseY:p.baseY,
+        return {kind:p.kind,value:p.value,lane:p.lane,side:p.side,pattern:p.pattern,distance:p.distance,baseY:p.baseY,
           animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
@@ -1683,7 +1683,7 @@ export class Game {
       this.nextSpawn = base + plan.gap;
     }
     const course=activeCourse();
-    if(course)for(const coin of this.courseCoins.takeThrough(this.distance+90,course))this.spawnCoin(coin.lane,coin.distance,COIN_Y+coin.height-NATIVE_COIN_ROOT_Y,coin.side);
+    if(course)for(const coin of this.courseCoins.takeThrough(this.distance+90,course))this.spawnCoin(coin.lane,coin.distance,COIN_Y+coin.height-NATIVE_COIN_ROOT_Y,coin.side,coin.pattern);
     if(course)while(this.courseCoinIndex<course.features.length){
       const feature=course.features[this.courseCoinIndex];const mid=12*Math.round((feature.from+feature.to)/24);
       if(mid-28>=this.distance+90)break;
@@ -1865,7 +1865,7 @@ export class Game {
     this.spawnDef(def, def.lanes === 'one' ? lane : 1, distance);
   }
 
-  private spawnCoin(lane: number, distance: number, y = COIN_Y,side?:number): void {
+  private spawnCoin(lane: number, distance: number, y = COIN_Y,side?:number,pattern?:number): void {
     if (distance < 4) return;
     const entity = this.world.createEntity();
     const value = this.difficulty.name==='classic'&&!this.referenceReplay
@@ -1874,7 +1874,7 @@ export class Game {
     const group = this.acquirePickup('coin', value);
     group.userData.nativeCoinSpawnTime=this.world.elapsed;
     if(this.difficulty.name==='classic')y=nativeCoinRootHeight(y,COIN_Y);
-    this.world.add(entity, Pickup, { kind: 'coin', lane,side, distance, baseY: y, value, taken: false, object: group });
+    this.world.add(entity, Pickup, { kind: 'coin', lane,side,pattern, distance, baseY: y, value, taken: false, object: group });
     this.pickups.push(entity);
   }
 

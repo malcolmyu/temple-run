@@ -1,0 +1,33 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "metadataSHA256": "5bd950811d6b26080d8e3b722ecfa91d8a0d726e7786f91f351b13c91ce5467b",
+  "fieldRefIndex": 13,
+  "typeIndex": 9793,
+  "definitionIndex": 4159,
+  "fieldIndex": 20128,
+  "fieldName": "F4E93BF24919BB3436EE6C6458095FDB4B6CDA90C2C2AB75287A4BAA2381FD3F",
+  "fieldToken": "0x40013de",
+  "dataIndex": 134104,
+  "bytes": "090000000a0000000700000008000000",
+  "excludedPathTypes": [
+    9,
+    10,
+    7,
+    8
+  ],
+  "rule": "AddCoins returns before instantiation for the four T path types7/8/9/10. This is absence by native design,not a missing T coin layout.",
+  "limits": [
+    "Adjacent straight-arm coins can still appear outside the T node.",
+    "This does not restore all remaining AddCoins eligibility or remote configuration."
+  ],
+  "instructionChecks": {
+    "0x13d7a14": "0xb8777b01",
+    "0x13d7a18": "0x2a1503e2",
+    "0x13d7a24": "0x370000c0",
+    "0x13d7a3c": "0x120002c0",
+    "0x12e4dd4": "0x52800081",
+    "0x12e4df4": "0x942c0378",
+    "0x12e4e0c": "0x9403cae7",
+    "0x12e4e10": "0x3707f680"
+  }
+}

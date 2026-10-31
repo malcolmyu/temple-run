@@ -1,4 +1,111 @@
 {
+  "cornerTypes": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "cornerDispatch": [
+    0,
+    17,
+    34,
+    51
+  ],
+  "cornerPathOffsetsWorld": [
+    -5,
+    -2.5,
+    0,
+    2.5,
+    5
+  ],
+  "cornerGate": "IsTurn requires previous CoinRowEnd1;otherwise created coins are removed;counter/spacing gates still apply",
+  "cornerAdapter": "Runtime merges turn node with straight stream;overlapping web grid cells within11m omitted;T geometry incomplete",
+  "coinRows": [
+    {
+      "id": 0,
+      "start": 1,
+      "end": 1,
+      "rawX": [
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "id": 1,
+      "start": 2,
+      "end": 2,
+      "rawX": [
+        -7.0,
+        -7.0,
+        -7.0,
+        -7.0,
+        -7.0
+      ]
+    },
+    {
+      "id": 2,
+      "start": 3,
+      "end": 3,
+      "rawX": [
+        7.0,
+        7.0,
+        7.0,
+        7.0,
+        7.0
+      ]
+    },
+    {
+      "id": 3,
+      "start": 1,
+      "end": 2,
+      "rawX": [
+        -0.0,
+        -1.399999976158142,
+        -2.799999952316284,
+        -4.199999809265137,
+        -6.599999904632568
+      ]
+    },
+    {
+      "id": 4,
+      "start": 3,
+      "end": 1,
+      "rawX": [
+        6.599999904632568,
+        4.199999809265137,
+        2.799999952316284,
+        1.399999976158142,
+        -0.0
+      ]
+    },
+    {
+      "id": 5,
+      "start": 1,
+      "end": 3,
+      "rawX": [
+        -0.0,
+        1.399999976158142,
+        2.799999952316284,
+        4.199999809265137,
+        6.599999904632568
+      ]
+    },
+    {
+      "id": 6,
+      "start": 2,
+      "end": 1,
+      "rawX": [
+        -6.599999904632568,
+        -4.199999809265137,
+        -2.799999952316284,
+        -1.399999976158142,
+        -0.0
+      ]
+    }
+  ],
   "parallelRowsRaw": [
     0,
     -7,
@@ -52,12 +159,16 @@
       6.599999904632568
     ]
   },
-  "sideMode": "Web enables centre/side and selects parallel subset;slants/full predecessor candidate filtering incomplete",
+  "sideMode": "Web enables all7 rows and links adjacent emitted cells by native start/end enums;special predicates and remote enables incomplete",
   "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
   "fields": {
     "HasCoins": "0x3d",
+    "CoinLocationStart": "0x44",
+    "CoinLocationEnd": "0x48",
     "SpacesSinceLastCoinRun": "0x84",
-    "CoinRunCount": "0x88"
+    "CoinRunCount": "0x88",
+    "sPathLevel": "0x44",
+    "sIsFastTurnSection": "0x48"
   },
   "straightOffsetsRaw": [
     -25,
@@ -111,10 +222,21 @@
   "counterRule": "HasCoins increments previous CoinRunCount;below maximum preserves SpacesSinceLastCoinRun;maximum resets spaces0.No coins resets count0 and increments spaces.",
   "limits": [
     "Eligibility,cell grid and obstacle exclusion use a web adapter.",
-    "Native tree jump/trip high row and slide low row integrated;corner,other obstacles,side rows and random choices incomplete.",
+    "Native tree jump/trip high row and slide low row integrated;all7 side rows integrated;corner,special predecessor/obstacle predicates and native random sequence incomplete.",
     "Remote config may alter static defaults."
   ],
   "instructionChecks": {
+    "0x12e54a0": "0x71000d1f",
+    "0x12e54b4": "0x3868692b",
+    "0x12e54d8": "0x1e373002",
+    "0x12e54fc": "0x1e353002",
+    "0x12e55ec": "0x1e2703e2",
+    "0x12e5608": "0x1e253000",
+    "0x12e562c": "0x1e273000",
+    "0x12e58d0": "0x97fff3f8",
+    "0x12e58dc": "0xb9404b68",
+    "0x12e58e0": "0x7100051f",
+    "0x12e58e4": "0x54000341",
     "0x12e567c": "0x7100191f",
     "0x12e5684": "0x52800041",
     "0x12e5688": "0x2a1f03e0",
