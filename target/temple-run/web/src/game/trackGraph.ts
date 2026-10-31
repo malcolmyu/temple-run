@@ -82,6 +82,11 @@ export class TrackGraph {
     for(let i=this.nodes.length-1;i>=0;i--)if(!retained.has(this.nodes[i]))this.nodes.splice(i,1);
   }
 
+  compactBefore(distance:number):void {
+    const paths=new Set([this.active,...this.forks.flatMap(f=>[f.left,f.right])]);
+    for(const path of paths)path.compactBefore(distance);
+  }
+
   /** Explicit branch->base distance remap at a merge node (branch length is same today). */
   remapAfterMerge(fork: TrackGraphFork, branchDistance: number): number {
     if (branchDistance <= fork.mergeAt) return branchDistance;

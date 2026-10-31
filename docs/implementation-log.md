@@ -435,3 +435,99 @@ TrackGraph增加pruneBefore，回收mergeAt已在尾部120米外的旧fork及nod
 证据analysis/gameplay-path-lookup-long-run.json与input.json，旧坐标参考在tools/path-linear-reference.ts。本轮没有UI变化，不另造可视差异截图。独立5175端口测试，用户原始存档先落盘并逐字不变，临时页/服务关闭。
 
 限制：仅将这些Path查询从O(N)改为O(logN)，当前路径/课程历史与clone仍随里程增长，其他CoursePlan查询尚未索引；不声称全局内存有界或实际渲染帧时改善。真机输入/性能、回放、其余元素反馈与原规则证据仍待完成。
+
+## P4/P1：结算商店入口先入账再消费（2026-11-01）
+
+实际复现：从零金币隔离存档正常操作至6000米后自然失败，本局713币/2宝石，点结果页商店，余额仍0、phase ended、session committed=false，500币天使翼不可买。原因是App直接showStore=true绕过toMenu/commitRun，商店只能用旧余额。未改成可复活局的部分入账，以免引入双结算/复活保留收益等新问题。
+
+结果入口文案改为“结算并去商店”，新openResultStore先调用已有toMenu完成一次结算并结束本局，再打开商店；关闭商店回主菜单。菜单原STORE直接打开逻辑不变，结果页仍可在结算前选复活。来源是网页可玩闭环设计/真实复现，不声称原版UI流程；不改奖励、价格或复活费用。
+
+实际操作同一零币条件：713币入账，gems10→12，runs=1，phase menu，本局已结束。真实点击500币天使翼，余额213、库存1；关闭并从菜单再次打开商店，余额和runs保持，无二次入账。实际点开始奔跑，新的runId、phase playing，真实点天使翼，库存1→0，正常遗漏障碍后wingRevives=1自动复活且playing。完成了核心操作→失败→结果商店→购买→新局使用→自动复活。原15项输入/左右/触摸/真实障碍/双转角/T两臂/漏转/结果重开全部通过；GameSession单测、类型和构建通过。
+
+证据analysis/gameplay-result-store-before.json、after.json、after.png。隔离5175测试，用户原始JSON先落盘并逐字不变；测试页/服务关闭。未声称刷新恢复未结算局已实现，路径/课程历史、真机、回放、原规则和元素反馈缺口继续保留。
+
+## P5-9：正常模式路径前缀压缩与绝对路段编号（2026-11-01）
+
+追踪所有segments使用点：除了位置/转角查询，game.ts的T口地面切口与路段跳过逻辑用segmentIndex映射referenceJunction。直接splice会改变正常Course的绝对turn索引，因此新增TrackPath.segmentOffset保存删去的段数，并在两处编号查询加回offset，clone也保留。compactBefore保留指定位置所在段及前一段，供平滑转角与incoming heading查询；仅正常Course在玩家后240米压缩active、保留fork的两侧path、以及侧路合流basePath。固定reference路径不压缩，QA历史查询不暗中套用新的保留窗口。
+
+来源为网页运行时内存生命周期策略，不改原生成、运动或奖励规则。压缩后窗口之前的路径坐标不再承诺完整历史重建；该行为写入方法契约。CoursePlan仍保留历史生成记录，尚不声称所有存储有界。
+
+2000转角与完整历史路径对照，在保留起点、转角前后、平滑开关、侧向偏移、nearTurn、absolute ordinal与clone上完全一致，最多保留4段；侧路渐变与basePath合流对照通过，无效cutoff不变。temple:test:path-compaction接入包脚本。
+
+正常seed1自然操作跑至60000.877米，采样路径段3..5（原36→383），11处5000米采样除pathSegments外，GPU/scene/pool/course全部字段与P5-8基准相等，最终distanceExact/position也相等。随后自然失败ended并重开playing。额外自然跑至9567..9699风险分路，真实Left选择、遗漏跳跃撞火墙到结算；真实点宝石复活后9783.727米仍playing且已合流，保留2段。15项原左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开回归通过；类型、路径查询/快照保留相关单测与构建通过。
+
+证据analysis/gameplay-path-compaction-long-run.json与regression.json；没有渲染差异，不造截图充数。独立5175运行，用户原始JSON先落盘，结束逐字一致，临时页/服务关闭。剩余CoursePlan历史、真机输入/性能、回放、元素表现与原规则证据；整体目标未完成。
+
+## P1/P5：启动失败重试入口（2026-11-01）
+
+启动失败原来仅展示String(error)，没有可操作恢复入口。新增role=alert的失败说明和“重新加载”，明确存档保留；按钮采用整页reload重新建立WebGL/资源/输入，不在部分失败的Game实例上重复init，也不通过reset/清存档来掩盖错误。详细原错误仍保留console.error，界面避免显示无帮助的[object Event]。来源是网页可用性修复，不属于原版机制。
+
+隔离页通过Network.setBlockedURLs阻断必需terrainTexture.webp并禁用缓存后真实reload：开始按钮disabled、启动失败alert和重载按钮出现。实际点重载，资源仍阻断时再次失败且可重试；解除阻断后真实点重载，开始按钮恢复可用，错误页消失。QA存档原始字符串重试前后完全一致。再实际点开始、正常遗漏危险失败到结算、点再跑一次回playing；15项原左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。类型和构建通过。
+
+证据analysis/gameplay-startup-retry.json、failed.png和recovered.png。阻断和禁缓存已解除，所有操作仅5175，用户原始JSON先落盘并逐字未变，临时页/服务关闭。本轮不声称不支持WebGL的设备可经重试恢复，也没有改离线资源缓存、存档中途恢复策略；课程历史、真机、回放与其他元素反馈仍待完成。
+
+## P1：菜单弹层隔离全局游戏输入（2026-11-01）
+
+实际复现STORE打开时真实Return令phase从menu变playing，商店仍在前面，玩家会在面板后跑动。根因Input.attach全局Enter→start、Escape→pause，没有UI弹层上下文。修复不是只特判Enter：Input新增setBlocked，打开/关闭时清队列、A/D保持、倾斜样本、pointer捕获；阻断期间不入队、不采样倾斜、不返回steeringAxis，键盘处理在preventDefault之前返回，让原生按钮键盘激活/滚动仍可用。Game提供窄的setModalInputBlocked适配，App同步watch商店/设置/统计/目标/升级/首次说明/加载/错误状态。
+
+来源是网页UI与游戏输入仲裁修复，不改原换道/转弯/跳滑规则。暂停主面板不在额外阻断列表，保留Escape继续；在暂停上叠设置时阻断，避免无意恢复。UI按钮直接调用开始/复活等已授权动作，不受调试队列替代。
+
+实际回归五个菜单面板：每次真实Enter、Escape后phase=menu、distance=-2、runId=null；逐个真实关闭。开始后暂停→OPTIONS→Escape仍paused，真实点完成→Escape变playing。清除隔离页tutorial标记，真实开始打开说明；Return仍menu/runId=null，真实点说明内开始后playing。15项左右/边界/空中/滑铲/触摸/真实障碍/两转角/T两臂/漏转/结果重开全过。
+
+新增temple:test:modal-input单测覆盖队列/保持键清理、被阻断的keyboard与debug push、modal中不preventDefault、退出后方向/Enter与A/D恢复。类型检查和生产构建通过。证据analysis/gameplay-modal-input-before.json、after.json/png。用户原始JSON先落盘并逐字不变，测试仅5175，临时页/服务关闭。
+
+剩余：课程历史占用、真机输入/性能、输入回放、其他表现及原规则证据；本轮只关闭一个实际影响完整游玩的输入漏洞，未宣称整体完成。
+
+## P0/P3：逐项验收索引与当前四道具自然覆盖（2026-11-01）
+
+新增docs/playability-acceptance.md，逐项覆盖用户要求的核心输入、道路/分路、全部障碍、四类道具、币/宝石、追逐、失败复活、结算商店升级和运行入口。分别标注有/缺/假设、当前证据和历史证据，附对应JSON并核对链接均存在。避免把“有代码”“旧版脚本通过”“当前正常模式实测”和“真机已验证”混为同一层级。game-design已链接该索引。
+
+审阅旧道具证据发现其驾驶脚本未适配新增fireWall/风险分路；更新正常驾驶的分路选边/窄路/石墩避让及所选支路危险过滤，火塔滑铲与低火墙跳跃分开，不修改游戏规则或道具权重。使用独立升级5/5/5/5夹具（明确预先解锁四类，不伪称从零购买），当前seed1..4各自然操作跑5500米，共24项全过：首次道具均600后1000前、间距>600、四类均自然生成且实际收集、正常失败ended、重开playing且生成器清空。没有spawn/seek/forced power。个别生成未收集仍保留collected=false，不将全部生成算作拿到。
+
+seed1实际拾取bonus2/magnet1/shield3，seed2 boost3/magnet3，seed3 bonus3/magnet1/shield2，seed4 bonus2/magnet2/shield1，其他为0。该样本证明当前四道具自然可达，不证明零升级默认生成全部，也不是所有保护危险类别或最大升级数值的重新物理验收。
+
+证据analysis/gameplay-current-power-coverage.json；本轮没有新增玩家功能或碰撞bug修复，产出可追溯清单并刷新重要自然生成证据，改变后续工作顺序：优先将旧版专项验收迁移到当前道路生成，不继续堆局部优化。本轮只改文档/驾驶脚本，未改运行时代码，不重复构建。用户原始JSON先落盘且逐字不变，QA5175临时页/服务关闭。真机、CoursePlan历史、回放、表现和原规则证据仍有缺口，未宣称整体完成。
+
+## P2/P3验收迁移：当前正常道路五类错误操作（2026-11-01）
+
+将test-temple-course-failures.browser.js由旧的planAhead/jumpTo混合测试改为全部从起点正常驾驶接近，覆盖branch、narrowSmall、narrowLong、shortGap、longGap。正常到达目标前保存完整state，再从正常输入队列故意选择中心缺口/错误支撑侧或遗漏跳跃；没有seek/spawn/强制保护/改碰撞。升级空夹具防止用道具掩盖失败，逐例检查无保护、自然到达、失败位置在目标附近、fall/water原因、ended结算和重开清理，共30检查全过。
+
+seed1实际接近/失败世界距离：branch694.167/742.962（入口726..762）；短窄路2598.309/2646.467（2634..2646，左安全）；长窄路3222.479/3278.487（3258..3294，右安全）；短坑382.692/401.568；长坑2050.976/2078.596，接近时真实pitLongB与配对障碍存在。死亡结算的最终距离含坠落推进，不拿它当首次碰撞精确位置。
+
+此前先跑三类18项通过，再扩到五类30项，最终证据以30项为准。当前原左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开15项也通过。规则来源沿用原支撑/碰撞与已标注网页生成，不新增玩法规则。本轮没有修复运行时bug，而是刷新正常可达和错误操作失败的证据，playability-acceptance相应三行已从历史专项改为当前专项。
+
+证据analysis/gameplay-current-road-failures.json与input.json；没有修改运行时代码，不重复构建。所有测试仅5175，用户原始JSON先落盘且逐字未变，测试页/服务关闭。保护交接和升级效果旧专项仍需迁移；课程历史、真机、回放、原规则和元素反馈继续保留，目标未完成。
+
+## P3验收迁移：当前保护交接与自然加速解除（2026-11-01）
+
+旧support-handover脚本的两处激活位置在当前seed1仍有效，实际重新运行14项全部通过，不为“更新”强行改动已适配fireWall/分路的逻辑。正常从起点驾驶至400/2900米，只在这里诊断激活boost，以确定覆盖分路/窄路中的到期延后。暂停后推进保持distance、boost预算、runElapsed、powers和deferred不变，解除时playing/非falling/无boost或shield，之后不操作自然失败到ended、重开清交接。明确这是诊断激活边界测试，不当作自然拾取证据。
+
+另外在四道具自然生成脚本记录每次boost active→inactive的实际phase、接地/支撑、powers、handover，新增两项验收。预先解锁升级5/5/5/5夹具，在当前seed1..4自然驾驶5500米，26项全过，四类自然生成和收集以及失败重开保持。seed2三次自然加速在世界1251.400、2002.483、2828.088米解除，均airborne=false/falling=false/supported=true/phase playing且powers空；后两次累计deferred=.5秒。未从累计值反推某个未记录的具体危险原因，亦未声称每种危险上均自然拾取到加速。
+
+本轮没有改变原加速预算、原4秒尾保护或网页交接政策，没有运行时bug修复，只刷新当前边界与自然使用的独立证据。15项原左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。验收表保护交接证据更新为当前文件：analysis/gameplay-current-support-handover-{diagnostic,natural,input}.json。只改驾驶脚本/文档，无运行时代码，故不重复构建。
+
+独立5175，用户原始JSON先落盘且逐字不变，临时页/服务关闭。下一步升级实际效果的旧专项需迁移；CoursePlan历史、真机、回放、其他表现与原规则证据仍保留，目标未完成。
+
+## P4验收迁移：四类道具升级实际购买→刷新→自然效果（2026-11-01）
+
+独立零升级、200000测试金币夹具，真实打开升级界面，按每次最新AX界面实际点击加速/磁铁/护盾/奖励四类各6档，共24次；不直接写升级字段或调用purchase接口。逐次对照显示价、存档扣款和等级，全部相等。原默认档价250/1000/2500/5000/7500/25000，每类41250，总165000，余额35000；刷新后四类Lv6、余额不变。夹具金币是测试准备，不声称真人从0赚了200000。
+
+随后使用当前四种子正常道具驾驶，记录每次powerPickups增量后那一帧的真实效果，四种子各5500米、26项自然生成/解除/失败/重开全通过，无spawn/seek/forced power。自然收集23次：磁铁25秒、护盾25秒、boost.left800（750+50制动余量，HUD remaining750）、bonus同帧coinsAdded150或151/153（普通金币可同时入账）。覆盖四类实际购买后的生效，不以读取配置函数代替运行状态。
+
+初版验证器用remaining<=25严格上限，护盾一条25.000000000000018误报。保留initialStrictChecks与全部原值，以1e-6秒浮点容差重新验证磁铁/护盾均通过，不改运行时规则。这不是被隐藏的玩法失败。15项原左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。
+
+来源为原native升级价格/LoadLevelInformation档表，当前网页购买和自然使用的验证；本轮没有新增玩家功能或运行时bug修复。新增collections只读采样到已有自然道具驾驶脚本，没有改生成或物理。证据analysis/gameplay-current-upgrade-purchases.json/png与effects.json。验收表明确只将四类道具升级迁移为当前证据，高值金币与兼容金币价值仍为历史专项，不泛称全部升级已重测。
+
+只改驾驶脚本/文档，无运行时代码，不重复构建。QA仅5175，用户原始JSON先落盘且结束逐字一致，临时页/服务关闭。剩余金币类升级、CoursePlan历史、真机、回放、表现与原规则证据，整体目标继续。
+
+## P4验收迁移：金币价值与高值金币五档（2026-11-01）
+
+新增正常驾驶金币观察脚本test-temple-coin-upgrades.browser.js，沿用当前驾驶并按距离/车道/侧向/高度/模式去重首见金币，记录progressDistance、world、coinDistance、value，检查没有在对应进度门槛前观察到红/蓝币。不是按显示世界米数判断native距离，也没有seek/spawn/power。观察首见不是所有潜在金币的出生日志，精确门槛由nativeCoinValues源表及边界单测另证。
+
+零升级50000币夹具，真实购买金币价值3档（300/600/1200），每档同seed正常4000.177米，同一最终world position，未拾取四类道具。收入Lv0=456、Lv1=570、Lv2=684、Lv3=798，逐项等于floor(456×[1,1.25,1.5,1.75])。证明小数收益在运行时累积，不因单个黄币取整而丢掉25%。该升级是明确网页经济扩展，不称原版规则。
+
+继续真实购买高值金币Lv1..5（250/1000/2500/5000/7500）并逐档正常4000米。Lv0只观察到黄币；Lv1红币首见progress1590.860（原门槛1500）；Lv2起红币首见1019.911（门槛1000）；Lv3蓝币3008.111（门槛3000）、Lv4蓝币2664.724（门槛2500）、Lv5蓝币2081.040（门槛2000）。未早出，相应币种均在正常路线出现；高于阈值的观察延迟受实际布币片段影响，不能反推阈值就是首见进度。生成交替摆放仍是网页适配，原CoinSpawnConfigData门槛为默认资源规则，远端覆盖未确证。
+
+刷新后coin=3/coinSpawn=5保留。另从干净50000币夹具真实重购这两类8档，逐次记录显示价/实际存档扣款/等级全部相等，共18350币。此前逐档自然跑动产生的收益不混入该独立扣款核对。所有自然跑动均失败到ended并重开playing，15项原左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。native coin threshold/value边界测试通过。
+
+证据analysis/gameplay-current-coin-value.json、high-coins.json、coin-upgrade-ledger.json、coin-upgrades.png；验收表六类升级均已有当前对应证据，但不宣称所有组合或真机效果全覆盖。本轮未改运行时规则，无bug修复，不重复构建。用户原始JSON先落盘且逐字不变，测试仅5175，临时页/服务关闭。课程历史、真机、回放、其余表现和原规则证据继续保留，整体未完成。

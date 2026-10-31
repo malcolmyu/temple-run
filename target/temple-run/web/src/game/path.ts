@@ -22,6 +22,8 @@ export const normAngle = (a: number): number => ((a + Math.PI) % (Math.PI * 2) +
  */
 export class TrackPath {
   readonly segments: PathSegment[] = [{ start: 0, end: Infinity, x: 0, z: PLAYER_Z, heading: 0 }];
+  /** Number of discarded prefix segments; authored turn ordinals stay stable. */
+  segmentOffset=0;
   /** Lateral offset of a branch path from the main centerline. */
   lateral = 0;
   branchSpan: {from:number;to:number}|null=null;
@@ -91,11 +93,21 @@ export class TrackPath {
   /** Deep copy; used by TrackGraph branches so a fork can own its own segments. */
   clone(): TrackPath {
     const copy = new TrackPath();
+    copy.segmentOffset=this.segmentOffset;
     copy.lateral = this.lateral;
     copy.branchSpan=this.branchSpan?{...this.branchSpan}:null;
     copy.segments.length = 0;
     for (const segment of this.segments) copy.segments.push({ ...segment });
     return copy;
+  }
+
+  /** Keep the segment containing the retained horizon plus its predecessor,
+   * so smoothing and junction heading queries retain their incoming geometry.
+   * Positions before this horizon are intentionally no longer historical queries. */
+  compactBefore(distance:number):void {
+    if(!Number.isFinite(distance))return;
+    const remove=Math.max(0,this.indexAt(distance)-1);
+    if(remove){this.segments.splice(0,remove);this.segmentOffset+=remove;}
   }
 
   /** Segment that contains a distance (used by scenery systems). */

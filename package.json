@@ -101,7 +101,9 @@
     "temple:test:focus-pause": "esbuild tools/test-focus-pause.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-focus-pause.mjs >/dev/null && node /tmp/temple-focus-pause.mjs",
     "temple:test:fire-wall": "esbuild tools/test-fire-wall.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-fire-wall.mjs >/dev/null && node /tmp/temple-fire-wall.mjs",
     "temple:test:graph-retention": "esbuild tools/test-track-graph-retention.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-graph-retention.mjs >/dev/null && node /tmp/temple-graph-retention.mjs",
-    "temple:test:path-lookup": "esbuild tools/test-path-lookup.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-path-lookup.mjs >/dev/null && node /tmp/temple-path-lookup.mjs"
+    "temple:test:path-lookup": "esbuild tools/test-path-lookup.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-path-lookup.mjs >/dev/null && node /tmp/temple-path-lookup.mjs",
+    "temple:test:path-compaction": "esbuild tools/test-path-compaction.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-path-compaction.mjs >/dev/null && node /tmp/temple-path-compaction.mjs",
+    "temple:test:modal-input": "esbuild tools/test-modal-input.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-modal-input.mjs >/dev/null && node /tmp/temple-modal-input.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

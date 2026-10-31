@@ -746,6 +746,8 @@ export class Game {
     setHint('天使之翼已激活');this.syncHud(0);return true;
   }
 
+  setModalInputBlocked(blocked:boolean):void {this.input.setBlocked(blocked);}
+
   restart(): void {
     this.start();
   }
@@ -894,7 +896,11 @@ export class Game {
     const challengeStats=this.world.require(this.runnerEntity,RunStats);
     stepRunChallenges(this.runChallenges,challengeStats.distance,challengeStats.coins,challengeStats.score);
     this.ensureTiles();
-    if(activeCourse())this.graph.pruneBefore(this.distance-120);
+    if(activeCourse()){
+      this.graph.pruneBefore(this.distance-120);
+      this.graph.compactBefore(this.distance-240);
+      this.basePath?.compactBefore(this.distance-240);
+    }
     this.spawnWaves();
     this.updateObstacles(dt);
     this.updatePickups(dt);
@@ -1460,7 +1466,7 @@ export class Game {
     const cuts: SurfaceCut[] = [];
     for(let index=1;index<this.path.segments.length;index++){
       const at=this.path.segments[index].start;
-      if(this.difficulty.name==='classic'&&referenceJunction(index-1,at)==='tee'){
+      if(this.difficulty.name==='classic'&&referenceJunction(this.path.segmentOffset+index-1,at)==='tee'){
         const cut=tJunctionApproachCut(distance,at)??tJunctionExitCut(distance,at);if(cut)cuts.push(cut);
       }
     }
@@ -1629,7 +1635,7 @@ export class Game {
       if(this.difficulty.name==='classic'&&index<=0)continue;
       // A 12 m tile that straddles a corner cannot be rotated to both headings: its walls
       // cut across the other leg. Drop it and let the road-width corner fill the gap.
-      const crossesTurn = this.path.segments.some((segment, segmentIndex) => segmentIndex > 0 && !(this.difficulty.name==='classic'&&referenceJunction(segmentIndex-1,segment.start)==='tee') && Math.abs(segment.start - distance) < TILE / 2 - 0.01);
+      const crossesTurn = this.path.segments.some((segment, segmentIndex) => segmentIndex > 0 && !(this.difficulty.name==='classic'&&referenceJunction(this.path.segmentOffset+segmentIndex-1,segment.start)==='tee') && Math.abs(segment.start - distance) < TILE / 2 - 0.01);
       if (crossesTurn) {
         const stale = this.tiles.get(index);
         if (stale) {

@@ -11,6 +11,11 @@ type Handler = (action: Action) => void;
  */
 export class Input {
   private queue: Action[] = [];
+  private blocked=false;
+  setBlocked(blocked:boolean):void {
+    if(this.blocked===blocked)return;
+    this.blocked=blocked;this.resetTransient();
+  }
   private handlers: Handler[] = [];
   private cancelPointer=()=>{this.touchStart=null;};
   private touchStart: { x: number; y: number; id: number } | null = null;
@@ -20,7 +25,7 @@ export class Input {
   }
 
   push(action: Action): void {
-    this.queue.push(action);
+    if(!this.blocked)this.queue.push(action);
   }
 
   drain(): Action[] {
@@ -49,6 +54,7 @@ export class Input {
   }
   // Desktop equivalent of holding a phone tilted; arrows/swipes change lanes, or turn at a junction.
   get steeringAxis(): number | null {
+    if(this.blocked)return null;
     if(this.classicControls&&(this.leanLeft||this.leanRight))return Number(this.leanRight)-Number(this.leanLeft);
     return this.tiltEnabled?this.tilt.axis:null;
   }
@@ -75,7 +81,7 @@ export class Input {
     if (!this.tiltListening) {
       this.tiltListening = true;
       window.addEventListener('deviceorientation', (event) => {
-        if (!this.tiltEnabled) return;
+        if (!this.tiltEnabled||this.blocked) return;
         this.tilt.sample(event.gamma);
       });
     }
@@ -94,7 +100,7 @@ export class Input {
     };
     this.cancelPointer=clearPointer;
     windowTarget.addEventListener('keydown', (event) => {
-      if (event.repeat) return;
+      if (this.blocked||event.repeat) return;
       if(this.classicControls&&(event.code==='KeyA'||event.code==='KeyD')){
         event.preventDefault();
         if(event.code==='KeyA')this.leanLeft=true;else this.leanRight=true;
@@ -128,7 +134,7 @@ export class Input {
     windowTarget.addEventListener('blur',()=>this.resetTransient());
 
     canvas.addEventListener('pointerdown', (event) => {
-      if(event.button!==0||this.touchStart)return;
+      if(this.blocked||event.button!==0||this.touchStart)return;
       this.touchStart = { x: event.clientX, y: event.clientY, id:event.pointerId };
       // Keep mouse/pen swipes bound when they leave the canvas. Synthetic test
       // pointers have no active browser pointer and may reject capture.

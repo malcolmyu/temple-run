@@ -31,6 +31,8 @@
 
 后续所有规则标记为“原版代码证据 / 视频观察 / 本项目设计 / 待验证”。没有来源的数值必须成为明确设计参数，不能包装成逆向事实。旧资料中的“单段仅五枚金币”“固定速度”“唯一参考”等结论可能已被后续证据推翻，具体以当前代码与最近审计为准。
 
+当前逐项验收状态与证据见[playability-acceptance.md](playability-acceptance.md)。
+
 ## 3. 完整元素与玩家规则
 
 ### 3.1 操作、角色和追逐
@@ -110,7 +112,7 @@ stateDiagram-v2
 实现契约：
 
 - 每局有唯一 `runId`；死亡序号与复活序号不创建新局。
-- 暂存单局金币/宝石/成绩，只有最终退出本局才提交；提交以runId防重。当前代码已有 `runCommitted`，迁移时保留此行为。
+- 暂存单局金币/宝石/成绩，只有最终退出本局才提交；结果页“结算并去商店”会先结束本局入账，再开放消费，关闭商店回主菜单。结果页复活入口在结算前保留；提交以runId防重。当前代码已有 `runCommitted`，迁移时保留此行为。
 - 复活不重复结算、不清空本局成绩，不跨越未完成路口立即再死；选取当前支撑图上的真实安全点。
 - 复活表现：恢复可跑姿态、透明度/贴图、保护与加速反馈。原APK默认角色Animation完整引用仅Run/Jump/Slide Start/Slide Loop/Stumble，sharedassets0全45个AnimationClip未见独立复活片段；CharacterPlayer.Resurrect直接调用SetAlpha与ApplyPlayerTexture。故独立起身动画不是已确认原版机制，不因文档曾列“待补”而杜撰；其他包与程序化效果仍可核对。证据：[资源及方法审计](../target/temple-run/analysis/gameplay-revive-clip-audit.json)。
 - 重开清空本局道具、充能、输入、计时、追逐压力和未选支路状态；保留库存、升级、已购角色与历史成绩。

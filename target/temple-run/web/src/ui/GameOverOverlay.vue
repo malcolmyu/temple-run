@@ -37,7 +37,7 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
         <button v-if="reviveAvailable" class="result-revive" @click="emit('revive')">宝石复活 · ◆ {{ reviveCost }}</button>
         <button class="result-restart" :style="{backgroundImage:`url(${BASE}assets/ui/result-ribbon-wide.png)`}" @click="emit('restart')">再跑一次</button>
         <div class="result-links">
-          <button @click="emit('store')">商店</button>
+          <button @click="emit('store')">结算并去商店</button>
           <button @click="emit('menu')">主菜单</button>
         </div>
       </nav>

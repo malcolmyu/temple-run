@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
+import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
 import { bootGame, getGame } from '../game/boot';
 import { mutableUi as ui } from '../game/state';
 import Hud from './Hud.vue';
@@ -21,6 +21,10 @@ const showStats = shallowRef(false);
 const showObjectives = shallowRef(false);
 const showUpgrades = shallowRef(false);
 const showTutorial = shallowRef(false);
+
+watch([showStore,showSettings,showStats,showObjectives,showUpgrades,showTutorial,loading,error],
+  () => getGame()?.setModalInputBlocked(showStore.value||showSettings.value||showStats.value||showObjectives.value||showUpgrades.value||showTutorial.value||loading.value||!!error.value),
+  {flush:'sync'});
 
 onMounted(async () => {
   if (!canvas.value) return;
@@ -45,6 +49,17 @@ function startRun(): void {
     return;
   }
   getGame()?.start();
+}
+
+function retryStartup(): void {
+  window.location.reload();
+}
+
+function openResultStore(): void {
+  const game=getGame();
+  if(!game)return;
+  game.toMenu(); // Finalize exactly once before exposing spendable rewards.
+  showStore.value=true;
 }
 
 function dismissTutorial(): void {
@@ -94,7 +109,7 @@ function dismissTutorial(): void {
         :revive-cost="ui.reviveCost"
         @restart="getGame()?.restart()"
         @menu="getGame()?.toMenu()"
-        @store="showStore = true"
+        @store="openResultStore"
         @revive="getGame()?.revive()"
       />
 
@@ -128,7 +143,12 @@ function dismissTutorial(): void {
         <div class="rotate-card"><span>⟳</span><strong>请竖屏游玩</strong><small>ROTATE YOUR DEVICE</small></div>
       </div>
       <div v-if="error" class="loading">
-        <div class="loading-card error"><strong>启动失败</strong><span>{{ error }}</span></div>
+        <div class="loading-card error" role="alert">
+          <strong>启动失败</strong>
+          <span>资源未能加载，请检查网络后重试。</span>
+          <span>重试会重新加载游戏，已保存的进度会保留。</span>
+          <button class="primary" @click="retryStartup"><span>重新加载</span><em>↻</em></button>
+        </div>
       </div>
     </div>
 
