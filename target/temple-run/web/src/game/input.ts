@@ -12,7 +12,12 @@ type Handler = (action: Action) => void;
 export class Input {
   private queue: Action[] = [];
   private handlers: Handler[] = [];
+  private cancelPointer=()=>{this.touchStart=null;};
   private touchStart: { x: number; y: number; id: number } | null = null;
+
+  resetTransient():void {
+    this.queue=[];this.leanLeft=false;this.leanRight=false;this.tilt.reset();this.cancelPointer();
+  }
 
   push(action: Action): void {
     this.queue.push(action);
@@ -87,6 +92,7 @@ export class Input {
       const start=this.touchStart;this.touchStart=null;
       if(start&&canvas.hasPointerCapture?.(start.id))canvas.releasePointerCapture(start.id);
     };
+    this.cancelPointer=clearPointer;
     windowTarget.addEventListener('keydown', (event) => {
       if (event.repeat) return;
       if(this.classicControls&&(event.code==='KeyA'||event.code==='KeyD')){
@@ -119,7 +125,7 @@ export class Input {
       if(event.code==='KeyA')this.leanLeft=false;
       if(event.code==='KeyD')this.leanRight=false;
     });
-    windowTarget.addEventListener('blur',()=>{this.leanLeft=false;this.leanRight=false;clearPointer();});
+    windowTarget.addEventListener('blur',()=>this.resetTransient());
 
     canvas.addEventListener('pointerdown', (event) => {
       if(event.button!==0||this.touchStart)return;

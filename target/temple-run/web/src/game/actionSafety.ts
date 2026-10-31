@@ -6,9 +6,10 @@ import type {ObstacleDef} from './obstacles/types';
 export const ACTION_SWITCH_SECONDS=.12;
 export const REACTION_SECONDS=.75;
 export const NORMAL_SAFETY_SPEED=42;
-const SINGLE_ACTION_IDS=new Set<string>(['treeJump','treeTrip','treeSlide','flameTower','plankBeam','pit','plankPit']);
+const SINGLE_ACTION_IDS=new Set<string>(['treeJump','treeTrip','treeSlide','flameTower','plankBeam','pit','plankPit','stonePedestal']);
 function halfWidth(id:DefId):number {const z=DEFS[id].hitbox.z;return Math.max(Math.abs(z[0]),Math.abs(z[1]));}
 export function actionRecoverySeconds(id:DefId,speed=NORMAL_SAFETY_SPEED):number {
+ if(id==='stonePedestal')return REACTION_SECONDS+.3; // web recognition + damped lateral settling
  if(!SINGLE_ACTION_IDS.has(id))return 0; // narrow paths,paired caps and dodging need separate support/lateral solvers.
  const def:ObstacleDef=DEFS[id];
  const jump=()=>Math.max(...[1/60,.025,.05].map(dt=>{

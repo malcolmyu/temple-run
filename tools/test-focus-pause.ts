@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {bindFocusPause} from '../target/temple-run/web/src/game/focusPause';
+import {GameSession} from '../target/temple-run/web/src/game/gameSession';
+import {Input} from '../target/temple-run/web/src/game/input';
+const win=new EventTarget(),doc=Object.assign(new EventTarget(),{visibilityState:'visible'}),canvas=new EventTarget();
+const input=new Input();input.setClassicControls(true);input.attach(win as unknown as Window,canvas as unknown as HTMLCanvasElement);
+const session=new GameSession();session.start();
+const cleanup=bindFocusPause(win,doc,()=>{input.resetTransient();session.pause();});
+input.push('left');win.dispatchEvent(Object.assign(new Event('keydown'),{code:'KeyA',repeat:false}));
+assert.equal(input.steeringAxis,-1);win.dispatchEvent(new Event('blur'));
+assert.equal(session.phase,'paused');assert.equal(input.steeringAxis,null);assert.deepEqual(input.drain(),[]);
+doc.visibilityState='hidden';doc.dispatchEvent(new Event('visibilitychange'));assert.equal(session.phase,'paused','duplicate lifecycle must never resume');
+doc.visibilityState='visible';doc.dispatchEvent(new Event('visibilitychange'));assert.equal(session.phase,'paused','focus return requires explicit resume');
+session.resume();canvas.dispatchEvent(Object.assign(new Event('pointerdown'),{button:0,pointerId:1,clientX:50,clientY:50}));
+doc.visibilityState='hidden';doc.dispatchEvent(new Event('visibilitychange'));canvas.dispatchEvent(Object.assign(new Event('pointerup'),{button:0,pointerId:1,clientX:200,clientY:50}));assert.deepEqual(input.drain(),[],'cancelled swipe cannot leak after resume');
+cleanup();session.resume();doc.dispatchEvent(new Event('visibilitychange'));assert.equal(session.phase,'playing','disposed focus callback removed');
+console.log('Focus pause:blur/hidden,held steering/queued actions/pointer cleared,idempotence,no implicit resume and cleanup pass');

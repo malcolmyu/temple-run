@@ -1,3 +1,4 @@
+import {bindFocusPause} from './focusPause';
 import {branchRewards} from './branchRewards';
 import {boostHandoverReasons} from './boostHandover';
 import {stepNativeMagnetCoin,MAGNET_PICKUP_RADIUS} from './nativeMagnet';
@@ -200,8 +201,11 @@ export class Game {
   private cameraPos = new THREE.Vector3(0, 5.8, 10.1);
   private cameraLook = new THREE.Vector3(0, 0.65, -7.5);
   private disposed = false;
+  private unbindFocusPause:(()=>void)|null=null;
   private runStartedAt = 0;
   private nativeRunClock = 0;
+  private simulationSteps=0;
+  private lastSimulationStep=0;
   private get runElapsed():number {
     return this.difficulty.name==='classic'?this.nativeRunClock:this.world.elapsed-this.runStartedAt;
   }
@@ -241,6 +245,10 @@ export class Game {
       this.bundle.scene.add(this.safetyNet);
     }
     this.input.attach(window, canvas);
+    this.unbindFocusPause=bindFocusPause(window,document,()=>{
+      this.input.resetTransient();
+      if(this.session.pause()){this.publishSession();sfx.pauseMusic();}
+    });
     this.resize();
     window.addEventListener('resize', this.resize);
     await this.setSkin(isOwned(progress.equipped) ? progress.equipped : 'jhony');
@@ -356,7 +364,7 @@ export class Game {
       spawnObstacle: (kind: ObstacleKind, ahead = 16) => this.spawnObstacle(kind, Math.floor(Math.random() * 3), this.distance + ahead),
       spawnCoin: (lane = 1, ahead = 6, height = COIN_Y) => this.spawnCoin(lane, this.distance + ahead, height),
       spawnPickup: (kind: PickupKind, lane = 1, ahead = 6, height = 1.35) => this.spawnPickup(kind, lane, this.distance + ahead, height),
-      advance: (ms: number) => this.advance(ms),
+      advance: (ms: number,stepMs=25) => this.advance(ms,stepMs),
       // Read immediately after render: default WebGL drawing buffers may be discarded
       // by the compositor between a frozen frame and an external screenshot request.
       captureFrame: () => {
@@ -471,6 +479,7 @@ export class Game {
       distance: Math.floor(this.distance),
       distanceExact: this.distance,
       runElapsed: this.runElapsed,
+      simulation:{steps:this.simulationSteps,lastStepSeconds:this.lastSimulationStep},
       progressDistance: stats.distance,
       score: stats.score,
       fps: mutateUi.fps,
@@ -563,6 +572,8 @@ export class Game {
   private coinSpawnIndex = 0;
 
   private resetWorld(): void {
+    this.input.resetTransient();
+    this.simulationSteps=0;this.lastSimulationStep=0;
     this.runChallenges=createRunChallenges();
     this.runPowerPickups=createPowerPickupCounts();
     this.angelWings=createAngelWings();this.wingRevivePending=false;
@@ -728,9 +739,11 @@ export class Game {
 
   togglePause(): void {
     if (this.session.pause()) {
+      this.input.resetTransient();
       this.publishSession();
       sfx.pauseMusic();
     } else if (this.session.resume()) {
+      this.input.resetTransient();
       this.publishSession();
       if (progress.music) sfx.startMusic('theme');
     }
@@ -854,6 +867,7 @@ export class Game {
 
   /** One deterministic simulation step (also used by the regression bot). */
   tick(dt: number): void {
+    this.simulationSteps++;this.lastSimulationStep=dt;
     activeCourse()?.ensureThrough(this.distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance,this.fastTurnState.active);
     // Advance the ECS clock: gameplay timers (invincibility, powers, jump windows) all read
     // world.elapsed, so without this the whole run freezes at t=0.
@@ -890,8 +904,10 @@ export class Game {
     }
   }
 
-  advance(ms: number): void {
-    const steps = Math.max(1, Math.ceil(ms / 25));
+  /** Diagnostic fixed-step advancement; not a claim about rendering FPS. */
+  advance(ms: number,stepMs=25): void {
+    if(!Number.isFinite(ms)||ms<=0||!Number.isFinite(stepMs)||stepMs<=0)return;
+    const steps = Math.max(1, Math.ceil(ms / Math.min(50,stepMs)));
     const dt = Math.min(0.05, ms / steps / 1000);
     for (let i = 0; i < steps; i++) {
       if (mutateUi.phase === 'playing') this.tick(dt);
@@ -2615,6 +2631,7 @@ export class Game {
 
   dispose(): void {
     this.disposed = true;
+    this.unbindFocusPause?.();this.unbindFocusPause=null;
     cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.resize);
     this.releaseRunnerRig();

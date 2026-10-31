@@ -1,6 +1,6 @@
 import {SeededRandom} from './obstacles/rng';
 import type {NativePathLevel} from './nativeThemePacing';
-export const COURSE_RULE_VERSION='beats-v2';
+export const COURSE_RULE_VERSION='beats-v3';
 /** Project pacing policy; weights/cooldowns are not recovered native values. */
 const THEMES:Record<NativePathLevel,readonly string[]>={
  1:['plankPit','plankBeam'],
@@ -19,6 +19,7 @@ export class CourseDirector {
   this.pressure++;this.seen.set(kind,(this.seen.get(kind)??0)+1);
   this.recent.push(kind);if(this.recent.length>2)this.recent.shift();
  }
+ hasPractised(kind:string):boolean{return (this.seen.get(kind)??0)>0;}
  choose(level:NativePathLevel,progress:number,at:number):BeatDecision {
   if(this.pressure>=3)return {kind:'recovery',intent:'recovery',allowCombination:false};
   const eligible=THEMES[level].filter(k=>{

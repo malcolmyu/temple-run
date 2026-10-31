@@ -15,7 +15,7 @@ export interface CourseObstacle {distance:number;defId:DefId;prefab:string;lane?
 export interface CourseSurface {kind:'stone'|'wood';from:number;to:number;level?:NativePathLevel;}
 export interface CourseNarrow {from:number;to:number;side:'left'|'right';}
 export interface CourseBranch {from:number;to:number;}
-export interface CourseFeature {kind:string;from:number;to:number;surface:'stone'|'wood';generatedAtProgress?:number;minTurnSpaces?:number;nativeStageKnown?:boolean;fastTurn?:boolean;extraObstacleAt?:number;combo?:'repeat'|'jump-slide'|'slide-jump';pathLevel?:NativePathLevel;themeRequestedAtProgress?:number;beatIntent?:BeatDecision['intent'];}
+export interface CourseFeature {kind:string;from:number;to:number;surface:'stone'|'wood';generatedAtProgress?:number;minTurnSpaces?:number;nativeStageKnown?:boolean;fastTurn?:boolean;extraObstacleAt?:number;combo?:'repeat'|'jump-slide'|'slide-jump'|'dodge-jump'|'dodge-slide';pathLevel?:NativePathLevel;themeRequestedAtProgress?:number;beatIntent?:BeatDecision['intent'];}
 const STONE_FEATURES=['treeJump','treeTrip','treeSlide','flameTower','stonePedestal','pit','narrowSmall','narrowLong','branch','longGap'] as const;
 /** Web course design, not recovered native generation weights.
  * Native constraints:12m grid, progress-dependent turn minimums, paired long-hole caps and support polygons.
@@ -138,7 +138,7 @@ export class CoursePlan {
    // Candidate25% is not a native weight;spacing comes from actionSafety.
    let extraObstacleAt:number|undefined;
    let combo:CourseFeature['combo'];
-   const repeatable=['treeJump','treeTrip','treeSlide','flameTower','plankBeam'];
+   const repeatable=['treeJump','treeTrip','treeSlide','flameTower','plankBeam',...(this.opening==='generated'?['stonePedestal']:[])];
    const first=this.obstacles.at(-1),candidate=mid+(first?repeatActionSpacing(first.defId):36);
    if(pacing&&!fast&&(beat?.allowCombination??true)&&repeatable.includes(kind)&&first?.distance===mid&&this.pairRng.int(4)===0
      &&nativeObstacleEligible(Math.floor((candidate-from)/12),1,3,pacing.minObstacleSpaces,pacing.doubleObstaclePercent,()=>this.pairRng.int(1000))){
@@ -148,10 +148,15 @@ export class CoursePlan {
     let second={...first,distance:candidate};combo='repeat';
     // Web encounter variety,not recovered native pairing probabilities.
     // Keep fixture routes stable; wood has its own repeated beam grammar.
-    if(this.opening==='generated'&&surface==='stone'&&this.pairRng.int(2)===0){
-     if(first.defId==='treeJump'||first.defId==='treeTrip'){
+    if(first.defId==='stonePedestal'){
+     first.lane=1; // clear central dodge cue; either side remains a legal solution.
+     const slide=this.director.hasPractised('treeSlide')&&this.pairRng.int(2)===0;
+     second={...second,defId:slide?'treeSlide':'treeJump',lane:1,prefab:slide?'tree-slide':right?'tree-jump-right':'tree-jump-left'};
+     combo=slide?'dodge-slide':'dodge-jump';
+    }else if(this.opening==='generated'&&surface==='stone'&&this.pairRng.int(2)===0){
+     if((first.defId==='treeJump'||first.defId==='treeTrip')&&this.director.hasPractised('treeSlide')){
       second={...second,defId:'treeSlide',prefab:level===3?'cliff-tree-slide':right?'tree-slide-right':'tree-slide-left'};combo='jump-slide';
-     }else if(first.defId==='treeSlide'){
+     }else if(first.defId==='treeSlide'&&this.director.hasPractised('treeJump')){
       second={...second,defId:'treeJump',prefab:right?'tree-jump-right':'tree-jump-left'};combo='slide-jump';
      }
     }

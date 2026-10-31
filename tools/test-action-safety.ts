@@ -23,3 +23,6 @@ for(let seed=1;seed<=200;seed++){
  }
 }
 assert.ok(repeated>100);console.log('Action budgets:jump/slide recovery,mixed transitions,turn reaction,paired-support exclusion and200 courses pass;48m pairs='+repeated);
+
+assert.ok(actionSequenceIssues([{defId:'stonePedestal',distance:72},{defId:'treeJump',distance:108}],0,240).includes('action-recovery-window'));
+assert.deepEqual(actionSequenceIssues([{defId:'stonePedestal',distance:72},{defId:'treeSlide',distance:120}],0,240),[]);
