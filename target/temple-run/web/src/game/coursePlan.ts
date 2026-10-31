@@ -6,6 +6,9 @@ export interface CourseSurface {kind:'stone'|'wood';from:number;to:number;}
 export interface CourseNarrow {from:number;to:number;side:'left'|'right';}
 export interface CourseBranch {from:number;to:number;}
 export interface CourseFeature {kind:string;from:number;to:number;surface:'stone'|'wood';}
+// At20fps the native jump stays airborne~.75s.35m/s covers26.25m,
+// enough for the22m hole plus3m approach and1m landing margin.
+export const MIN_LONG_GAP_SPEED=35;
 const STONE_FEATURES=['treeJump','treeTrip','treeSlide','flameTower','stonePedestal','pit','narrowSmall','narrowLong','branch','longGap'] as const;
 /** Web course design, not recovered native generation weights.
  * Native constraints:12m grid, minimum6 spaces, paired long-hole caps and original support polygons.

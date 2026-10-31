@@ -21,6 +21,7 @@ export interface HudState {
   coins: number;
   gems: number;
   multiplier: number;
+  scoreMultiplier: number;
   speed: number;
   best: number;
   totalCoins: number;
@@ -59,6 +60,7 @@ const defaults = (): HudState => ({
   coins: 0,
   gems: 0,
   multiplier: 1,
+  scoreMultiplier: 10,
   speed: 0,
   best: progress.bestDistance,
   totalCoins: progress.coins,

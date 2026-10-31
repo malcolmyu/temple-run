@@ -56,7 +56,7 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
       <span class="ms-text"><SpriteNumber :value="ui.milestone.value" label="里程" :height="28" /><em>{{ ui.milestone.unit }}</em></span>
     </div>
 
-    <div v-if="ui.hint && (assist || ui.hint.includes('半边路') || ui.hint.includes('分路'))" class="hint">{{ ui.hint }}</div>
+    <div v-if="ui.hint && (assist || ui.hint.includes('半边路') || ui.hint.includes('分路') || ui.hint.includes('复活'))" class="hint">{{ ui.hint }}</div>
 
     <div v-if="assist" class="touch-pad">
       <div class="pad-group">

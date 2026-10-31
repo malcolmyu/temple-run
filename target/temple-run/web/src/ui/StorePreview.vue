@@ -12,6 +12,8 @@ let renderer: THREE.WebGLRenderer | null = null;
 let scene: THREE.Scene | null = null;
 let camera: THREE.PerspectiveCamera | null = null;
 let rig: { object: THREE.Object3D; update(dt: number, timeScale?: number): void; setClip(name: string, restart?: boolean): void } | null = null;
+const loading = ref(false);
+const failed = ref(false);
 let token = 0;
 let raf = 0;
 let last = 0;
@@ -87,6 +89,10 @@ function resize(): void {
 async function loadSkin(id: string): Promise<void> {
   const skin = skinById(id);
   const my = ++token;
+  loading.value = true;
+  failed.value = false;
+  if (rig && scene) scene.remove(rig.object);
+  rig = null;
   try {
     const loaded = await loadRunnerRig(
       `${BASE}assets/characters/rig-${skin.rig}.json`,
@@ -94,14 +100,17 @@ async function loadSkin(id: string): Promise<void> {
       { scale: 0.27, yOffset: 0, clipFallbackUrl: DEFAULT_RIG_URL },
     );
     if (my !== token || !scene) return;
-    if (rig) scene.remove(rig.object);
     normalizeRigHeight(loaded, 2.15);
     loaded.setClip('run');
     loaded.object.rotation.y = Math.PI;
     scene.add(loaded.object);
     rig = loaded;
   } catch (error) {
+    if (my !== token) return;
+    failed.value = true;
     console.warn('preview rig unavailable', error);
+  } finally {
+    if (my === token) loading.value = false;
   }
 }
 
@@ -135,6 +144,7 @@ watch(
 );
 
 onBeforeUnmount(() => {
+  token++;
   cancelAnimationFrame(raf);
   window.removeEventListener('resize', resize);
   if (rig && scene) scene.remove(rig.object);
@@ -145,6 +155,6 @@ onBeforeUnmount(() => {
 <template>
   <div class="store-preview">
     <canvas ref="canvas" aria-label="角色 3D 预览" />
-    <span class="preview-hint">拖动旋转</span>
+    <span class="preview-hint" role="status">{{ loading ? '角色加载中…' : failed ? '预览加载失败，请重新选择' : '拖动旋转' }}</span>
   </div>
 </template>

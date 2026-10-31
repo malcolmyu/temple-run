@@ -1,4 +1,4 @@
-import { CoursePlan, activeCourse, setActiveCourse } from './coursePlan';
+import { CoursePlan, activeCourse, setActiveCourse, MIN_LONG_GAP_SPEED } from './coursePlan';
 import { BonusSpawnDirector } from './nativeBonusSpawn';
 import { boostAcceleration, consumeBoostProgress } from './nativeBoost';
 import { activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
@@ -25,6 +25,7 @@ import { REFERENCE_VISIBLE_OBSTACLES, REFERENCE_RANDOM_OBSTACLES_FROM, overlapsR
 import { REFERENCE_OPENING_TURNS, referenceTurnDirection, referenceNextTurnDistance, referenceGate, referenceJunction } from './referenceRoute';
 import { followCameraPose, followCameraBack, stepNativeFollowCamera, nextNativeDuckCamera } from './followCamera';
 import { makeSafetyNet, setSafetyNetFrame, safetyNetIntensity, setSafetyNetIntensity } from './safetyNet';
+import { nextRunScoreMultiplier } from './objectives';
 import { referenceCoinValue } from './coinValues';
 import { FIRST_TURN_DISTANCE, openingSpeedFactor } from './pacing';
 import { openingChaseGap, nativeEnemyFollowTarget, stepNativeEnemyFollow, nativeEnemyFormation, enemyFollowAnchor } from './chasePresentation';
@@ -405,6 +406,8 @@ export class Game {
     const primary = effects.find(effect=>effect.kind===power.kind)??effects[0];
     return {
       phase: mutateUi.phase,
+      equipped: progress.equipped,
+      scoreMultiplier: this.runScoreMultiplier,
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
       generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
@@ -442,6 +445,8 @@ export class Game {
       autoTurnQueued: turn.autoQueued,
       turnCount: turn.count,
       chaseGap: chase.gap,
+      stumbleAge: this.nativeTimeSinceStumble,
+      enemyGap: this.nativeEnemyGap,
       obstacles: this.obstacles.map((entity) => {
         const o = this.world.require(entity, Obstacle);
         return { kind: o.kind, defId:o.defId, lane: o.lane, full: o.full, ahead: Math.round(o.distance - this.distance) };
@@ -497,7 +502,11 @@ export class Game {
     this.world.add(this.runnerEntity, Runner, { rig: null });
   }
 
+  private runScoreMultiplier = 10;
+
   private resetWorld(): void {
+    this.runScoreMultiplier = this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
+    mutateUi.scoreMultiplier = this.runScoreMultiplier;
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = false;
     this.runStartedAt = this.world.elapsed;
@@ -654,7 +663,6 @@ export class Game {
     progress.equipped = id;
     saveProgress();
     const token = ++this.rigToken;
-    this.runnerGroup.clear();
     try {
       const rig = await loadRunnerRig(
         `${BASE}assets/characters/rig-${skin.rig}.json`,
@@ -670,10 +678,13 @@ export class Game {
       );
       if (token !== this.rigToken || this.disposed) return;
       if (skin.id !== 'jhony') normalizeRigHeight(rig, 1.85);
+      this.runnerGroup.clear();
       this.runnerRig = rig;
       this.runnerGroup.add(rig.object);
       this.installWings();
     } catch (error) {
+      if (token !== this.rigToken || this.disposed) return;
+      this.runnerGroup.clear();
       console.warn('runner rig unavailable, using proxy', error);
       const proxy = new THREE.Mesh(new THREE.CapsuleGeometry(0.35, 1.1, 4, 8), new THREE.MeshStandardMaterial({ color: 0xd6b388 }));
       proxy.position.y = 1.1;
@@ -972,7 +983,7 @@ export class Game {
       // Character220 is still held on the frame Controller280 releases it.
       const stats=this.world.require(this.runnerEntity,RunStats);
       const delta=nativeProgressDelta(0,2,dt);
-      const award=nativeProgressScore(stats.progressRemainder,delta,REFERENCE_SCORE_MULTIPLIER);
+      const award=nativeProgressScore(stats.progressRemainder,delta,this.runScoreMultiplier);
       stats.progressRemainder=award.remainder;stats.score+=award.scoreDelta;stats.distance+=delta;
       this.nativeSpawnPending=false;
       return;
@@ -1036,7 +1047,7 @@ export class Game {
     if (nativeMotion) {
       const afterPose = this.path.at(trackPos.distance, lane.x, true);
       const delta = nativeProgressDelta(afterPose.x-beforePose.x, afterPose.z-beforePose.z, dt);
-      const award = nativeProgressScore(stats.progressRemainder, delta, REFERENCE_SCORE_MULTIPLIER);
+      const award = nativeProgressScore(stats.progressRemainder, delta, this.runScoreMultiplier);
       stats.progressRemainder = award.remainder;
       stats.score += award.scoreDelta;
       stats.distance += delta;
@@ -1116,7 +1127,7 @@ export class Game {
       this.graph.choose(this.sideFork, this.sideBranch);
       lane.index=1; // Once on the chosen road, its centre is a normal safe lane.
       sfx.play('branchChime');
-      this.rebuildTilesAhead();
+      this.rebuildBranchTiles(side.from,side.to);
     }
     if (side) {
       if (!this.sideWarned) {
@@ -1179,6 +1190,16 @@ export class Game {
     const course=activeCourse();
     if(course){const section=course.branches.find(b=>distance>=b.from&&distance<b.to);return section?{...section,safe:[0,2],startIdx:Math.round((section.from+6)/TILE),first:distance<section.from+12,last:distance>=section.to-12}:null;}
     return this.difficulty.name==='classic' && referenceFullWidthAt(distance) ? null : sidePathAt(distance,path);
+  }
+
+  private rebuildBranchTiles(from:number,to:number):void {
+    for(const [index,entity] of [...this.tiles]){
+      const tile=this.world.require(entity,Tile);
+      if(tile.distance>=from-6&&tile.distance<=to+6){
+        if(tile.object)this.releaseTile(tile.object);this.world.destroyEntity(entity);this.tiles.delete(index);
+      }
+    }
+    this.rebuildTilesAhead();
   }
 
   /** Drop generated tiles ahead (their layout depends on the path/turn positions). */
@@ -1486,7 +1507,7 @@ export class Game {
         const lane='lane' in recorded?recorded.lane??1:1;
         if(activeCourse()&&recorded.defId==='pitLongB'){
           const boost=this.world.require(this.runnerEntity,Power).boost;
-          if(Math.min(this.speed,boost.active?boost.speedBefore:this.speed)<33){
+          if(Math.min(this.speed,boost.active?boost.speedBefore:this.speed)<MIN_LONG_GAP_SPEED){
             this.spawnDef(DEFS.pit,1,recorded.distance,'pit');this.referenceObstacleIndex++;this.longGapFallbacks.push(recorded.distance);continue;
           }
         }
@@ -1889,7 +1910,7 @@ export class Game {
         const generated=this.generatedBonuses.find(record=>record.distance===pickup.distance&&record.kind===pickup.kind);
         if(generated)generated.collected=true;
         if (pickup.kind !== 'coin' && pickup.kind !== 'gem') {
-          stats.score += NATIVE_POWER_SCORE_VALUE * REFERENCE_SCORE_MULTIPLIER;
+          stats.score += NATIVE_POWER_SCORE_VALUE * this.runScoreMultiplier;
         }
         if (pickup.kind === 'coin') {
           this.coinValueAcc += coinMultiplier() * pickup.value;
@@ -1901,7 +1922,7 @@ export class Game {
           stats.multiplier = Math.min(5, 1 + Math.floor(stats.combo / 8));
           stats.charge = Math.min(100, stats.charge + 4);
           stats.score += this.difficulty.name === 'classic'
-            ? NATIVE_COIN_SCORE_VALUE * REFERENCE_SCORE_MULTIPLIER * pickup.value
+            ? NATIVE_COIN_SCORE_VALUE * this.runScoreMultiplier * pickup.value
             : 10 * stats.multiplier * pickup.value;
           if (stats.charge >= 100) {
             stats.charge = 0;
@@ -2036,6 +2057,7 @@ export class Game {
     mutateUi.coins = stats.coins;
     mutateUi.gems = stats.gems;
     mutateUi.score = stats.score;
+    mutateUi.scoreMultiplier = this.runScoreMultiplier;
     mutateUi.charge = stats.charge;
     mutateUi.powers = activePowers(power,this.world.elapsed);
     const primary=mutateUi.powers.find(effect=>effect.kind===power.kind)??mutateUi.powers[0];
@@ -2066,13 +2088,14 @@ export class Game {
     this.runnerGroup.position.y = this.groundY()+jump.y;
     this.runnerGroup.scale.set(1, 1, 1);
     const shield = this.world.require(this.runnerEntity, Power);
-    const invisible = hasPower(shield,'shield',this.world.elapsed);
+    const invincibilityRemaining=Math.max(0,shield.expires.shield-this.world.elapsed,this.invincibleUntil-this.world.elapsed);
+    const invisible = invincibilityRemaining>0;
     this.wingsGroup.visible = false;
     if (this.safetyNet) {
       // Native PathElement owns each net: it stays on its tile as the runner moves.
       // Clones share the animated atlas/material; only their world transforms differ.
       this.safetyNet.visible = false;
-      this.safetyNetColor = safetyNetIntensity(this.safetyNetColor, invisible ? shield.expires.shield - this.world.elapsed : 0, dt);
+      this.safetyNetColor = safetyNetIntensity(this.safetyNetColor, invincibilityRemaining, dt);
       setSafetyNetIntensity(this.safetyNet, this.safetyNetColor);
       let count = 0;
       if (invisible) {
@@ -2094,7 +2117,7 @@ export class Game {
       }
       for (let i = count; i < this.safetyNets.length; i++) this.safetyNets[i].visible = false;
     }
-    this.runnerRig?.setInvincibility(invisible, this.bundle.assets.texture.glow, dt, shield.expires.shield - this.world.elapsed);
+    this.runnerRig?.setInvincibility(invisible, this.bundle.assets.texture.glow, dt, invincibilityRemaining);
     if (this.runnerRig) {
       const slideElapsed = this.difficulty.name==='classic'?slide.elapsed:slide.duration-slide.remaining;
       const animation=this.runnerRig.getTime();
@@ -2245,6 +2268,14 @@ export class Game {
       turn.cueShown = false;
       turn.next = 9 + 12 * Math.max(1, Math.round((this.distance + 72 - 9) / 12));
     }
+    // A centre-gap death must revive on a real branch, not above the hole.
+    const side=this.sidePathAt(this.distance,this.path);
+    if(side&&!this.sideFork){
+      this.basePath=this.path.clone();this.sideFork=this.graph.forkLateral(side.from,1.9,side.to);
+      this.sideBranch='left';this.graph.choose(this.sideFork,'left');
+      const lane=this.world.require(this.runnerEntity,Lane);lane.index=1;lane.x=0;
+      this.rebuildBranchTiles(side.from,side.to);this.ensureTiles();
+    }
     // Falling in a collapsed-lane section: put the runner back on the surviving lane.
     const narrow = this.narrowAt(this.distance, this.path);
     if (narrow) {
@@ -2252,7 +2283,13 @@ export class Game {
       lane.index = narrow.side === 'left' ? 0 : 2;
       lane.x = laneX(lane.index);
     }
-    this.nativeFalling=false;this.nativeGroundHeight=0;this.nativeEnemyGroundHeight=0;this.nativeForwardForce=0;this.nativeSpawnPending=true;this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
+    this.nativeFalling=false;this.nativeGroundHeight=this.groundY();this.nativeEnemyGroundHeight=this.nativeGroundHeight;
+    this.nativeForwardForce=0;this.nativeSpawnPending=false; // Same run: never repeat the opening displacement award.
+    this.nativeTimeSinceStumble=NATIVE_STUMBLE_RESET_AGE;
+    this.nativeStumbleElapsed=0;this.nativeStumbleSeconds=0;this.nativeStumbleRemaining=0;this.stumbleAnimation=null;
+    this.recoveringFromStumble=false;
+    this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
+    Object.assign(this.world.require(this.runnerEntity,Slide),{remaining:0,elapsed:0,duration:0});
     Object.assign(this.world.require(this.runnerEntity,Jump),{y:0,v:0,airborne:false});
     this.invincibleUntil = this.world.elapsed + 3;
     this.deathTimer = 0;this.deathElapsed=0;

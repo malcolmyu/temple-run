@@ -11,6 +11,8 @@ export interface SkinDef {
   speed: number;
 }
 
+// Rigs/textures are exported game assets. Prices/currencies and challenge-mode
+// speed modifiers are web economy assumptions, not recovered native shop rules.
 export const SKINS: SkinDef[] = [
   { id: 'jhony', name: 'Jhony', sub: '默认跑者', rig: 'orig_02___Default', texture: 'tex-orig_02___Default.png', avatar: 'avatar-jhony.png', price: 0, currency: 'coins', speed: 1 },
   { id: 'selene', name: 'Selene', sub: '宇航员', rig: 'selene_astronaut', texture: 'tex-selene_astronaut.png', avatar: 'avatar-selene.png', price: 300, currency: 'coins', speed: 1.04 },

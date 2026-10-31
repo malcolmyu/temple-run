@@ -87,6 +87,7 @@ function dismissTutorial(): void {
         :coins="ui.coins"
         :gems="ui.gems"
         :best="ui.best"
+        :multiplier="ui.scoreMultiplier"
         :reason="ui.deathReason"
         :kind="ui.deathKind"
         :revive-available="ui.reviveAvailable"

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { OBJECTIVES, claim, objectiveClaimed } from '../game/objectives';
+import { computed, ref } from 'vue';
+import { OBJECTIVES, claim, objectiveClaimed, nextRunScoreMultiplier } from '../game/objectives';
 import { progress, saveProgress } from '../game/progress';
 import { syncBanks } from '../game/state';
 
 const emit = defineEmits<{ close: [] }>();
 const notice = ref('');
+const scoreMultiplier = computed(nextRunScoreMultiplier);
 
 function onClaim(id: string): void {
   if (claim(id)) {
@@ -24,6 +25,7 @@ function onClaim(id: string): void {
     <div class="card">
       <p class="kicker">OBJECTIVES</p>
       <h2 class="title">目标</h2>
+      <p>下局得分倍率 {{ scoreMultiplier }}× · 每完成一项目标 +1</p>
       <div class="objective-list">
         <div v-for="objective in OBJECTIVES" :key="objective.id" class="objective" :class="{ done: objective.done() }">
           <div class="objective-head">

@@ -1,4 +1,5 @@
 import { progress, claimObjective } from './progress';
+import { nativeScoreMultiplier } from './scoring';
 
 export interface Objective {
   id: string;
@@ -62,4 +63,10 @@ export function claim(id: string): boolean {
   const objective = OBJECTIVES.find((o) => o.id === id);
   if (!objective || !objective.done()) return false;
   return claimObjective(id, objective.coins, objective.gems);
+}
+
+/** Web objective catalogue adapts the native completed-achievement count rule.
+ * Completion counts before reward claiming; a claim cannot increase it twice. */
+export function nextRunScoreMultiplier(): number {
+  return nativeScoreMultiplier(OBJECTIVES.filter(objective => objective.done() || objectiveClaimed(objective.id)).length);
 }

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import NativeResultNumber from './NativeResultNumber.vue';
-import { REFERENCE_SCORE_MULTIPLIER } from '../game/scoring';
 
-const props = defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; reason: string; kind: string; reviveAvailable: boolean; reviveCost: number }>();
+const props = defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; multiplier: number; reason: string; kind: string; reviveAvailable: boolean; reviveCost: number }>();
 const BASE = import.meta.env.BASE_URL;
 const art = computed(() => {
   const map: Record<string, string> = {
@@ -30,7 +29,7 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
         <dl class="result-metrics">
           <div><dt>距离：</dt><dd>{{ distance.toLocaleString('en-US') }}米</dd></div>
           <div><dt>金币：</dt><dd>{{ coins.toLocaleString('en-US') }}</dd></div>
-          <div><dt>加成：</dt><dd>{{ REFERENCE_SCORE_MULTIPLIER }}x</dd></div>
+          <div><dt>加成：</dt><dd>{{ multiplier }}x</dd></div>
           <div v-if="gems > 0"><dt>宝石：</dt><dd>{{ gems }}</dd></div>
         </dl>
       </div>

@@ -103,6 +103,15 @@ function load(): Progress {
       claimed: Array.isArray(saved.claimed) ? saved.claimed : [],
       upgrades: { magnet: 0, coin: 0, ...(saved.upgrades ?? {}) },
     };
+    // A removed/unknown character must never stay equipped or unlock a catalogue entry.
+    merged.owned = [...new Set([SKINS[0].id, ...merged.owned.filter(
+      id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
+    )])];
+    if (!merged.owned.includes(merged.equipped)) merged.equipped = SKINS[0].id;
+    for (const key of ['coins', 'gems', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore'] as const) {
+      const value = merged[key];
+      merged[key] = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    }
     // Earlier v2 builds could create the new key with defaults before the player ever ran.
     // In that case still import the legacy save instead of treating the empty v2 key as real.
     const meaningful =
@@ -112,7 +121,8 @@ function load(): Progress {
       Number(saved.runs) > 0 ||
       Number(saved.totalDistance) > 0 ||
       (Array.isArray(saved.owned) && saved.owned.length > 1) ||
-      (Array.isArray(saved.claimed) && saved.claimed.length > 0);
+      (Array.isArray(saved.claimed) && saved.claimed.length > 0) ||
+      Object.values(merged.upgrades).some(level => Number.isFinite(level) && level > 0);
     if (!meaningful) {
       const legacy = migrateLegacy(defaults);
       if (legacy) {
@@ -162,7 +172,7 @@ export function buySkin(id: string): boolean {
 }
 
 export function equipSkin(id: string): void {
-  if (!isOwned(id)) return;
+  if (!SKINS.some(skin => skin.id === id) || !isOwned(id)) return;
   progress.equipped = id;
   saveProgress();
 }
