@@ -2,11 +2,11 @@ import { referenceTileDistance,referenceWorldDistance } from './referenceCoordin
 import { REFERENCE_OPENING_TURNS } from './referenceRoute';
 /** Fitted physical exit offset; old8 score-coordinate units placed the tower behind the camera too early. */
 export const REFERENCE_EXIT_GATE_OFFSET=20;
-/** BV1ypuKzPErT 020–023: tall glyph-column gate on the straight after root177.
- * Tile192's exit edge is198m; position is fitted to the existing tile grid.
+/** BV1ypuKzPErT021/022: glyph columns remain ahead;023 passes their bases.
+ * The first portal is fitted to those multi-frame projections, not the old periodic tile192.
  */
 export const REFERENCE_STRAIGHT_GATES = [
-  { tileDistance:192, distance:198, variant:'tower' as const, frames:[20,21,22,23] },
+  { tileDistance:204, distance:210, variant:'tower' as const, frames:[20,21,22,23] },
   { tileDistance:420, distance:426, variant:'tower' as const, frames:[48,49,50] },
   { tileDistance:1410, distance:1416, variant:'tower' as const, frames:[156,157,158] },
   { tileDistance:1572, distance:1578, variant:'tower' as const, frames:[174,175,176] },

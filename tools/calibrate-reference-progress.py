@@ -16,6 +16,7 @@ estimated_world = -2
 # Initial100 is reset-position scoring, not traversal of the road.
 initial_score_frames=json.loads((ROOT/'target/temple-run/analysis/reference-opening-exact/first-score/observations.json').read_text())
 release_second=next(r['PTS']for r in initial_score_frames['observations']if r['score']==100)
+last_zero_second=max(r['PTS']for r in initial_score_frames['observations']if r['score']==0)
 spawn_progress = 5.0
 initial_anchor = None
 previous = None
@@ -42,8 +43,8 @@ for observation in observations:
             motion_max=progress+1-spawn_progress
             travel=math.sqrt(48*(motion_min+motion_max)/2*active_dt)
             initial_anchor=dict(releaseVideoSecond=release_second,spawnProgress=spawn_progress,
-                spawnPhysicalPosition=-2,activeSeconds=active_dt,motionProgressBounds=[motion_min,motion_max],
-                physicalPositionBounds=[-2+math.sqrt(48*p*active_dt)for p in [motion_min,motion_max]],
+                spawnPhysicalPosition=-2,releaseVisibleBracket=[last_zero_second,release_second],activeSeconds=active_dt,motionProgressBounds=[motion_min,motion_max],
+                physicalPositionBounds=[-2+math.sqrt(48*motion_min*active_dt),-2+math.sqrt(48*motion_max*(second-last_zero_second))],
                 status='conditional60Hz spawn metric and approximately constant speed over first active fraction; midpoint estimate')
             row['initialAnchor']=initial_anchor
         else:

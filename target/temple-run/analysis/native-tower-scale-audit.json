@@ -1,0 +1,166 @@
+{
+  "prefab": "958067d7b5d41492992dab0f64f3d4ac",
+  "prefabSHA256": "778b1aa9ea8c8dadc1d8dd50dea1a669a34c66f66ef68159cfa25111e77f5968",
+  "mesh": "eae89589a8fae4355b57cd6a7ca2ff9d",
+  "transforms": [
+    {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 2
+      },
+      "m_LocalRotation": {
+        "x": 0.0,
+        "y": -0.0,
+        "z": -0.0,
+        "w": 1.0
+      },
+      "m_LocalPosition": {
+        "x": 829.9521484375,
+        "y": -995.3496704101562,
+        "z": 30.000001907348633
+      },
+      "m_LocalScale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "m_Children": [],
+      "m_Father": {
+        "m_FileID": 0,
+        "m_PathID": 6
+      }
+    },
+    {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 3
+      },
+      "m_LocalRotation": {
+        "x": -5.5536041543291503e-08,
+        "y": 0.7071068286895752,
+        "z": 0.7071068286895752,
+        "w": 5.5536041543291503e-08
+      },
+      "m_LocalPosition": {
+        "x": -0.0,
+        "y": -15.000073432922363,
+        "z": 0.0
+      },
+      "m_LocalScale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "m_Children": [
+        {
+          "m_FileID": 0,
+          "m_PathID": 5
+        }
+      ],
+      "m_Father": {
+        "m_FileID": 0,
+        "m_PathID": 4
+      }
+    },
+    {
+      "m_GameObject": {
+        "m_FileID": 0,
+        "m_PathID": 1
+      },
+      "m_LocalRotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "m_LocalPosition": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "m_LocalScale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "m_Children": [
+        {
+          "m_FileID": 0,
+          "m_PathID": 6
+        }
+      ],
+      "m_Father": {
+        "m_FileID": 0,
+        "m_PathID": 0
+      }
+    }
+  ],
+  "nativeWorldScale": 0.2,
+  "oldPresentationScale": 0.18,
+  "objSHA256": "178d3009aee41de28d35f5b4b3e07c052a78af2f0244c7931b5435a434eb2e9d",
+  "bounds": [
+    -6.000002328293625,
+    -6.000016765769617,
+    -6.713951326676216,
+    6.000478038387907,
+    27.44451841250484,
+    6.601491657836316
+  ],
+  "orientationCandidates": [
+    {
+      "mirrorX": 1,
+      "quarterTurns": 0,
+      "rms": 1.5869802525649876,
+      "maximum": 4.4502231380465656
+    },
+    {
+      "mirrorX": 1,
+      "quarterTurns": 1,
+      "rms": 0.11923384526019011,
+      "maximum": 0.6726140348277572
+    },
+    {
+      "mirrorX": 1,
+      "quarterTurns": 2,
+      "rms": 1.5861283920790559,
+      "maximum": 4.480942701293236
+    },
+    {
+      "mirrorX": 1,
+      "quarterTurns": 3,
+      "rms": 0.08819704488628197,
+      "maximum": 0.6183560811298506
+    },
+    {
+      "mirrorX": -1,
+      "quarterTurns": 0,
+      "rms": 1.5866398260376438,
+      "maximum": 4.449677786484764
+    },
+    {
+      "mirrorX": -1,
+      "quarterTurns": 1,
+      "rms": 1.023850957534361e-06,
+      "maximum": 2.044798080641686e-06
+    },
+    {
+      "mirrorX": -1,
+      "quarterTurns": 2,
+      "rms": 1.586370231508981,
+      "maximum": 4.481172030488692
+    },
+    {
+      "mirrorX": -1,
+      "quarterTurns": 3,
+      "rms": 0.12890181419858684,
+      "maximum": 0.5914449962761192
+    }
+  ],
+  "best": {
+    "mirrorX": -1,
+    "quarterTurns": 1,
+    "rms": 1.023850957534361e-06,
+    "maximum": 2.044798080641686e-06
+  },
+  "finding": "Legacy OBJ after half-turn equals mirrored-X native full TRS after path quarter-turn1, RMS1e-6m. Renderer must reflect X and use native.2 scale rather than.18. Face order/normal fidelity not proven by nearest-vertex audit."
+}

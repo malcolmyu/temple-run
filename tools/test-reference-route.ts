@@ -46,7 +46,7 @@ assert.equal(referenceGate(0,J(81)),'exit');
 assert.equal(referenceGate(1,J(153)),'forward');
 assert.equal(referenceGate(0,J(669)),null);
 
-assert.equal(referenceStraightGate(T(192)),'tower');
+assert.equal(referenceStraightGate(T(204)),'tower');
 assert.equal(referenceStraightGate(276),null);
 assert.equal(REFERENCE_STRAIGHT_GATES[0].distance,REFERENCE_STRAIGHT_GATES[0].tileDistance+6);
 
@@ -78,3 +78,5 @@ assert.equal(referenceNextTurnDistance(35,J(2133)),J(2189));
 
 for(const [i,d,dir]of [[35,2189,1],[36,2203,1],[37,2217,-1],[38,2233,1],[39,2247,1],[40,2271,1],[41,2341,1]])assert.equal(referenceTurnDirection(i,J(d)),dir);
 assert.equal(referenceNextTurnDistance(42,J(2341)),null);
+
+assert.equal(referenceStraightGate(T(192)),null,'first glyph tower remains ahead at source21, not the old periodic gate position');

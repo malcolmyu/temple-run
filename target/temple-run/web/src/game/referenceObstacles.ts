@@ -1,5 +1,13 @@
 import { referenceJunctionDistance } from './referenceCoordinates';
 import type { DefId } from './obstacles/catalog';
+// Authored long narrow pieces are adjacent12m cells. Round the cluster anchor
+// once; independent score interpolation can otherwise insert a missing cell.
+const narrowClusters:readonly (readonly number[])[]=[[1719,1725],[1765,1771,1777],[1801,1807,1813],[2359,2363,2367]];
+function referenceObstacleDistance(legacy:number):number {
+ const cluster=narrowClusters.find(c=>c.includes(legacy));
+ return cluster?referenceJunctionDistance(cluster[0])+12*cluster.indexOf(legacy):referenceJunctionDistance(legacy);
+}
+
 
 /** Video-derived legacy-coordinate estimates; native progress is not world length.
  * Converted to estimated physical centers on the12m grid; brackets remain original score/20 observations. */
@@ -72,14 +80,14 @@ export const REFERENCE_OPENING_OBSTACLES: ReadonlyArray<{
   { distance: 2359, defId: 'narrowWallLeftB', prefab: 'narrow-wall-left-b', frames: [261, 262], distanceBracket: [2350, 2390] },
   { distance: 2363, defId: 'narrowWallLeft', prefab: 'narrow-wall-left', frames: [261, 262], distanceBracket: [2350, 2390] },
   { distance: 2367, defId: 'narrowWallLeft', prefab: 'narrow-wall-left', frames: [261, 262], distanceBracket: [2350, 2390] },
-] as const).map(obstacle=>({...obstacle,legacyDistance:obstacle.distance,distance:referenceJunctionDistance(obstacle.distance)}));
+] as const).map(obstacle=>({...obstacle,legacyDistance:obstacle.distance,distance:referenceObstacleDistance(obstacle.distance)}));
 /** 261–262 show the final half-road continuing to the fog horizon, with no
  * return to full width. Extend its visible surface by eight native12m tiles.
  * This is a visibility lower bound/buffer, not the recovered end of the stretch;
  * no source score-coordinate positions are invented for these distant tiles.
  */
 export const REFERENCE_FINAL_NARROW_CONTINUATION = Array.from({length:8},(_,i)=>({
-  distance:referenceJunctionDistance(2367)+12*(i+1),
+  distance:REFERENCE_OPENING_OBSTACLES.at(-1)!.distance+12*(i+1),
   defId:'narrowWallLeft' as const,prefab:'narrow-wall-left',frames:[261,262] as const,
 }));
 export const REFERENCE_VISIBLE_OBSTACLES = [

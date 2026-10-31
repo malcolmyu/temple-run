@@ -31,3 +31,6 @@ for(const x of [-2.3,2.3])for(const y of [.2,.8,1.5,2.2]) {
 assert.equal(new THREE.Raycaster(new THREE.Vector3(0,1,-8),new THREE.Vector3(0,0,1),0,16).intersectObject(tower,true).length,0);
 tower.traverse((o:any)=>{if(o.isMesh)assert.equal(o.geometry.attributes.uv1.count,o.geometry.attributes.position.count);});
 console.log('Original tower portal preserves carved panels, UV1 and centre passage.',towerBox.min.toArray(),towerBox.max.toArray());
+
+assert.ok(Math.abs(towerBox.max.y-27.444518)<.002,'native.2 world scale, not legacy.18 shrink');
+assert.ok(Math.abs(towerBox.min.x+6.713951)<.002&&Math.abs(towerBox.max.x-6.601492)<.002,'native authored TRS horizontal handedness');

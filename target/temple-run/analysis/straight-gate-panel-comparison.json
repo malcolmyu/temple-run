@@ -1,0 +1,112 @@
+{
+  "method": "manual source glyph ROI + multiscale normalized cross correlation, resized414x896; restricted gate ROI; both mirror candidates",
+  "sourceSecond": 21,
+  "sourceBox": [
+    112,
+    201,
+    137,
+    249
+  ],
+  "records": [
+    {
+      "case": "before",
+      "file": "straight-gate-position-before.png",
+      "ncc": 0.7777037723634319,
+      "match": {
+        "x": 80,
+        "y": 268,
+        "width": 52,
+        "height": 84,
+        "mirror": false
+      },
+      "sourceSecond": 21,
+      "sourceBox": [
+        112,
+        201,
+        137,
+        249
+      ]
+    },
+    {
+      "case": "after",
+      "file": "straight-gate-source-21.png",
+      "ncc": 0.8322554513771324,
+      "match": {
+        "x": 138,
+        "y": 201,
+        "width": 28,
+        "height": 48,
+        "mirror": false
+      },
+      "sourceSecond": 21,
+      "sourceBox": [
+        112,
+        201,
+        137,
+        249
+      ]
+    },
+    {
+      "case": "after22",
+      "file": "straight-gate-source-22.png",
+      "ncc": 0.7214895690171357,
+      "match": {
+        "x": 87,
+        "y": 231,
+        "width": 38,
+        "height": 88,
+        "mirror": false
+      },
+      "sourceSecond": 22,
+      "sourceBox": [
+        48,
+        229,
+        81,
+        314
+      ]
+    },
+    {
+      "case": "afterRightLean",
+      "file": "straight-gate-source-21-right-lean.png",
+      "ncc": 0.8451126868124758,
+      "match": {
+        "x": 108,
+        "y": 201,
+        "width": 28,
+        "height": 48,
+        "mirror": false
+      },
+      "sourceSecond": 21,
+      "sourceBox": [
+        112,
+        201,
+        137,
+        249
+      ]
+    },
+    {
+      "case": "afterRightLean22",
+      "file": "straight-gate-source-22-right-lean.png",
+      "ncc": 0.7518468094009939,
+      "match": {
+        "x": 35,
+        "y": 231,
+        "width": 38,
+        "height": 88,
+        "mirror": false
+      },
+      "sourceSecond": 22,
+      "sourceBox": [
+        48,
+        229,
+        81,
+        314
+      ]
+    }
+  ],
+  "limits": [
+    "only glyph-panel landmark",
+    "ROI manually selected; no full-frame similarity claim",
+    "source camera lateral position and physical authoring anchor still estimated"
+  ]
+}

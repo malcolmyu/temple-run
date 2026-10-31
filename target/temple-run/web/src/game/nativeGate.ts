@@ -31,7 +31,10 @@ export function extractNativeGate(source: THREE.Group | null, variant: 'side' | 
     if(!arrays[0]?.length)return;
     const portal=new THREE.BufferGeometry();
     names.forEach((name,n)=>portal.setAttribute(name,new THREE.Float32BufferAttribute(arrays[n],geometry.getAttribute(name).itemSize)));
-    if(variant==='tower'){portal.rotateY(Math.PI);portal.scale(.18,.18,.18);}
+    if(variant==='tower'){
+      // Full authored Horz TRS + path quarter-turn: legacy OBJ has mirrored X.
+      portal.rotateY(Math.PI);portal.scale(-.2,.2,.2);
+    }
     else {portal.translate(-18,-30,-.67);portal.rotateY(Math.PI/2);portal.scale(.2,.2,.2);}
     portal.computeVertexNormals();
     const arch=new THREE.Mesh(portal,mesh.material);result.add(arch);
