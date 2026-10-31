@@ -12,6 +12,7 @@ import StatsOverlay from './StatsOverlay.vue';
 import ObjectivesOverlay from './ObjectivesOverlay.vue';
 import UpgradesOverlay from './UpgradesOverlay.vue';
 import HelpOverlay from './HelpOverlay.vue';
+import TutorialOverlay from './TutorialOverlay.vue';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const loading = shallowRef(true);
@@ -126,19 +127,7 @@ function dismissTutorial(): void {
       <SettingsOverlay v-if="showSettings" @close="showSettings = false" />
       <HelpOverlay v-if="showHelp" @close="showHelp = false" />
 
-      <section v-if="showTutorial" class="overlay tutorial-overlay">
-        <div class="card tutorial-card">
-          <p class="kicker">YOU'RE READY</p>
-          <h2 class="title">准备出发</h2>
-          <div class="tutorial-grid">
-            <div><span>← →</span><small>换道 / 路口转弯</small></div>
-            <div><span>↑</span><small>跳跃</small></div>
-            <div><span>↓</span><small>滑铲</small></div>
-          </div>
-          <p class="lead">手机可用滑动操作：左右滑动换道或在路口转弯，上滑跳跃，下滑滑铲。</p>
-          <button class="primary" @click="dismissTutorial"><span>开始奔跑</span><em>↗</em></button>
-        </div>
-      </section>
+      <TutorialOverlay v-if="showTutorial" @start="dismissTutorial" @close="showTutorial = false" />
 
       <div v-if="loading" class="loading">
         <div class="loading-card">

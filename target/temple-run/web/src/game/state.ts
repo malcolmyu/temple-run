@@ -19,6 +19,7 @@ export interface MilestoneState {
 export interface HudState {
   phase: Phase;
   ready: boolean;
+  runnerLoadStatus: 'loading'|'ready'|'error';
   headStartReady:boolean;
   permaWingsReady:boolean;
   wingsPermanent:boolean;
@@ -68,6 +69,7 @@ const defaults = (): HudState => ({
   wingsRemaining:0,wingsCooldown:0,wingsReady:false,
   phase: 'menu',
   ready: false,
+  runnerLoadStatus: 'loading',
   headStartReady:false,
   permaWingsReady:false,wingsPermanent:false,
   distance: 0,
@@ -176,6 +178,7 @@ export function resetHud(): void {
     best: state.best,
     totalCoins: state.totalCoins,
     skin: state.skin,
+    runnerLoadStatus: state.runnerLoadStatus,
     muted: state.muted,
     music: state.music,
     sfx: state.sfx,

@@ -1,11 +1,11 @@
 // Four normal seeded runs. No spawned fixtures, teleports, forced powers or collision overrides.
 // Uniform random selection permits repeats: coverage is across seeds, not a per-run quota.
 (() => {
- const g=window.__templeGame,runs=[],originalUrl=location.href,checks=[],releases=[],collections=[];
+ const g=window.__templeGame,runs=[],originalUrl=location.href,checks=[],releases=[],collections=[],expirations=[];
  const check=(name,ok)=>checks.push({name,passed:!!ok});
  for(const seed of [1,2,3,4]){
   const url=new URL(location.href);url.searchParams.set('seed',String(seed));url.searchParams.delete('route');history.replaceState(null,'',url);
-  g.restart();g.freeze();g.advance(1600);g.press('left');let ticks=0;
+  g.restart();g.freeze();g.advance(1600);g.press('left');let ticks=0,shieldSource='none';
   while(g.state().phase==='playing'&&g.state().distanceExact<5500&&ticks++<9000){
    const s=g.state(),remaining=s.nextTurn-s.distanceExact;
    if(remaining<5&&!s.turnQueued)g.press(s.turnDirection===-1?'left':'right');
@@ -30,6 +30,9 @@
    if(!protectedNow&&!s.airborne&&(s.course?s.course.surfaces.map(surface=>surface.from).filter(at=>at>0):[1320,2244,4308,4908]).some(at=>s.distanceExact>at-20&&s.distanceExact<at-10))g.press('jump');
    g.advance(25);
    const after=g.state();
+   if(after.powerPickups.shield>s.powerPickups.shield)shieldSource='pickup';
+   if(!s.boost.active&&after.boost.active)shieldSource='boost';
+   for(const kind of ['magnet','shield'])if(s.powers.some(p=>p.kind===kind)&&!after.powers.some(p=>p.kind===kind))expirations.push({seed,kind,distance:after.distanceExact,phase:after.phase,falling:after.falling,supported:g.groundSupport()[after.lane],fromBoost:kind==='shield'&&shieldSource==='boost',remainingBefore:s.powers.find(p=>p.kind===kind).remaining});
    for(const kind of ['bonus','boost','magnet','shield'])if(after.powerPickups[kind]>s.powerPickups[kind])collections.push({seed,kind,distance:after.distanceExact,coinsAdded:after.coins-s.coins,boostBudget:after.boost.left,remaining:after.powers.find(p=>p.kind===kind)?.remaining??null});
    if(s.boost.active&&!after.boost.active)releases.push({seed,distance:after.distanceExact,phase:after.phase,lane:after.lane,airborne:after.airborne,falling:after.falling,supported:g.groundSupport()[after.lane],powers:after.powers,handover:after.boostHandover});
   }
@@ -43,6 +46,14 @@
  for(const kind of ['bonus','shield','magnet','boost'])check(`normally generated and collected ${kind}`,runs.some(run=>run.generation.bonuses.some(p=>p.kind===kind&&p.collected)));
  check('natural boost expiry observed',releases.length>0);
  check('natural boost releases grounded and supported',releases.every(r=>r.phase==='playing'&&!r.airborne&&!r.falling&&r.supported));
+ for(const kind of ['magnet','shield']){
+  const ended=expirations.filter(e=>e.kind===kind&&!e.fromBoost);
+  check(`natural ${kind} expiry observed`,ended.length>0);
+  check(`natural ${kind} expiry leaves run playable`,ended.every(e=>e.phase==='playing'&&!e.falling&&e.supported));
+  check(`collected ${kind} uses captured duration`,collections.filter(c=>c.kind===kind).every(c=>Math.abs(c.remaining-runs[[1,2,3,4].indexOf(c.seed)].runUpgrades[kind==='magnet'?'magnetDuration':'shieldDuration'])<.001));
+ }
+ check('collected boost uses captured budget',collections.filter(c=>c.kind==='boost').every(c=>c.remaining===runs[[1,2,3,4].indexOf(c.seed)].runUpgrades.boostProgress));
+ check('instant bonus grants captured reward',collections.filter(c=>c.kind==='bonus').every(c=>c.coinsAdded>=runs[[1,2,3,4].indexOf(c.seed)].runUpgrades.coinBonusReward));
  history.replaceState(null,'',originalUrl);
- return {checks,runs,releases,collections};
+ return {checks,runs,releases,collections,expirations};
 })()

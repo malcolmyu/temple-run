@@ -5,6 +5,7 @@ const emit = defineEmits<{ close: [] }>();
 const page = ref(0);
 const chapters = ['操作与道路', '障碍与失误', '道具与成长'];
 const dialog = useModalDialog(()=>emit('close'));
+const powerIcon=(kind:string)=>`${import.meta.env.BASE_URL}assets/ui/native-pickup-${kind}.png`;
 </script>
 
 <template>
@@ -38,9 +39,10 @@ const dialog = useModalDialog(()=>emit('close'));
         <template v-else>
           <h3>道具各有用途，收益在结算时入账</h3>
           <dl>
-            <dt>磁铁与金币奖励</dt><dd>磁铁吸取附近金币，不吸宝石或其他道具；金币奖励立即增加本局金币。红、蓝金币价值更高。</dd>
-            <dt>护盾 / 无敌</dt><dd>可穿过障碍、跨过缺路，但仍需手动在路口转弯。到期前回到有地面的安全侧，留意倒计时和闪烁。</dd>
-            <dt>加速</dt><dd>自动转弯并保护角色。“减速”倒计时结束后，恢复手动避障和转弯。</dd>
+            <dt class="power-name"><img :src="powerIcon('magnet')" alt="" />磁铁</dt><dd>红蓝 U 形图标，吸取附近金币，不吸宝石或其他道具。磁铁本身不提供无敌保护。</dd>
+            <dt class="power-name"><img :src="powerIcon('bonus')" alt="" />金币奖励</dt><dd>圆形金币图标，立即增加本局金币。道路上的红、蓝金币也有更高价值。</dd>
+            <dt class="power-name"><img :src="powerIcon('shield')" alt="" />护盾 / 无敌</dt><dd>条带人形图标。可穿过障碍、跨过缺路，但仍需手动在路口转弯。到期前回到有地面的安全侧，留意倒计时和闪烁。</dd>
+            <dt class="power-name"><img :src="powerIcon('boost')" alt="" />加速</dt><dd>橙色跑者图标，自动转弯并保护角色。“减速”倒计时结束后，恢复手动避障和转弯。</dd>
             <dt>天使之翼与宝石</dt><dd>天使之翼需在跑动中激活，有效时保留一次自动复活机会；永久翼在本局首次死亡后用尽。结算页也可花宝石复活，每局限一次。</dd>
             <dt>商店与升级</dt><dd>最终结算后金币、宝石入账。商店买到的是库存，起跑道具需开跑后点击使用；道具升级在下一局生效。未解锁的道具不会自然出现。</dd>
           </dl>
@@ -63,4 +65,6 @@ const dialog = useModalDialog(()=>emit('close'));
 .help-content dl { margin:0 0 18px; }
 .help-content dt { color:#f5ce71; font-weight:700; margin-top:12px; }
 .help-content dd { margin:3px 0 0; }
+.power-name { display:flex; align-items:center; gap:6px; }
+.power-name img { width:28px; height:28px; object-fit:contain; }
 </style>

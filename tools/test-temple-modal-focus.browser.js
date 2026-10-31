@@ -22,5 +22,25 @@
   check(`${name}: Escape closes without starting`,!document.querySelector('[role="dialog"]')&&g.state().phase==='menu');
   check(`${name}: focus returns to entry`,document.activeElement===entry);
  }
+ const seen=localStorage.getItem('temple.v2.tutorial');
+ try{
+  localStorage.removeItem('temple.v2.tutorial');
+  const entry=document.querySelector('.overlay:not([role="dialog"]) .primary');
+  entry.focus();entry.click();await flush();
+  const root=document.querySelector('.tutorial-overlay');
+  check('tutorial: focus enters primer',root&&root.contains(document.activeElement));
+  const first=document.activeElement;
+  key(first,'Tab',true);
+  check('tutorial: reverse Tab reaches return',root.contains(document.activeElement)&&document.activeElement.textContent==='返回主菜单');
+  key(document.activeElement,'Tab');check('tutorial: forward Tab wraps',document.activeElement===first);
+  const before=g.state();g.advance(2000);
+  check('tutorial: does not advance world',g.state().phase==='menu'&&g.state().distanceExact===before.distanceExact);
+  key(document.activeElement,'Escape');await flush();
+  check('tutorial: cancel closes without opening store',!document.querySelector('.tutorial-overlay')&&!document.querySelector('.store-card')&&g.state().phase==='menu');
+  check('tutorial: cancel does not mark seen',localStorage.getItem('temple.v2.tutorial')===null);
+  check('tutorial: focus returns to start',document.activeElement===entry);
+ }finally{
+  if(seen===null)localStorage.removeItem('temple.v2.tutorial');else localStorage.setItem('temple.v2.tutorial',seen);
+ }
  return {checks};
 })()

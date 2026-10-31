@@ -8,6 +8,7 @@ import { SKINS, skinById } from '../game/skins';
 import { getGame } from '../game/boot';
 import { syncBanks } from '../game/state';
 import StorePreview from './StorePreview.vue';
+import RunnerLoadNotice from './RunnerLoadNotice.vue';
 
 const emit = defineEmits<{ close: [] }>();
 const dialog=useModalDialog(()=>emit('close'));
@@ -36,22 +37,24 @@ function select(id: string): void {
   notice.value = '';
 }
 
-function equip(): void {
+async function equip(): Promise<void> {
   if (!owned.value) return;
-  equipSkin(selected.value);
-  void getGame()?.setSkin(selected.value);
-  notice.value = '已装备';
+  const id=selected.value;
+  equipSkin(id);
+  notice.value = '装备选择已保存';
+  await getGame()?.setSkin(id);
 }
 
-function buy(): void {
+async function buy(): Promise<void> {
   if (owned.value || !afford.value) {
     notice.value = '货币不足';
     return;
   }
-  if (buySkin(selected.value)) {
-    void getGame()?.setSkin(selected.value);
+  const id=selected.value;
+  if (buySkin(id)) {
     syncBanks();
-    notice.value = '解锁成功，已装备';
+    notice.value = '解锁成功，已保存';
+    await getGame()?.setSkin(id);
   }
 }
 </script>
@@ -79,6 +82,7 @@ function buy(): void {
         </div>
         <em>{{ owned ? (equipped ? '已装备' : '已拥有') : priceLabel }}</em>
       </div>
+      <RunnerLoadNotice v-if="equipped" />
       <button class="primary store-action" :disabled="equipped || (!owned && !afford)" @click="owned ? equip() : buy()">
         <span>{{ equipped ? '使用中' : owned ? '装备' : afford ? `解锁 · ${priceLabel}` : '货币不足' }}</span>
         <em>{{ equipped ? '✓' : owned ? '↗' : '🔓' }}</em>

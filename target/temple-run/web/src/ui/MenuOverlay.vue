@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { progress } from '../game/progress';
+import RunnerLoadNotice from './RunnerLoadNotice.vue';
 defineProps<{ ready: boolean }>();
 const emit = defineEmits<{ start: []; store: []; settings: []; stats: []; objectives: []; upgrades: []; help: [] }>();
 </script>
@@ -14,6 +15,7 @@ const emit = defineEmits<{ start: []; store: []; settings: []; stats: []; object
       <button class="primary" :disabled="!ready" @click="emit('start')">
         <span>{{ ready ? '开始奔跑' : '加载中…' }}</span><em>↗</em>
       </button>
+      <RunnerLoadNotice />
       <div class="menu-row">
         <button class="menu-btn" @click="emit('store')">STORE</button>
         <button class="menu-btn" @click="emit('objectives')">目标</button>

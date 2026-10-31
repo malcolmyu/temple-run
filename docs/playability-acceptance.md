@@ -25,7 +25,7 @@
 | 火塔 | 有 | 原资源/代码碰撞，保留滑铲与高金币跳跃选择；当前正常长跑通行。原版独立参数证据见既有native测试 |
 | 低火墙 | 有；原版独立身份/规则未证实 | [真实Up通过/Down死亡](../target/temple-run/analysis/gameplay-fire-wall-manual.json)，当前风险分支也真实通过；使用原火焰贴图，尺寸/生成门槛是明确网页假设 |
 | 石墩 | 有；部分解法为网页设计 | 当前course生成和长跑；独立横移/混合横移跳滑预算测试。不是把皮肤上的石头当碰撞实现 |
-| 磁铁、加速、护盾、金币奖励 | 有；当前四类自然收集已重测 | [当前四种子24项验收](../target/temple-run/analysis/gameplay-current-power-coverage.json)，无spawn/seek/强制power，检查collected与powerPickups。存档预先解锁四类，不证明零升级开局可直接生成全部。金币奖励是即时奖励，不伪装成持续倍率 |
+| 磁铁、加速、护盾、金币奖励 | 有；v7首档四类自然收集/失效重测 | [四种子首档34项验收](../target/temple-run/analysis/gameplay-first-unlock122-summary.json)：实际UI花1000金币解锁四个Lv1，各正常跑到5500世界米；磁铁/护盾15秒、奖励50、加速250进度。无spawn/seek/强制power；观察自然磁铁/护盾失效与3次加速解除，均仍playing且有支撑。初始1000金币为隔离测试资金，不证明新玩家从零赚取全过程；不是真人或所有随机种子的通行总证明。金币奖励即时发放，不伪装持续倍率。原[历史四种子验收](../target/temple-run/analysis/gameplay-current-power-coverage.json)保留版本边界 |
 | 金币、高值币、宝石 | 有；价值/形态部分原规则，宝石经济是网页扩展 | [v7窄路金币20项](../target/temple-run/analysis/gameplay-narrow-coins-summary.json)覆盖12/36/48/60m安全侧实际收集及失败重开，100种子10340枚币均经贴地碰撞支撑验证；当前位置适配为网页设计。当前分路实际5币/9币/宝石增量；[历史特殊布币](../target/temple-run/analysis/gameplay-tree-coins-natural.json)、[升级效果](../target/temple-run/analysis/gameplay-upgrade-native-levels.json)。完整原版所有布币模式尚未确证 |
 | 追逐者 | 有；当前自然追逐/被捕/复活，视觉逐主题仍待复核 | 上述追逐专项，不声称已对每种主题逐帧验证脚步/接触姿态 |
 
@@ -38,10 +38,10 @@
 | 天使翼/永久翼、起跑 | 有；购买使用及双翼/起跑当前验证 | [结算收益购买翼并新局自动复活](../target/temple-run/analysis/gameplay-result-store-after.json)；[当前双翼/起跑41项含输入](../target/temple-run/analysis/gameplay-current-utilities-summary.json)：实际HUD激活、正常生成、两起跑安全退出、永久翼45秒仍有效、普通翼/永久翼真实失败自动复活及下一次失败结算重开；预备库存、25ms推进，不等于真人或真机验收 |
 | 结算入账与商店 | 有；当前真实UI闭环 | 本局713币→结算商店713→买500币翼余额213→新局使用；重复打开无重复入账。结果页明确“结算并去商店”，结算前仍可复活 |
 | 升级 | 有；六类升级当前UI购买与自然效果 | [当前24次实际购买](../target/temple-run/analysis/gameplay-current-upgrade-purchases.json)与[刷新后自然效果](../target/temple-run/analysis/gameplay-current-upgrade-effects.json)，覆盖四类道具0→6。[金币价值同路线收入对照](../target/temple-run/analysis/gameplay-current-coin-value.json)、[高值币各档首次观察](../target/temple-run/analysis/gameplay-current-high-coins.json)及[八档扣款](../target/temple-run/analysis/gameplay-current-coin-upgrade-ledger.json)覆盖另两类。高值币门槛原默认，金币价值为网页扩展；真机与所有组合效果仍未泛化验收 |
-| 角色购买/装备/开跑 | 有；网页9角色，原版完整收藏未确证 | [9角色闭环](../target/temple-run/analysis/gameplay-store-closure.json)。网页价格明示，不声称完整原版14角色价格 |
+| 角色购买/装备/开跑 | 有；网页9角色，原版完整收藏未确证 | [9角色闭环](../target/temple-run/analysis/gameplay-store-closure.json)；[角色素材故障恢复7项](../target/temple-run/analysis/gameplay-skin-retry125.json)实际购买Selene→阻断模型失败→重复重试不扣款→预览/跑者分别恢复→正常左右与死亡重开。菜单/商店保留错误状态与免费重试，旧异步结果仍受token保护。网页价格明示，不声称完整原版14角色价格 |
 | 分数/倍率/目标 | 有；原55项目标目录已接入 | [无道具高分](../target/temple-run/analysis/gameplay-power-free-score.json)、native目标/升级/生涯单测。没有以录像某秒分数为验收 |
 | 暂停/后台/横屏 | 有；桌面浏览器验证，真机待验 | [焦点暂停](../target/temple-run/analysis/gameplay-focus-pause.json)、[小屏/横屏](../target/temple-run/analysis/gameplay-mobile-hud.json)；归位不自动恢复 |
-| UI弹层不偷偷开跑/恢复 | 有；当前真实键盘验证 | 最新modal-input记录覆盖5菜单面板、暂停设置、首次说明；关弹层后输入恢复 |
+| UI弹层不偷偷开跑/恢复 | 有；原生焦点穿透已修复 | [六面板焦点验收](../target/temple-run/analysis/gameplay-modal-focus121.json)记录修前STORE/ShiftTab/Enter后台开跑，修后原操作不启动；36项DOM焦点回归、原生双向Tab/Esc、暂停设置与15项输入通过。Input阻断与面板焦点边界共同生效，设置summary仍可用Space展开 |
 | 启动失败恢复 | 有；当前实际资源阻断验证 | [失败→重试→恢复→开始→失败重开](../target/temple-run/analysis/gameplay-startup-retry.json)，不清存档；不承诺无法支持WebGL设备可以靠重试修复 |
 | 资源与性能 | 部分完成 | 六万米渲染池趋稳、旧fork回收、当前path3..5段；[课程历史回收](../target/temple-run/analysis/gameplay-course-compaction-long-run.json)后正常课程片段6..7，保留前驱和绝对编号；仅证明采样范围内资源稳定。20/40/60Hz是模拟步长测试，不是设备渲染FPS或堆内存上限证明；另有[桌面开局15秒真实RAF](../target/temple-run/analysis/gameplay-live-frame-controlled.json)，DPR2/750×1624约59.8FPS，仅该环境与开局范围；[桌面三分钟自然三主题](../target/temple-run/analysis/gameplay-live-three-themes-summary.json)约59.9FPS，最大83.4ms，仍不是手机或所有设备性能证明；[v7三分钟实时长跑](../target/temple-run/analysis/gameplay-live-v7-summary.json)自然三主题、约59.9FPS/p95 18.2ms/max66.8ms，12/36/60m窄路贴地通过并收币，181个资源采样；48m未遇到，保留专项。实际继续后漏转结算并点击重开，非手机/无限稳定证明 |
 | 手机触摸/倾斜 | 有接入，缺真机验收 | [浏览器原生触摸15项](../target/temple-run/analysis/gameplay-native-touch.json)已通过，派发到canvas的22个事件均isTrusted=true、pointerType=touch，另有权限分支模拟；这是桌面Chrome触摸模拟，不能替代iOS/Android传感器、真实权限和触摸延迟 |
@@ -52,7 +52,7 @@
 1. 将历史专项中仍影响完整可玩的部分迁移到当前正常生成版本，优先错误动作失败、保护交接和成长效果；不把旧绿灯当新版本总验收。
 2. 课程历史回收已完成当前长跑与完整历史对照；继续验证真实设备堆占用和渲染帧时，不以有界记录数替代性能实测。
 3. 真机输入/传感器/渲染性能验收，明确实际设备与环境。
-4. 持久操作回放及逐元素反馈；原版证据继续补充，拿不到的保留假设标签。
+4. 逐元素反馈与原版证据继续补充，拿不到的保留假设标签；持久操作回放是可选诊断工程，不能挤占用户要求的可玩性。
 
 这份表是验收证据索引，不是整体完成声明，也不把“有实现”替换成“已在所有设备正确运行”。
 

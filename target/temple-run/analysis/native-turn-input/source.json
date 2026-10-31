@@ -1,0 +1,176 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "metadataSHA256": "5bd950811d6b26080d8e3b722ecfa91d8a0d726e7786f91f351b13c91ce5467b",
+  "methods": [
+    {
+      "type": "TouchInput",
+      "method": "TouchMoved",
+      "address": "0x12acc7c",
+      "end": "0x12ad500",
+      "sha256": "af5d3ec324d4b08a6545cb2158e485ce8f29d81fb058212df93763f7ab05c8e8",
+      "parameterNames": [
+        "touchPoint"
+      ]
+    },
+    {
+      "type": "TouchInput",
+      "method": ".ctor",
+      "address": "0x12ad570",
+      "end": "0x12ad61c",
+      "sha256": "4c9f39a8d422c638f253431586de1efd92db74d6adcb8d7a353fbd58ef2d563e",
+      "parameterNames": []
+    },
+    {
+      "type": "PathElement",
+      "method": "GetPathElementIfPointOverTurn",
+      "address": "0x12e7e08",
+      "end": "0x12e7e18",
+      "sha256": "017af6d276d5caa882e4459dfde41f5613b4287fe901136209f39e96d4f4215b",
+      "parameterNames": [
+        "point",
+        "radius",
+        "origin",
+        "isRootNode",
+        "bailOut"
+      ]
+    },
+    {
+      "type": "PathElement",
+      "method": "GetPathElementIfPointOverTurn2D",
+      "address": "0x12e7e18",
+      "end": "0x12e8180",
+      "sha256": "63e3415ce9ea1498337d21adab96f7cf10c2deaad0b8c3209e54d6bd93e5b409",
+      "parameterNames": [
+        "point",
+        "radius",
+        "origin",
+        "isRootNode",
+        "bailOut"
+      ]
+    },
+    {
+      "type": "PathElement",
+      "method": "IsPointOverTurnArea",
+      "address": "0x12e8180",
+      "end": "0x12e818c",
+      "sha256": "3fb5d56085236051bbe2f495829f6f04572be3279059979ba56a34a6b291a7ac",
+      "parameterNames": [
+        "point",
+        "radius"
+      ]
+    },
+    {
+      "type": "PathElement",
+      "method": "IsPointOverTurnArea",
+      "address": "0x12e818c",
+      "end": "0x12e828c",
+      "sha256": "7ce9dc03c73466f1ed1701edc79d2d822e7f614778c77abfdeaf5d9c298d1d82",
+      "parameterNames": [
+        "point",
+        "radius"
+      ]
+    },
+    {
+      "type": "GameController",
+      "method": "HandleDelayedTurning",
+      "address": "0x126ffb0",
+      "end": "0x127089c",
+      "sha256": "9b94d356a2dc3ea9e634daa57529d136b6613a12e535def92500b370b676b535",
+      "parameterNames": []
+    }
+  ],
+  "instructionChecks": {
+    "0x12ad578": "0x52a7e008",
+    "0x12ad57c": "0xb9006008",
+    "0x12acd44": "0x1e2e1000",
+    "0x12acd4c": "0x1e2a3800",
+    "0x12acd58": "0x1e2f9001",
+    "0x12acd5c": "0x1e210800",
+    "0x12acd60": "0x1e2a1001",
+    "0x12acd64": "0x52a84609",
+    "0x12acd68": "0x1e21280b",
+    "0x12acd90": "0x1e2d096d",
+    "0x12acdbc": "0x1e2d2140",
+    "0x12aced8": "0x52a85609",
+    "0x12acee4": "0x1e230968",
+    "0x12ad0d4": "0x39008a68",
+    "0x12ad2b0": "0x39008668",
+    "0x12e7e08": "0x4ea21c41",
+    "0x12e7e0c": "0x12000042",
+    "0x12e7e10": "0x4ea31c62",
+    "0x12e7edc": "0x1e2b394d",
+    "0x12e7ee0": "0x1e2c392b",
+    "0x12e7ef4": "0x1e2d09a0",
+    "0x12e7ef8": "0x1e2b0961",
+    "0x12e7efc": "0x1e212800",
+    "0x12e7f00": "0x1e21c000",
+    "0x12e7f04": "0x1e282000",
+    "0x12e7f08": "0x54000569",
+    "0x12e7f0c": "0x510006d6",
+    "0x12e7fb4": "0xaa1303f7",
+    "0x12e823c": "0x1e232120",
+    "0x12e8248": "0x5400016b",
+    "0x12e8250": "0x1e222120",
+    "0x12e8254": "0x54000105",
+    "0x12e8258": "0x1e202100",
+    "0x12e825c": "0x540000cb",
+    "0x12e8264": "0x1e202100",
+    "0x12e8268": "0x1a9f57e0",
+    "0x1270688": "0x39408509",
+    "0x12706c4": "0x39408908",
+    "0x1270704": "0x3900891f",
+    "0x1270708": "0x79004109"
+  },
+  "callChecks": {
+    "0x12acf04": "0x12e7e08",
+    "0x12e7e14": "0x12e7e18",
+    "0x12e7e74": "0x12e28b0",
+    "0x12e81d0": "0x12e28b0",
+    "0x1270144": "0x12e7e08",
+    "0x12706b4": "0x129899c",
+    "0x12706f0": "0x1298a14"
+  },
+  "defaults": {
+    "sensitivity": 0.5,
+    "factor": 1.125,
+    "minGesturePixels": 49.5,
+    "queryRadiusRaw": 99.0,
+    "queryRadiusWorld": 19.8
+  },
+  "sensitivityExamples": [
+    {
+      "sensitivity": 0,
+      "factor": 2.0,
+      "minGesturePixels": 88.0,
+      "queryRadiusRaw": 176.0,
+      "queryRadiusWorld": 35.2
+    },
+    {
+      "sensitivity": 0.5,
+      "factor": 1.125,
+      "minGesturePixels": 49.5,
+      "queryRadiusRaw": 99.0,
+      "queryRadiusWorld": 19.8
+    },
+    {
+      "sensitivity": 1,
+      "factor": 0.25,
+      "minGesturePixels": 11.0,
+      "queryRadiusRaw": 22.0,
+      "queryRadiusWorld": 4.4
+    }
+  ],
+  "findings": [
+    "TouchInput constructor defaults sensitivity to0.5. TouchMoved derives factor=(1-sensitivity)*1.75+0.25.",
+    "Gesture recognition compares screen movement to44*factor; nearby turn lookup uses88*factor native world units. These are different units.",
+    "GetPathElementIfPointOverTurn maps Vector3 to XZ and recurses through neighbouring graph nodes with bailOut. A candidate must be IsTurn and within a Euclidean radius, not a scalar6m-before-centre interval.",
+    "IsPointOverTurnArea is a separate axis-aligned square test: lower bounds inclusive and upper bounds exclusive. Do not equate the turn search radius to this area or final rotation time.",
+    "TouchMoved stores requested directions at GameInput offsets0x21/0x22. HandleDelayedTurning consumes those flags and conditionally invokes TurnLeft/TurnRight after further graph/position checks."
+  ],
+  "limits": [
+    "Scene serialization, saved sensitivity and remote/version overrides may change the constructor default;19.8world units is a default calculation, not an observed video parameter.",
+    "The delayed execution method has not been fully translated. This audit does not prove all input acceptance cases, exact commit timing, late bounds, or PCInput parity.",
+    "Current web6m-before/2m-after input contract remains a web adapter, not a recovered native constant. No production input or map behaviour is changed by this audit.",
+    "Native rejected-swipe stumble is intentionally not restored: the user requires ordinary Left/Right to change lane safely."
+  ]
+}

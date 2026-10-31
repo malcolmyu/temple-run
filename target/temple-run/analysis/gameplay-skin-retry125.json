@@ -1,0 +1,446 @@
+{
+  "checks": [
+    {
+      "name": "purchase failure exposes retry without restoring debit",
+      "passed": true
+    },
+    {
+      "name": "repeated failure preserves owned skin and zero bank",
+      "passed": true
+    },
+    {
+      "name": "preview recovers independently",
+      "passed": true
+    },
+    {
+      "name": "error survives menu reset",
+      "passed": true
+    },
+    {
+      "name": "runner retry recovers with no additional debit",
+      "passed": true
+    },
+    {
+      "name": "native left and right survive after recovery",
+      "passed": true
+    },
+    {
+      "name": "actual result restart preserves recovered skin",
+      "passed": true
+    }
+  ],
+  "repro": {
+    "button": "使用中✓",
+    "retryButtons": 0,
+    "rig": "pending",
+    "save": {
+      "bestCleanRunDistance": 0,
+      "bestCoinFreeStart": 0,
+      "bestCoinMeterFills": 0,
+      "bestDistance": 0,
+      "bestPowerFreeScore": 0,
+      "bestPowerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "bestRunCoins": 0,
+      "bestScore": 0,
+      "bestWingResurrections": 0,
+      "claimed": [],
+      "coins": 0,
+      "equipped": "selene",
+      "gems": 0,
+      "headStartUsed": 0,
+      "headStarts": 0,
+      "legacyMigrationComplete": true,
+      "lifetimeCoins": 0,
+      "megaStarts": 0,
+      "music": true,
+      "owned": [
+        "jhony",
+        "selene"
+      ],
+      "permaWings": 0,
+      "runs": 0,
+      "sound": true,
+      "totalDistance": 0,
+      "upgradeSchema": 2,
+      "upgrades": {
+        "bonus": 0,
+        "boost": 0,
+        "coin": 0,
+        "coinSpawn": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "wings": 0
+    }
+  },
+  "error": {
+    "coins": 0,
+    "equipped": "selene",
+    "status": "error"
+  },
+  "retryFailed": {
+    "save": {
+      "bestCleanRunDistance": 0,
+      "bestCoinFreeStart": 0,
+      "bestCoinMeterFills": 0,
+      "bestDistance": 0,
+      "bestPowerFreeScore": 0,
+      "bestPowerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "bestRunCoins": 0,
+      "bestScore": 0,
+      "bestWingResurrections": 0,
+      "claimed": [],
+      "coins": 0,
+      "equipped": "selene",
+      "gems": 0,
+      "headStartUsed": 0,
+      "headStarts": 0,
+      "legacyMigrationComplete": true,
+      "lifetimeCoins": 0,
+      "megaStarts": 0,
+      "music": true,
+      "owned": [
+        "jhony",
+        "selene"
+      ],
+      "permaWings": 0,
+      "runs": 0,
+      "sound": true,
+      "totalDistance": 0,
+      "upgradeSchema": 2,
+      "upgrades": {
+        "bonus": 0,
+        "boost": 0,
+        "coin": 0,
+        "coinSpawn": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "wings": 0
+    },
+    "status": "error"
+  },
+  "previewRecovered": {
+    "hint": "拖动旋转",
+    "runnerStatus": "error"
+  },
+  "menuError": {
+    "coins": 0,
+    "status": "error"
+  },
+  "recovered": {
+    "equipped": "selene",
+    "rig": "ready",
+    "save": {
+      "bestCleanRunDistance": 0,
+      "bestCoinFreeStart": 0,
+      "bestCoinMeterFills": 0,
+      "bestDistance": 0,
+      "bestPowerFreeScore": 0,
+      "bestPowerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "bestRunCoins": 0,
+      "bestScore": 0,
+      "bestWingResurrections": 0,
+      "claimed": [],
+      "coins": 0,
+      "equipped": "selene",
+      "gems": 0,
+      "headStartUsed": 0,
+      "headStarts": 0,
+      "legacyMigrationComplete": true,
+      "lifetimeCoins": 0,
+      "megaStarts": 0,
+      "music": true,
+      "owned": [
+        "jhony",
+        "selene"
+      ],
+      "permaWings": 0,
+      "runs": 0,
+      "sound": true,
+      "totalDistance": 0,
+      "upgradeSchema": 2,
+      "upgrades": {
+        "bonus": 0,
+        "boost": 0,
+        "coin": 0,
+        "coinSpawn": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "wings": 0
+    },
+    "status": "ready"
+  },
+  "left": {
+    "lane": 0,
+    "phase": "playing",
+    "skin": "selene",
+    "status": "ready"
+  },
+  "right": {
+    "lane": 1,
+    "phase": "playing",
+    "skin": "selene",
+    "status": "ready"
+  },
+  "restart": {
+    "phase": "playing",
+    "skin": "selene",
+    "status": "ready"
+  },
+  "modal": {
+    "checks": [
+      {
+        "name": "STORE: focus enters panel",
+        "passed": true
+      },
+      {
+        "name": "STORE: reverse Tab stays in panel",
+        "passed": true
+      },
+      {
+        "name": "STORE: forward Tab wraps",
+        "passed": true
+      },
+      {
+        "name": "STORE: background focus redirected",
+        "passed": true
+      },
+      {
+        "name": "STORE: Escape closes without starting",
+        "passed": true
+      },
+      {
+        "name": "STORE: focus returns to entry",
+        "passed": true
+      },
+      {
+        "name": "目标: focus enters panel",
+        "passed": true
+      },
+      {
+        "name": "目标: reverse Tab stays in panel",
+        "passed": true
+      },
+      {
+        "name": "目标: forward Tab wraps",
+        "passed": true
+      },
+      {
+        "name": "目标: background focus redirected",
+        "passed": true
+      },
+      {
+        "name": "目标: Escape closes without starting",
+        "passed": true
+      },
+      {
+        "name": "目标: focus returns to entry",
+        "passed": true
+      },
+      {
+        "name": "升级: focus enters panel",
+        "passed": true
+      },
+      {
+        "name": "升级: reverse Tab stays in panel",
+        "passed": true
+      },
+      {
+        "name": "升级: forward Tab wraps",
+        "passed": true
+      },
+      {
+        "name": "升级: background focus redirected",
+        "passed": true
+      },
+      {
+        "name": "升级: Escape closes without starting",
+        "passed": true
+      },
+      {
+        "name": "升级: focus returns to entry",
+        "passed": true
+      },
+      {
+        "name": "STATS: focus enters panel",
+        "passed": true
+      },
+      {
+        "name": "STATS: reverse Tab stays in panel",
+        "passed": true
+      },
+      {
+        "name": "STATS: forward Tab wraps",
+        "passed": true
+      },
+      {
+        "name": "STATS: background focus redirected",
+        "passed": true
+      },
+      {
+        "name": "STATS: Escape closes without starting",
+        "passed": true
+      },
+      {
+        "name": "STATS: focus returns to entry",
+        "passed": true
+      },
+      {
+        "name": "OPTIONS: focus enters panel",
+        "passed": true
+      },
+      {
+        "name": "OPTIONS: reverse Tab stays in panel",
+        "passed": true
+      },
+      {
+        "name": "OPTIONS: forward Tab wraps",
+        "passed": true
+      },
+      {
+        "name": "OPTIONS: background focus redirected",
+        "passed": true
+      },
+      {
+        "name": "OPTIONS: Escape closes without starting",
+        "passed": true
+      },
+      {
+        "name": "OPTIONS: focus returns to entry",
+        "passed": true
+      },
+      {
+        "name": "玩法说明: focus enters panel",
+        "passed": true
+      },
+      {
+        "name": "玩法说明: reverse Tab stays in panel",
+        "passed": true
+      },
+      {
+        "name": "玩法说明: forward Tab wraps",
+        "passed": true
+      },
+      {
+        "name": "玩法说明: background focus redirected",
+        "passed": true
+      },
+      {
+        "name": "玩法说明: Escape closes without starting",
+        "passed": true
+      },
+      {
+        "name": "玩法说明: focus returns to entry",
+        "passed": true
+      },
+      {
+        "name": "tutorial: focus enters primer",
+        "passed": true
+      },
+      {
+        "name": "tutorial: reverse Tab reaches return",
+        "passed": true
+      },
+      {
+        "name": "tutorial: forward Tab wraps",
+        "passed": true
+      },
+      {
+        "name": "tutorial: does not advance world",
+        "passed": true
+      },
+      {
+        "name": "tutorial: cancel closes without opening store",
+        "passed": true
+      },
+      {
+        "name": "tutorial: cancel does not mark seen",
+        "passed": true
+      },
+      {
+        "name": "tutorial: focus returns to start",
+        "passed": true
+      }
+    ]
+  },
+  "input": [
+    {
+      "name": "ArrowLeft: lane and survival",
+      "passed": true
+    },
+    {
+      "name": "ArrowLeft: edge clamp",
+      "passed": true
+    },
+    {
+      "name": "ArrowLeft: airborne lane change",
+      "passed": true
+    },
+    {
+      "name": "ArrowRight: lane and survival",
+      "passed": true
+    },
+    {
+      "name": "ArrowRight: edge clamp",
+      "passed": true
+    },
+    {
+      "name": "ArrowRight: airborne lane change",
+      "passed": true
+    },
+    {
+      "name": "slide lane change",
+      "passed": true
+    },
+    {
+      "name": "swipe lane 0",
+      "passed": true
+    },
+    {
+      "name": "swipe lane 1",
+      "passed": true
+    },
+    {
+      "name": "natural route: roots, gap, two corners, T left",
+      "passed": true
+    },
+    {
+      "name": "natural route: roots, gap, two corners, T right",
+      "passed": true
+    },
+    {
+      "name": "actual root still collides",
+      "passed": true
+    },
+    {
+      "name": "missed corner still fails",
+      "passed": true
+    },
+    {
+      "name": "failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "restart resets input and powers",
+      "passed": true
+    }
+  ],
+  "mainUnchanged": true
+}

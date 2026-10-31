@@ -164,6 +164,11 @@ onBeforeUnmount(() => {
 <template>
   <div class="store-preview">
     <canvas ref="canvas" aria-label="角色 3D 预览" />
-    <span class="preview-hint" role="status">{{ loading ? '角色加载中…' : failed ? '预览加载失败，请重新选择' : '拖动旋转' }}</span>
+    <span class="preview-hint" role="status">{{ loading ? '角色加载中…' : failed ? '预览加载失败' : '拖动旋转' }}</span>
+    <button v-if="failed" class="preview-retry menu-btn" @click="loadSkin(props.skinId)">重新加载预览</button>
   </div>
 </template>
+
+<style scoped>
+.preview-retry { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); min-height:44px; }
+</style>

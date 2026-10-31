@@ -2,6 +2,26 @@
 
 本页补充[整体设计](game-design.md)的规则来源。目标是恢复玩法机制，不是让某个种子按视频时间表跑同一条路。审计对象为当前已有APK的静态il2cpp二进制；没有执行原生库，也没有把网页适配规则写成原版事实。
 
+## 转角查询与输入时序（Round126）
+
+道路端口不能直接等同转弯输入窗口。新增可复跑命令：
+
+```sh
+python3 tools/inspect-native-turn-input.py /tmp/com.imangi.templerun.apk /tmp/temple-libil2cpp.so
+```
+
+[来源记录](../target/temple-run/analysis/native-turn-input/source.json)核对7个完整方法哈希、40条指令及7个调用目标；[负向检查](../target/temple-run/analysis/native-turn-input/negative-control.json)只在临时库副本改动88倍数指令，按预期失败且未覆盖正式来源记录。
+
+| 阶段 | 原代码事实 | 边界 |
+|---|---|---|
+| 手势识别 | TouchInput构造默认Sensitivity=.5；TouchMoved计算factor=(1-Sensitivity)×1.75+.25，用44×factor比较屏幕移动距离 | 默认49.5屏幕像素，不能与道路米数混用；场景/保存设置可覆盖默认 |
+| 找附近转角 | 同方法用88×factor作GetPathElementIfPointOverTurn的原生世界半径，isRootNode=true、bailOut=3 | 默认99原生单位，按当前.2缩放为19.8网页世界单位；不是已证明的录像参数，也不是完整“前19.8米可转”契约 |
+| 图查询 | Vector3包装转为XZ；2D方法要求候选IsTurn且hypot(point-centre)≤radius，否则带bailOut向邻居递归 | 属于二维圆形邻近搜索，与网页标量remaining阈值不同 |
+| 路口区域 | IsPointOverTurnArea另用轴对齐正方形；下边界含、上边界不含 | 查询半径、区域半径、实际执行时刻是三件事 |
+| 意图与执行 | TouchMoved写GameInput的0x21/0x22方向flag；HandleDelayedTurning在进一步位置/道路资格检查后分别调用TurnLeft/TurnRight并消费flag | 尚未完整翻译该方法的执行条件，不能把搜索半径直接用作网页接受/提交窗口 |
+
+网页目前的前6m/后2m仍是明确适配，不能包装为原版常量。本轮不改输入参数；下一步迁移必须把“附近合法转角—暂存方向意图—到达提交点”分开，并验证普通左右只换道、错误方向、T两臂、跳滑中输入与漏转。原版拒绝滑动触发绊倒的行为不恢复，用户已明确要求普通左右安全换道。
+
 ## 可复跑证据
 
 ```

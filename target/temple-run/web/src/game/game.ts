@@ -540,6 +540,7 @@ export class Game {
         return { kind: p.kind, value:p.value, lane: p.lane, ahead: Math.round(p.distance - this.distance) };
       }),
       rig: this.runnerRig ? 'ready' : 'pending',
+      rigLoadStatus: mutateUi.runnerLoadStatus,
     };
   }
 
@@ -817,6 +818,7 @@ export class Game {
       saveProgress();
     }
     const token = ++this.rigToken;
+    mutateUi.runnerLoadStatus='loading';
     try {
       const rig = await loadRunnerRig(
         `${BASE}assets/characters/rig-${skin.rig}.json`,
@@ -837,6 +839,7 @@ export class Game {
       this.runnerRig = rig;
       this.runnerGroup.add(rig.object);
       this.installWings();
+      mutateUi.runnerLoadStatus='ready';
     } catch (error) {
       if (token !== this.rigToken || this.disposed) return;
       this.releaseRunnerRig();
@@ -848,6 +851,7 @@ export class Game {
       this.runnerGroup.add(proxy);
       this.runnerRig = null;
       this.installWings();
+      mutateUi.runnerLoadStatus='error';
     }
   }
 
