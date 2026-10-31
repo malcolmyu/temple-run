@@ -37,6 +37,7 @@ export class CoursePlan {
  readonly rejectedEncounters:{from:number;to:number;kind:string;reasons:string[]}[]=[];
  private readonly rng:SeededRandom;
  private readonly pairRng:SeededRandom;
+ private readonly narrowRng:SeededRandom;
  private readonly director:CourseDirector;
  private bag:string[]=[];
  private cliffBag:string[]=[];
@@ -67,7 +68,7 @@ export class CoursePlan {
  readonly coinStart:number;
  constructor(readonly seed:number,initialExtent=6000,readonly opening:'generated'|'fixture'='generated'){
   this.director=new CourseDirector(seed);
-  this.rng=new SeededRandom(seed^0x636f7572);this.pairRng=new SeededRandom(seed^0x70616972);
+  this.rng=new SeededRandom(seed^0x636f7572);this.pairRng=new SeededRandom(seed^0x70616972);this.narrowRng=new SeededRandom(seed^0x6e617272);
   this.coinStart=opening==='generated'?0:489;
   const plan=opening==='generated'?generateCourseOpening(seed):historicalCourseFixture();
   for(const feature of plan.features){
@@ -121,13 +122,16 @@ export class CoursePlan {
     kind='transition';
    }else if(this.opening==='generated'){beat=this.director.choose(level,progress??2000,mid);kind=beat.kind;}
    else kind=surface==='wood'?(this.rng.int(2)===0?'plankPit':'plankBeam'):level===3?this.cliffFeature():this.stoneFeature(mid,progress);
+   // Native compatibility permits repeated long-narrow body tiles. The three
+   // equally likely 36/48/60m variants are web pacing policy, not native weights.
+   const narrowBodyTiles=kind==='narrowLong'&&this.opening==='generated'?1+this.narrowRng.int(3):1;
    if(kind==='narrowSmall'||kind==='narrowLong'){
     // Keep the mechanic: allocate a draft approach/exit instead of rejecting
     // short groups. No already-published turn is moved.
     const half=kind==='narrowLong'?18:6;
     const reserve=NORMAL_SAFETY_SPEED*lateralTravelSeconds(1,0);
     mid=Math.max(mid,12*Math.ceil((from+half+reserve)/12));
-    to+=12*Math.ceil(Math.max(0,mid+half+reserve-to)/12);
+    to+=12*Math.ceil(Math.max(0,mid+(kind==='narrowLong'?12*narrowBodyTiles+6:half)+reserve-to)/12);
    }
    if(kind==='branch'&&this.opening==='generated'&&(progress??2000)>=1000){
     mid=Math.max(mid,from+96);to=Math.max(to,mid+120);
@@ -153,9 +157,10 @@ export class CoursePlan {
      this.narrows.push({from:mid-6,to:mid+6,side:right?'left':'right'});break;
     }
     case 'narrowLong':{
-     if(right){add('narrowWallRightB','narrow-wall-right-b',mid-12);add('narrowWallRight','narrow-wall-right');add('narrowWallRightA','narrow-wall-right-a',mid+12);}
-     else{add('narrowWallLeftB','narrow-wall-left-b',mid-12);add('narrowWallLeft','narrow-wall-left');add('narrowWallLeftA','narrow-wall-left-a',mid+12);}
-     this.narrows.push({from:mid-18,to:mid+18,side:right?'left':'right'});break;
+     add(right?'narrowWallRightB':'narrowWallLeftB',right?'narrow-wall-right-b':'narrow-wall-left-b',mid-12);
+     for(let i=0;i<narrowBodyTiles;i++)add(right?'narrowWallRight':'narrowWallLeft',right?'narrow-wall-right':'narrow-wall-left',mid+i*12);
+     add(right?'narrowWallRightA':'narrowWallLeftA',right?'narrow-wall-right-a':'narrow-wall-left-a',mid+narrowBodyTiles*12);
+     this.narrows.push({from:mid-18,to:mid+narrowBodyTiles*12+6,side:right?'left':'right'});break;
     }
     case 'branch':{
      if(this.opening==='generated'&&(progress??2000)>=1000){

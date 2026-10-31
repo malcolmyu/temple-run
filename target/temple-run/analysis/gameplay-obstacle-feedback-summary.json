@@ -1,0 +1,52 @@
+{
+  "fatalCases": [
+    {
+      "id": "treeJump",
+      "message": "撞上了树根",
+      "ended": true,
+      "actualUiRestart": true,
+      "normalApproachDistance": 58.59250000000001
+    },
+    {
+      "id": "treeSlide",
+      "message": "撞上了树洞拱门",
+      "ended": true,
+      "actualUiRestart": true,
+      "normalApproachDistance": 2195.1205834198136
+    },
+    {
+      "id": "flameTower",
+      "message": "撞上了火塔",
+      "ended": true,
+      "actualUiRestart": true,
+      "normalApproachDistance": 2770.9920030975495
+    },
+    {
+      "id": "fireWall",
+      "message": "撞上了火墙",
+      "ended": true,
+      "actualUiRestart": true,
+      "normalApproachDistance": 2351.039329452524
+    },
+    {
+      "id": "plankBeam",
+      "message": "撞上了木桥横梁",
+      "ended": true,
+      "actualUiRestart": true,
+      "normalApproachDistance": 1426.684921112062
+    }
+  ],
+  "stoneNonfatal": {
+    "phase": "playing",
+    "stumbled": true
+  },
+  "initialIncorrectExpectation": "Initial stone test expected fatal impact, but source kill=false and diagnostic confirms only stumble; preserved raw case, removed unreachable stone death label.",
+  "inputRegression": 15,
+  "rulesSource": "web feedback wording; existing native-derived flags and separately documented web obstacle rules unchanged",
+  "method": "natural seeded routes, no seek/spawn/power; simulated25ms progression; five actual DOM checks and button restarts",
+  "limitations": [
+    "not human timing or physical-device acceptance",
+    "impact illustration still shared, no per-obstacle death art claim"
+  ],
+  "mainSaveUnchanged": true
+}

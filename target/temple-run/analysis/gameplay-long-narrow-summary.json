@@ -1,0 +1,43 @@
+{
+  "rulesVersion": "beats-v6",
+  "nativeSource": "WillPieceTypeConnectOnSide: long-narrow body types19/22 can connect to themselves; canonical southward B/body*/A chain verified from raw compatibility matrix",
+  "webPolicy": "equal selection of1/2/3 body tiles,36/48/60m support spans; exact weights and limits are assumptions",
+  "browserChecks": 24,
+  "inputChecks": 15,
+  "generationCheck": {
+    "seeds": 100,
+    "extent": 20000,
+    "longNarrows": 887,
+    "variants": [
+      "left:36",
+      "left:48",
+      "left:60",
+      "right:36",
+      "right:48",
+      "right:60"
+    ]
+  },
+  "coverageNote": "Initial seed1 search did not find48m variant by20000m while still playing. Initial failed-coverage checks retained; seed7 naturally reaches48m and final beats-v6 suite passes all24.",
+  "realKeyObservation": {
+    "key": "Right",
+    "distance": 4972.946537857259,
+    "span": {
+      "from": 4962,
+      "to": 5022,
+      "side": "right"
+    },
+    "lane": 2,
+    "phase": "playing",
+    "supportedLanes": [
+      false,
+      false,
+      true
+    ]
+  },
+  "mainSaveUnchanged": true,
+  "limitations": [
+    "freeze/advance25ms and automated approach are not human real-time play",
+    "desktop browser only; no physical tilt/device acceptance",
+    "not all seeds or all speed/power combinations"
+  ]
+}

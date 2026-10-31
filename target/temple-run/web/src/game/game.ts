@@ -1,3 +1,4 @@
+import {obstacleImpactReason} from './obstacles/feedback';
 import {RunTrace,parseRunTrace,type RunTraceData,type TraceCommand} from './runTrace';
 import {ambientTreeAllowed} from './sceneryVisibility';
 import {bindFocusPause,PORTRAIT_BLOCK_QUERY} from './focusPause';
@@ -2048,7 +2049,7 @@ export class Game {
         const point = obstacle.branch?(this.basePath??this.path).at(obstacle.distance,obstacle.branch==='left'?-1.9:1.9):this.path.at(obstacle.distance, x);
         obstacle.object.position.set(point.x, this.meshY(obstacle.distance), point.z);
         obstacle.object.rotation.y = point.heading;
-        if ((def.kind === 'gap' || def.kind === 'gapLong') && !obstacle.warned && ahead > 3.5 && ahead < 12) {
+        if (def.placement !== 'narrow' && (def.kind === 'gap' || def.kind === 'gapLong') && !obstacle.warned && ahead > 3.5 && ahead < 12) {
           obstacle.warned = true;
           setHint('前方坑洞 · 向上跳！');
         }
@@ -2090,7 +2091,7 @@ export class Game {
           } else if (def.kill) {
             const hole=isGapKind(obstacle.kind);
             if(!(hole&&this.difficulty.name==='classic')){
-              this.die(hole?'掉进了断桥':'撞上了路障',hole?'fall':'impact');
+              this.die(hole?'掉进了断桥':obstacleImpactReason(def.id),hole?'fall':'impact');
               if(this.difficulty.name==='classic')this.nativeCameraShake=startNativeCameraShake(1,1);
             }
           } else {
@@ -2104,7 +2105,9 @@ export class Game {
 
       const blocked = laneIsBlocked(def, obstacle.lane, lane.index);
       const threatens = def.action === 'jump' || def.action === 'slide' || (def.action === 'dodge' && blocked);
-      if (selectedArm && threatens && ahead > 0 && ahead < 12 && ahead < cueAhead) {
+      // Narrow tiles retain legacy jump flags for support collision, but their
+      // actionable guidance comes from the safe-side span warning above.
+      if (selectedArm && def.placement !== 'narrow' && threatens && ahead > 0 && ahead < 12 && ahead < cueAhead) {
         cueAhead = ahead;
         cue = def.action;
       }

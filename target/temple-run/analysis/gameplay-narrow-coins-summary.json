@@ -1,0 +1,147 @@
+{
+  "rulesVersion": "beats-v7",
+  "browserChecks": [
+    {
+      "name": "12:natural narrow coin approach",
+      "passed": true
+    },
+    {
+      "name": "12:coins only on safe side",
+      "passed": true
+    },
+    {
+      "name": "12:grounded safe side collects row",
+      "passed": true
+    },
+    {
+      "name": "12:failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "12:restart clears run coins",
+      "passed": true
+    },
+    {
+      "name": "36:natural narrow coin approach",
+      "passed": true
+    },
+    {
+      "name": "36:coins only on safe side",
+      "passed": true
+    },
+    {
+      "name": "36:grounded safe side collects row",
+      "passed": true
+    },
+    {
+      "name": "36:failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "36:restart clears run coins",
+      "passed": true
+    },
+    {
+      "name": "48:natural narrow coin approach",
+      "passed": true
+    },
+    {
+      "name": "48:coins only on safe side",
+      "passed": true
+    },
+    {
+      "name": "48:grounded safe side collects row",
+      "passed": true
+    },
+    {
+      "name": "48:failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "48:restart clears run coins",
+      "passed": true
+    },
+    {
+      "name": "60:natural narrow coin approach",
+      "passed": true
+    },
+    {
+      "name": "60:coins only on safe side",
+      "passed": true
+    },
+    {
+      "name": "60:grounded safe side collects row",
+      "passed": true
+    },
+    {
+      "name": "60:failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "60:restart clears run coins",
+      "passed": true
+    }
+  ],
+  "cases": [
+    {
+      "length": 12,
+      "span": {
+        "from": 2634,
+        "side": "left",
+        "to": 2646
+      },
+      "rowCoins": 5,
+      "income": 9,
+      "phase": "playing"
+    },
+    {
+      "length": 36,
+      "span": {
+        "from": 3258,
+        "side": "right",
+        "to": 3294
+      },
+      "rowCoins": 15,
+      "income": 20,
+      "phase": "playing"
+    },
+    {
+      "length": 48,
+      "span": {
+        "from": 8226,
+        "side": "left",
+        "to": 8274
+      },
+      "rowCoins": 10,
+      "income": 22,
+      "phase": "playing"
+    },
+    {
+      "length": 60,
+      "span": {
+        "from": 4962,
+        "side": "right",
+        "to": 5022
+      },
+      "rowCoins": 15,
+      "income": 20,
+      "phase": "playing"
+    }
+  ],
+  "generationTest": {
+    "seeds": 100,
+    "narrowCoins": 10340,
+    "supportedVariants": 8
+  },
+  "source": "Native support polygons, five-coin offsets and existing coin-run counters retained; granting narrow tiles eligibility and safe-lane1.3 placement is web adapter policy, not recovered full AddCoins special rules.",
+  "actualUiRetry": {
+    "phase": "playing",
+    "coins": 0
+  },
+  "mainSaveUnchanged": true,
+  "limits": [
+    "25ms automated advancement is not human timing",
+    "desktop only; physical touch/tilt not tested",
+    "positive collection plus failure closure; does not prove all speed/power combinations"
+  ]
+}

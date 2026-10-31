@@ -1,8 +1,8 @@
 # 玩法完备与可玩性验收表
 
-更新：2026-11-01，正常生成规则beats-v5。验收目标是玩法与完整闭环，不是录像逐帧/分数/投影一致。设计和规则见[game-design](game-design.md)，逐轮过程见[implementation-log](implementation-log.md)。
+更新：2026-11-01，正常生成规则beats-v7。验收目标是玩法与完整闭环，不是录像逐帧/分数/投影一致。设计和规则见[game-design](game-design.md)，逐轮过程见[implementation-log](implementation-log.md)。
 
-“有”表示已有功能与相应证据，不代表原版每个参数已证实；“有，待复核”表示证据来自旧版本或未覆盖真机。“不准/假设”单列原版忠实度，避免把网页可玩实现误写成逆向结论。当前证据只对记录覆盖的范围有效。
+“有”表示已有功能与相应证据，不代表原版每个参数已证实；“有，待复核”表示证据来自旧版本或未覆盖真机。“不准/假设”单列原版忠实度，避免把网页可玩实现误写成逆向结论。当前证据只对记录覆盖的范围有效。Round110窄路金币/输入专项为beats-v7，Round107长窄路专项为beats-v6；此前六万米/三主题长跑等记录保留原版本来源，不能当作v6已完成所有长跑验收。
 
 ## 核心操作与道路
 
@@ -13,7 +13,7 @@
 | 石桥、木桥、悬崖主题及高差连接 | 有；当前长跑覆盖，接缝专项为历史证据 | 六万米course.surfaces、features及正常通行；[历史连接段](../target/temple-run/analysis/gameplay-transition-pairs-natural.json)。主题长度/切换保留原代码约束与网页分组假设，非视频时间表 |
 | 断桥、短坑 | 有 | [当前自然道路失败30项](../target/temple-run/analysis/gameplay-current-road-failures.json)含未跳短坑；当前15项输入有跳坑/真实失败 |
 | 长坑与成对桥帽 | 有；当前自然生成/通行与错误动作专项 | 当前六万米course中的longGap与速度预算回退；当前道路失败30项记录自然达到pitLongB/A后不跳会失败。静态encounter-safety验证实际腾空跨度；不把低速替换的短坑算成长坑通过 |
-| 半边窄路、长窄墙 | 有；当前短/长窄路错误侧专项 | 当前course.narrows；当前道路失败30项记录narrowSmall与narrowLong错误侧均失败；[当前诊断激活边界14项](../target/temple-run/analysis/gameplay-current-support-handover-diagnostic.json)含窄路到期安全交接；[自然拾取后3次解除](../target/temple-run/analysis/gameplay-current-support-handover-natural.json)全部接地、supported且playing |
+| 半边窄路、长窄墙 | 有；当前短/长窄路错误侧专项，长路支持三档长度 | [v6三档长窄路24项](../target/temple-run/analysis/gameplay-long-narrow-variants.json)验证36/48/60m安全侧通过、错误侧失败、结算重开；100种子887个长窄路覆盖左右六变体。本体重复有原兼容表依据，三档等概率为网页设计。[当前提示修复](../target/temple-run/analysis/gameplay-narrow-cue-after.json)不再将窄路提示为跳跃，保留靠侧提示；真实短坑仍提示跳跃。当前course.narrows；此前道路失败30项记录narrowSmall与narrowLong错误侧均失败；[当前诊断激活边界14项](../target/temple-run/analysis/gameplay-current-support-handover-diagnostic.json)含窄路到期安全交接；[自然拾取后3次解除](../target/temple-run/analysis/gameplay-current-support-handover-natural.json)全部接地、supported且playing |
 | 左右分路与合流 | 有；风险规则是网页假设 | [实际左右风险/安全臂](../target/temple-run/analysis/gameplay-branch-risk-manual.json)：安全5币、风险9币或宝石；[当前压缩后分路死亡复活合流](../target/temple-run/analysis/gameplay-path-compaction-regression.json) |
 
 ## 障碍、收集与道具
@@ -26,14 +26,14 @@
 | 低火墙 | 有；原版独立身份/规则未证实 | [真实Up通过/Down死亡](../target/temple-run/analysis/gameplay-fire-wall-manual.json)，当前风险分支也真实通过；使用原火焰贴图，尺寸/生成门槛是明确网页假设 |
 | 石墩 | 有；部分解法为网页设计 | 当前course生成和长跑；独立横移/混合横移跳滑预算测试。不是把皮肤上的石头当碰撞实现 |
 | 磁铁、加速、护盾、金币奖励 | 有；当前四类自然收集已重测 | [当前四种子24项验收](../target/temple-run/analysis/gameplay-current-power-coverage.json)，无spawn/seek/强制power，检查collected与powerPickups。存档预先解锁四类，不证明零升级开局可直接生成全部。金币奖励是即时奖励，不伪装成持续倍率 |
-| 金币、高值币、宝石 | 有；价值/形态部分原规则，宝石经济是网页扩展 | 当前分路实际5币/9币/宝石增量；[历史特殊布币](../target/temple-run/analysis/gameplay-tree-coins-natural.json)、[升级效果](../target/temple-run/analysis/gameplay-upgrade-native-levels.json)。完整原版所有布币模式尚未确证 |
+| 金币、高值币、宝石 | 有；价值/形态部分原规则，宝石经济是网页扩展 | [v7窄路金币20项](../target/temple-run/analysis/gameplay-narrow-coins-summary.json)覆盖12/36/48/60m安全侧实际收集及失败重开，100种子10340枚币均经贴地碰撞支撑验证；当前位置适配为网页设计。当前分路实际5币/9币/宝石增量；[历史特殊布币](../target/temple-run/analysis/gameplay-tree-coins-natural.json)、[升级效果](../target/temple-run/analysis/gameplay-upgrade-native-levels.json)。完整原版所有布币模式尚未确证 |
 | 追逐者 | 有；当前自然追逐/被捕/复活，视觉逐主题仍待复核 | 上述追逐专项，不声称已对每种主题逐帧验证脚步/接触姿态 |
 
 ## 本局、成长和运行入口
 
 | 要求 | 有/缺/不准 | 证据与边界 |
 |---|---|---|
-| 死亡→结算→重开 | 有；当前多次实际验证 | 输入15项、六万米、四道具24项均到ended再回playing；[当前结算死因](../target/temple-run/analysis/gameplay-result-death-reason-missed.json)正常漏转显示“错过路口”，[正常分路踩空](../target/temple-run/analysis/gameplay-result-death-reason-water.json)显示“掉进了水里”，均实际点击重开，不再被统一俏皮话覆盖 |
+| 死亡→结算→重开 | 有；当前多次实际验证 | 输入15项、六万米、四道具24项均到ended再回playing；[当前结算死因](../target/temple-run/analysis/gameplay-result-death-reason-missed.json)正常漏转显示“错过路口”，[正常分路踩空](../target/temple-run/analysis/gameplay-result-death-reason-water.json)显示“掉进了水里”，均实际点击重开，不再被统一俏皮话覆盖；[五类障碍具体死因](../target/temple-run/analysis/gameplay-obstacle-feedback-summary.json)正常遇到→致命碰撞→DOM文案→实际点击重开通过，石墩单独确认仍为非致命绊倒 |
 | 宝石复活 | 有；网页经济扩展 | 当前分路死亡后实际点复活、同runId后合流；[保护反馈](../target/temple-run/analysis/gameplay-revive-feedback.json)验证倒计时/暂停/清理 |
 | 天使翼/永久翼、起跑 | 有；购买使用及双翼/起跑当前验证 | [结算收益购买翼并新局自动复活](../target/temple-run/analysis/gameplay-result-store-after.json)；[当前双翼/起跑41项含输入](../target/temple-run/analysis/gameplay-current-utilities-summary.json)：实际HUD激活、正常生成、两起跑安全退出、永久翼45秒仍有效、普通翼/永久翼真实失败自动复活及下一次失败结算重开；预备库存、25ms推进，不等于真人或真机验收 |
 | 结算入账与商店 | 有；当前真实UI闭环 | 本局713币→结算商店713→买500币翼余额213→新局使用；重复打开无重复入账。结果页明确“结算并去商店”，结算前仍可复活 |
@@ -55,3 +55,7 @@
 4. 持久操作回放及逐元素反馈；原版证据继续补充，拿不到的保留假设标签。
 
 这份表是验收证据索引，不是整体完成声明，也不把“有实现”替换成“已在所有设备正确运行”。
+
+## 原版生成规则来源补充
+
+[候选池审计](native-path-generation.md)新增类型遍历、方向/侧路资格、通用池排除、额外随机门槛和最终候选槽位抽取的静态证据。已验证当前二进制与旧方法哈希一致，并用修改指令的临时副本确认校验失败。没有改网页生成概率，也没有新一轮真人/真机玩法验收；完整原版路段长度和所有候选过滤仍未解码。

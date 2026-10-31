@@ -1,3 +1,6 @@
+import {DEFS} from './obstacles/catalog';
+import type {ObstacleDef} from './obstacles/types';
+import {insideGroundSupport} from './obstacles/collision';
 import {nativePathPacing} from './nativePathPacing';
 import {NativeCoinRunState,NATIVE_STRAIGHT_COIN_OFFSETS,nativeTreeCoinHeights,nativeFlameCoinHeights} from './nativeCoinRuns';
 import {nativeCoinRowCandidates,nativeCoinRowEnd,nativeCoinRowSides} from './nativeCoinRows';
@@ -49,7 +52,12 @@ export class CourseCoinDirector {
    const safeLane=narrow?(narrow.side==='left'?0:2):1;
    const obstacle=course.obstacles.find(o=>Math.abs(o.distance-centre)<.001);
    const heights=obstacle?nativeTreeCoinHeights(obstacle.defId):null;
-   const safeObstacle=!course.obstacles.some(o=>o!==obstacle&&Math.abs(o.distance-centre)<12)&&(!obstacle||heights!==null||obstacle.defId==='flameTower');
+   const definition:ObstacleDef|undefined=obstacle?DEFS[obstacle.defId]:undefined;
+   const region=definition?.groundSupportRegion;
+   // A narrow tile is not an exclusion when its complete low row fits the
+   // authored support polygon. Keep native coin-run counters/spacing below.
+   const safeNarrow=!!(narrow&&obstacle&&definition?.placement==='narrow'&&region&&NATIVE_STRAIGHT_COIN_OFFSETS.every(offset=>insideGroundSupport(region,(safeLane-1)*1.3,obstacle.distance-centre-offset)));
+   const safeObstacle=!course.obstacles.some(o=>o!==obstacle&&Math.abs(o.distance-centre)<12)&&(!obstacle||heights!==null||obstacle.defId==='flameTower'||safeNarrow);
    const eligible=centre-5>=f.from+6&&centre+5<=f.to-6&&f.kind!=='transition'&&f.kind!=='branch'&&safeObstacle;
    const minimum=f.fastTurn?0:nativePathPacing(f.generatedAtProgress??0).minCoinRunSpaces;
    const startsRun=this.state.count===0;

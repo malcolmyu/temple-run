@@ -662,3 +662,58 @@ Round101补充验证：angel-wings单测通过（原30/45秒计时、购买边�
 - 18组核心测试通过，类型检查和构建通过。浏览器正常生成30项道路失败/重开及15项输入回归通过：分路、短/长窄路、短/长坑实际从起点遇到并失败重开；普通左右/边缘/空中/滑铲、转角/T两向与真实路障仍通过。前者正常模式，后者显式reference fixture；freeze/advance25ms，不等于真人/真机。首轮CDP返回超时后检查实际状态，游戏已回playing；重采集持久结果到页内后取得完整证据，不把超时算通过。用户主存档字节未变，隔离源已还原。
 - 证据：gameplay-composition-safety-{roads,input}.json、core/build.log；新增单测在test-encounter-safety.ts。此轮无可见UI变化，不用截图伪造视觉差异。
 - 剩余：跨片段全状态可达性、真人长程节奏、真机输入性能、完整原规则证据与回放等仍未完成。
+
+## Round104 — 原版道路候选池取证
+
+- 新增inspect-native-path-candidates.py，直接从当前APK metadata与libil2cpp.so恢复PathType枚举、PathElement静态/实例字段、三个实际方法名，校验38条指令和Random.Range调用目标。现存二进制/方法哈希与此前source.json相符；修改临时副本中0x12e44e8指令后按预期拒绝，原文件未改。
+- 确认类型1–37遍历、转弯资格排除3–10、关闭侧路时父方向关联的T类型排除、通用池排除12/13/15/16与33–37、短坑11/14和高火塔31/32在特定控制分支的额外二选一随机门槛，以及从本次候选表Range(0,count)抽槽。详见native-generation/path-candidates.json与docs/native-path-generation.md。
+- 原版代码来源；没有将条件门槛写成各类型全局50%概率，没有把候选等概率写成固定全局权重，也没有把高火塔枚举当作独立低火墙的证据。辅助方法名从metadata确认是DoesPieceTypeFitOnSide和ACertainTypeCheck，不用推测性语义名。
+- 本轮无生产玩法变更，未声称重新试玩；补的是规则证据与架构边界。最近左右/道路回归为Round103的45项，不能改标签冒充Round104实际操作。剩余完整辅助过滤/后处理/配置覆写/道路长度分布、真机与真人手感、完整回放仍未完成。
+
+## Round105 — 原版道路端口与占用匹配
+
+- 新增静态inspect-native-path-connections.py及native-generation/path-connections.json，恢复37种有效PathType开放方向、四转角和四T口。原版北东南西编号由跳转表+实例字段偏移确认；竖直/水平类型由IsStraightVert/Horz位掩码确认。
+- 恢复DoesPieceTypeFitOnSide的流程：指定方向邻居非空时拒绝，当前路块不可延伸时拒绝，调用方要求时继续检查候选兼容。Unity对象比较实际为op_Inequality，经CoreModule token确认，避免将占用条件读反。CanPathExtend和WillPieceTypeConnect名称也从metadata确认。
+- 48条指令、两位掩码、两跳转表、字段和方法名校验通过；四转角两端口、四T三端口、90度旋转闭合检查通过；临时副本改转角表负向校验拒绝。无原生执行或原文件修改。
+- 规则是原版静态代码证据。整体设计补明确边界：几何开放口不等于玩家任意位置转弯许可，不能再次让普通Left/Right误判转弯/撞墙。
+- 本轮无生产玩法修改，未冒称新试玩。WillPieceTypeConnect的完整兼容表、生成后处理/配置覆写/路段分布仍未完成，当前不据此更改网页概率。真人、真机、完整回放等既有缺口保持。
+
+## Round106 — 原版长坑/窄路兼容矩阵
+
+- 新增inspect-native-path-compatibility.py，恢复WillPieceTypeConnectOnSide的156行父类型/方向矩阵，分别保存raw helper与父端口过滤结果。四张默认数组从metadata FieldRef和PrivateImplementationDetails原始int32数据恢复，SHA256与字段名一致；方法全字节和60字节跳转表固定哈希，改表临时副本负向校验拒绝。
+- 原版静态规则示例：12北只接1/13，13南只接1/12；15东接2/16、16西接2/15；19北接19/21，21南接19/20。原矩阵保留构建方向性，有限有效枚举空间130个反向不对称组合记录在JSON，不擅自对称化。
+- 新证据native-generation/path-compatibility.json、WillPieceTypeConnectOnSide.asm，设计来源说明docs/native-path-generation.md。无原生执行、无生产玩法变更、未宣称新增试玩。普通左右换道规则未动。
+- 剩余：ACertainTypeCheck与其他状态过滤、候选后组装/回退/配置、完整原版长度分布、网页prefab与基数朝向适配、真人/真机、完整回放。恢复一个helper不替代完整生成器或可玩性总验收。
+
+## Round107 — 可变长度长窄路
+
+- 将正常模式固定36m长窄路扩为36/48/60m：B帽+1/2/3块本体+A帽，12m格点连续拼装，支撑span随实际组件同步延长。生成前保留原进场横移余量，并按远端新位置增加出场余量，不移动已发布转角。使用独立narrow RNG；正常规则版本升为beats-v6，reference fixture仍固定36m。
+- 来源：原WillPieceTypeConnectOnSide矩阵允许左右长窄路本体19/22重复，canonical southward B/body*/A相邻关系经矩阵检查；1–3本体上限和三档等概率为网页可玩性策略，未声称原版完整长度分布。ACertainTypeCheck后续分析仍未完成，不冒充已恢复整个筛选器。
+- 新test-long-narrow纳入核心套件：100种子各20000m共887个长窄路，左右三长度全覆盖，组件数/帽/格点/支撑范围、原兼容链、发布前动作/横移校验和固定fixture通过；19组核心、类型检查和构建通过。
+- 浏览器正常生成：36/48/60各安全侧通过、错误侧坠落、随后失败结算与重开，共24项通过；15项原左右/转角/T口/真实障碍回归通过。原始seed1找48m的两条未到达检查保留：诊断显示20000.546m仍playing、无死亡，属于覆盖未达而非功能失败；用seed7补齐自然到达，最终v6全24项通过。不用spawn/seek/强制power。
+- 另实际按Right进入自然60m窄路：4972.946m位于4962..5022 span内，lane2、playing、support=[false,false,true]；截图已检查路面与角色可见。测试推进25ms仍非真人实时/物理设备，未扩大声明。用户主存档字节未变，隔离源还原。
+- 证据gameplay-long-narrow-{variants,input,summary,initial-seed1,seed1-48-diagnostic}.json、checks.log、60.png。剩余原完整生成长度/权重及后处理、真人/真机、完整回放和逐元素表现等。
+
+## Round108 — 修复窄路错误跳跃提示
+
+- 发现game.ts以legacy kind=gap/action=jump为所有窄路发出坑洞跳跃警告并将assist下一动作设为jump，与stepRunner的半边路靠侧提示冲突。窄路的这些标志用于原支撑碰撞，不应直接变成玩家操作指南。现在两个通用提示入口跳过placement=narrow，保留真实支撑span生成的安全侧提示。碰撞、输入和生成未改。
+- 正常seed1自然接近60m右侧安全窄路（from4962/to5022，当前位置4959.296m）实际复现assist HUD“↑ 跳过”与“靠右”矛盾；修复后同路段DOM为cue空、hint“前方半边路 · 靠右！”，截图已检查。普通模式本来过滤通用坑洞文案，但仍会被该通用hint占用提示槽；本次也阻止该覆盖。
+- 从正常路线早期窗口实际按Right进入lane2，advance2500后5031.746m仍playing，已越过窄路；随后故意漏转正常失败到结算，实际点击再跑一次回playing。独立正常短坑仍显示“↑ 跳过”和“前方坑洞 · 向上跳！”。15项左右/边缘/空中/滑铲/转角/T口/实际碰撞/重开回归通过。19组核心、类型和构建通过。
+- 来源：网页提示与实际已有支撑玩法的语义修正，不冒称原版UI文案。辅助模式用于显式暴露错误动作cue，正常路线无spawn/seek/power。推进为25ms自动模拟，实际Right/重开为浏览器原生输入；不是完整真人/真机验收。用户主存档字节未变，隔离源存档还原。
+- 新可复用test-temple-narrow-cue.browser.js，证据gameplay-narrow-cue-{before,before-dom,after,pass,gap,input}.json、checks.log、after.png。剩余逐障碍具体失败原因、真人/真机、原完整生成及回放等缺口保持。
+
+## Round109 — 致命障碍名称反馈
+
+- 新obstacles/feedback.ts为树根、树洞拱门、火塔、低火墙、木桥横梁提供具体碰撞原因，game.ts只在实际def.kill接触时取名；未知对象仍回退“撞上了路障”。未改变碰撞/动作/死亡kind/结算/复活，不把原版资源名包装成原版UI译文。
+- 五种障碍分别从正常seed1路线自然到达，无seek/spawn/强制power，故意不躲避触发impact ended；核对引擎死因与真实DOM文案相同，每次实际点“再跑一次”回playing。石墩首次错误地被列入致命预期，记录显示最终漏转而非石墩致死；检查源码kill=false后去掉不可达的石墩死因映射，另单独碰撞500ms确认playing且stumbled=true，原始误断言记录保留。
+- 当前15项左右/边缘/空中/滑铲/转角/T口/实际碰撞/重开回归通过。类型检查与构建通过；本轮简单文本映射以实际五类闭环验证，未再为映射写镜像单测。推进为25ms模拟，DOM与按钮实际浏览器操作，不等同于真人/真机。用户主存档字节不变，隔离存档还原。
+- 证据gameplay-obstacle-feedback-{feedback,stone,input,summary}.json、death-feedback.png。截图已检查：火墙文案正确，但死亡插画仍共用impact树图，未宣称逐障碍插画还原。
+- 余项：逐元素表现/插画、真人手感/真机、原版生成完整后处理和分布、完整回放等。
+
+## Round110 — 窄路安全侧金币串
+
+- 发现CourseCoinDirector虽选择narrow safeLane，safeObstacle资格却排除所有窄路组件，导致实际支撑区内无金币。新增专项先红（自然内部金币不足），再允许placement=narrow且整串5枚位置都通过原groundSupportRegion多边形检查的组件；保持原5枚偏移、间距/最大串计数、相邻障碍排除和低币高度。支撑与币串时间门槛沿用原适配来源，窄路资格与±1.3安全侧摆放是网页策略，不冒称完整原AddCoins规则。规则版本升beats-v7。
+- 100种子各20000m生成测试中，10340枚窄路币的准确侧坐标以当前grounded collisionWouldHit验证无碰撞/坠落，短/36/48/60m左右八种跨度全覆盖。100条混合课程布币分块不变性、唯一坐标和转角/主题/分路排除专项也通过。20组核心、类型检查与构建通过。
+- 浏览器正常seed1/7路线分别自然到达四种长度中确有金币的窄路，实际币位置都在安全侧，贴地沿安全侧收集收入不少于该串金币值、无护盾/加速辅助；随后失败结算并重开，共20项通过。另实际Right进60m安全侧、截图可见连续金币，结束后实际点再跑一次回playing且本局币0。15项输入/真实碰撞回归通过，未丢普通左右不撞墙。
+- 自动推进25ms，不等于真人实时/物理设备验收；用户主存档字节不变、隔离源还原。证据gameplay-narrow-coins-{coins,view,input,summary}.json、checks.log、png。新test-narrow-coins.ts纳入核心，test-temple-narrow-coins.browser.js可复跑。
+- 剩余：原完整布币/生成后处理和分布、真人/真机、完整回放及逐元素表现。历史v5/v6长跑证据未伪装成v7全程实测。
