@@ -60,7 +60,7 @@ console.log('Cliff TDown:canonical incoming+Z, both exits, no forward exit and n
 
 const {CoursePlan,setActiveCourse}=await import('../target/temple-run/web/src/game/coursePlan');
 const {nativeMeshHeightAt}=await import('../target/temple-run/web/src/game/surface');
-const heightPlan=new CoursePlan(1,489);heightPlan.surfaces.splice(0,heightPlan.surfaces.length,{kind:'stone',level:3,from:0,to:Infinity});setActiveCourse(heightPlan);
+const heightPlan=new CoursePlan(1,489,'fixture');heightPlan.surfaces.splice(0,heightPlan.surfaces.length,{kind:'stone',level:3,from:0,to:Infinity});setActiveCourse(heightPlan);
 tile.position.y=nativeMeshHeightAt(100);tile.updateMatrixWorld(true);const worldBox=new THREE.Box3().setFromObject(tile);
 assert.equal(tile.position.y,3);assert.ok(worldBox.max.y>2.9&&worldBox.max.y<3.01,'world cliff floor restores native3m');setActiveCourse(null);
 console.log('Native cliff world elevation restored by3m parent and relative mesh template');

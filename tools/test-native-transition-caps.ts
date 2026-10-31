@@ -20,7 +20,7 @@ console.log('Native transition caps: correct half-floor directions, source UV1, 
 
 const {CoursePlan,setActiveCourse}=await import('../target/temple-run/web/src/game/coursePlan');
 const {nativeCliffTransitionAt}=await import('../target/temple-run/web/src/game/surface');
-const plan=new CoursePlan(1,489);plan.surfaces.splice(0,plan.surfaces.length,{kind:'stone',level:2,from:0,to:600},{kind:'stone',level:3,from:600,to:900},{kind:'stone',level:2,from:900,to:Infinity});setActiveCourse(plan);
+const plan=new CoursePlan(1,489,'fixture');plan.surfaces.splice(0,plan.surfaces.length,{kind:'stone',level:2,from:0,to:600},{kind:'stone',level:3,from:600,to:900},{kind:'stone',level:2,from:900,to:Infinity});setActiveCourse(plan);
 assert.equal(nativeCliffTransitionAt(600),'b');assert.equal(nativeCliffTransitionAt(888),'a');assert.equal(nativeCliffTransitionAt(612),null);
 for(const d of [588,601,887,900])assert.equal(nativeTransitionSupported(d),true,`boundary${d}`);
 for(const d of [588.001,600,600.999,887.001,890,899.999])assert.equal(nativeTransitionSupported(d),false,`gap${d}`);

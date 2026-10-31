@@ -1,4 +1,5 @@
 import {stepNativeMagnetCoin,MAGNET_PICKUP_RADIUS} from './nativeMagnet';
+import {GameSession} from './gameSession';
 import {CLIFF_MESH_Y,nativeCliffSupported} from './nativeCliff';
 import { NativeThemePacing } from './nativeThemePacing';
 import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups';
@@ -46,7 +47,7 @@ import { FIRST_TURN_DISTANCE, openingSpeedFactor } from './pacing';
 import { openingChaseGap, nativeEnemyFollowTarget, stepNativeEnemyFollow, nativeEnemyFormation, enemyFollowAnchor } from './chasePresentation';
 import { distanceScoreDelta, REFERENCE_SCORE_MULTIPLIER } from './scoring';
 import { entranceCameraPose, nativeEntranceCameraPose } from './introCamera';
-import { acceptsTurn } from './turnInput';
+import { routeDirection, type DirectionalDecision } from './inputRouter';
 import { NARROW_EDGE, offNarrowSurface } from './terrain';
 import { cutSurfaceGeometry } from './cutSurface';
 import * as THREE from 'three';
@@ -136,7 +137,7 @@ export class Game {
   private runChallenges=createRunChallenges();
   private runPowerPickups=createPowerPickupCounts();
   private wingRevivePending=false;
-  private runWingRevives=0;
+  private readonly session=new GameSession();
   private wingSprites: THREE.Sprite[] = [];
   private chaserGroup = new THREE.Group();
   private safetyNet: THREE.Mesh | null = null;
@@ -187,7 +188,7 @@ export class Game {
   private lastFrame = 0;
   private raf = 0;
   private running = false;
-  private paused = false;
+  private get paused():boolean{return this.session.phase==='paused'||this.session.phase==='menu';}
   private hintCooldown = 0;
   private stepAccumulator = 0;
   /** Fractional coin value, so the +25% upgrade is not rounded away coin by coin. */
@@ -445,6 +446,7 @@ export class Game {
       phase: mutateUi.phase,
       equipped: progress.equipped,
       scoreMultiplier: this.runScoreMultiplier,
+      session:this.session.snapshot(),
       headStart:this.runHeadStart,
       headStartReady:this.canUseHeadStart(),
       headStartStock:{normal:progress.headStarts,mega:progress.megaStarts},
@@ -546,7 +548,7 @@ export class Game {
     this.world.add(this.runnerEntity, Speed, { value: this.difficulty.name === 'classic' ? 20 : RUN_SPEED });
     this.world.add(this.runnerEntity, RunStats);
     this.world.add(this.runnerEntity, Chase, { gap: CHASE_GAP_MAX });
-    this.world.add(this.runnerEntity, Turn, { next: FIRST_TURN_DISTANCE });
+    this.world.add(this.runnerEntity, Turn, { next:activeCourse()?.turns[0]?.distance??FIRST_TURN_DISTANCE });
     this.world.add(this.runnerEntity, Power);
     this.world.add(this.runnerEntity, Runner, { rig: null });
   }
@@ -558,7 +560,7 @@ export class Game {
   private resetWorld(): void {
     this.runChallenges=createRunChallenges();
     this.runPowerPickups=createPowerPickupCounts();
-    this.angelWings=createAngelWings();this.wingRevivePending=false;this.runWingRevives=0;
+    this.angelWings=createAngelWings();this.wingRevivePending=false;
     this.coinSpawnLevel=levelOf('coinSpawn');this.coinSpawnIndex=0;
     this.runScoreMultiplier = this.difficulty.name !== 'classic' || this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
@@ -624,8 +626,8 @@ export class Game {
     this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
     this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765),this.difficulty.name==='classic'&&!this.referenceReplay?powerAvailability():WEB_BONUS_AVAILABILITY);
     this.generatedBonuses=[];
-    setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,489):null);
-    this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector();this.longGapFallbacks=[];
+    setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,0):null);
+    this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector(activeCourse()?.coinStart??489);this.longGapFallbacks=[];
     if(activeCourse())this.nextSpawn=Infinity;
     this.deathTimer = 0;this.deathElapsed=0;
     this.hintCooldown = 0;
@@ -636,10 +638,8 @@ export class Game {
     this.basePath = null;
     this.lastMilestone = 0;
     this.invincibleUntil = 0;
-    this.reviveUsed = false;
     this.stepAccumulator = 0;
     this.coinValueAcc = 0;
-    this.runCommitted = false;
     this.enemyJumps = Array.from({length:8}, newEnemyJump);
     this.createRunner();
     const chaser = this.world.createEntity();
@@ -673,12 +673,11 @@ export class Game {
     this.resetWorld();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = true;
-    mutateUi.phase = 'playing';
+    this.session.start();
     mutateUi.speed = RUN_SPEED;
-    setPhase('playing');
+    this.publishSession();
     sfx.unlockAudio();
     if (progress.music) sfx.startMusic('theme');
-    this.paused = false;
     this.updateCamera(0);
     this.startLoop();
   }
@@ -720,29 +719,26 @@ export class Game {
   }
 
   togglePause(): void {
-    if (mutateUi.phase === 'playing') {
-      this.paused = true;
-      setPhase('paused');
+    if (this.session.pause()) {
+      this.publishSession();
       sfx.pauseMusic();
-    } else if (mutateUi.phase === 'paused') {
-      this.paused = false;
-      setPhase('playing');
+    } else if (this.session.resume()) {
+      this.publishSession();
       if (progress.music) sfx.startMusic('theme');
     }
   }
 
   resume(): void {
-    if (mutateUi.phase === 'paused') {
-      this.paused = false;
-      setPhase('playing');
+    if (this.session.resume()) {
+      this.publishSession();
       if (progress.music) sfx.startMusic('theme');
     }
   }
 
   toMenu(): void {
     if (mutateUi.phase === 'ended') this.commitRun();
-    setPhase('menu');
-    this.paused = true;
+    this.session.toMenu();
+    this.publishSession();
     this.resetWorld();
     this.showEntranceCamera();
   }
@@ -913,23 +909,35 @@ export class Game {
   }
 
   private move(dir: 1 | -1): void {
-    if (mutateUi.phase !== 'playing' || this.introHeld()) return;
-    // A swipe used to turn must not also displace the runner across the new road.
-    if (this.queueTurn(dir)) return;
-    if (this.difficulty.name === 'classic' && this.nativeFalling) return;
+    const decision=this.directionalDecision(dir);
+    if(decision.kind==='ignore')return;
+    if(decision.kind==='turn'){this.applyTurnDecision(decision);return;}
     const lane = this.world.require(this.runnerEntity, Lane);
-    lane.index = Math.max(0, Math.min(2, lane.index + dir));
+    lane.index = decision.index;
     sfx.play('swish', { gain: 0.55, rate: 0.95 + Math.random() * 0.1 });
   }
 
   private queueTurn(dir: 1 | -1): boolean {
-    if (mutateUi.phase !== 'playing' || this.introHeld()) return false;
+    const decision=this.directionalDecision(dir);
+    if(decision.kind!=='turn')return false;
+    this.applyTurnDecision(decision);
+    return true;
+  }
+
+  private directionalDecision(dir:1|-1):DirectionalDecision {
     const turn = this.world.require(this.runnerEntity, Turn);
     const tee=this.difficulty.name==='classic' && referenceJunction(turn.count,turn.next)==='tee';
-    if (!acceptsTurn(tee?dir:turn.direction, dir, turn.next - this.distance, turn.queued && !(turn.autoQueued&&tee))) return false;
-    if(tee && dir!==turn.direction) {
-      const fork=[...this.graph.forks].reverse().find(f=>f.at===turn.next);
-      if(!fork)return false;
+    return routeDirection({playing:mutateUi.phase==='playing',held:this.introHeld(),
+      falling:this.difficulty.name==='classic'&&this.nativeFalling,
+      lane:this.world.require(this.runnerEntity,Lane).index,junction:tee?'tee':'corner',
+      turnDirection:turn.direction,remaining:turn.next-this.distance,queued:turn.queued,
+      autoQueued:turn.autoQueued,alternateBranchAvailable:this.graph.forks.some(f=>f.at===turn.next)},dir);
+  }
+
+  private applyTurnDecision(decision:Extract<DirectionalDecision,{kind:'turn'}>):void {
+    const turn=this.world.require(this.runnerEntity,Turn),dir=decision.direction;
+    if(decision.selectAlternateBranch) {
+      const fork=[...this.graph.forks].reverse().find(f=>f.at===turn.next)!;
       this.graph.choose(fork,dir>0?'right':'left');turn.direction=dir;
       this.rebuildTilesAhead();this.ensureTiles();
     }
@@ -937,7 +945,6 @@ export class Game {
     turn.autoQueued = false;
     sfx.play('click', { gain: 0.5 });
     setHint('转弯');
-    return true;
   }
 
   private jump(): void {
@@ -1001,10 +1008,10 @@ export class Game {
       sfx.play('whoosh', { gain: 0.8 });
       if(this.referenceReplay&&this.difficulty.name==='classic')for(const pickup of referencePickupsForTurn(turn.count,turn.next))
         this.spawnPickup(pickup.kind,pickup.lane,pickup.distance,pickup.height);
-      const recordedCoins=this.difficulty.name==='classic'&&(!activeCourse()||turn.count<3) ? referenceCoinsForTurn(turn.count,turn.next) : null;
+      const recordedCoins=this.difficulty.name==='classic'&&!activeCourse() ? referenceCoinsForTurn(turn.count,turn.next) : null;
       if(recordedCoins) {
         for(const coin of recordedCoins)this.spawnCoin(coin.lane,coin.distance,coin.height);
-      } else if(!activeCourse()||turn.count<3) {
+      } else if(!activeCourse()) {
         for (let i = 0; i < MAX_COINS_PER_RUN; i++) this.spawnCoin(1, turn.next - 5 + i * 2.2, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.4);
       }
     }
@@ -2364,12 +2371,12 @@ export class Game {
   }
 
   private invincibleUntil = 0;
-  private reviveUsed = false;
-  private runCommitted = false;
+  private publishSession():void {setPhase(this.session.phase);}
 
   private die(reason: string, kind: 'impact' | 'fall' | 'water' | 'caught' | 'missed'): void {
     if (mutateUi.phase !== 'playing') return;
     if (this.world.elapsed < this.invincibleUntil) return;
+    if(!this.session.die())return;
     if(consumeAngelWings(this.angelWings))this.wingRevivePending=true;
     if (this.stepLoop) {
       sfx.stopLoop(this.stepLoop, 0.15);
@@ -2377,7 +2384,7 @@ export class Game {
     }
     mutateUi.deathReason = reason;
     mutateUi.deathKind = kind;
-    mutateUi.phase = 'dying';
+    this.publishSession();
     this.deathElapsed=0;
     this.deathTimer = this.difficulty.name==='classic'?NATIVE_RESULT_DELAY:1.25;
     sfx.play(this.difficulty.name==='classic'&&kind==='water'?'splash':kind === 'fall' || kind === 'water' ? 'splat' : 'scream', { gain: 0.9 });
@@ -2386,29 +2393,29 @@ export class Game {
 
   /** Bank the run exactly once: after a revive the same run would otherwise be counted twice. */
   private commitRun(): void {
-    if (this.runCommitted) return;
     const stats = this.world.require(this.runnerEntity, RunStats);
     if (stats.distance <= 0) return;
-    recordRun(stats.distance, stats.coins, stats.gems, stats.score,summarizeRunChallenges(this.runChallenges,stats.distance),this.runPowerPickups,{coinMeterFills:Math.max(0,stats.coinBonusMax-1),wingResurrections:this.runWingRevives,headStartUsed:this.runHeadStart?1:0});
-    syncBanks();
-    this.runCommitted = true;
+    this.session.commit(stats.distance,()=>{
+      recordRun(stats.distance, stats.coins, stats.gems, stats.score,summarizeRunChallenges(this.runChallenges,stats.distance),this.runPowerPickups,{coinMeterFills:Math.max(0,stats.coinBonusMax-1),wingResurrections:this.session.wingRevives,headStartUsed:this.runHeadStart?1:0});
+      syncBanks();
+    });
   }
 
   private finishDeath(): void {
-    if(this.wingRevivePending){this.wingRevivePending=false;this.runWingRevives++;this.restoreRunnerAfterDeath();setHint('天使之翼复活！');return;}
+    if(this.wingRevivePending){this.wingRevivePending=false;if(this.session.revive('wing')){this.restoreRunnerAfterDeath();setHint('天使之翼复活！');}return;}
     const stats = this.world.require(this.runnerEntity, RunStats);
-    mutateUi.phase = 'ended';
+    if(!this.session.finishDeath())return;
     mutateUi.best = Math.max(progress.bestDistance, Math.floor(stats.distance));
     // Gems picked up this run are not banked until the run is committed, but the original
     // lets you spend them on a revive, so count both pools here.
-    mutateUi.reviveAvailable = !this.reviveUsed && progress.gems + stats.gems >= mutateUi.reviveCost;
-    setPhase('ended');
+    mutateUi.reviveAvailable = this.session.gemReviveAvailable && progress.gems + stats.gems >= mutateUi.reviveCost;
+    this.publishSession();
     sfx.pauseMusic();
   }
 
   /** Spend gems to get back up on the same run. */
   revive(): void {
-    if (mutateUi.phase !== 'ended' || !mutateUi.reviveAvailable) return;
+    if (!this.session.gemReviveAvailable || !mutateUi.reviveAvailable) return;
     const stats = this.world.require(this.runnerEntity, RunStats);
     const cost = mutateUi.reviveCost;
     if (progress.gems + stats.gems < cost) return;
@@ -2417,7 +2424,7 @@ export class Game {
     progress.gems -= cost - fromRun;
     saveProgress();
     syncBanks();
-    this.reviveUsed = true;
+    this.session.revive('gem');
     mutateUi.reviveAvailable = false;
     this.restoreRunnerAfterDeath();
   }
@@ -2479,7 +2486,7 @@ export class Game {
     }
     this.invincibleUntil = this.world.elapsed + 3;
     this.deathTimer = 0;this.deathElapsed=0;
-    setPhase('playing');
+    this.publishSession();
     if (progress.music) sfx.startMusic('theme');
     setHint(this.difficulty.name==='classic'?'复活！加速逃离危险':'复活！短暂无敌');
     this.syncHud(0);

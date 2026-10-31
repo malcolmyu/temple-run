@@ -1,0 +1,87 @@
+{
+  "duration": 1271,
+  "samples": [
+    {
+      "requested": 60,
+      "ready": 4,
+      "time": 60,
+      "file": "sample-0060.png"
+    },
+    {
+      "requested": 180,
+      "decoded": false,
+      "ready": 1,
+      "time": 180,
+      "file": "sample-0180.png"
+    },
+    {
+      "requested": 420,
+      "decoded": false,
+      "ready": 1,
+      "time": 420,
+      "file": "sample-0420.png"
+    },
+    {
+      "requested": 720,
+      "decoded": false,
+      "ready": 1,
+      "time": 720,
+      "file": "sample-0720.png"
+    },
+    {
+      "requested": 1080,
+      "decoded": false,
+      "ready": 1,
+      "time": 1080,
+      "file": "sample-1080.png"
+    },
+    {
+      "requested": 1265,
+      "decoded": false,
+      "ready": 1,
+      "time": 1265,
+      "file": "sample-1265.png"
+    },
+    {
+      "requested": 1265,
+      "time": 1265,
+      "ready": 4,
+      "decoded": true,
+      "file": "sample-1265.png",
+      "note": "Decoded on later recheck after initial8s timeout."
+    },
+    {
+      "requested": 720,
+      "decoded": true,
+      "ready": 4,
+      "time": 720,
+      "file": "sample-0720.png",
+      "note": "Longer wait after first timeout."
+    },
+    {
+      "requested": 420,
+      "decoded": false,
+      "ready": 1,
+      "time": 420,
+      "file": null,
+      "note": "Rechecked with longer decode wait."
+    },
+    {
+      "requested": 1080,
+      "decoded": false,
+      "ready": 1,
+      "time": 1080,
+      "file": null,
+      "note": "Rechecked with longer decode wait."
+    },
+    {
+      "requested": 1080,
+      "time": 1080,
+      "ready": 4,
+      "decoded": true,
+      "file": "sample-1080.png",
+      "note": "Later successful recheck after20s timeout."
+    }
+  ],
+  "limits": "Only decoded samples support time-labelled observations;timeouts retained alongside successful rechecks."
+}

@@ -13,7 +13,7 @@ assert.equal(state.advance(501,501,()=>0),1);
 assert.equal(state.advance(201,702,limit=>{assert.equal(limit,4);return 0}),2);
 assert.equal(nextNativeTheme(2,()=>1),3);assert.equal(nextNativeTheme(3,()=>0),2);assert.equal(nextNativeTheme(3,()=>1),1);
 for(let seed=1;seed<=100;seed++){
- const pacing=new NativeThemePacing(),rng=new SeededRandom(seed),plan=new CoursePlan(seed,489);
+ const pacing=new NativeThemePacing(),rng=new SeededRandom(seed),plan=new CoursePlan(seed,489,'fixture');
  let progress=0;const seen=new Set([2]);
  for(let distance=500;distance<20000;distance+=12){
   progress+=9.6;const next=pacing.advance(9.6,progress,limit=>rng.int(limit));
@@ -33,7 +33,7 @@ for(let seed=1;seed<=100;seed++){
  }
 }
 console.log('Native theme thresholds, strict gate/reset, transition graph and100 streamed seeds passed');
-const cliffCourse=new CoursePlan(7,489);cliffCourse.requestTheme(3,2000);cliffCourse.ensureThrough(10000,2000);
+const cliffCourse=new CoursePlan(7,489,'fixture');cliffCourse.requestTheme(3,2000);cliffCourse.ensureThrough(10000,2000);
 const cliffFeatures=cliffCourse.features.filter(f=>f.pathLevel===3&&f.kind!=='transition');
 for(const f of cliffFeatures)assert.ok(['treeJump','treeTrip','treeSlide','cliffGap','cliffStraight'].includes(f.kind),f.kind);
 assert.ok(cliffFeatures.some(f=>f.kind==='cliffGap'));assert.ok(cliffFeatures.some(f=>f.kind==='treeSlide'));

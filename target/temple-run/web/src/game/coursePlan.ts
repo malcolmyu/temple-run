@@ -4,6 +4,7 @@ import { nativePathPacing, COURSE_GROUP_MIN_LENGTH } from './nativePathPacing';
 import { NativeFastTurnState } from './nativeFastTurn';
 import type { DefId } from './obstacles/catalog';
 import { SeededRandom } from './obstacles/rng';
+import {generateCourseOpening} from './courseOpening';
 export interface CourseTurn {distance:number;direction:1|-1;junction:'corner'|'tee';}
 export interface CourseObstacle {distance:number;defId:DefId;prefab:string;lane?:number;}
 export interface CourseSurface {kind:'stone'|'wood';from:number;to:number;level?:NativePathLevel;}
@@ -36,7 +37,18 @@ export class CoursePlan {
   if(previous!==level)this.pendingThemes.push({level,progress});
  }
  extent=489;
- constructor(readonly seed:number,initialExtent=6000){this.rng=new SeededRandom(seed^0x636f7572);this.pairRng=new SeededRandom(seed^0x70616972);this.ensureThrough(initialExtent);}
+ readonly coinStart:number;
+ constructor(readonly seed:number,initialExtent=6000,readonly opening:'generated'|'fixture'='generated'){
+  this.rng=new SeededRandom(seed^0x636f7572);this.pairRng=new SeededRandom(seed^0x70616972);
+  this.coinStart=opening==='generated'?0:489;
+  if(opening==='generated'){
+   const plan=generateCourseOpening(seed);
+   this.turns.splice(0,this.turns.length,...plan.turns);
+   this.obstacles.splice(0,this.obstacles.length,...plan.obstacles);
+   this.features.push(...plan.features);this.extent=plan.extent;
+  }
+  this.ensureThrough(initialExtent);
+ }
  private stoneFeature(at:number,progress?:number):string {
   if(!this.bag.length){this.bag=[...STONE_FEATURES];for(let i=this.bag.length-1;i>0;i--){const j=this.rng.int(i+1);[this.bag[i],this.bag[j]]=[this.bag[j],this.bag[i]];}}
   const feature=this.bag.shift()!;

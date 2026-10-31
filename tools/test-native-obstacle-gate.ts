@@ -9,7 +9,7 @@ assert.equal(gate(3,1,1,2,0,roll(0)),false);
 assert.equal(gate(3,1,3,4,.05,roll(49)),true);assert.equal(gate(3,1,3,4,.05,roll(50)),false);
 let count=0;
 for(let seed=1;seed<=100;seed++){
- const p=new CoursePlan(seed,489);p.ensureThrough(10000,2000);
+ const p=new CoursePlan(seed,489,'fixture');p.ensureThrough(10000,2000);
  for(const f of p.features.filter(f=>f.extraObstacleAt!==undefined)){
   count++;assert.ok(!f.fastTurn);assert.ok(f.to-f.extraObstacleAt!>=36);
   const obs=p.obstacles.filter(o=>o.distance>f.from&&o.distance<f.to);

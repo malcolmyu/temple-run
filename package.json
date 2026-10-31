@@ -84,7 +84,9 @@
     "temple:test:upgrade-objectives": "esbuild tools/test-upgrade-objectives.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-upgrade-objectives.mjs >/dev/null && node /tmp/temple-upgrade-objectives.mjs",
     "temple:test:lifetime-objectives": "esbuild tools/test-lifetime-objectives.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-lifetime-objectives.mjs >/dev/null && node /tmp/temple-lifetime-objectives.mjs",
     "temple:test:utility-objectives": "esbuild tools/test-utility-objectives.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-utility-objectives.mjs >/dev/null && node /tmp/temple-utility-objectives.mjs",
-    "temple:test:character-objectives": "esbuild tools/test-character-objectives.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-character-objectives.mjs >/dev/null && node /tmp/temple-character-objectives.mjs"
+    "temple:test:character-objectives": "esbuild tools/test-character-objectives.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-character-objectives.mjs >/dev/null && node /tmp/temple-character-objectives.mjs",
+    "temple:test:input-router": "esbuild tools/test-input-router.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-input-router.mjs >/dev/null && node /tmp/temple-input-router.mjs",
+    "temple:test:game-session": "esbuild tools/test-game-session.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-game-session.mjs >/dev/null && node /tmp/temple-game-session.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

@@ -4,8 +4,8 @@ import {surfaceAt,nativeGroundHeightAt} from '../target/temple-run/web/src/game/
 import {stepNativeJump,nativeJumpVelocity} from '../target/temple-run/web/src/game/nativeMotion';
 import {TrackGraph} from '../target/temple-run/web/src/game/trackGraph';
 for(let seed=1;seed<=100;seed++){
- const plan=new CoursePlan(seed);plan.ensureThrough(12000);
- const same=new CoursePlan(seed);same.ensureThrough(12000);assert.deepEqual(plan.features,same.features);
+ const plan=new CoursePlan(seed,6000,'fixture');plan.ensureThrough(12000);
+ const same=new CoursePlan(seed,6000,'fixture');same.ensureThrough(12000);assert.deepEqual(plan.features,same.features);
  assert.ok(plan.surfaces.some(s=>s.kind==='wood'));
  assert.ok(plan.turns.some(t=>t.junction==='tee'&&t.distance>489));
  for(let i=1;i<plan.turns.length;i++)assert.ok(plan.turns[i].distance-plan.turns[i-1].distance>=72);
@@ -37,7 +37,7 @@ for(const dt of [.025,.05]){let y=0,v=nativeJumpVelocity(MIN_LONG_GAP_SPEED),tra
 // Runtime mode: only generate beyond the buffered boundary, using supplied metric
 // progress rather than assuming physical metres equal native progress.
 for(let seed=1;seed<=100;seed++){
- const plan=new CoursePlan(seed,489);assert.equal(plan.features.length,0);
+ const plan=new CoursePlan(seed,489,'fixture');assert.equal(plan.features.length,0);
  for(let distance=0;distance<7200;distance+=48){
   const oldExtent=plan.extent,oldFeatures=JSON.stringify(plan.features),oldTurns=JSON.stringify(plan.turns),count=plan.features.length,turns=plan.turns.length;
   plan.ensureThrough(distance+360,distance*.8);
@@ -52,7 +52,7 @@ for(let seed=1;seed<=100;seed++){
  }
  for(const o of plan.obstacles)assert.ok(Math.min(...plan.turns.map(t=>Math.abs(t.distance-o.distance)))>=36);
 }
-const early=new CoursePlan(1,489),late=new CoursePlan(1,489);
+const early=new CoursePlan(1,489,'fixture'),late=new CoursePlan(1,489,'fixture');
 early.ensureThrough(800,0);late.ensureThrough(800,2000);
 assert.ok(early.features[0].to-early.features[0].from>late.features[0].to-late.features[0].from,'native stage uses supplied progress');
 console.log('Incremental course:100 runtime sequences, stable prefixes, bounded lookahead, supplied-progress spacing and unlock gates pass.');
@@ -66,7 +66,7 @@ assert.equal(nativePathPacing(4500).minObstacleSpaces,2);assert.equal(nativePath
 // Short fast-turn groups are appended without putting long-hole/narrow caps
 // against a corner. Existing normal groups and theme continuity stay intact.
 for(let seed=1;seed<=100;seed++){
- const plan=new CoursePlan(seed,489);plan.ensureThrough(850,1500);
+ const plan=new CoursePlan(seed,489,'fixture');plan.ensureThrough(850,1500);
  const prefix=JSON.stringify(plan.features),count=plan.features.length;
  plan.ensureThrough(2000,1500,true);
  assert.equal(JSON.stringify(plan.features.slice(0,count)),prefix);

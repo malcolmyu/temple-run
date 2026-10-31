@@ -23,7 +23,7 @@ export class CourseCoinDirector {
   this.random??=new SeededRandom(course.seed^0x636f696e); // Web seeded stream, not Unity Random reproduction.
   while(true){
    let turn=course.turns[this.turnIndex];
-   while(turn&&(turn.distance<=this.from||turn.distance<=489)){this.turnIndex++;turn=course.turns[this.turnIndex];}
+   while(turn&&(turn.distance<=this.from||turn.distance<=course.coinStart)){this.turnIndex++;turn=course.turns[this.turnIndex];}
    const cornerNext=turn&&turn.distance<this.next;
    const at=cornerNext?turn.distance:this.next;if(at>=to)break;
    if(cornerNext){
