@@ -1,4 +1,6 @@
+import { nativeUnlitMaterial } from './nativeUnlit.js';
 import * as THREE from 'three';
+import { sampleCurveComponent } from './nativeAnimationCurve.js';
 
 // CPU-skinned runner built from the original Unity SkinnedMeshRenderer data.
 // The JSON stores Unity-space data (bone local TRS raw, mesh positions with x negated
@@ -34,7 +36,7 @@ function samplePosition(curve, time, out) {
   while (i < n && times[i] < time) i++;
   const t0 = times[i - 1], t1 = times[i];
   const alpha = (time - t0) / (t1 - t0 || 1);
-  out.fromArray(values[i - 1]).lerp(new THREE.Vector3().fromArray(values[i]), alpha);
+  out.set(...[0, 1, 2].map((axis) => sampleCurveComponent(curve, i - 1, i, alpha, axis)));
   return out;
 }
 
@@ -254,7 +256,14 @@ export function buildRunnerRig(data, options = {}) {
           rows[3][0], rows[3][1], rows[3][2], rows[3][3]);
     return m;
   });
-  const rest = computeBindRest(data);
+  // The default actor has its original skeleton and complete absolute-local clips.
+  // Its native SetupCharacter supplies the model offset; do not rebase root motion.
+  const authoredSkeleton = options.authoredSkeleton === true;
+  const rest = authoredSkeleton ? data.bones.map((bone) => ({
+    position: new THREE.Vector3().fromArray(bone.position),
+    quaternion: new THREE.Quaternion().fromArray(bone.rotation),
+    scale: new THREE.Vector3().fromArray(bone.scale ?? [1, 1, 1]),
+  })) : computeBindRest(data);
 
   // Unity's per-frame hip/spine local rotations are authored for one specific skeleton. The
   // shop-skin prefabs ("Bone X" rigs) reuse that clip verbatim, so applying its local values
@@ -333,7 +342,7 @@ export function buildRunnerRig(data, options = {}) {
   // Clip root translation is authored in a scene where the root sits ~3.8u above the
   // bind pose. Keep only the relative motion (bob) by subtracting the first key offset.
   const rootPositionOffset = new Map();
-  if (!lockRootPosition) {
+  if (!lockRootPosition && !authoredSkeleton) {
     const baseClip = clipData.run || Object.values(clipData)[0];
     data.bones.forEach((bone, i) => {
       if (bone.parent >= 0) return;
@@ -372,13 +381,7 @@ export function buildRunnerRig(data, options = {}) {
   }
   geometry.setIndex(indexArray);
 
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    roughness: 0.82,
-    metalness: 0.04,
-    side: THREE.FrontSide,
-    map: options.texture || null,
-  });
+  const material = nativeUnlitMaterial(options.texture || null);
   const mesh = new THREE.Mesh(geometry, material);
   mesh.castShadow = true;
   mesh.frustumCulled = false;
@@ -398,6 +401,7 @@ export function buildRunnerRig(data, options = {}) {
   const vertex = new THREE.Vector3();
   const out = new THREE.Vector3();
 
+  let glowMaterial = null;
   let clipName = 'run';
   let clipTime = 0;
   let clipLoops = true;
@@ -407,7 +411,7 @@ export function buildRunnerRig(data, options = {}) {
     if (name === clipName && !restart) return;
     clipName = name;
     clipTime = 0;
-    clipLoops = name === 'run';
+    clipLoops = name === 'run' || name === 'slideLoop';
   }
 
   function applyPose(time) {
@@ -455,10 +459,10 @@ export function buildRunnerRig(data, options = {}) {
     geometry.computeVertexNormals();
   }
 
-  function update(dt, timeScale = 1) {
+  function update(dt, timeScale = 1, scaleAllClips = false) {
     const clip = clipData[clipName];
     if (!clip) return;
-    clipTime += dt * (clipName === 'run' ? timeScale : 1);
+    clipTime += dt * (scaleAllClips || clipName === 'run' ? timeScale : 1);
     if (clipLoops) clipTime %= clip.duration;
     else clipTime = Math.min(clipTime, clip.duration);
     applyPose(clipTime);
@@ -475,11 +479,22 @@ export function buildRunnerRig(data, options = {}) {
     object: holder,
     mesh,
     material,
+    /** @param {boolean} active @param {THREE.Texture|null} [texture] */
+    setInvincibility(active, texture = null) {
+      if (active) {
+        if (!glowMaterial) glowMaterial = new THREE.MeshBasicMaterial({
+          map: texture, color: 0x66eee5, transparent: true, opacity: .55,
+          depthWrite: false, side: THREE.DoubleSide,
+        });
+        mesh.material = glowMaterial;
+      } else mesh.material = material;
+    },
     setClip,
     update,
     getClip: () => clipName,
-    setTime(t) {
-      clipLoops = false;
+    clipDuration: (name) => clipData[name]?.duration || 0,
+    setTime(t, loop = false) {
+      clipLoops = loop;
       clipTime = t;
       applyPose(t);
       skin();
@@ -543,7 +558,7 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
 // Different APK prefabs were authored at very different unit scales (raw rest heights range
 // 1.2-10.8). Normalise a freshly built rig to the same on-screen height and drop its feet
 // onto y = 0 so swapping skins never changes the apparent size. Shared by both entries.
-export function normalizeRigHeight(rig, targetH = 2.55) {
+export function normalizeRigHeight(rig, targetH = 2.55, options = {}) {
   try {
     if (rig.update) rig.update(0, 0);
     const o = rig.object;
@@ -551,7 +566,7 @@ export function normalizeRigHeight(rig, targetH = 2.55) {
     let box = new THREE.Box3().setFromObject(o);
     let size = box.getSize(new THREE.Vector3());
     // Some prefabs are authored lying flat (huge XZ, thin Y): stand them upright first.
-    if (size.y > 1e-3 && Math.max(size.x, size.z) > size.y * 1.6) {
+    if (options.autoOrient !== false && size.y > 1e-3 && Math.max(size.x, size.z) > size.y * 1.6) {
       o.rotation.x -= Math.PI / 2;
       o.updateWorldMatrix(true, true);
       box = new THREE.Box3().setFromObject(o);

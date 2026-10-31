@@ -9,7 +9,7 @@ import { getDifficulty, setDifficulty, type DifficultyName } from '../game/diffi
 const emit = defineEmits<{ close: [] }>();
 const music = ref(progress.music);
 const sound = ref(progress.sound);
-const tilt = ref(false);
+const tilt = ref(getGame()?.input.isTiltEnabled ?? false);
 const difficulty = ref<DifficultyName>(getDifficulty().name);
 
 function toggleMusic(): void {
@@ -61,7 +61,7 @@ function toggleSound(): void {
         <em :class="{ on: difficulty === 'challenge' }">{{ difficulty === 'challenge' ? '挑战' : '经典' }}</em>
       </button>
       <button class="switch-row" @click="toggleTilt">
-        <span>倾斜转向<small>左右倾斜手机换道 / 转弯（需授权）</small></span>
+        <span>倾斜移动<small>开启时保持手机自然握姿；倾斜移动，左右滑动转弯</small></span>
         <em :class="{ on: tilt }">{{ tilt ? '开' : '关' }}</em>
       </button>
       <p class="menu-stats">帧率 {{ ui.fps }} fps · 已解锁 {{ progress.owned.length }} 个角色</p>

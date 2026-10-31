@@ -1,0 +1,90 @@
+{
+  "assetSHA256": "685af1f435ec5f48e47ecf95a7530751bcd98e4fb70a8d1a33cbd41f5fc62b73",
+  "nativeBinarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "prefab202": "monster_prefab",
+  "rendererPathID": 1940,
+  "mesh": {
+    "m_FileID": 0,
+    "m_PathID": 96
+  },
+  "boneCount": 28,
+  "boneTRSMaxDifference": 0,
+  "transforms": [
+    {
+      "pathID": 1054,
+      "name": "monster_prefab",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    {
+      "pathID": 1405,
+      "name": "monster",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0,
+        "w": 1.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    },
+    {
+      "pathID": 1072,
+      "name": "enemy",
+      "position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": -0.7071068286895752,
+        "y": 0.0,
+        "z": -0.0,
+        "w": 0.7071068286895752
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    }
+  ],
+  "worldScale": 0.2,
+  "modelOffsetWorld": [
+    0,
+    0,
+    0
+  ],
+  "animationMethods": {
+    "set_normalizedTime": "0x248d344",
+    "set_speed": "0x248d3cc"
+  },
+  "reset": "Enemy.Reset12ae0f4 sets random normalizedTime via12ae1a8\u2192248d344; not speed",
+  "limitations": [
+    "Unity quaternion interpolation remains unverified",
+    "per-enemy native random normalizedTime is not reconstructed",
+    "enemy simulation jumping/ground callbacks remain approximate"
+  ]
+}

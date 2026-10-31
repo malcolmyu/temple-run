@@ -36,7 +36,7 @@ export interface HudState {
   hint: string;
   milestone: MilestoneState | null;
   deathReason: string;
-  deathKind: 'impact' | 'fall' | 'caught' | 'missed' | '';
+  deathKind: 'impact' | 'fall' | 'water' | 'caught' | 'missed' | '';
   fps: number;
   skin: string;
   bankCoins: number;
@@ -105,7 +105,7 @@ let hintTimer = 0;
 let milestoneTimer = 0;
 let milestoneSeq = 0;
 
-/** Gold milestone plaque using the original NICE JOB / HIGH SCORE artwork. */
+/** Top-center distance plaque using the original messageBoard artwork. */
 export function showMilestone(value: number, unit: string, art: 'nicejob' | 'highscore' = 'nicejob'): void {
   state.milestone = { id: ++milestoneSeq, value, unit, art };
   window.clearTimeout(milestoneTimer);

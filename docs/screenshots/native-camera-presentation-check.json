@@ -1,0 +1,473 @@
+{
+  "checks": {
+    "fatalImpactShakes": true,
+    "nativeClipPlanes": true,
+    "noClassicLaneErrorRoll": true,
+    "noUnverifiedDelayedShake": true,
+    "shakeContinuesDuringDeath": true,
+    "shakeExpires": true,
+    "shieldPassHasNoShake": true,
+    "tripTranslatesCamera": true
+  },
+  "dying": {
+    "camera": {
+      "clip": {
+        "far": 100,
+        "near": 1
+      },
+      "forward": [
+        -0.0030721145731444095,
+        -0.0650352826580862,
+        0.9978782361198346
+      ],
+      "look": [
+        0,
+        4,
+        -18.35875
+      ],
+      "needsToDuckCamera": false,
+      "position": [
+        0.28769295745071466,
+        6.960118154762104,
+        -61.47068569116436
+      ],
+      "rightY": 0,
+      "runnerNdc": [
+        0.01654403333481496,
+        -0.20429603488814824,
+        0.9737328191362687
+      ],
+      "shake": {
+        "damper": 1,
+        "duration": 1,
+        "frequency": 1,
+        "magnitude": 0.7750002145767212,
+        "phase": -0.2250000238418579
+      },
+      "shakeOffset": [
+        -0.15496580302715302,
+        0.15001024305820465,
+        0
+      ],
+      "waterPosition": [
+        0,
+        -6.1,
+        -40
+      ]
+    },
+    "death": {
+      "delay": 0.5,
+      "elapsed": 0.20000001788139343,
+      "kind": "impact",
+      "reason": "撞上了路障"
+    },
+    "state": {
+      "airborne": false,
+      "chaseGap": 11.5,
+      "coins": 0,
+      "distance": 21,
+      "distanceExact": 21.35875,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 1,
+      "nextTurn": 150,
+      "obstacles": [
+        {
+          "ahead": 1,
+          "full": true,
+          "kind": "arch",
+          "lane": 1
+        }
+      ],
+      "phase": "dying",
+      "pickups": [],
+      "progressDistance": 39.32040439446876,
+      "queuedForwardForce": 0,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 4.249999999999833,
+      "score": 780,
+      "side": 0,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 27.200000000000003,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false
+    }
+  },
+  "expired": {
+    "clip": {
+      "far": 100,
+      "near": 1
+    },
+    "forward": [
+      0,
+      -0.2873478855663454,
+      -0.9578262852211514
+    ],
+    "look": [
+      0,
+      4,
+      -62.01406250000001
+    ],
+    "needsToDuckCamera": false,
+    "position": [
+      0,
+      7,
+      -52.01406250000001
+    ],
+    "rightY": 0,
+    "runnerNdc": [
+      0,
+      -0.7089279076064662,
+      0.8458918689554962
+    ],
+    "shake": null,
+    "shakeOffset": [
+      0,
+      0,
+      0
+    ],
+    "waterPosition": [
+      0,
+      -6.1,
+      -40
+    ]
+  },
+  "impact": {
+    "camera": {
+      "clip": {
+        "far": 100,
+        "near": 1
+      },
+      "forward": [
+        -0.00844022684722095,
+        -0.06895434022479417,
+        0.9975841125112864
+      ],
+      "look": [
+        0,
+        4,
+        -18.35875
+      ],
+      "needsToDuckCamera": false,
+      "position": [
+        0.19959322688570327,
+        6.9854926718290855,
+        -61.46800501604967
+      ],
+      "rightY": -5.421010862427522e-20,
+      "runnerNdc": [
+        -0.017623705473743246,
+        -0.197065145963217,
+        0.9737482842707263
+      ],
+      "shake": {
+        "damper": 1,
+        "duration": 1,
+        "frequency": 1,
+        "magnitude": 0.8750001192092896,
+        "phase": -0.125
+      },
+      "shakeOffset": [
+        0.16513390839099884,
+        0.0058063636533916,
+        0
+      ],
+      "waterPosition": [
+        0,
+        -6.1,
+        -40
+      ]
+    },
+    "death": {
+      "delay": 0.5,
+      "elapsed": 0.10000000149011612,
+      "kind": "impact",
+      "reason": "撞上了路障"
+    },
+    "state": {
+      "airborne": false,
+      "chaseGap": 11.5,
+      "coins": 0,
+      "distance": 21,
+      "distanceExact": 21.35875,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 1,
+      "nextTurn": 150,
+      "obstacles": [
+        {
+          "ahead": 1,
+          "full": true,
+          "kind": "arch",
+          "lane": 1
+        }
+      ],
+      "phase": "dying",
+      "pickups": [],
+      "progressDistance": 39.32040439446876,
+      "queuedForwardForce": 0,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 4.249999999999833,
+      "score": 780,
+      "side": 0,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 27.200000000000003,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false
+    }
+  },
+  "passed": true,
+  "projection": {
+    "clip": {
+      "far": 100,
+      "near": 1
+    },
+    "forward": [
+      0,
+      -0.06606045333920353,
+      0.9978156224997778
+    ],
+    "look": [
+      0,
+      4,
+      -17
+    ],
+    "needsToDuckCamera": false,
+    "position": [
+      0,
+      7,
+      -62.31374999999999
+    ],
+    "rightY": 0,
+    "runnerNdc": [
+      0,
+      -0.18738652431227457,
+      0.9759742123363304
+    ],
+    "shake": null,
+    "shakeOffset": [
+      0,
+      0,
+      0
+    ],
+    "waterPosition": [
+      0,
+      -6.1,
+      -40
+    ]
+  },
+  "rejected": {
+    "camera": {
+      "clip": {
+        "far": 100,
+        "near": 1
+      },
+      "forward": [
+        0.04934373281877871,
+        -0.10809140852799078,
+        0.9929156275504702
+      ],
+      "look": [
+        1.591719436645508,
+        4,
+        -24.892913093566897
+      ],
+      "needsToDuckCamera": false,
+      "position": [
+        0.22221930271023088,
+        7,
+        -52.450578621443235
+      ],
+      "rightY": 4.33680868994202e-19,
+      "runnerNdc": [
+        -7.312431903295274e-17,
+        -0.30254634028458116,
+        0.9485297280170956
+      ],
+      "shake": null,
+      "shakeOffset": [
+        0,
+        0,
+        0
+      ],
+      "waterPosition": [
+        0,
+        -6.1,
+        -40
+      ]
+    },
+    "state": {
+      "airborne": false,
+      "chaseGap": 3.8,
+      "coins": 0,
+      "distance": 27,
+      "distanceExact": 27.892913093566897,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 2,
+      "nextTurn": 150,
+      "obstacles": [],
+      "phase": "playing",
+      "pickups": [],
+      "progressDistance": 43.11746301371902,
+      "queuedForwardForce": 2,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 4.500000000000064,
+      "score": 860,
+      "side": 1.591719436645508,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 23.380503845214847,
+      "stumbleRemaining": 0.42499999701976776,
+      "swipeStumbleDelay": null,
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false
+    }
+  },
+  "shield": {
+    "clip": {
+      "far": 100,
+      "near": 1
+    },
+    "forward": [
+      0,
+      -0.09044918219587292,
+      0.9959010721151464
+    ],
+    "look": [
+      0,
+      4,
+      -22.45862518310547
+    ],
+    "needsToDuckCamera": false,
+    "position": [
+      0,
+      7,
+      -55.49046852111815
+    ],
+    "rightY": 0,
+    "runnerNdc": [
+      0,
+      -0.25478588721026696,
+      0.9599507057241778
+    ],
+    "shake": null,
+    "shakeOffset": [
+      0,
+      0,
+      0
+    ],
+    "waterPosition": [
+      0,
+      -6.1,
+      -40
+    ]
+  },
+  "trip": {
+    "camera": {
+      "clip": {
+        "far": 100,
+        "near": 1
+      },
+      "forward": [
+        -0.005058226504393597,
+        -0.08717863569019917,
+        0.9961798531509388
+      ],
+      "look": [
+        0,
+        4,
+        -21.954062500000003
+      ],
+      "needsToDuckCamera": false,
+      "position": [
+        0.019610518510649405,
+        6.833143796985046,
+        -56.26553164945627
+      ],
+      "rightY": -2.710505431213761e-20,
+      "runnerNdc": [
+        -0.02063410351604477,
+        -0.23531295663306484,
+        0.9621105048294172
+      ],
+      "shake": {
+        "damper": 0.6666666865348816,
+        "duration": 1.5,
+        "frequency": 1,
+        "magnitude": 0.9000000953674316,
+        "phase": -0.15000000596046448
+      },
+      "shakeOffset": [
+        0.15460821986198425,
+        -0.16884003579616547,
+        0
+      ],
+      "waterPosition": [
+        0,
+        -6.1,
+        -40
+      ]
+    },
+    "state": {
+      "airborne": false,
+      "chaseGap": 3.8,
+      "coins": 0,
+      "distance": 24,
+      "distanceExact": 24.954062500000003,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 1,
+      "nextTurn": 150,
+      "obstacles": [
+        {
+          "ahead": -3,
+          "full": true,
+          "kind": "trip",
+          "lane": 1
+        }
+      ],
+      "phase": "playing",
+      "pickups": [],
+      "progressDistance": 41.1224621870211,
+      "queuedForwardForce": 2,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 4.399999999999997,
+      "score": 820,
+      "side": 0,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 23.4125,
+      "stumbleRemaining": 0.375,
+      "swipeStumbleDelay": null,
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false
+    }
+  }
+}

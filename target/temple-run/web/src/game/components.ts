@@ -1,3 +1,4 @@
+import { FIRST_TURN_DISTANCE } from './pacing';
 import type { Object3D } from 'three';
 import { defineComponent } from './ecs/world';
 import type { Hitbox, LaneMask, ObstacleAction } from './obstacles/types';
@@ -23,7 +24,9 @@ export const Jump = defineComponent<{ y: number; v: number; airborne: boolean; l
   lastJumpAt: -10,
 }));
 
-export const Slide = defineComponent<{ remaining: number; lastSlideAt: number }>('Slide', () => ({
+export const Slide = defineComponent<{ remaining: number; duration: number; elapsed: number; lastSlideAt: number }>('Slide', () => ({
+  elapsed: 0,
+  duration: 0,
   remaining: 0,
   lastSlideAt: -10,
 }));
@@ -41,7 +44,7 @@ export const Turn = defineComponent<{
   lastTurnDistance: number;
   forced: 0 | 1 | -1;
 }>('Turn', () => ({
-  next: 57,
+  next: FIRST_TURN_DISTANCE,
   direction: 0,
   queued: false,
   cueShown: false,
@@ -85,6 +88,7 @@ export const Pickup = defineComponent<{
   lane: number;
   distance: number;
   baseY: number;
+  value: number;
   taken: boolean;
   object: Object3D | null;
 }>('Pickup', () => ({
@@ -92,6 +96,7 @@ export const Pickup = defineComponent<{
   lane: 1,
   distance: 0,
   baseY: 1.3,
+  value: 1,
   taken: false,
   object: null,
 }));
@@ -111,6 +116,7 @@ export const Chase = defineComponent<{ gap: number; cooldown: number; lunge: num
 
 export const RunStats = defineComponent<{
   distance: number;
+  progressRemainder: number;
   coins: number;
   gems: number;
   multiplier: number;
@@ -120,6 +126,7 @@ export const RunStats = defineComponent<{
   score: number;
 }>('RunStats', () => ({
   distance: 0,
+  progressRemainder: 0,
   coins: 0,
   gems: 0,
   multiplier: 1,

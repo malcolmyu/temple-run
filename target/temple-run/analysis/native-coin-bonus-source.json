@@ -1,0 +1,53 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "baseCoins": 50,
+  "upgradeLevels1Through6": [
+    50,
+    75,
+    100,
+    125,
+    150,
+    150
+  ],
+  "jumpTableAddress": "0x6b7876",
+  "configFieldOffset": "0x154",
+  "startCoinBonus": "0x1298cb0",
+  "addCoins": "0x1298aa8",
+  "behavior": "instant AddCoins; existing timed powers are preserved",
+  "powerPickupScoreValue": 25,
+  "referenceScoreMultiplier": 20,
+  "referencePowerPickupScore": 500,
+  "baseTimedPowers": {
+    "VacuumDuration": 15,
+    "InvincibilityDuration": 15
+  },
+  "timedPowerUpgradeLevels1Through6": {
+    "VacuumDuration": [
+      15.0,
+      20.0,
+      20.0,
+      25.0,
+      25.0,
+      25.0
+    ],
+    "InvincibilityDuration": [
+      15.0,
+      17.5,
+      20.0,
+      22.5,
+      25.0,
+      25.0
+    ]
+  },
+  "coinScoreValues": [
+    5,
+    10,
+    15
+  ],
+  "referenceCoinScores": [
+    100,
+    200,
+    300
+  ],
+  "separatePickupScore": "BonusItem.Instantiate assigns25 for types4..7; AddScore multiplies by run multiplier"
+}

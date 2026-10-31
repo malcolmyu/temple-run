@@ -1,3 +1,5 @@
+> 2026-10-31：本文针对旧参考 BV1GW411N794，不能作为用户新指定 BV1ypuKzPErT 的验收依据。新分析及逐秒证据见 [BV1ypuKzPErT 分析](reference/BV1ypuKzPErT-analysis.md)。其中永久翼、最高倍率、单车道等旧结论不得直接移植。
+
 # 参考视频分帧记录
 
 - 视频：<https://www.bilibili.com/video/BV1GW411N794/>

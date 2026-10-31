@@ -49,10 +49,10 @@ export function getDifficulty(): DifficultyConfig {
       ? query
       : stored === 'classic' || stored === 'challenge'
         ? stored
-        : 'challenge';
+        : 'classic';
     return DIFFICULTIES[name];
   } catch {
-    return DIFFICULTIES.challenge;
+    return DIFFICULTIES.classic;
   }
 }
 

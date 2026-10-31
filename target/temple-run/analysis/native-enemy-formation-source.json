@@ -1,0 +1,39 @@
+{
+  "nativeBinarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "componentSHA256": "6e4b2a9dcf5652c4825a8692e2ea92afdae1a4bf5cb95fa6458fb0e22b424172",
+  "componentPathID": 6396,
+  "count": 8,
+  "spreadLeftRight": 12.0,
+  "spreadFrontBack": 6.0,
+  "backTableAddress": "0x6b78bc",
+  "sideTableAddress": "0x6b78d8",
+  "backTable": [
+    0.4545454680919647,
+    0.6363636255264282,
+    4.545454502105713,
+    5.818181991577148,
+    7.309091091156006,
+    9.59999942779541,
+    12.818181991577148
+  ],
+  "sideTable": [
+    -0.2888888716697693,
+    0.42222222685813904,
+    -0.1666666716337204,
+    0.35555556416511536,
+    -0.46666663885116577,
+    0.02222222276031971,
+    0.5333333611488342
+  ],
+  "method": "GameController.SimulateEnemies",
+  "tableLookup": "0x1271ad8..0x1271af0; slot=index-1, first enemy has zero offsets",
+  "worldScale": 0.2,
+  "introCount": 8,
+  "normalCount": 3,
+  "trimBranch": "0x1271828..0x12718b4 removes indices3+ once IsIntroScene false",
+  "limitations": [
+    "enemy rig dimensions and animation speed not verified here",
+    "base anchor through corners remains approximate",
+    "initial animation phase remains fitted"
+  ]
+}

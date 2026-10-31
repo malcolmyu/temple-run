@@ -1,0 +1,15 @@
+<!doctype html><html><meta charset="utf-8"><title>Original mesh identification</title><body style="margin:0;background:#182323;color:white"><p id="status">Loading original static meshes…</p><canvas id="sheet"></canvas><script type="module">
+import * as THREE from 'three';
+import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+const base='/@fs/Users/yuminghao/Work/temple-run/target/temple-run/analysis/entrance-search/';
+const all=await (await fetch(base+'manifest.json')).json();
+const page=Number(new URLSearchParams(location.search).get('page')||0);const items=all.slice(page*40,page*40+40);
+const sheet=document.querySelector('#sheet');sheet.width=1600;sheet.height=Math.ceil(items.length/8)*240;const ctx=sheet.getContext('2d');
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(200,210);renderer.outputColorSpace=THREE.SRGBColorSpace;
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x263d40);scene.add(new THREE.HemisphereLight(0xffffff,0x667050,2));const sun=new THREE.DirectionalLight(0xffffff,2);sun.position.set(4,8,9);scene.add(sun);
+const camera=new THREE.PerspectiveCamera(42,200/210,.1,100);camera.position.set(0,5,16);camera.lookAt(0,4,0);
+const texture=await new THREE.TextureLoader().loadAsync('/assets/apk/wallTexture.webp');texture.colorSpace=THREE.SRGBColorSpace;
+const mat=new THREE.MeshStandardMaterial({map:texture,side:THREE.DoubleSide,roughness:1});
+for(let i=0;i<items.length;i++){const item=items[i];const object=await new OBJLoader().loadAsync(base+item.id+'.obj');object.rotation.x=-Math.PI/2;object.traverse(o=>{if(o.isMesh){o.material=mat;o.geometry.computeVertexNormals()}});object.updateMatrixWorld(true);let box=new THREE.Box3().setFromObject(object),size=box.getSize(new THREE.Vector3());object.scale.setScalar(8/Math.max(size.x,size.y,size.z));object.updateMatrixWorld(true);box=new THREE.Box3().setFromObject(object);let center=box.getCenter(new THREE.Vector3());object.position.sub(center);object.position.y+=4;scene.add(object);const x=i%8*200,y=Math.floor(i/8)*240;renderer.render(scene,camera);ctx.drawImage(renderer.domElement,x,y+25);ctx.fillStyle='white';ctx.font='15px sans-serif';ctx.fillText(item.name,x+4,y+18);scene.remove(object);}
+document.querySelector('#status').textContent='Complete · '+items.length+' models · page '+page;
+</script></body></html>

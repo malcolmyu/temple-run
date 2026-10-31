@@ -1,0 +1,53 @@
+{
+  "material": "Temple Run Material",
+  "shader": "Imangi/MachuLightmap/Opaque VertexFog",
+  "operation": "MainTex(UV0) * DetailTex(UV1), radial linear vertex fog",
+  "fogOriginalUnits": [
+    100,
+    400
+  ],
+  "fogAtCurrentScale": [
+    20,
+    80
+  ],
+  "fogRGB": [
+    50,
+    82,
+    86
+  ],
+  "textureSHA256": "5a2a6763a846805336857fbe2539b0963d39105ebe22b7cf25f24798757ae78d",
+  "meshes": {
+    "temple-road-tile": {
+      "source": "49c44bda4d7504c2cb64a42a3c14eae4",
+      "mesh": "Object81-Pivot",
+      "vertices": 691,
+      "expandedVertices": 1206,
+      "objSHA256": "83ef23c7660030ea71bcb39a5f5174c0547e8d422594847cfad6d04afdf524fb",
+      "uvSHA256": "fa5618cd04ab66896457bebcc4dd2f96b2778aa2e183a94bfbb1f9a268d277d8"
+    },
+    "plank-road-tile": {
+      "source": "c4e9b0aa32add4ca3b868191238efa2f",
+      "mesh": "Object59-Pivot",
+      "vertices": 906,
+      "expandedVertices": 1356,
+      "objSHA256": "aae4a61bbf833899d69c199a6617125a3095c76f1a0ae263b6c712f0186ba821",
+      "uvSHA256": "b48a19bf386ccb3b0772859a31c565081207cf3e17507587813f4a3315fb22b3"
+    },
+    "plank-corner": {
+      "source": "605dac492cb28411ba5c1a63b87668a2",
+      "mesh": "Object64-Pivot",
+      "vertices": 756,
+      "expandedVertices": 1158,
+      "objSHA256": "6e303593cb96985f7d4652598f2a67fecad9e7f4f5465af6508c97fe84d8e990",
+      "uvSHA256": "8b0d6e20616f0a6896e6cf8306114b58fc3f4102707ebecc95c3dae11156026e"
+    },
+    "track-wall-corner-a": {
+      "source": "f2b43b62951944519b8ca7f1e4ae47a7",
+      "mesh": "Object76-Pivot",
+      "vertices": 668,
+      "expandedVertices": 1122,
+      "objSHA256": "67cfca23bd0f2faa60d43ddb7f6e4b61fbf9b97763faa28d04457920ed002d1f",
+      "uvSHA256": "6f62890a090b9c3dbcd0ade12a2a79ff83a8a0ac71500b6db15ca9698f1d35d7"
+    }
+  }
+}
