@@ -36,7 +36,21 @@ export function surfaceAt(distance: number): SurfaceSection {
   };
 }
 
-/** Region2D ground is raw0 for stone, raw-15 for plank. */
-export const nativeGroundHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3:0;
-/** Existing plank exports add raw15.25; undo that graphical normalization. */
+/** Transition cells replace the last stone cell before wood and the first
+ * stone cell after wood. Placement follows the current fitted reference grid. */
+export function nativeTransitionAt(distance:number):'a'|'b'|null {
+ for(const section of REFERENCE_SURFACES)if(section.kind==='wood'){
+  if(Math.abs(distance-(section.from-12))<.01)return 'a';
+  if(Math.abs(distance-section.to)<.01)return 'b';
+ }
+ return null;
+}
+export function nativeTransitionSupported(distance:number):boolean {
+ return !REFERENCE_SURFACES.some(section=>section.kind==='wood'&&
+  (distance>section.from-12&&distance<section.from-6||distance>section.to-6&&distance<section.to));
+}
+/** First plank region starts six metres before its centre; the exit cap's
+ * stone support starts at its centre. Missing regions retain the previous level. */
+export const nativeGroundHeightAt=(distance:number):number=>REFERENCE_SURFACES.some(s=>s.kind==='wood'&&distance>=s.from-6&&distance<s.to)?-3:0;
+/** Existing plank exports add raw15.25; undo graphical normalization only. */
 export const nativeMeshHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3.05:0;

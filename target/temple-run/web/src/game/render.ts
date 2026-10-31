@@ -38,6 +38,8 @@ export interface Assets {
   roadTile: THREE.Group | null;
   wall: THREE.Group | null;
   corner?: THREE.Group | null;
+  transitionA?: THREE.Group | null;
+  transitionB?: THREE.Group | null;
   stoneCornerLeft?: THREE.Group | null;
   stoneCornerRight?: THREE.Group | null;
   tJunction?: THREE.Group | null;
@@ -77,7 +79,7 @@ const loadTexture = (url: string): Promise<THREE.Texture> =>
     );
   });
 
-const lightmappedMeshes = new Set(['stone-turn-a', 'stone-turn-b', 'temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
+const lightmappedMeshes = new Set(['stone-plank-cap-a','stone-plank-cap-b','stone-turn-a', 'stone-turn-b', 'temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
 const loadObj = async (url: string): Promise<THREE.Group | null> => {
   try {
     const response=await fetch(url);
@@ -223,7 +225,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     water: new THREE.MeshBasicMaterial({ color: 0x0b2b27, transparent: true, opacity: 0.72 }),
   };
 
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
     loadObj(`${BASE}assets/track/decor-tree-a.obj`),
@@ -241,6 +243,8 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadObj(`${BASE}assets/track/plank-t-junction.obj`),
     loadObj(`${BASE}assets/track/stone-turn-a.obj`),
     loadObj(`${BASE}assets/track/stone-turn-b.obj`),
+    loadObj(`${BASE}assets/track/stone-plank-cap-a.obj`),
+    loadObj(`${BASE}assets/track/stone-plank-cap-b.obj`),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;
@@ -351,6 +355,8 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       roadTile: paint(roadTile, nativeRoadMaterial, false),
       wall: paint(wallTemplate, nativeRoadMaterial, true),
       corner: paint(cornerMesh, nativeRoadMaterial, true),
+      transitionA: paint(transitionA, nativeRoadMaterial, true),
+      transitionB: paint(transitionB, nativeRoadMaterial, true),
       stoneCornerLeft: paint(stoneCornerLeft, nativeRoadMaterial, true),
       stoneCornerRight: paint(stoneCornerRight, nativeRoadMaterial, true),
       tJunction: paint(tJunction, nativeRoadMaterial, true),

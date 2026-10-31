@@ -15,7 +15,7 @@ import { referencePickupsForTurn, REFERENCE_SHIELD_DURATION } from './referenceP
 import { updateNativePower } from './nativePower';
 import { updateNativeFlame } from './nativeFlame';
 import { nativeCoinYaw, nativeCoinRootHeight } from './nativeCoinPresentation';
-import { pickupHeightAt, coinHeightWithinReach } from './pickupReach';
+import { pickupPresentationHeight, coinHeightWithinReach } from './pickupReach';
 import { referenceCoinsForTurn } from './referenceCoins';
 import { REFERENCE_VISIBLE_OBSTACLES, REFERENCE_RANDOM_OBSTACLES_FROM, overlapsReferenceTree } from './referenceObstacles';
 import { referenceTurnDirection, referenceNextTurnDistance, referenceGate, referenceJunction } from './referenceRoute';
@@ -70,7 +70,7 @@ import {
 import { createWorld, buildTile, buildStoneGate, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
-import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, type SurfaceKind } from './surface';
+import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, nativeTransitionAt, nativeTransitionSupported, type SurfaceKind } from './surface';
 import { sidePathAt } from './sidePath';
 import { getDifficulty, type DifficultyConfig } from './difficulty';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
@@ -271,6 +271,13 @@ export class Game {
       spawnCoin: (lane = 1, ahead = 6, height = COIN_Y) => this.spawnCoin(lane, this.distance + ahead, height),
       spawnPickup: (kind: PickupKind, lane = 1, ahead = 6, height = 1.35) => this.spawnPickup(kind, lane, this.distance + ahead, height),
       advance: (ms: number) => this.advance(ms),
+      // Read immediately after render: default WebGL drawing buffers may be discarded
+      // by the compositor between a frozen frame and an external screenshot request.
+      captureFrame: () => {
+        this.syncObjects(0);
+        this.renderOnce();
+        return { state: this.debugState(), png: this.bundle.renderer.domElement.toDataURL('image/png') };
+      },
       freeze: () => { cancelAnimationFrame(this.raf); this.syncObjects(0); this.renderOnce(); },
       power: (kind: PickupKind) => {
         const power = this.world.require(this.runnerEntity, Power);
@@ -872,6 +879,7 @@ export class Game {
   }
 
   private nativeGroundSupported(distance:number,side:number,laneIndex:number):boolean {
+    if(!nativeTransitionSupported(distance))return false;
     const branch=this.sidePathAt(distance,this.path);
     if(branch&&laneIndex===1)return false;
     const narrow=branch?null:this.narrowAt(distance,this.path);
@@ -990,9 +998,10 @@ export class Game {
         const contact=nativeGroundContact(jump.y,supported,wasFalling,this.nativeGroundHeight);
         if(contact.dead){this.die(contact.deathType===1?'掉进了水里':'撞到了断崖',contact.deathType===1?'water':'fall');if(contact.deathType===4)this.nativeCameraShake=startNativeCameraShake(1,1);return;}
         if(contact.landed){
+          const wasJumping=jump.airborne;
           jump.y=0;jump.v=0;jump.airborne=false;this.nativeFalling=false;
           if(contact.stumble)this.stumble();
-          sfx.play('land',{gain:.7});
+          if(wasJumping)sfx.play('land',{gain:.7});
         }else this.nativeFalling=jump.y<0;
       }
     }else if(jump.y>0||jump.v>0){
@@ -1357,7 +1366,10 @@ export class Game {
       const side = this.sidePathAt(distance, this.path) ?? this.sidePathAt(distance + TILE * 0.5, this.path);
       const narrow = side ? null : this.narrowAt(distance, this.path) ?? this.narrowAt(distance + TILE * 0.5, this.path);
       const clearScenery = this.path.nearTurn(distance, 26);
-      const group = this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateral : 0);
+      const transition=this.difficulty.name==='classic'?nativeTransitionAt(distance):null;
+      const template=transition==='a'?this.bundle.assets.transitionA:transition==='b'?this.bundle.assets.transitionB:null;
+      const group = template?template.clone(true):this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateral : 0);
+      if(template){group.name='native-transition-'+transition;group.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});}
       const point = this.path.at(distance);
       group.position.set(point.x, this.meshY(distance), point.z);
       group.rotation.y = point.heading;
@@ -1738,12 +1750,12 @@ export class Game {
       const entity = this.pickups[i];
       const pickup = this.world.require(entity, Pickup);
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
-      const pickupY=nativeCoin?pickup.baseY:pickupHeightAt(pickup.baseY,this.world.elapsed,pickup.distance);
+      const pickupY=pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem');
       if (pickup.object) {
         const point = this.path.at(pickup.distance, LANES[pickup.lane]);
         pickup.object.position.set(point.x, pickupY+this.groundY(pickup.distance), point.z);
         pickup.object.rotation.y = nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
-        if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed);
+        if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed,this.bundle.camera);
       }
       const ahead = pickup.distance - distance;
       const magnet = power.kind === 'magnet' && this.world.elapsed < power.until;
@@ -2026,9 +2038,9 @@ export class Game {
       if (!pickup.object) continue;
       const point = this.path.at(pickup.distance, LANES[pickup.lane]);
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
-      pickup.object.position.set(point.x,this.groundY(pickup.distance)+(nativeCoin?pickup.baseY:pickupHeightAt(pickup.baseY,this.world.elapsed,pickup.distance)),point.z);
+      pickup.object.position.set(point.x,this.groundY(pickup.distance)+pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem'),point.z);
       pickup.object.rotation.y=nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
-        if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed);
+        if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed,this.bundle.camera);
     }
     // Tiles are placed once in ensureTiles (and rebuilt ahead of a new turn); re-running
     // path.at() for every live tile each frame was pure GC churn.

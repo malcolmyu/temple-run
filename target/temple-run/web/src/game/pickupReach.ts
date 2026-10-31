@@ -15,3 +15,8 @@ export function coinHeightWithinReach(coinY: number, runnerY: number, sliding: b
   const padding=COIN_HALF_HEIGHT+PICKUP_PADDING;
   return coinY>=runnerY-padding && coinY<=runnerY+(sliding?SLIDE_HEIGHT:RUNNER_HEIGHT)+padding;
 }
+
+/** Native BonusItem has no bob animation; its root stays at the authored height. */
+export function pickupPresentationHeight(base: number, elapsed: number, distance: number, native: boolean): number {
+  return native ? base : pickupHeightAt(base, elapsed, distance);
+}

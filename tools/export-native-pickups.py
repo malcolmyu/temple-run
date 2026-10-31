@@ -17,7 +17,13 @@ for kind,key in prefabKeys.items():
  first,last,fps=struct.unpack_from('<iif',animation,52);assert (first,last,fps)==(1,11,15)
  size=[round(parent[axis]*child[axis]*.2,6)for axis in ('x','y')];iconSizes[kind]=size
  prefabs[kind]=dict(key=key,sha256=hashlib.sha256(source).hexdigest(),parentScale=parent,iconScale=child,worldSize=size,firstFrame=first,lastFrame=last,fps=fps)
-data=dict(atlasSize=list(tex.image.size),icons=frames,sparkles=sparkles,fps=15,iconSizes=iconSizes,sparkleSize=[1.78,3.58])
+sparklePadding=[]
+for i,rect_ in enumerate(sparkles,1):
+ name=f'sparkle{i}.png';pos=atlas.index(name.encode());pos=(pos+len(name)+3)//4*4
+ padding=struct.unpack_from('<4f',atlas,pos+32) # Sprite.paddingLeft/Right/Top/Bottom
+ sparklePadding.append([round(padding[j]*rect_[2 if j<2 else 3])for j in range(4)])
+assert all([r[2]+p[0]+p[1],r[3]+p[2]+p[3]]==[173,283]for r,p in zip(sparkles,sparklePadding))
+data=dict(sparklePadding=sparklePadding,atlasSize=list(tex.image.size),icons=frames,sparkles=sparkles,fps=15,iconSizes=iconSizes,sparkleSize=[1.78,3.58])
 (root/'target/temple-run/web/src/game/nativePickupFrames.json').write_text(json.dumps(data,indent=2)+'\n')
 (root/'target/temple-run/analysis/native-pickup-source.json').write_text(json.dumps(dict(sharedAssetsSHA256=hashlib.sha256(raw).hexdigest(),atlasPathID=1957,texturePathID=81,shaderPathID=115,shader='Unlit/Premultiplied Alpha/Transparent Colored (+1)',coinBonusPrefab='ca1c5ef40178fbf42b358fa5c1aa41b4',prefabScale=.1,worldScale=.2,sourceIconSize=[160,160],sourceSparkleSize=[89,179],animationFrames=[1,11],prefabs=prefabs,**data),indent=2)+'\n')
 for kind,r in frames.items():

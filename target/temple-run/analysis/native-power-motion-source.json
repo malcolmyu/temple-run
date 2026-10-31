@@ -1,0 +1,112 @@
+{
+  "faceCameraCalls": {
+    "0x2494ecc": "Camera.get_main",
+    "0x24c2674": "Transform.get_position",
+    "0x24c2ac8": "Transform.get_up",
+    "0x24c3628": "Transform.LookAt"
+  },
+  "faceCameraMapping": "LookAt(camera world position,camera world up); web negates native Z, so local plane X and crop offsets reflect horizontally. Use unlit double-sided planes, not screen-aligned Sprites.",
+  "shaderCullMode": 0.0,
+  "sparkleFrameSizing": "UISpriteFrameAnimation.Update12cbd14 calls virtual slot7; UISprite.MakePixelPerfect128433c includes Sprite paddingLeft/Right/Top/Bottom. All11 sparkle crops occupy173x283 untrimmed pixels. Renderer preserves each crop size and atlas padding with plane positions.",
+  "librarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "UISprite.MakePixelPerfect": {
+      "address": "0x128433c",
+      "end": "0x1284a44",
+      "sha256": "6363a245bfa23efbad0492ccd89782de1b6e2a7bcbb22e395b32fc325ba66a52"
+    },
+    "BonusItem.Update": {
+      "address": "0x1296068",
+      "end": "0x1296070",
+      "sha256": "02aa6e9ce81410a92364eca5565ee92616888ad1a699cdfa7d1a01ff060c5374"
+    },
+    "BonusItem.Instantiate": {
+      "address": "0x1296084",
+      "end": "0x12965c4",
+      "sha256": "f009b08eae27dbdb7cfc9fa21fa6a2c4dacbf359d0700e8e3cd141b59bb9b78e"
+    },
+    "FaceCamera.Update": {
+      "address": "0x12ae51c",
+      "end": "0x12ae5b8",
+      "sha256": "16851c88c864cbc15216158e4e45b0918a50d673d1cb33410b9209ba039e7259"
+    },
+    "UISpriteFrameAnimation.Start": {
+      "address": "0x12cbbbc",
+      "end": "0x12cbc14",
+      "sha256": "bba7c2b9b610c4427adb2cdafb67e351e427695eb1a7873f0619a0a123344cb0"
+    },
+    "UISpriteFrameAnimation.Update": {
+      "address": "0x12cbc14",
+      "end": "0x12cbd9c",
+      "sha256": "71b1dc63296352c06775b120a1e6558bac66a0a2e194e1310483f267820adfe4"
+    },
+    "MovingObject.Update": {
+      "address": "0x12e0050",
+      "end": "0x12e0054",
+      "sha256": "788f1512f26f87f558ccda89030f23036527961be061f31e047ad5b93b8aafe2"
+    },
+    "MovingObject.Simulate": {
+      "address": "0x12e0054",
+      "end": "0x12e0640",
+      "sha256": "6311c872225b781c436ba64a98f0b14e326eedf331b77a1b8178f9ff07141cd7"
+    }
+  },
+  "prefabs": {
+    "magnet": {
+      "key": "3c3dd1062b4ec054abc6537a33f1fdb4",
+      "sha256": "d59befb4fa8788e0e4996885593a9a8f39bf52a3af2c7b736a1cffb2eadc799c",
+      "behaviours": [
+        "UISprite",
+        "BonusItem",
+        "UISpriteFrameAnimation",
+        "UISprite",
+        "FaceCamera"
+      ],
+      "animationComponents": []
+    },
+    "shield": {
+      "key": "67889826fae00394980b09531ad50e8e",
+      "sha256": "eead02c37ba4e7b75b23f946e6990994d3dc1326b39e43a2bf422c7eb746bb15",
+      "behaviours": [
+        "UISpriteFrameAnimation",
+        "BonusItem",
+        "UISprite",
+        "UISprite",
+        "FaceCamera"
+      ],
+      "animationComponents": []
+    },
+    "boost": {
+      "key": "53b67a9e3e4a2b441935c8b39f299ecf",
+      "sha256": "5ff85730eef3e0bffe93111c1cce7f3e526e0f38654f306b9a12993d32ec8d9e",
+      "behaviours": [
+        "UISpriteFrameAnimation",
+        "BonusItem",
+        "UISprite",
+        "UIPanel",
+        "UISprite",
+        "FaceCamera"
+      ],
+      "animationComponents": []
+    },
+    "bonus": {
+      "key": "ca1c5ef40178fbf42b358fa5c1aa41b4",
+      "sha256": "cf2d747772b822a29168f194dae10dd42bca6b68bc19cad20b012666e2030cb3",
+      "behaviours": [
+        "UIPanel",
+        "BonusItem",
+        "UISprite",
+        "UISpriteFrameAnimation",
+        "UISprite",
+        "FaceCamera"
+      ],
+      "animationComponents": []
+    }
+  },
+  "finding": "BonusItem.Update tail-calls MovingObject.Update/Simulate; no independent bob function. Prefabs have BonusItem, FaceCamera and sprite/frame animation (boost/bonus also have UIPanel). MovingObject integrates forces/velocity/path, not sinusoidal bob. Ordinary unforced native powers retain authored root height.",
+  "limitations": [
+    "Reference authored root heights/spawn positions remain fitted.",
+    "Magnet attraction is separate.",
+    "Sprite animation per-instance phase still unverified."
+  ]
+}

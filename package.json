@@ -34,6 +34,7 @@
     "temple:test:invincibility": "esbuild tools/test-invincibility-material.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-invincibility-test.mjs >/dev/null && node /tmp/temple-invincibility-test.mjs",
     "temple:test:safety-net": "esbuild tools/test-native-safety-net.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-safety-net-test.mjs >/dev/null && node /tmp/temple-safety-net-test.mjs",
     "temple:test:pit": "esbuild tools/test-native-pit.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-native-pit-test.mjs >/dev/null && node /tmp/temple-native-pit-test.mjs",
+    "temple:test:power-facing": "esbuild tools/test-native-power-facing.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-power-facing-test.mjs >/dev/null && node /tmp/temple-power-facing-test.mjs",
     "temple:test:native-power": "esbuild tools/test-native-power.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-native-power-test.mjs >/dev/null && node /tmp/temple-native-power-test.mjs",
     "temple:test:native-water": "esbuild tools/test-native-water.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-native-water-test.mjs >/dev/null && node /tmp/temple-native-water-test.mjs",
     "temple:test:plank-beam": "esbuild tools/test-native-plank-beam.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-plank-beam-test.mjs >/dev/null && node /tmp/temple-plank-beam-test.mjs",
@@ -60,7 +61,8 @@
     "temple:test:corner-assets": "esbuild tools/test-native-corner-assets.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-corner-assets-test.mjs >/dev/null && node /tmp/temple-corner-assets-test.mjs",
     "temple:test:stone-junction": "esbuild tools/test-native-stone-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-native-stone-junction-test.mjs >/dev/null && node /tmp/temple-native-stone-junction-test.mjs",
     "temple:test:ground-height-contact": "esbuild tools/test-native-ground-height-contact.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-ground-height-contact-test.mjs >/dev/null && node /tmp/temple-ground-height-contact-test.mjs",
-    "temple:test:terrain-heights": "esbuild tools/test-native-terrain-heights.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-terrain-heights-test.mjs >/dev/null && node /tmp/temple-terrain-heights-test.mjs"
+    "temple:test:terrain-heights": "esbuild tools/test-native-terrain-heights.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-terrain-heights-test.mjs >/dev/null && node /tmp/temple-terrain-heights-test.mjs",
+    "temple:test:transition-caps": "esbuild tools/test-native-transition-caps.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-transition-caps-test.mjs >/dev/null && node /tmp/temple-transition-caps-test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",
