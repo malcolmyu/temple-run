@@ -1,3 +1,4 @@
+import {branchRewardChoice} from './branchRewards';
 import {CourseDirector,COURSE_RULE_VERSION,type BeatDecision} from './courseDirector';
 import type { NativePathLevel } from './nativeThemePacing';
 import { nativeObstacleEligible } from './nativeObstacleGate';
@@ -11,10 +12,10 @@ import {repeatActionSpacing,NORMAL_SAFETY_SPEED} from './actionSafety';
 import {lateralTravelSeconds} from './lateralSafety';
 export {MIN_LONG_GAP_SPEED} from './encounterSafety';
 export interface CourseTurn {distance:number;direction:1|-1;junction:'corner'|'tee';}
-export interface CourseObstacle {distance:number;defId:DefId;prefab:string;lane?:number;}
+export interface CourseObstacle {distance:number;defId:DefId;prefab:string;lane?:number;branch?:'left'|'right';}
 export interface CourseSurface {kind:'stone'|'wood';from:number;to:number;level?:NativePathLevel;}
 export interface CourseNarrow {from:number;to:number;side:'left'|'right';}
-export interface CourseBranch {from:number;to:number;}
+export interface CourseBranch {from:number;to:number;riskyArm?:'left'|'right';}
 export interface CourseFeature {kind:string;from:number;to:number;surface:'stone'|'wood';generatedAtProgress?:number;minTurnSpaces?:number;nativeStageKnown?:boolean;fastTurn?:boolean;extraObstacleAt?:number;combo?:'repeat'|'jump-slide'|'slide-jump'|'dodge-jump'|'dodge-slide';pathLevel?:NativePathLevel;themeRequestedAtProgress?:number;beatIntent?:BeatDecision['intent'];}
 const STONE_FEATURES=['treeJump','treeTrip','treeSlide','flameTower','stonePedestal','pit','narrowSmall','narrowLong','branch','longGap'] as const;
 /** Web course design, not recovered native generation weights.
@@ -108,6 +109,9 @@ export class CoursePlan {
     mid=Math.max(mid,12*Math.ceil((from+half+reserve)/12));
     to+=12*Math.ceil(Math.max(0,mid+half+reserve-to)/12);
    }
+   if(kind==='branch'&&this.opening==='generated'&&(progress??2000)>=1000){
+    mid=Math.max(mid,from+96);to=Math.max(to,mid+120);
+   }
    const obstacleStart=this.obstacles.length,narrowStart=this.narrows.length,branchStart=this.branches.length;
    const add=(defId:DefId,prefab:string,at=mid,lane?:number)=>this.obstacles.push({defId,prefab,distance:at,lane});
    const right=this.rng.int(2)===0;
@@ -133,7 +137,15 @@ export class CoursePlan {
      else{add('narrowWallLeftB','narrow-wall-left-b',mid-12);add('narrowWallLeft','narrow-wall-left');add('narrowWallLeftA','narrow-wall-left-a',mid+12);}
      this.narrows.push({from:mid-18,to:mid+18,side:right?'left':'right'});break;
     }
-    case 'branch':this.branches.push({from:mid-18,to:mid+18});break;
+    case 'branch':{
+     if(this.opening==='generated'&&(progress??2000)>=1000){
+      const span={from:mid-54,to:mid+78};
+      const riskyArm=branchRewardChoice(this.seed,span.from).special;
+      this.branches.push({...span,riskyArm});
+      this.obstacles.push({defId:'fireWall',prefab:'branch-fire-wall',distance:mid,branch:riskyArm});
+     }else this.branches.push({from:mid-18,to:mid+18});
+     break;
+    }
    }
    // Web candidate adapter: reserve motion recovery and corner clearance.
    // Candidate25% is not a native weight;spacing comes from actionSafety.

@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
-import {branchRewards} from '../target/temple-run/web/src/game/branchRewards';
+import {CoursePlan} from '../target/temple-run/web/src/game/coursePlan';
+import {validateEncounterLayout} from '../target/temple-run/web/src/game/encounterSafety';
+import {branchRewardChoice,branchRewards} from '../target/temple-run/web/src/game/branchRewards';
 import {TrackGraph} from '../target/temple-run/web/src/game/trackGraph';
 let gemForks=0,coinForks=0;
 for(let seed=1;seed<=200;seed++){
@@ -18,3 +20,25 @@ for(let seed=1;seed<=200;seed++){
 }
 assert.ok(gemForks>20&&coinForks>20);
 console.log('Branch rewards:stable seed,coin/gem choices,both arms,full separation and base-anchor world positions pass',{gemForks,coinForks});
+
+let riskyForks=0;
+for(let seed=1;seed<=200;seed++){
+ const p=new CoursePlan(seed,0);p.ensureThrough(12000,2000);
+ assert.equal(p.rejectedEncounters.length,0);
+ for(const b of p.branches){
+  if(!b.riskyArm)continue;riskyForks++;
+  assert.equal(b.to-b.from,132);
+  assert.equal(b.riskyArm,branchRewardChoice(seed,b.from).special);
+  const hazards=p.obstacles.filter(o=>o.branch&&o.distance>b.from&&o.distance<b.to);
+  assert.equal(hazards.length,1);assert.equal(hazards[0].branch,b.riskyArm);
+  assert.equal(hazards[0].defId,'fireWall');assert.equal(hazards[0].distance,b.from+54);
+  const rewards=branchRewards(seed,b.from,b.to),safe=rewards.filter(r=>r.branch!==b.riskyArm),risk=rewards.filter(r=>r.branch===b.riskyArm);
+  assert.equal(safe.length,5);assert.ok(risk.length===9||risk.length===1&&risk[0].kind==='gem');
+  assert.ok(rewards.every(r=>r.distance>=hazards[0].distance+44&&r.distance<=b.to-12));
+  const bad={...hazards[0],branch:b.riskyArm==='left'?'right' as const:'left' as const};
+  assert.ok(validateEncounterLayout({from:b.from-6,to:b.to+6,obstacles:[bad],narrows:[],branches:[b]}).includes('invalid-branch-hazard'));
+ }
+ const novice=new CoursePlan(seed,0);novice.ensureThrough(3000,600);assert.ok(novice.branches.every(b=>!b.riskyArm));
+}
+assert.ok(riskyForks>100);
+console.log('Risk forks:200 courses,one rich-arm hazard,safe arm,post-jump rewards,novice gate and invalid ownership rejection pass',{riskyForks});

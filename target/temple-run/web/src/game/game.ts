@@ -327,6 +327,14 @@ export class Game {
         calls: this.bundle.renderer.info.render.calls,
         triangles: this.bundle.renderer.info.render.triangles,
       }),
+      resources: () => {
+        const pool=(map:Map<string,THREE.Object3D[]>)=>({keys:map.size,objects:[...map.values()].reduce((n,a)=>n+a.length,0)});
+        let sceneObjects=0;this.bundle.scene.traverse(()=>sceneObjects++);
+        return {sceneObjects,tiles:this.tiles.size,junctions:this.junctions.size,obstacles:this.obstacles.length,pickups:this.pickups.length,
+          tilePool:pool(this.tilePools),obstaclePool:pool(this.obstaclePools),pickupPool:pool(this.pickupPools),
+          tilePrototypes:this.tilePrototypes.size,junctionPrototypes:this.junctionPrototypes.size,narrowOverlays:this.narrowOverlays.size,
+          pathSegments:this.path.segments.length,graphForks:this.graph.forks.length,courseFeatures:activeCourse()?.features.length??0};
+      },
       enableTilt: () => this.input.enableTilt(),
       stepLoop: () => this.stepLoop,
       chaserInfo: () => {
@@ -503,6 +511,7 @@ export class Game {
       swipeStumbleDelay:this.nativeSwipeStumbleDelay,
       side:this.world.require(this.runnerEntity,Lane).x,
       position:this.runnerGroup.position.toArray(),
+      reviveProtectionRemaining:Math.max(0,this.invincibleUntil-this.world.elapsed),
       activeBranch:this.sideBranch,
       nextTurn: turn.next,
       turnDirection: turn.direction,
@@ -515,7 +524,7 @@ export class Game {
       enemyGap: this.nativeEnemyGap,
       obstacles: this.obstacles.map((entity) => {
         const o = this.world.require(entity, Obstacle);
-        return { kind: o.kind, action:DEFS[o.defId as DefId]?.action, defId:o.defId, lane: o.lane, full: o.full, ahead: Math.round(o.distance - this.distance) };
+        return { kind: o.kind, action:DEFS[o.defId as DefId]?.action, defId:o.defId, branch:o.branch, lane: o.lane, full: o.full, ahead: Math.round(o.distance - this.distance) };
       }),
       pickups: this.pickups.map((entity) => {
         const p = this.world.require(entity, Pickup);
@@ -885,6 +894,7 @@ export class Game {
     const challengeStats=this.world.require(this.runnerEntity,RunStats);
     stepRunChallenges(this.runChallenges,challengeStats.distance,challengeStats.coins,challengeStats.score);
     this.ensureTiles();
+    if(activeCourse())this.graph.pruneBefore(this.distance-120);
     this.spawnWaves();
     this.updateObstacles(dt);
     this.updatePickups(dt);
@@ -1694,7 +1704,7 @@ export class Game {
             this.spawnDef(DEFS.pit,1,recorded.distance,'pit');this.referenceObstacleIndex++;this.longGapFallbacks.push(recorded.distance);continue;
           }
         }
-        this.spawnDef(DEFS[recorded.defId],lane,recorded.distance,recorded.prefab);
+        this.spawnDef(DEFS[recorded.defId],lane,recorded.distance,recorded.prefab,'branch' in recorded?recorded.branch:undefined);
       }
     }
     while (this.nextSpawn < this.distance + 95) {
@@ -1793,16 +1803,18 @@ export class Game {
     this.spawnDef(def, lane, plan.distance);
   }
 
-  private spawnDef(def: ObstacleDef, lane: number, distance: number, recordedPrefab?: string): void {
+  private spawnDef(def: ObstacleDef, lane: number, distance: number, recordedPrefab?: string,branch?:'left'|'right'): void {
     const prefab = recordedPrefab ?? def.prefabs[this.obstacleRng.int(def.prefabs.length)];
     const object = this.acquireObstacle(def, prefab);
+    if(branch)object.scale.x=.45;
     const entity = this.world.createEntity();
     this.world.add(entity, Obstacle, {
+      branch,
       kind: def.kind as ObstacleKind,
       defId: def.id,
       action: def.action,
       lanes: def.lanes,
-      hitbox: def.variantHitboxes?.[prefab]??def.hitbox,
+      hitbox: branch?{...def.hitbox,x:[-.63,.63]}:def.variantHitboxes?.[prefab]??def.hitbox,
       kill: def.kill,
       lane,
       distance,
@@ -1934,7 +1946,9 @@ export class Game {
     if(!activeCourse())return '前方左右分路 · 选一边！';
     const rewards=branchRewards(this.runSeed,span.from,span.to);
     const label=(side:'left'|'right')=>rewards.some(r=>r.branch===side&&r.kind==='gem')?'宝石':`金币×${rewards.filter(r=>r.branch===side).length}`;
-    return `分路选择 · 左${label('left')} / 右${label('right')}`;
+    const risky=activeCourse()?.branches.find(b=>b.from===span.from)?.riskyArm;
+    const risk=(side:'left'|'right')=>risky?(risky===side?' · 火墙需跳':' · 安全'):'';
+    return `分路选择 · 左${label('left')}${risk('left')} / 右${label('right')}${risk('right')}`;
   }
 
   private pickupPoint(pickup:{distance:number;side?:number;lane:number;baseAnchored?:boolean}) {
@@ -1989,7 +2003,7 @@ export class Game {
       if (obstacle.object) {
         if(def.id==='flameTower'||def.id==='fireWall')updateNativeFlame(obstacle.object,this.world.elapsed);
         const x = def.lanes === 'one' ? LANES[obstacle.lane] : 0;
-        const point = this.path.at(obstacle.distance, x);
+        const point = obstacle.branch?(this.basePath??this.path).at(obstacle.distance,obstacle.branch==='left'?-1.9:1.9):this.path.at(obstacle.distance, x);
         obstacle.object.position.set(point.x, this.meshY(obstacle.distance), point.z);
         obstacle.object.rotation.y = point.heading;
         if ((def.kind === 'gap' || def.kind === 'gapLong') && !obstacle.warned && ahead > 3.5 && ahead < 12) {
@@ -2000,7 +2014,8 @@ export class Game {
 
       // A hole remains unsupported ground after its first protected crossing.
       // Recheck until it leaves the swept interval, including power expiry or landing.
-      if (!obstacle.passed || isGapKind(obstacle.kind)) {
+      const selectedArm=!obstacle.branch||this.sideBranch===obstacle.branch;
+      if (selectedArm&&(!obstacle.passed || isGapKind(obstacle.kind))) {
         const hit = collisionWouldHit(
           { def, lane: obstacle.lane, distance: obstacle.distance },
           {
@@ -2047,7 +2062,7 @@ export class Game {
 
       const blocked = laneIsBlocked(def, obstacle.lane, lane.index);
       const threatens = def.action === 'jump' || def.action === 'slide' || (def.action === 'dodge' && blocked);
-      if (threatens && ahead > 0 && ahead < 12 && ahead < cueAhead) {
+      if (selectedArm && threatens && ahead > 0 && ahead < 12 && ahead < cueAhead) {
         cueAhead = ahead;
         cue = def.action;
       }
@@ -2309,6 +2324,7 @@ export class Game {
     mutateUi.scoreMultiplier = this.runScoreMultiplier;
     mutateUi.charge = Math.min(100,stats.charge);
     mutateUi.coinBonusLevel = stats.coinBonusLevel;
+    mutateUi.reviveProtectionRemaining=Math.max(0,this.invincibleUntil-this.world.elapsed);
     mutateUi.powers = activePowers(power,this.world.elapsed);
     const primary=mutateUi.powers.find(effect=>effect.kind===power.kind)??mutateUi.powers[0];
     mutateUi.power = primary?.kind??null;

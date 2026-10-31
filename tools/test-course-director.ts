@@ -19,9 +19,9 @@ for(let seed=1;seed<=100;seed++){
   if(f.beatIntent==='recovery')assert.equal(p.obstacles.some(o=>o.distance>=f.from&&o.distance<f.to),false);
  }
 }
-for(const k of ['longGap','narrowSmall','narrowLong','branch','plankPit','plankBeam','stonePedestal','treeSlide','flameTower','cliffGap'])assert.ok(coverage.has(k),k);
+for(const k of ['longGap','narrowSmall','narrowLong','branch','plankPit','plankBeam','stonePedestal','treeSlide','flameTower','fireWall','cliffGap'])assert.ok(coverage.has(k),k);
 assert.ok(rests>100&&combos>100);
-const early=new CourseDirector(1);for(let i=0;i<100;i++){const d=early.choose(2,0,600);assert.ok(!['treeSlide','flameTower','narrowSmall','narrowLong','longGap'].includes(d.kind));assert.equal(d.allowCombination,false);early.record(d.kind);}
+const early=new CourseDirector(1);for(let i=0;i<100;i++){const d=early.choose(2,0,600);assert.ok(!['treeSlide','flameTower','fireWall','narrowSmall','narrowLong','longGap'].includes(d.kind));assert.equal(d.allowCombination,false);early.record(d.kind);}
 console.log('Director:theme pools,novice gates,first exposure,no immediate repeats,max3 pressure,recovery,seed replay and100 courses pass',{rests,combos});
 
 const whole=new CoursePlan(75,0),chunked=new CoursePlan(75,0);whole.ensureThrough(12000,2000);

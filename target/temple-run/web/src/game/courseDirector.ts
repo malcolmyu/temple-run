@@ -1,6 +1,6 @@
 import {SeededRandom} from './obstacles/rng';
 import type {NativePathLevel} from './nativeThemePacing';
-export const COURSE_RULE_VERSION='beats-v4';
+export const COURSE_RULE_VERSION='beats-v5';
 /** Project pacing policy; weights/cooldowns are not recovered native values. */
 const THEMES:Record<NativePathLevel,readonly string[]>={
  1:['plankPit','plankBeam'],

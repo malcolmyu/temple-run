@@ -41,8 +41,12 @@ export function validateEncounterLayout(group:EncounterLayout):string[]{
  for(const span of [...group.narrows,...group.branches]){
   if(!Number.isFinite(span.from)||!Number.isFinite(span.to)||span.to<=span.from||span.from<group.from+6||span.to>group.to-6)reasons.add('support-span-outside-group');
  }
+ for(const o of group.obstacles.filter(o=>o.branch)){
+  const span=group.branches.find(b=>b.riskyArm===o.branch&&o.distance>=b.from+42&&o.distance<=b.to-42);
+  if(!span||o.defId!=='fireWall'||o.prefab!=='branch-fire-wall')reasons.add('invalid-branch-hazard');
+ }
  for(const branch of group.branches){
-  if(group.obstacles.some(o=>o.distance>=branch.from-6&&o.distance<=branch.to+6)||group.narrows.some(n=>n.from<branch.to&&n.to>branch.from))reasons.add('branch-support-conflict');
+  if(group.obstacles.some(o=>!o.branch&&o.distance>=branch.from-6&&o.distance<=branch.to+6)||group.narrows.some(n=>n.from<branch.to&&n.to>branch.from))reasons.add('branch-support-conflict');
  }
  return [...reasons];
 }

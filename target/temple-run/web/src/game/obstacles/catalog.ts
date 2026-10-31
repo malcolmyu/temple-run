@@ -127,7 +127,7 @@ export const DEFS = {
     lanes: 'all',
     hitbox: box([-1.4,1.4], [0,1.25], [-.7,.7]),strictActionTiming:true,
     kill: true,
-    prefabs: ['flame-tower'],
+    prefabs: ['fire-wall'],
     placement: 'straight',
     weight: 1,
     note: 'Web low fire-wall variant; jump only. No independent native/video identity confirmed;uses native flame atlas over a low plinth.',

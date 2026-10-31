@@ -3,7 +3,7 @@ import {CoursePlan} from '../target/temple-run/web/src/game/coursePlan';
 import {validateEncounterLayout} from '../target/temple-run/web/src/game/encounterSafety';
 const counts={repeat:0,'jump-slide':0,'slide-jump':0,'dodge-jump':0,'dodge-slide':0};
 for(let seed=1;seed<=200;seed++){
- const p=new CoursePlan(seed,0);p.ensureThrough(12000,2000);
+ const p=new CoursePlan(seed,0);p.ensureThrough(16000,2000);
  assert.equal(p.rejectedEncounters.length,0);
  const seen=new Set<string>();
  for(const f of p.features){
@@ -19,8 +19,8 @@ for(let seed=1;seed<=200;seed++){
   if(f.combo!=='repeat')assert.equal(f.surface,'stone');
   seen.add(f.kind);
  }
- const q=new CoursePlan(seed,0);q.ensureThrough(12000,2000);assert.deepEqual(q.obstacles,p.obstacles,'same seed replay');
+ const q=new CoursePlan(seed,0);q.ensureThrough(16000,2000);assert.deepEqual(q.obstacles,p.obstacles,'same seed replay');
 }
 for(const kind of ['repeat','jump-slide','slide-jump'] as const)assert.ok(counts[kind]>100);
 assert.ok(counts['dodge-jump']>20&&counts['dodge-slide']>20);
-console.log('Mixed encounters:200 deterministic courses,both action orders,repeat retention,theme and safety constraints pass',counts);
+console.log('Mixed encounters:200 deterministic16000m courses,both action orders,repeat retention,theme and safety constraints pass',counts);

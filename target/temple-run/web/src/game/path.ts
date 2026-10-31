@@ -33,13 +33,17 @@ export class TrackPath {
     return this.lateral*t*t*(3-2*t);
   }
 
+  /** Upper-bound search preserves historical segment numbering and duplicate
+   * starts. Keep index0 for pre-start/NaN distances,matching the old scan. */
+  private indexAt(distance:number):number {
+    let lo=1,hi=this.segments.length;
+    while(lo<hi){const mid=lo+Math.floor((hi-lo)/2);if(distance>=this.segments[mid].start)lo=mid+1;else hi=mid;}
+    return lo-1;
+  }
+
   /** World position and heading at a distance. `smooth` rounds the corner for actors. */
   at(distance: number, side = 0, smooth = false): PathPoint {
-    let index = 0;
-    for (let i = 1; i < this.segments.length; i++) {
-      if (distance >= this.segments[i].start) index = i;
-      else break;
-    }
+    const index=this.indexAt(distance);
     const segment = this.segments[index];
     const travel = distance - segment.start;
     const bx = segment.x - Math.sin(segment.heading) * travel;
@@ -96,14 +100,13 @@ export class TrackPath {
 
   /** Segment that contains a distance (used by scenery systems). */
   segmentAt(distance: number): PathSegment {
-    for (let i = this.segments.length - 1; i >= 0; i--) {
-      if (distance >= this.segments[i].start) return this.segments[i];
-    }
-    return this.segments[0];
+    return this.segments[this.indexAt(distance)];
   }
 
   /** True when a distance is within `margin` metres of any corner. */
   nearTurn(distance: number, margin = 22): boolean {
-    return this.segments.some((segment, index) => index > 0 && Math.abs(distance - segment.start) < margin);
+    const index=this.indexAt(distance);
+    return (index>0&&Math.abs(distance-this.segments[index].start)<margin)
+      || (index+1<this.segments.length&&Math.abs(distance-this.segments[index+1].start)<margin);
   }
 }

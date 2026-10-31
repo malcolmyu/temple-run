@@ -73,6 +73,15 @@ export class TrackGraph {
     return fork;
   }
 
+  /** Drop unreachable historical branch snapshots. Keep the active path and any
+   * fork whose merge is still ahead; callers retain the visible/revive tail. */
+  pruneBefore(distance:number):void {
+    if(!Number.isFinite(distance))return;
+    for(let i=this.forks.length-1;i>=0;i--)if(this.forks[i].mergeAt<distance)this.forks.splice(i,1);
+    const retained=new Set(this.forks.map(f=>f.node));
+    for(let i=this.nodes.length-1;i>=0;i--)if(!retained.has(this.nodes[i]))this.nodes.splice(i,1);
+  }
+
   /** Explicit branch->base distance remap at a merge node (branch length is same today). */
   remapAfterMerge(fork: TrackGraphFork, branchDistance: number): number {
     if (branchDistance <= fork.mergeAt) return branchDistance;

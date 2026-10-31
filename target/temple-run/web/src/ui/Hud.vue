@@ -12,6 +12,7 @@ defineProps<{ disabled?: boolean }>();
 const uiAsset = (file: string): string => `${import.meta.env.BASE_URL}assets/ui/${file}`;
 
 const turnLabel = computed(() => (ui.turnDirection < 0 ? '前方左转' : ui.turnDirection > 0 ? '前方右转' : ''));
+const reviveProtected = computed(() => (ui.phase==='playing'||ui.phase==='paused') && ui.reviveProtectionRemaining>0);
 const powerNames: Record<string,string> = {magnet:'磁铁',shield:'无敌',boost:'加速'};
 const cueLabel = computed(() => {
   const map: Record<string, string> = { jump: '↑ 跳过', slide: '↓ 滑铲', dodge: '↔ 换道', run: '' };
@@ -42,7 +43,8 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
     <div v-if="assist" class="run-distance">{{ ui.distance }} m</div>
 
     <div v-if="assist && ui.multiplier > 1" class="multi-badge">×{{ ui.multiplier }}</div>
-    <div v-if="ui.powers.length" class="power-badge" role="status"><div v-for="effect in ui.powers" :key="effect.kind">{{ effect.slowing ? '减速' : powerNames[effect.kind] }} {{ Math.ceil(Math.max(0,effect.remaining-1e-6)) }}{{ effect.unit }}</div></div>
+    <div v-if="ui.phase==='playing' && ui.reviveProtectionRemaining>2.4" class="revive-arrival" aria-hidden="true" :style="{opacity:Math.min(1,(ui.reviveProtectionRemaining-2.4)/.6)}" />
+    <div v-if="ui.powers.length || reviveProtected" class="power-badge" role="status"><div v-if="reviveProtected" class="revive-protection">复活保护 {{ Math.ceil(Math.max(0,ui.reviveProtectionRemaining-1e-6)) }}s</div><div v-for="effect in ui.powers" :key="effect.kind">{{ effect.slowing ? '减速' : powerNames[effect.kind] }} {{ Math.ceil(Math.max(0,effect.remaining-1e-6)) }}{{ effect.unit }}</div></div>
     <div v-if="assist && cueLabel && !turnLabel" class="action-cue">{{ cueLabel }}</div>
 
     <div v-if="assist && turnLabel" class="turn-cue" :class="{ ready: ui.turnQueued }">
@@ -93,4 +95,9 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 
 <style scoped>
 .head-start-actions{position:absolute;left:calc(18px + env(safe-area-inset-left));right:calc(18px + env(safe-area-inset-right));bottom:calc(108px + env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}.head-start-actions button{min-height:44px;padding:8px 12px;background:#28382e;border:1px solid #b99c61;color:#f4dfac;border-radius:8px}
+</style>
+
+<style scoped>
+.revive-protection{color:#fff1bd;font-weight:700}
+.revive-arrival{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 44px 12px #e6b65488;border:2px solid #f6d78988;box-sizing:border-box}
 </style>

@@ -54,6 +54,7 @@ export interface HudState {
   muted: boolean;
   music: boolean;
   sfx: boolean;
+  reviveProtectionRemaining: number;
   reviveAvailable: boolean;
   reviveCost: number;
   wingsRemaining:number;
@@ -100,6 +101,7 @@ const defaults = (): HudState => ({
   muted: false,
   music: progress.music,
   sfx: progress.sound,
+  reviveProtectionRemaining: 0,
   reviveAvailable: false,
   reviveCost: 2,
 });

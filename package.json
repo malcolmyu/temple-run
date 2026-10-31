@@ -99,7 +99,9 @@
     "temple:test:power-free-score": "esbuild tools/test-power-free-score.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-power-free-score.mjs >/dev/null && node /tmp/temple-power-free-score.mjs",
     "temple:qa": "vite --config target/temple-run/vite.config.js --host 127.0.0.1 --port 5175 --strictPort",
     "temple:test:focus-pause": "esbuild tools/test-focus-pause.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-focus-pause.mjs >/dev/null && node /tmp/temple-focus-pause.mjs",
-    "temple:test:fire-wall": "esbuild tools/test-fire-wall.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-fire-wall.mjs >/dev/null && node /tmp/temple-fire-wall.mjs"
+    "temple:test:fire-wall": "esbuild tools/test-fire-wall.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-fire-wall.mjs >/dev/null && node /tmp/temple-fire-wall.mjs",
+    "temple:test:graph-retention": "esbuild tools/test-track-graph-retention.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-graph-retention.mjs >/dev/null && node /tmp/temple-graph-retention.mjs",
+    "temple:test:path-lookup": "esbuild tools/test-path-lookup.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-path-lookup.mjs >/dev/null && node /tmp/temple-path-lookup.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

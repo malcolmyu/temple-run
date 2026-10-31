@@ -62,6 +62,7 @@ export const Turn = defineComponent<{
 export const Obstacle = defineComponent<{
   kind: ObstacleKind;
   defId: string;
+  branch?:'left'|'right';
   action: ObstacleAction;
   lanes: LaneMask;
   hitbox: Hitbox;
