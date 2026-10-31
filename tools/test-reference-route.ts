@@ -61,8 +61,8 @@ assert.equal(overlapsReferenceGate(T(564)),false);
 
 assert.equal(overlapsReferenceGate(J(501)+24),true,'exit gate suppresses the following periodic duplicate');
 
-assert.equal(REFERENCE_OPENING_TURNS[0].distance,177);
-assert.equal(REFERENCE_OPENING_TURNS[1].distance,333);
+assert.equal(REFERENCE_OPENING_TURNS[0].distance,153);
+assert.equal(REFERENCE_OPENING_TURNS[1].distance,321);
 
 for(const [i,d,dir]of [[21,1357,-1],[22,1393,1],[23,1545,1],[24,1585,1]])assert.equal(referenceTurnDirection(i,J(d)),dir);
 assert.equal(referenceNextTurnDistance(25,J(1585)),J(1683));

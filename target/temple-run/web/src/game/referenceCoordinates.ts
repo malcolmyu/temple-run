@@ -11,7 +11,5 @@ export function referenceWorldDistance(legacy:number):number {
  const a=knots[low-1],b=knots[low];
  return a[1]+(b[1]-a[1])*(legacy-a[0])/(b[0]-a[0]);
 }
-export const referenceJunctionDistance=(legacy:number):number=>legacy===81
- ? 177 // First corner at game~7.4s in the subsecond clip; interval RMS alone rounds one tile early.
- : 9+12*Math.round((referenceWorldDistance(legacy)-9)/12);
+export const referenceJunctionDistance=(legacy:number):number=>9+12*Math.round((referenceWorldDistance(legacy)-9)/12);
 export const referenceTileDistance=(legacy:number):number=>12*Math.round(referenceWorldDistance(legacy)/12);

@@ -18,9 +18,11 @@ for(const kind of ['magnet','shield','boost','bonus'] as const){
  assert.deepEqual(icon.material.map!.repeat.toArray(),[w/1024,h/1024]);
  assert.deepEqual(icon.material.map!.offset.toArray(),[x/1024,1-(y+h)/1024]);
  const sparkle=group.getObjectByName('native-pickup-sparkle') as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
- updateNativePower(group,1/15+.0001);
+ updateNativePower(group,1/15);
+ assert.equal(sparkle.material.map!.offset.x,frames.sparkles[0][0]/1024);
+ updateNativePower(group,1/15);
  assert.equal(sparkle.material.map!.offset.x,frames.sparkles[1][0]/1024);
- updateNativePower(group,11/15+.0001);
+ for(let i=0;i<10;i++)updateNativePower(group,1/15);
  assert.equal(sparkle.material.map!.offset.x,frames.sparkles[0][0]/1024);
 }
 assert.deepEqual(referencePickupsForTurn(3,J(285)),[{kind:'bonus',lane:0,distance:W(329),height:3}]);
@@ -49,7 +51,7 @@ assert.notEqual(pickupPresentationHeight(3,.25,3702,false),3,'legacy challenge p
 // Frame3 is a short83x63 crop in a173x283 canvas, not a stretched89x179 sprite.
 {
  const group=buildNativePower('shield',new THREE.Texture());
- updateNativePower(group,2/15+.0001);
+ for(let i=0;i<3;i++)updateNativePower(group,1/15);
  const sparkle=group.getObjectByName('native-pickup-sparkle') as THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
  assert.deepEqual(sparkle.scale.toArray(),[-1.6600000000000001,1.26,1]);
  assert.equal(sparkle.position.x,.36);

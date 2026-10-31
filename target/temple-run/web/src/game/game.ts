@@ -12,7 +12,7 @@ import { nativeCoinBonusValue, NATIVE_POWER_SCORE_VALUE, NATIVE_COIN_SCORE_VALUE
 import { nativeSlideDuration, stepNativeSlideTimer, stepNativeVertical, nativeForwardAcceleration, stepNativeForwardVelocity, nativeJumpVelocity, NATIVE_STUMBLE_SPEED_FACTOR } from './nativeMotion';
 import { nativeProgressDelta, nativeProgressScore } from './nativeProgress';
 import { referencePickupsForTurn, REFERENCE_SHIELD_DURATION } from './referencePickups';
-import { updateNativePower } from './nativePower';
+import { updateNativePower, nativePowerAnimationState } from './nativePower';
 import { updateNativeFlame } from './nativeFlame';
 import { nativeCoinYaw, nativeCoinRootHeight } from './nativeCoinPresentation';
 import { pickupPresentationHeight, coinHeightWithinReach } from './pickupReach';
@@ -274,11 +274,10 @@ export class Game {
       // Read immediately after render: default WebGL drawing buffers may be discarded
       // by the compositor between a frozen frame and an external screenshot request.
       captureFrame: () => {
-        this.syncObjects(0);
         this.renderOnce();
         return { state: this.debugState(), png: this.bundle.renderer.domElement.toDataURL('image/png') };
       },
-      freeze: () => { cancelAnimationFrame(this.raf); this.syncObjects(0); this.renderOnce(); },
+      freeze: () => { cancelAnimationFrame(this.raf); this.renderOnce(); },
       power: (kind: PickupKind) => {
         const power = this.world.require(this.runnerEntity, Power);
         power.kind = kind;
@@ -340,7 +339,7 @@ export class Game {
         const p=this.world.require(entity,Pickup),o=p.object;
         const bounds=o?new THREE.Box3().setFromObject(o,true):null;
         return {kind:p.kind,value:p.value,lane:p.lane,distance:p.distance,baseY:p.baseY,
-          position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
+          animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
       scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length }),
@@ -1755,7 +1754,7 @@ export class Game {
         const point = this.path.at(pickup.distance, LANES[pickup.lane]);
         pickup.object.position.set(point.x, pickupY+this.groundY(pickup.distance), point.z);
         pickup.object.rotation.y = nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
-        if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed,this.bundle.camera);
+
       }
       const ahead = pickup.distance - distance;
       const magnet = power.kind === 'magnet' && this.world.elapsed < power.until;
@@ -2040,7 +2039,7 @@ export class Game {
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
       pickup.object.position.set(point.x,this.groundY(pickup.distance)+pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem'),point.z);
       pickup.object.rotation.y=nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
-        if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed,this.bundle.camera);
+        if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,dt,this.bundle.camera);
     }
     // Tiles are placed once in ensureTiles (and rebuilt ahead of a new turn); re-running
     // path.at() for every live tile each frame was pure GC churn.

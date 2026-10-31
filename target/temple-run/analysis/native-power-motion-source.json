@@ -1,4 +1,5 @@
 {
+  "spriteAnimationClock": "Start copies first frame into next frame. Each active Update subtracts Time.deltaTime(f32); if <=0, adds (60/fps)/60(f32), displays next frame and increments once, not a while loop. Constructor direction=+1. Per-instance countdown, no global phase.",
   "faceCameraCalls": {
     "0x2494ecc": "Camera.get_main",
     "0x24c2674": "Transform.get_position",
@@ -39,6 +40,11 @@
       "address": "0x12cbc14",
       "end": "0x12cbd9c",
       "sha256": "71b1dc63296352c06775b120a1e6558bac66a0a2e194e1310483f267820adfe4"
+    },
+    "UISpriteFrameAnimation..ctor": {
+      "address": "0x12cbd9c",
+      "end": "0x12cbdac",
+      "sha256": "95e6b27252fe5e858f246a57130cf01e3187cb17b3f380151d95746cb8ad1d39"
     },
     "MovingObject.Update": {
       "address": "0x12e0050",
@@ -107,6 +113,6 @@
   "limitations": [
     "Reference authored root heights/spawn positions remain fitted.",
     "Magnet attraction is separate.",
-    "Sprite animation per-instance phase still unverified."
+    "Native pool activation timing still unverified; inactive instances retain clock state."
   ]
 }

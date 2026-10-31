@@ -7,7 +7,7 @@ group.position.set(4,3,-20);
 const camera=new THREE.PerspectiveCamera(50,1,1,100);
 camera.position.set(0,7,0);camera.lookAt(0,4,-10);camera.updateMatrixWorld();
 // Native FaceCamera.Update passes camera POSITION and camera UP to Transform.LookAt.
-(updateNativePower as Function)(group,2/15+.0001,camera);group.updateMatrixWorld(true);
+for(let i=0;i<3;i++)updateNativePower(group,1/15,camera);group.updateMatrixWorld(true);
 const towardCamera=camera.position.clone().sub(group.position).normalize();
 near(group.getWorldDirection(new THREE.Vector3()),towardCamera);
 assert.ok(towardCamera.distanceTo(camera.getWorldDirection(new THREE.Vector3()).negate())>.1,'off-axis fixture distinguishes position-facing from screen alignment');

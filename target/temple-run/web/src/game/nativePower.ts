@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import frames from './nativePickupFrames.json';
+import { createNativeSpriteAnimation, stepNativeSpriteAnimation, type NativeSpriteAnimation } from './nativeSpriteAnimation';
 import type { PickupKind } from './components';
 
+const animationClocks=new WeakMap<THREE.Object3D,NativeSpriteAnimation>();
 type NativePowerKind = keyof typeof frames.icons;
 function selectFrame(texture: THREE.Texture, rect: readonly number[]): void {
   const [x,y,w,h]=rect;
@@ -23,6 +25,7 @@ function sprite(atlas: THREE.Texture, rect: readonly number[], size: readonly nu
 /** Original UISprite/FaceCamera pickup, not a lit geometric substitute. */
 export function buildNativePower(kind: PickupKind, atlas: THREE.Texture): THREE.Group {
   const group=new THREE.Group();
+  animationClocks.set(group,createNativeSpriteAnimation());
   if(!(kind in frames.icons))return group;
   const icon=sprite(atlas,frames.icons[kind as NativePowerKind],frames.iconSizes[kind as NativePowerKind]);
   icon.name='native-pickup-icon';
@@ -41,7 +44,7 @@ function setSparkleFrame(sparkle: PowerPlane, index: number): void {
   sparkle.scale.set(-rect[2]*.02,rect[3]*.02,1);
   sparkle.position.set((right-left)*.01,(bottom-top)*.01,0);
 }
-export function updateNativePower(group: THREE.Object3D, elapsed: number, camera?: THREE.Camera): void {
+export function updateNativePower(group: THREE.Object3D, dt: number, camera?: THREE.Camera): void {
   if(camera){
     camera.getWorldQuaternion(cameraRotation);
     group.up.copy(cameraUp.set(0,1,0).applyQuaternion(cameraRotation));
@@ -49,5 +52,13 @@ export function updateNativePower(group: THREE.Object3D, elapsed: number, camera
   }
   const sparkle=group.getObjectByName('native-pickup-sparkle') as PowerPlane|undefined;
   if(!sparkle)return;
-  setSparkleFrame(sparkle,Math.floor(elapsed*frames.fps)%frames.sparkles.length);
+  const clock=animationClocks.get(group);
+  if(!clock)return;
+  stepNativeSpriteAnimation(clock,dt,frames.fps,frames.sparkles.length);
+  setSparkleFrame(sparkle,clock.frame);
+}
+
+export function nativePowerAnimationState(group: THREE.Object3D): NativeSpriteAnimation | null {
+  const clock=animationClocks.get(group);
+  return clock ? {...clock} : null;
 }

@@ -1,6 +1,21 @@
 {
   "bvid": "BV1ypuKzPErT",
   "scoreObservations": "target/temple-run/analysis/reference-score-observations.json",
+  "initialAnchor": {
+    "releaseVideoSecond": 2.703,
+    "spawnProgress": 5.0,
+    "spawnPhysicalPosition": -2,
+    "activeSeconds": 0.29700000000000015,
+    "motionProgressBounds": [
+      2.0,
+      3.0
+    ],
+    "physicalPositionBounds": [
+      3.3396629107088787,
+      4.539724764850583
+    ],
+    "status": "conditional60Hz spawn metric and approximately constant speed over first active fraction; midpoint estimate"
+  },
   "inferredAwards": [
     {
       "videoSecond": 146,
@@ -23,6 +38,7 @@
     "score multiplier20 throughout; integer progress quantization remains",
     "smoothDeltaTime approximates actual frame time",
     "constant speed within each one-second interval for travel estimates",
+    "initial100 reset-position progress removed from road traversal; first active fraction starts at exact first100-score PTS2.703; quantization midpoint with bounds",
     "RMS speed does not recover turns, acceleration or exact physical path length",
     "do not use these estimates as exact obstacle coordinates"
   ],
@@ -34,7 +50,7 @@
       "inferredCumulativeAward": 0,
       "progress": 0.0,
       "glyphConfidence": 0.9196490730463539,
-      "cumulativeConstantSpeedWorldEstimate": 0
+      "cumulativeConstantSpeedWorldEstimate": -2
     },
     {
       "videoSecond": 3,
@@ -43,11 +59,26 @@
       "inferredCumulativeAward": 0,
       "progress": 7.0,
       "glyphConfidence": 0.9165014381093669,
+      "initialAnchor": {
+        "releaseVideoSecond": 2.703,
+        "spawnProgress": 5.0,
+        "spawnPhysicalPosition": -2,
+        "activeSeconds": 0.29700000000000015,
+        "motionProgressBounds": [
+          2.0,
+          3.0
+        ],
+        "physicalPositionBounds": [
+          3.3396629107088787,
+          4.539724764850583
+        ],
+        "status": "conditional60Hz spawn metric and approximately constant speed over first active fraction; midpoint estimate"
+      },
       "progressDelta": 7.0,
       "intervalSeconds": 1,
-      "estimatedRmsWorldSpeed": 18.33030277982336,
-      "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 18.33030277982336
+      "estimatedRmsWorldSpeed": 20.100756305184234,
+      "constantSpeedTravelEstimate": 5.969924622639721,
+      "cumulativeConstantSpeedWorldEstimate": 3.969924622639721
     },
     {
       "videoSecond": 4,
@@ -60,7 +91,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 22.978250586152114,
       "constantSpeedTravelEstimate": 22.978250586152114,
-      "cumulativeConstantSpeedWorldEstimate": 41.30855336597547
+      "cumulativeConstantSpeedWorldEstimate": 26.948175208791834
     },
     {
       "videoSecond": 5,
@@ -73,7 +104,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 24.0,
       "constantSpeedTravelEstimate": 24.0,
-      "cumulativeConstantSpeedWorldEstimate": 65.30855336597547
+      "cumulativeConstantSpeedWorldEstimate": 50.94817520879184
     },
     {
       "videoSecond": 6,
@@ -86,7 +117,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 24.979991993593593,
       "constantSpeedTravelEstimate": 24.979991993593593,
-      "cumulativeConstantSpeedWorldEstimate": 90.28854535956907
+      "cumulativeConstantSpeedWorldEstimate": 75.92816720238542
     },
     {
       "videoSecond": 7,
@@ -99,7 +130,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 24.979991993593593,
       "constantSpeedTravelEstimate": 24.979991993593593,
-      "cumulativeConstantSpeedWorldEstimate": 115.26853735316266
+      "cumulativeConstantSpeedWorldEstimate": 100.90815919597901
     },
     {
       "videoSecond": 8,
@@ -112,7 +143,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 137.1774396533693
+      "cumulativeConstantSpeedWorldEstimate": 122.81706149618566
     },
     {
       "videoSecond": 9,
@@ -125,7 +156,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 159.08634195357595
+      "cumulativeConstantSpeedWorldEstimate": 144.7259637963923
     },
     {
       "videoSecond": 10,
@@ -138,7 +169,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 179.87095164440248
+      "cumulativeConstantSpeedWorldEstimate": 165.51057348721883
     },
     {
       "videoSecond": 11,
@@ -151,7 +182,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 201.77985394460913
+      "cumulativeConstantSpeedWorldEstimate": 187.41947578742548
     },
     {
       "videoSecond": 12,
@@ -164,7 +195,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 222.56446363543566
+      "cumulativeConstantSpeedWorldEstimate": 208.204085478252
     },
     {
       "videoSecond": 13,
@@ -177,7 +208,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 244.4733659356423
+      "cumulativeConstantSpeedWorldEstimate": 230.11298777845866
     },
     {
       "videoSecond": 14,
@@ -190,7 +221,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 266.3822682358489
+      "cumulativeConstantSpeedWorldEstimate": 252.0218900786653
     },
     {
       "videoSecond": 15,
@@ -203,7 +234,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 287.16687792667545
+      "cumulativeConstantSpeedWorldEstimate": 272.80649976949184
     },
     {
       "videoSecond": 16,
@@ -216,7 +247,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 309.0757802268821
+      "cumulativeConstantSpeedWorldEstimate": 294.7154020696985
     },
     {
       "videoSecond": 17,
@@ -229,7 +260,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 330.98468252708875
+      "cumulativeConstantSpeedWorldEstimate": 316.62430436990513
     },
     {
       "videoSecond": 18,
@@ -242,7 +273,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 351.7692922179153
+      "cumulativeConstantSpeedWorldEstimate": 337.40891406073166
     },
     {
       "videoSecond": 19,
@@ -255,7 +286,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 373.6781945181219
+      "cumulativeConstantSpeedWorldEstimate": 359.3178163609383
     },
     {
       "videoSecond": 20,
@@ -268,7 +299,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 395.5870968183286
+      "cumulativeConstantSpeedWorldEstimate": 381.22671866114496
     },
     {
       "videoSecond": 21,
@@ -281,7 +312,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 415.183014760594
+      "cumulativeConstantSpeedWorldEstimate": 400.8226366034104
     },
     {
       "videoSecond": 22,
@@ -294,7 +325,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 434.77893270285944
+      "cumulativeConstantSpeedWorldEstimate": 420.4185545456758
     },
     {
       "videoSecond": 23,
@@ -307,7 +338,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 454.37485064512487
+      "cumulativeConstantSpeedWorldEstimate": 440.01447248794125
     },
     {
       "videoSecond": 24,
@@ -320,7 +351,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 473.9707685873903
+      "cumulativeConstantSpeedWorldEstimate": 459.6103904302067
     },
     {
       "videoSecond": 25,
@@ -333,7 +364,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 493.5666865296557
+      "cumulativeConstantSpeedWorldEstimate": 479.2063083724721
     },
     {
       "videoSecond": 26,
@@ -346,7 +377,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 513.1626044719211
+      "cumulativeConstantSpeedWorldEstimate": 498.80222631473754
     },
     {
       "videoSecond": 27,
@@ -359,7 +390,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 532.7585224141865
+      "cumulativeConstantSpeedWorldEstimate": 518.398144257003
     },
     {
       "videoSecond": 28,
@@ -372,7 +403,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 553.543132105013
+      "cumulativeConstantSpeedWorldEstimate": 539.1827539478295
     },
     {
       "videoSecond": 29,
@@ -385,7 +416,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 573.1390500472784
+      "cumulativeConstantSpeedWorldEstimate": 558.7786718900949
     },
     {
       "videoSecond": 30,
@@ -398,7 +429,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 593.9236597381049
+      "cumulativeConstantSpeedWorldEstimate": 579.5632815809214
     },
     {
       "videoSecond": 31,
@@ -411,7 +442,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 614.7082694289314
+      "cumulativeConstantSpeedWorldEstimate": 600.3478912717479
     },
     {
       "videoSecond": 32,
@@ -424,7 +455,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 633.0385722087548
+      "cumulativeConstantSpeedWorldEstimate": 618.6781940515713
     },
     {
       "videoSecond": 33,
@@ -437,7 +468,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 652.6344901510201
+      "cumulativeConstantSpeedWorldEstimate": 638.2741119938366
     },
     {
       "videoSecond": 34,
@@ -450,7 +481,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 670.9647929308435
+      "cumulativeConstantSpeedWorldEstimate": 656.60441477366
     },
     {
       "videoSecond": 35,
@@ -463,7 +494,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 689.2950957106668
+      "cumulativeConstantSpeedWorldEstimate": 674.9347175534833
     },
     {
       "videoSecond": 36,
@@ -476,7 +507,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 708.8910136529322
+      "cumulativeConstantSpeedWorldEstimate": 694.5306354957487
     },
     {
       "videoSecond": 37,
@@ -489,7 +520,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 728.4869315951976
+      "cumulativeConstantSpeedWorldEstimate": 714.1265534380141
     },
     {
       "videoSecond": 38,
@@ -502,7 +533,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 746.8172343750209
+      "cumulativeConstantSpeedWorldEstimate": 732.4568562178374
     },
     {
       "videoSecond": 39,
@@ -515,7 +546,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 766.4131523172863
+      "cumulativeConstantSpeedWorldEstimate": 752.0527741601028
     },
     {
       "videoSecond": 40,
@@ -528,7 +559,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 786.0090702595517
+      "cumulativeConstantSpeedWorldEstimate": 771.6486921023682
     },
     {
       "videoSecond": 41,
@@ -541,7 +572,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 805.604988201817
+      "cumulativeConstantSpeedWorldEstimate": 791.2446100446335
     },
     {
       "videoSecond": 42,
@@ -554,7 +585,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 825.2009061440824
+      "cumulativeConstantSpeedWorldEstimate": 810.8405279868989
     },
     {
       "videoSecond": 43,
@@ -567,7 +598,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 845.9855158349089
+      "cumulativeConstantSpeedWorldEstimate": 831.6251376777254
     },
     {
       "videoSecond": 44,
@@ -580,7 +611,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 865.5814337771743
+      "cumulativeConstantSpeedWorldEstimate": 851.2210556199908
     },
     {
       "videoSecond": 45,
@@ -593,7 +624,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 886.3660434680008
+      "cumulativeConstantSpeedWorldEstimate": 872.0056653108173
     },
     {
       "videoSecond": 46,
@@ -606,7 +637,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 905.9619614102662
+      "cumulativeConstantSpeedWorldEstimate": 891.6015832530827
     },
     {
       "videoSecond": 47,
@@ -619,7 +650,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 925.5578793525316
+      "cumulativeConstantSpeedWorldEstimate": 911.1975011953481
     },
     {
       "videoSecond": 48,
@@ -632,7 +663,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 943.8881821323549
+      "cumulativeConstantSpeedWorldEstimate": 929.5278039751714
     },
     {
       "videoSecond": 49,
@@ -645,7 +676,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 963.4841000746203
+      "cumulativeConstantSpeedWorldEstimate": 949.1237219174368
     },
     {
       "videoSecond": 50,
@@ -658,7 +689,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 981.8144028544436
+      "cumulativeConstantSpeedWorldEstimate": 967.4540246972601
     },
     {
       "videoSecond": 51,
@@ -671,7 +702,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 1000.144705634267
+      "cumulativeConstantSpeedWorldEstimate": 985.7843274770835
     },
     {
       "videoSecond": 52,
@@ -684,7 +715,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1019.7406235765324
+      "cumulativeConstantSpeedWorldEstimate": 1005.3802454193489
     },
     {
       "videoSecond": 53,
@@ -697,7 +728,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 1038.0709263563558
+      "cumulativeConstantSpeedWorldEstimate": 1023.7105481991722
     },
     {
       "videoSecond": 54,
@@ -710,7 +741,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1057.6668442986213
+      "cumulativeConstantSpeedWorldEstimate": 1043.3064661414376
     },
     {
       "videoSecond": 55,
@@ -723,7 +754,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 1075.9971470784446
+      "cumulativeConstantSpeedWorldEstimate": 1061.636768921261
     },
     {
       "videoSecond": 56,
@@ -736,7 +767,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1095.5930650207101
+      "cumulativeConstantSpeedWorldEstimate": 1081.2326868635264
     },
     {
       "videoSecond": 57,
@@ -749,7 +780,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1115.1889829629756
+      "cumulativeConstantSpeedWorldEstimate": 1100.8286048057919
     },
     {
       "videoSecond": 58,
@@ -762,7 +793,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1134.784900905241
+      "cumulativeConstantSpeedWorldEstimate": 1120.4245227480574
     },
     {
       "videoSecond": 59,
@@ -775,7 +806,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1154.3808188475066
+      "cumulativeConstantSpeedWorldEstimate": 1140.0204406903229
     },
     {
       "videoSecond": 60,
@@ -788,7 +819,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1173.976736789772
+      "cumulativeConstantSpeedWorldEstimate": 1159.6163586325883
     },
     {
       "videoSecond": 61,
@@ -801,7 +832,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1194.7613464805986
+      "cumulativeConstantSpeedWorldEstimate": 1180.4009683234149
     },
     {
       "videoSecond": 62,
@@ -814,7 +845,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1214.357264422864
+      "cumulativeConstantSpeedWorldEstimate": 1199.9968862656804
     },
     {
       "videoSecond": 63,
@@ -827,7 +858,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1235.1418741136906
+      "cumulativeConstantSpeedWorldEstimate": 1220.781495956507
     },
     {
       "videoSecond": 64,
@@ -840,7 +871,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1254.737792055956
+      "cumulativeConstantSpeedWorldEstimate": 1240.3774138987724
     },
     {
       "videoSecond": 65,
@@ -853,7 +884,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1275.5224017467826
+      "cumulativeConstantSpeedWorldEstimate": 1261.162023589599
     },
     {
       "videoSecond": 66,
@@ -866,7 +897,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1296.3070114376092
+      "cumulativeConstantSpeedWorldEstimate": 1281.9466332804254
     },
     {
       "videoSecond": 67,
@@ -879,7 +910,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 1314.6373142174325
+      "cumulativeConstantSpeedWorldEstimate": 1300.2769360602488
     },
     {
       "videoSecond": 68,
@@ -892,7 +923,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 15.491933384829668,
       "constantSpeedTravelEstimate": 15.491933384829668,
-      "cumulativeConstantSpeedWorldEstimate": 1330.1292476022622
+      "cumulativeConstantSpeedWorldEstimate": 1315.7688694450785
     },
     {
       "videoSecond": 69,
@@ -905,7 +936,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1349.7251655445277
+      "cumulativeConstantSpeedWorldEstimate": 1335.364787387344
     },
     {
       "videoSecond": 70,
@@ -918,7 +949,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1369.3210834867932
+      "cumulativeConstantSpeedWorldEstimate": 1354.9607053296095
     },
     {
       "videoSecond": 71,
@@ -931,7 +962,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1388.9170014290587
+      "cumulativeConstantSpeedWorldEstimate": 1374.556623271875
     },
     {
       "videoSecond": 72,
@@ -944,7 +975,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1408.5129193713242
+      "cumulativeConstantSpeedWorldEstimate": 1394.1525412141405
     },
     {
       "videoSecond": 73,
@@ -957,7 +988,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1428.1088373135897
+      "cumulativeConstantSpeedWorldEstimate": 1413.748459156406
     },
     {
       "videoSecond": 74,
@@ -970,7 +1001,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1448.8934470044162
+      "cumulativeConstantSpeedWorldEstimate": 1434.5330688472325
     },
     {
       "videoSecond": 75,
@@ -983,7 +1014,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 1468.4893649466817
+      "cumulativeConstantSpeedWorldEstimate": 1454.128986789498
     },
     {
       "videoSecond": 76,
@@ -996,7 +1027,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1489.2739746375082
+      "cumulativeConstantSpeedWorldEstimate": 1474.9135964803245
     },
     {
       "videoSecond": 77,
@@ -1009,7 +1040,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1510.0585843283347
+      "cumulativeConstantSpeedWorldEstimate": 1495.698206171151
     },
     {
       "videoSecond": 78,
@@ -1022,7 +1053,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1530.8431940191613
+      "cumulativeConstantSpeedWorldEstimate": 1516.4828158619775
     },
     {
       "videoSecond": 79,
@@ -1035,7 +1066,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1551.6278037099878
+      "cumulativeConstantSpeedWorldEstimate": 1537.267425552804
     },
     {
       "videoSecond": 80,
@@ -1048,7 +1079,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1572.4124134008143
+      "cumulativeConstantSpeedWorldEstimate": 1558.0520352436306
     },
     {
       "videoSecond": 81,
@@ -1061,7 +1092,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1593.1970230916409
+      "cumulativeConstantSpeedWorldEstimate": 1578.8366449344571
     },
     {
       "videoSecond": 82,
@@ -1074,7 +1105,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1613.9816327824674
+      "cumulativeConstantSpeedWorldEstimate": 1599.6212546252837
     },
     {
       "videoSecond": 83,
@@ -1087,7 +1118,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1635.890535082674
+      "cumulativeConstantSpeedWorldEstimate": 1621.5301569254902
     },
     {
       "videoSecond": 84,
@@ -1100,7 +1131,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1656.6751447735005
+      "cumulativeConstantSpeedWorldEstimate": 1642.3147666163168
     },
     {
       "videoSecond": 85,
@@ -1113,7 +1144,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1678.584047073707
+      "cumulativeConstantSpeedWorldEstimate": 1664.2236689165234
     },
     {
       "videoSecond": 86,
@@ -1126,7 +1157,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1699.3686567645336
+      "cumulativeConstantSpeedWorldEstimate": 1685.00827860735
     },
     {
       "videoSecond": 87,
@@ -1139,7 +1170,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1721.2775590647402
+      "cumulativeConstantSpeedWorldEstimate": 1706.9171809075565
     },
     {
       "videoSecond": 88,
@@ -1152,7 +1183,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1742.0621687555667
+      "cumulativeConstantSpeedWorldEstimate": 1727.701790598383
     },
     {
       "videoSecond": 89,
@@ -1165,7 +1196,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1763.9710710557733
+      "cumulativeConstantSpeedWorldEstimate": 1749.6106928985896
     },
     {
       "videoSecond": 90,
@@ -1178,7 +1209,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1785.87997335598
+      "cumulativeConstantSpeedWorldEstimate": 1771.5195951987962
     },
     {
       "videoSecond": 91,
@@ -1191,7 +1222,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1807.7888756561865
+      "cumulativeConstantSpeedWorldEstimate": 1793.4284974990028
     },
     {
       "videoSecond": 92,
@@ -1204,7 +1235,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 1828.573485347013
+      "cumulativeConstantSpeedWorldEstimate": 1814.2131071898293
     },
     {
       "videoSecond": 93,
@@ -1217,7 +1248,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1850.4823876472196
+      "cumulativeConstantSpeedWorldEstimate": 1836.122009490036
     },
     {
       "videoSecond": 94,
@@ -1230,7 +1261,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1872.3912899474262
+      "cumulativeConstantSpeedWorldEstimate": 1858.0309117902425
     },
     {
       "videoSecond": 95,
@@ -1243,7 +1274,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1894.3001922476328
+      "cumulativeConstantSpeedWorldEstimate": 1879.939814090449
     },
     {
       "videoSecond": 96,
@@ -1256,7 +1287,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1916.2090945478394
+      "cumulativeConstantSpeedWorldEstimate": 1901.8487163906557
     },
     {
       "videoSecond": 97,
@@ -1269,7 +1300,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1938.117996848046
+      "cumulativeConstantSpeedWorldEstimate": 1923.7576186908623
     },
     {
       "videoSecond": 98,
@@ -1282,7 +1313,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1960.0268991482526
+      "cumulativeConstantSpeedWorldEstimate": 1945.6665209910689
     },
     {
       "videoSecond": 99,
@@ -1295,7 +1326,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 1981.9358014484592
+      "cumulativeConstantSpeedWorldEstimate": 1967.5754232912755
     },
     {
       "videoSecond": 100,
@@ -1308,7 +1339,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2003.8447037486658
+      "cumulativeConstantSpeedWorldEstimate": 1989.484325591482
     },
     {
       "videoSecond": 101,
@@ -1321,7 +1352,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2025.7536060488724
+      "cumulativeConstantSpeedWorldEstimate": 2011.3932278916886
     },
     {
       "videoSecond": 102,
@@ -1334,7 +1365,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2047.662508349079
+      "cumulativeConstantSpeedWorldEstimate": 2033.3021301918952
     },
     {
       "videoSecond": 103,
@@ -1347,7 +1378,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2069.5714106492856
+      "cumulativeConstantSpeedWorldEstimate": 2055.211032492102
     },
     {
       "videoSecond": 104,
@@ -1360,7 +1391,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2091.480312949492
+      "cumulativeConstantSpeedWorldEstimate": 2077.1199347923084
     },
     {
       "videoSecond": 105,
@@ -1373,7 +1404,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2113.3892152496987
+      "cumulativeConstantSpeedWorldEstimate": 2099.028837092515
     },
     {
       "videoSecond": 106,
@@ -1386,7 +1417,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 22.978250586152114,
       "constantSpeedTravelEstimate": 22.978250586152114,
-      "cumulativeConstantSpeedWorldEstimate": 2136.367465835851
+      "cumulativeConstantSpeedWorldEstimate": 2122.007087678667
     },
     {
       "videoSecond": 107,
@@ -1399,7 +1430,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2158.2763681360575
+      "cumulativeConstantSpeedWorldEstimate": 2143.9159899788738
     },
     {
       "videoSecond": 108,
@@ -1412,7 +1443,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2180.185270436264
+      "cumulativeConstantSpeedWorldEstimate": 2165.8248922790804
     },
     {
       "videoSecond": 109,
@@ -1425,7 +1456,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2202.0941727364707
+      "cumulativeConstantSpeedWorldEstimate": 2187.733794579287
     },
     {
       "videoSecond": 110,
@@ -1438,7 +1469,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 22.978250586152114,
       "constantSpeedTravelEstimate": 22.978250586152114,
-      "cumulativeConstantSpeedWorldEstimate": 2225.072423322623
+      "cumulativeConstantSpeedWorldEstimate": 2210.712045165439
     },
     {
       "videoSecond": 111,
@@ -1451,7 +1482,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2246.9813256228294
+      "cumulativeConstantSpeedWorldEstimate": 2232.6209474656457
     },
     {
       "videoSecond": 112,
@@ -1464,7 +1495,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 22.978250586152114,
       "constantSpeedTravelEstimate": 22.978250586152114,
-      "cumulativeConstantSpeedWorldEstimate": 2269.9595762089816
+      "cumulativeConstantSpeedWorldEstimate": 2255.599198051798
     },
     {
       "videoSecond": 113,
@@ -1477,7 +1508,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2289.555494151247
+      "cumulativeConstantSpeedWorldEstimate": 2275.195115994063
     },
     {
       "videoSecond": 114,
@@ -1490,7 +1521,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2309.151412093512
+      "cumulativeConstantSpeedWorldEstimate": 2294.7910339363284
     },
     {
       "videoSecond": 115,
@@ -1503,7 +1534,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2328.7473300357774
+      "cumulativeConstantSpeedWorldEstimate": 2314.3869518785937
     },
     {
       "videoSecond": 116,
@@ -1516,7 +1547,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2349.531939726604
+      "cumulativeConstantSpeedWorldEstimate": 2335.17156156942
     },
     {
       "videoSecond": 117,
@@ -1529,7 +1560,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2369.127857668869
+      "cumulativeConstantSpeedWorldEstimate": 2354.7674795116855
     },
     {
       "videoSecond": 118,
@@ -1542,7 +1573,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2389.9124673596957
+      "cumulativeConstantSpeedWorldEstimate": 2375.552089202512
     },
     {
       "videoSecond": 119,
@@ -1555,7 +1586,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2409.508385301961
+      "cumulativeConstantSpeedWorldEstimate": 2395.1480071447772
     },
     {
       "videoSecond": 120,
@@ -1568,7 +1599,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2431.4172876021676
+      "cumulativeConstantSpeedWorldEstimate": 2417.056909444984
     },
     {
       "videoSecond": 121,
@@ -1581,7 +1612,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2452.201897292994
+      "cumulativeConstantSpeedWorldEstimate": 2437.8415191358104
     },
     {
       "videoSecond": 122,
@@ -1594,7 +1625,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2472.9865069838206
+      "cumulativeConstantSpeedWorldEstimate": 2458.626128826637
     },
     {
       "videoSecond": 123,
@@ -1607,7 +1638,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2493.771116674647
+      "cumulativeConstantSpeedWorldEstimate": 2479.4107385174634
     },
     {
       "videoSecond": 124,
@@ -1620,7 +1651,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2515.6800189748537
+      "cumulativeConstantSpeedWorldEstimate": 2501.31964081767
     },
     {
       "videoSecond": 125,
@@ -1633,7 +1664,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2536.4646286656803
+      "cumulativeConstantSpeedWorldEstimate": 2522.1042505084965
     },
     {
       "videoSecond": 126,
@@ -1646,7 +1677,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2558.373530965887
+      "cumulativeConstantSpeedWorldEstimate": 2544.013152808703
     },
     {
       "videoSecond": 127,
@@ -1659,7 +1690,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2580.2824332660934
+      "cumulativeConstantSpeedWorldEstimate": 2565.9220551089097
     },
     {
       "videoSecond": 128,
@@ -1672,7 +1703,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2602.1913355663
+      "cumulativeConstantSpeedWorldEstimate": 2587.8309574091163
     },
     {
       "videoSecond": 129,
@@ -1685,7 +1716,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2624.1002378665066
+      "cumulativeConstantSpeedWorldEstimate": 2609.739859709323
     },
     {
       "videoSecond": 130,
@@ -1698,7 +1729,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2644.884847557333
+      "cumulativeConstantSpeedWorldEstimate": 2630.5244694001494
     },
     {
       "videoSecond": 131,
@@ -1711,7 +1742,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 2663.2151503371565
+      "cumulativeConstantSpeedWorldEstimate": 2648.8547721799728
     },
     {
       "videoSecond": 132,
@@ -1724,7 +1755,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2682.8110682794218
+      "cumulativeConstantSpeedWorldEstimate": 2668.450690122238
     },
     {
       "videoSecond": 133,
@@ -1737,7 +1768,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2703.5956779702483
+      "cumulativeConstantSpeedWorldEstimate": 2689.2352998130646
     },
     {
       "videoSecond": 134,
@@ -1750,7 +1781,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2723.1915959125135
+      "cumulativeConstantSpeedWorldEstimate": 2708.83121775533
     },
     {
       "videoSecond": 135,
@@ -1763,7 +1794,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2743.97620560334
+      "cumulativeConstantSpeedWorldEstimate": 2729.6158274461563
     },
     {
       "videoSecond": 136,
@@ -1776,7 +1807,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2764.7608152941666
+      "cumulativeConstantSpeedWorldEstimate": 2750.400437136983
     },
     {
       "videoSecond": 137,
@@ -1789,7 +1820,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 2784.356733236432
+      "cumulativeConstantSpeedWorldEstimate": 2769.996355079248
     },
     {
       "videoSecond": 138,
@@ -1802,7 +1833,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2805.1413429272584
+      "cumulativeConstantSpeedWorldEstimate": 2790.7809647700747
     },
     {
       "videoSecond": 139,
@@ -1815,7 +1846,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2825.925952618085
+      "cumulativeConstantSpeedWorldEstimate": 2811.565574460901
     },
     {
       "videoSecond": 140,
@@ -1828,7 +1859,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2846.7105623089114
+      "cumulativeConstantSpeedWorldEstimate": 2832.3501841517277
     },
     {
       "videoSecond": 141,
@@ -1841,7 +1872,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2868.619464609118
+      "cumulativeConstantSpeedWorldEstimate": 2854.2590864519343
     },
     {
       "videoSecond": 142,
@@ -1854,7 +1885,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2889.4040742999446
+      "cumulativeConstantSpeedWorldEstimate": 2875.043696142761
     },
     {
       "videoSecond": 143,
@@ -1867,7 +1898,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2911.312976600151
+      "cumulativeConstantSpeedWorldEstimate": 2896.9525984429674
     },
     {
       "videoSecond": 144,
@@ -1880,7 +1911,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2932.0975862909777
+      "cumulativeConstantSpeedWorldEstimate": 2917.737208133794
     },
     {
       "videoSecond": 145,
@@ -1893,7 +1924,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2954.0064885911843
+      "cumulativeConstantSpeedWorldEstimate": 2939.6461104340005
     },
     {
       "videoSecond": 146,
@@ -1906,7 +1937,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 2974.791098282011
+      "cumulativeConstantSpeedWorldEstimate": 2960.430720124827
     },
     {
       "videoSecond": 147,
@@ -1919,7 +1950,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 2996.7000005822174
+      "cumulativeConstantSpeedWorldEstimate": 2982.3396224250337
     },
     {
       "videoSecond": 148,
@@ -1932,7 +1963,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3017.484610273044
+      "cumulativeConstantSpeedWorldEstimate": 3003.12423211586
     },
     {
       "videoSecond": 149,
@@ -1945,7 +1976,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3038.2692199638705
+      "cumulativeConstantSpeedWorldEstimate": 3023.9088418066867
     },
     {
       "videoSecond": 150,
@@ -1958,7 +1989,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3057.8651379061357
+      "cumulativeConstantSpeedWorldEstimate": 3043.504759748952
     },
     {
       "videoSecond": 151,
@@ -1971,7 +2002,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3077.461055848401
+      "cumulativeConstantSpeedWorldEstimate": 3063.1006776912172
     },
     {
       "videoSecond": 152,
@@ -1984,7 +2015,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3097.0569737906662
+      "cumulativeConstantSpeedWorldEstimate": 3082.6965956334825
     },
     {
       "videoSecond": 153,
@@ -1997,7 +2028,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3117.8415834814928
+      "cumulativeConstantSpeedWorldEstimate": 3103.481205324309
     },
     {
       "videoSecond": 154,
@@ -2010,7 +2041,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3138.6261931723193
+      "cumulativeConstantSpeedWorldEstimate": 3124.2658150151356
     },
     {
       "videoSecond": 155,
@@ -2023,7 +2054,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3159.410802863146
+      "cumulativeConstantSpeedWorldEstimate": 3145.050424705962
     },
     {
       "videoSecond": 156,
@@ -2036,7 +2067,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3180.1954125539723
+      "cumulativeConstantSpeedWorldEstimate": 3165.8350343967886
     },
     {
       "videoSecond": 157,
@@ -2049,7 +2080,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3200.980022244799
+      "cumulativeConstantSpeedWorldEstimate": 3186.619644087615
     },
     {
       "videoSecond": 158,
@@ -2062,7 +2093,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3221.7646319356254
+      "cumulativeConstantSpeedWorldEstimate": 3207.4042537784417
     },
     {
       "videoSecond": 159,
@@ -2075,7 +2106,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3243.673534235832
+      "cumulativeConstantSpeedWorldEstimate": 3229.3131560786483
     },
     {
       "videoSecond": 160,
@@ -2088,7 +2119,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3265.5824365360386
+      "cumulativeConstantSpeedWorldEstimate": 3251.222058378855
     },
     {
       "videoSecond": 161,
@@ -2101,7 +2132,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3285.178354478304
+      "cumulativeConstantSpeedWorldEstimate": 3270.81797632112
     },
     {
       "videoSecond": 162,
@@ -2114,7 +2145,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3305.9629641691304
+      "cumulativeConstantSpeedWorldEstimate": 3291.6025860119466
     },
     {
       "videoSecond": 163,
@@ -2127,7 +2158,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3326.747573859957
+      "cumulativeConstantSpeedWorldEstimate": 3312.387195702773
     },
     {
       "videoSecond": 164,
@@ -2140,7 +2171,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3347.5321835507834
+      "cumulativeConstantSpeedWorldEstimate": 3333.1718053935997
     },
     {
       "videoSecond": 165,
@@ -2153,7 +2184,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3369.44108585099
+      "cumulativeConstantSpeedWorldEstimate": 3355.0807076938063
     },
     {
       "videoSecond": 166,
@@ -2166,7 +2197,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3391.3499881511966
+      "cumulativeConstantSpeedWorldEstimate": 3376.989609994013
     },
     {
       "videoSecond": 167,
@@ -2179,7 +2210,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3412.134597842023
+      "cumulativeConstantSpeedWorldEstimate": 3397.7742196848394
     },
     {
       "videoSecond": 168,
@@ -2192,7 +2223,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3434.0435001422297
+      "cumulativeConstantSpeedWorldEstimate": 3419.683121985046
     },
     {
       "videoSecond": 169,
@@ -2205,7 +2236,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3454.8281098330563
+      "cumulativeConstantSpeedWorldEstimate": 3440.4677316758725
     },
     {
       "videoSecond": 170,
@@ -2218,7 +2249,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3476.737012133263
+      "cumulativeConstantSpeedWorldEstimate": 3462.376633976079
     },
     {
       "videoSecond": 171,
@@ -2231,7 +2262,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3498.6459144334694
+      "cumulativeConstantSpeedWorldEstimate": 3484.2855362762857
     },
     {
       "videoSecond": 172,
@@ -2244,7 +2275,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3520.554816733676
+      "cumulativeConstantSpeedWorldEstimate": 3506.1944385764923
     },
     {
       "videoSecond": 173,
@@ -2257,7 +2288,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3541.3394264245026
+      "cumulativeConstantSpeedWorldEstimate": 3526.979048267319
     },
     {
       "videoSecond": 174,
@@ -2270,7 +2301,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 3563.248328724709
+      "cumulativeConstantSpeedWorldEstimate": 3548.8879505675254
     },
     {
       "videoSecond": 175,
@@ -2283,7 +2314,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3582.8442466669744
+      "cumulativeConstantSpeedWorldEstimate": 3568.4838685097907
     },
     {
       "videoSecond": 176,
@@ -2296,7 +2327,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3601.1745494467978
+      "cumulativeConstantSpeedWorldEstimate": 3586.814171289614
     },
     {
       "videoSecond": 177,
@@ -2309,7 +2340,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3620.770467389063
+      "cumulativeConstantSpeedWorldEstimate": 3606.4100892318793
     },
     {
       "videoSecond": 178,
@@ -2322,7 +2353,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3639.1007701688864
+      "cumulativeConstantSpeedWorldEstimate": 3624.7403920117026
     },
     {
       "videoSecond": 179,
@@ -2335,7 +2366,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3658.6966881111516
+      "cumulativeConstantSpeedWorldEstimate": 3644.336309953968
     },
     {
       "videoSecond": 180,
@@ -2348,7 +2379,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3677.026990890975
+      "cumulativeConstantSpeedWorldEstimate": 3662.666612733791
     },
     {
       "videoSecond": 181,
@@ -2361,7 +2392,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3697.8116005818015
+      "cumulativeConstantSpeedWorldEstimate": 3683.4512224246178
     },
     {
       "videoSecond": 182,
@@ -2374,7 +2405,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3717.4075185240667
+      "cumulativeConstantSpeedWorldEstimate": 3703.047140366883
     },
     {
       "videoSecond": 183,
@@ -2387,7 +2418,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3737.003436466332
+      "cumulativeConstantSpeedWorldEstimate": 3722.6430583091483
     },
     {
       "videoSecond": 184,
@@ -2400,7 +2431,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3756.5993544085973
+      "cumulativeConstantSpeedWorldEstimate": 3742.2389762514135
     },
     {
       "videoSecond": 185,
@@ -2413,7 +2444,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 3777.383964099424
+      "cumulativeConstantSpeedWorldEstimate": 3763.02358594224
     },
     {
       "videoSecond": 186,
@@ -2426,7 +2457,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3796.979882041689
+      "cumulativeConstantSpeedWorldEstimate": 3782.6195038845053
     },
     {
       "videoSecond": 187,
@@ -2439,7 +2470,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3815.3101848215124
+      "cumulativeConstantSpeedWorldEstimate": 3800.9498066643287
     },
     {
       "videoSecond": 188,
@@ -2452,7 +2483,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3833.6404876013357
+      "cumulativeConstantSpeedWorldEstimate": 3819.280109444152
     },
     {
       "videoSecond": 189,
@@ -2465,7 +2496,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3851.970790381159
+      "cumulativeConstantSpeedWorldEstimate": 3837.6104122239753
     },
     {
       "videoSecond": 190,
@@ -2478,7 +2509,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3871.5667083234243
+      "cumulativeConstantSpeedWorldEstimate": 3857.2063301662406
     },
     {
       "videoSecond": 191,
@@ -2491,7 +2522,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3889.8970111032477
+      "cumulativeConstantSpeedWorldEstimate": 3875.536632946064
     },
     {
       "videoSecond": 192,
@@ -2504,7 +2535,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3909.492929045513
+      "cumulativeConstantSpeedWorldEstimate": 3895.132550888329
     },
     {
       "videoSecond": 193,
@@ -2517,7 +2548,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 3927.8232318253363
+      "cumulativeConstantSpeedWorldEstimate": 3913.4628536681525
     },
     {
       "videoSecond": 194,
@@ -2530,7 +2561,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3947.4191497676015
+      "cumulativeConstantSpeedWorldEstimate": 3933.058771610418
     },
     {
       "videoSecond": 195,
@@ -2543,7 +2574,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3967.015067709867
+      "cumulativeConstantSpeedWorldEstimate": 3952.654689552683
     },
     {
       "videoSecond": 196,
@@ -2556,7 +2587,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 3986.610985652132
+      "cumulativeConstantSpeedWorldEstimate": 3972.2506074949483
     },
     {
       "videoSecond": 197,
@@ -2569,7 +2600,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4006.2069035943973
+      "cumulativeConstantSpeedWorldEstimate": 3991.8465254372136
     },
     {
       "videoSecond": 198,
@@ -2582,7 +2613,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4025.8028215366626
+      "cumulativeConstantSpeedWorldEstimate": 4011.442443379479
     },
     {
       "videoSecond": 199,
@@ -2595,7 +2626,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4045.398739478928
+      "cumulativeConstantSpeedWorldEstimate": 4031.038361321744
     },
     {
       "videoSecond": 200,
@@ -2608,7 +2639,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4064.994657421193
+      "cumulativeConstantSpeedWorldEstimate": 4050.6342792640094
     },
     {
       "videoSecond": 201,
@@ -2621,7 +2652,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4084.5905753634584
+      "cumulativeConstantSpeedWorldEstimate": 4070.2301972062746
     },
     {
       "videoSecond": 202,
@@ -2634,7 +2665,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4105.375185054285
+      "cumulativeConstantSpeedWorldEstimate": 4091.014806897101
     },
     {
       "videoSecond": 203,
@@ -2647,7 +2678,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4124.97110299655
+      "cumulativeConstantSpeedWorldEstimate": 4110.610724839366
     },
     {
       "videoSecond": 204,
@@ -2660,7 +2691,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4145.755712687376
+      "cumulativeConstantSpeedWorldEstimate": 4131.3953345301925
     },
     {
       "videoSecond": 205,
@@ -2673,7 +2704,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4166.540322378203
+      "cumulativeConstantSpeedWorldEstimate": 4152.1799442210195
     },
     {
       "videoSecond": 206,
@@ -2686,7 +2717,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4187.32493206903
+      "cumulativeConstantSpeedWorldEstimate": 4172.964553911846
     },
     {
       "videoSecond": 207,
@@ -2699,7 +2730,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4209.233834369237
+      "cumulativeConstantSpeedWorldEstimate": 4194.8734562120535
     },
     {
       "videoSecond": 208,
@@ -2712,7 +2743,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4231.142736669444
+      "cumulativeConstantSpeedWorldEstimate": 4216.7823585122605
     },
     {
       "videoSecond": 209,
@@ -2725,7 +2756,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4253.051638969651
+      "cumulativeConstantSpeedWorldEstimate": 4238.691260812468
     },
     {
       "videoSecond": 210,
@@ -2738,7 +2769,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4273.836248660478
+      "cumulativeConstantSpeedWorldEstimate": 4259.475870503295
     },
     {
       "videoSecond": 211,
@@ -2751,7 +2782,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4293.432166602744
+      "cumulativeConstantSpeedWorldEstimate": 4279.07178844556
     },
     {
       "videoSecond": 212,
@@ -2764,7 +2795,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4313.028084545009
+      "cumulativeConstantSpeedWorldEstimate": 4298.667706387825
     },
     {
       "videoSecond": 213,
@@ -2777,7 +2808,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 4331.358387324833
+      "cumulativeConstantSpeedWorldEstimate": 4316.998009167649
     },
     {
       "videoSecond": 214,
@@ -2790,7 +2821,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 18.33030277982336,
       "constantSpeedTravelEstimate": 18.33030277982336,
-      "cumulativeConstantSpeedWorldEstimate": 4349.688690104656
+      "cumulativeConstantSpeedWorldEstimate": 4335.328311947473
     },
     {
       "videoSecond": 215,
@@ -2803,7 +2834,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4369.284608046922
+      "cumulativeConstantSpeedWorldEstimate": 4354.924229889738
     },
     {
       "videoSecond": 216,
@@ -2816,7 +2847,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4390.069217737748
+      "cumulativeConstantSpeedWorldEstimate": 4375.708839580564
     },
     {
       "videoSecond": 217,
@@ -2829,7 +2860,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4410.853827428575
+      "cumulativeConstantSpeedWorldEstimate": 4396.493449271391
     },
     {
       "videoSecond": 218,
@@ -2842,7 +2873,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4431.638437119402
+      "cumulativeConstantSpeedWorldEstimate": 4417.278058962218
     },
     {
       "videoSecond": 219,
@@ -2855,7 +2886,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4452.423046810229
+      "cumulativeConstantSpeedWorldEstimate": 4438.062668653045
     },
     {
       "videoSecond": 220,
@@ -2868,7 +2899,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4473.207656501056
+      "cumulativeConstantSpeedWorldEstimate": 4458.847278343872
     },
     {
       "videoSecond": 221,
@@ -2881,7 +2912,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4493.992266191883
+      "cumulativeConstantSpeedWorldEstimate": 4479.631888034699
     },
     {
       "videoSecond": 222,
@@ -2894,7 +2925,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4515.90116849209
+      "cumulativeConstantSpeedWorldEstimate": 4501.540790334906
     },
     {
       "videoSecond": 223,
@@ -2907,7 +2938,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4536.685778182917
+      "cumulativeConstantSpeedWorldEstimate": 4522.325400025733
     },
     {
       "videoSecond": 224,
@@ -2920,7 +2951,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4557.470387873744
+      "cumulativeConstantSpeedWorldEstimate": 4543.11000971656
     },
     {
       "videoSecond": 225,
@@ -2933,7 +2964,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4579.379290173951
+      "cumulativeConstantSpeedWorldEstimate": 4565.018912016767
     },
     {
       "videoSecond": 226,
@@ -2946,7 +2977,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4600.163899864778
+      "cumulativeConstantSpeedWorldEstimate": 4585.803521707594
     },
     {
       "videoSecond": 227,
@@ -2959,7 +2990,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4622.072802164985
+      "cumulativeConstantSpeedWorldEstimate": 4607.712424007801
     },
     {
       "videoSecond": 228,
@@ -2972,7 +3003,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4642.857411855812
+      "cumulativeConstantSpeedWorldEstimate": 4628.497033698628
     },
     {
       "videoSecond": 229,
@@ -2985,7 +3016,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4663.642021546639
+      "cumulativeConstantSpeedWorldEstimate": 4649.281643389455
     },
     {
       "videoSecond": 230,
@@ -2998,7 +3029,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4685.550923846846
+      "cumulativeConstantSpeedWorldEstimate": 4671.190545689662
     },
     {
       "videoSecond": 231,
@@ -3011,7 +3042,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4707.459826147053
+      "cumulativeConstantSpeedWorldEstimate": 4693.099447989869
     },
     {
       "videoSecond": 232,
@@ -3024,7 +3055,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4729.36872844726
+      "cumulativeConstantSpeedWorldEstimate": 4715.008350290076
     },
     {
       "videoSecond": 233,
@@ -3037,7 +3068,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4750.153338138087
+      "cumulativeConstantSpeedWorldEstimate": 4735.792959980903
     },
     {
       "videoSecond": 234,
@@ -3050,7 +3081,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4772.062240438294
+      "cumulativeConstantSpeedWorldEstimate": 4757.70186228111
     },
     {
       "videoSecond": 235,
@@ -3063,7 +3094,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4793.971142738501
+      "cumulativeConstantSpeedWorldEstimate": 4779.610764581317
     },
     {
       "videoSecond": 236,
@@ -3076,7 +3107,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4815.880045038708
+      "cumulativeConstantSpeedWorldEstimate": 4801.519666881524
     },
     {
       "videoSecond": 237,
@@ -3089,7 +3120,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 4836.664654729535
+      "cumulativeConstantSpeedWorldEstimate": 4822.304276572351
     },
     {
       "videoSecond": 238,
@@ -3102,7 +3133,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4858.573557029742
+      "cumulativeConstantSpeedWorldEstimate": 4844.213178872558
     },
     {
       "videoSecond": 239,
@@ -3115,7 +3146,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4880.482459329949
+      "cumulativeConstantSpeedWorldEstimate": 4866.122081172765
     },
     {
       "videoSecond": 240,
@@ -3128,7 +3159,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 22.978250586152114,
       "constantSpeedTravelEstimate": 22.978250586152114,
-      "cumulativeConstantSpeedWorldEstimate": 4903.460709916101
+      "cumulativeConstantSpeedWorldEstimate": 4889.1003317589175
     },
     {
       "videoSecond": 241,
@@ -3141,7 +3172,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 4925.369612216308
+      "cumulativeConstantSpeedWorldEstimate": 4911.0092340591245
     },
     {
       "videoSecond": 242,
@@ -3154,7 +3185,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4944.9655301585735
+      "cumulativeConstantSpeedWorldEstimate": 4930.60515200139
     },
     {
       "videoSecond": 243,
@@ -3167,7 +3198,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4964.561448100839
+      "cumulativeConstantSpeedWorldEstimate": 4950.201069943655
     },
     {
       "videoSecond": 244,
@@ -3180,7 +3211,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 4984.157366043104
+      "cumulativeConstantSpeedWorldEstimate": 4969.79698788592
     },
     {
       "videoSecond": 245,
@@ -3193,7 +3224,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 5003.753283985369
+      "cumulativeConstantSpeedWorldEstimate": 4989.392905828186
     },
     {
       "videoSecond": 246,
@@ -3206,7 +3237,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5024.537893676195
+      "cumulativeConstantSpeedWorldEstimate": 5010.177515519012
     },
     {
       "videoSecond": 247,
@@ -3219,7 +3250,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 5044.133811618461
+      "cumulativeConstantSpeedWorldEstimate": 5029.773433461277
     },
     {
       "videoSecond": 248,
@@ -3232,7 +3263,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 5063.729729560726
+      "cumulativeConstantSpeedWorldEstimate": 5049.369351403542
     },
     {
       "videoSecond": 249,
@@ -3245,7 +3276,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5084.514339251553
+      "cumulativeConstantSpeedWorldEstimate": 5070.153961094369
     },
     {
       "videoSecond": 250,
@@ -3258,7 +3289,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 5104.110257193818
+      "cumulativeConstantSpeedWorldEstimate": 5089.749879036634
     },
     {
       "videoSecond": 251,
@@ -3271,7 +3302,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5124.894866884644
+      "cumulativeConstantSpeedWorldEstimate": 5110.5344887274605
     },
     {
       "videoSecond": 252,
@@ -3284,7 +3315,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5145.679476575471
+      "cumulativeConstantSpeedWorldEstimate": 5131.3190984182875
     },
     {
       "videoSecond": 253,
@@ -3297,7 +3328,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 5165.2753945177365
+      "cumulativeConstantSpeedWorldEstimate": 5150.915016360553
     },
     {
       "videoSecond": 254,
@@ -3310,7 +3341,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5186.0600042085625
+      "cumulativeConstantSpeedWorldEstimate": 5171.699626051379
     },
     {
       "videoSecond": 255,
@@ -3323,7 +3354,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5206.8446138993895
+      "cumulativeConstantSpeedWorldEstimate": 5192.484235742206
     },
     {
       "videoSecond": 256,
@@ -3336,7 +3367,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5227.6292235902165
+      "cumulativeConstantSpeedWorldEstimate": 5213.268845433033
     },
     {
       "videoSecond": 257,
@@ -3349,7 +3380,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 20.784609690826528,
       "constantSpeedTravelEstimate": 20.784609690826528,
-      "cumulativeConstantSpeedWorldEstimate": 5248.4138332810435
+      "cumulativeConstantSpeedWorldEstimate": 5234.05345512386
     },
     {
       "videoSecond": 258,
@@ -3362,7 +3393,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 21.908902300206645,
       "constantSpeedTravelEstimate": 21.908902300206645,
-      "cumulativeConstantSpeedWorldEstimate": 5270.3227355812505
+      "cumulativeConstantSpeedWorldEstimate": 5255.962357424067
     },
     {
       "videoSecond": 259,
@@ -3375,7 +3406,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 22.978250586152114,
       "constantSpeedTravelEstimate": 22.978250586152114,
-      "cumulativeConstantSpeedWorldEstimate": 5293.300986167403
+      "cumulativeConstantSpeedWorldEstimate": 5278.940608010219
     },
     {
       "videoSecond": 260,
@@ -3388,7 +3419,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 22.978250586152114,
       "constantSpeedTravelEstimate": 22.978250586152114,
-      "cumulativeConstantSpeedWorldEstimate": 5316.279236753555
+      "cumulativeConstantSpeedWorldEstimate": 5301.918858596371
     },
     {
       "videoSecond": 261,
@@ -3401,7 +3432,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 24.979991993593593,
       "constantSpeedTravelEstimate": 24.979991993593593,
-      "cumulativeConstantSpeedWorldEstimate": 5341.259228747149
+      "cumulativeConstantSpeedWorldEstimate": 5326.898850589965
     },
     {
       "videoSecond": 262,
@@ -3414,7 +3445,7 @@
       "intervalSeconds": 1,
       "estimatedRmsWorldSpeed": 19.595917942265423,
       "constantSpeedTravelEstimate": 19.595917942265423,
-      "cumulativeConstantSpeedWorldEstimate": 5360.855146689414
+      "cumulativeConstantSpeedWorldEstimate": 5346.49476853223
     }
   ]
 }

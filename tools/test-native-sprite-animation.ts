@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {createNativeSpriteAnimation as create,stepNativeSpriteAnimation as step} from '../target/temple-run/web/src/game/nativeSpriteAnimation';
+const a=create(),b=create();
+step(a,0,15,11);assert.deepEqual(a,create(),'capture/render-only call does not consume update');
+step(a,.01,15,11);assert.equal(a.frame,0);assert.equal(a.nextFrame,1);
+for(let i=0;i<6;i++)step(a,.01,15,11);
+assert.equal(a.frame,1);assert.equal(b.frame,0,'new instance does not inherit global phase');
+assert.equal(b.remaining,0);
+const large=create();step(large,1,15,11);
+assert.equal(large.frame,0);assert.equal(large.nextFrame,1,'native advances once, even across a long dt');
+assert.ok(large.remaining<0,'native preserves overdue countdown');
+step(large,.01,15,11);assert.equal(large.frame,1,'subsequent update advances another overdue frame');
+const loop=create();for(let i=0;i<12;i++)step(loop,1/15,15,11);
+assert.equal(loop.frame,0);assert.equal(loop.nextFrame,1,'all eleven frames loop');
+console.log('Native per-instance f32 countdown: first update, no global phase, one frame per tick, preserved debt and11-frame loop.');
