@@ -5,6 +5,12 @@ import UnityPy
 from UnityPy.helpers.MeshHelper import MeshHandler
 root=Path(__file__).resolve().parents[1];z=zipfile.ZipFile(sys.argv[1]);out=root/'target/temple-run/analysis/native-scenery-trees';out.mkdir(exist_ok=True)
 keys={'1':'11aee0eb3c3c54b068414a7504045ab8','2':'614f2046ff1a94b9794a3512d486dda4','3':'25c3b7e7af1194da091b9355ea4d6b69','4':'bc81ba8fd7359483d9ef9aeae023c4f8'}
+managerRaw=z.read('assets/bin/Data/globalgamemanagers');managerEnv=UnityPy.load(managerRaw);managerFile=next(iter(managerEnv.files.values()));manager=next(o.read_typetree()for o in managerEnv.objects if o.type.name=='ResourceManager');resourceProof={}
+for label,key in keys.items():
+ resource='prefabs/temple/trees/treealone'+(''if label=='1'else label)+'_prefab'
+ refs=[ref for name,ref in manager['m_Container']if name==resource]
+ assert refs and {managerFile.externals[ref['m_FileID']-1].path for ref in refs}=={key}
+ resourceProof[label]=dict(resource=resource,prefab=key,references=refs)
 def cross(a,b):return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]
 records={}
 for label,key in keys.items():
@@ -36,7 +42,7 @@ for label,key in keys.items():
   if max(v[1]for v in [a,b,c])-min(v[1]for v in [a,b,c])>.01:continue
   n=cross([b[i]-a[i]for i in range(3)],[c[i]-a[i]for i in range(3)])[1];up+=n>1e-8;down+=n<-1e-8
  records[label]=dict(prefab=key,prefabName=next(o.read_typetree()['m_Name']for o in e.objects if o.type.name=='GameObject'),prefabSHA256=hashlib.sha256(raw).hexdigest(),mesh=source,transforms=chain,bounds=[[min(v[i]for v in positions),max(v[i]for v in positions)]for i in range(3)],vertices=len(positions),expandedUV1Vertices=len(uv)//2,horizontalUp=up,horizontalDown=down,objSHA256=hashlib.sha256(obj.read_bytes()).hexdigest(),uv1SHA256=hashlib.sha256(uvfile.read_bytes()).hexdigest())
-(out/'source.json').write_text(json.dumps(dict(worldScale=.2,rootTranslationExcluded=True,productionIntegrated=True,defaultVariant=1,variantSelectionStatus='standalone family corrected; exact per-source-frame variant/spawn/side/yaw remains unverified',replacedLegacyAsset=dict(file='decor-tree-a.obj',mesh='1c25557b112d64b0692afc7b1401d311',actualPrefab='treeSlideCliffHorz_prefab',prefab='ad96d3a23c14d44e88a6ec27b1b184a0'),records=records),indent=2)+'\n');print(json.dumps({k:{n:v[n]for n in ['bounds','horizontalUp','horizontalDown']}for k,v in records.items()}))
+(out/'source.json').write_text(json.dumps(dict(resourceManagerSHA256=hashlib.sha256(managerRaw).hexdigest(),resourceProof=resourceProof,worldScale=.2,rootTranslationExcluded=True,productionIntegrated=True,defaultVariant=1,variantSelectionStatus='standalone family corrected; exact per-source-frame variant/spawn/side/yaw remains unverified',replacedLegacyAsset=dict(file='decor-tree-a.obj',mesh='1c25557b112d64b0692afc7b1401d311',actualPrefab='treeSlideCliffHorz_prefab',prefab='ad96d3a23c14d44e88a6ec27b1b184a0'),records=records),indent=2)+'\n');print(json.dumps({k:{n:v[n]for n in ['bounds','horizontalUp','horizontalDown']}for k,v in records.items()}))
 
 public=root/'target/temple-run/web/public/assets/track'
 for label in keys:

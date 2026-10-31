@@ -67,7 +67,7 @@ import {
   TURN_PREBUILD_DISTANCE,
   laneX,
 } from './config';
-import { createWorld, buildTile, buildStoneGate, buildSceneryTree, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
+import { createWorld, buildTile, buildStoneGate, buildSceneryTree, buildNativeScenery, alignNativeSceneryRoots, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, nativeTransitionAt, nativeTransitionSupported, type SurfaceKind } from './surface';
@@ -222,6 +222,26 @@ export class Game {
   private bindDebugApi(): void {
     (window as unknown as Record<string, unknown>).__templeGame = {
       state: () => this.debugState(),
+      setReferenceObstaclePrefab:(index:number,prefab:string)=>{
+        const obstacle=REFERENCE_VISIBLE_OBSTACLES[index];if(!obstacle)return null;
+        const definition=DEFS[obstacle.defId];if(!(definition.prefabs as readonly string[]).includes(prefab))return null;
+        const previous=obstacle.prefab;obstacle.prefab=prefab;return{index,previous,prefab};
+      },
+      moveReferenceObstacle:(index:number,distance:number)=>{
+        const obstacle=REFERENCE_VISIBLE_OBSTACLES[index];
+        if(!obstacle||!Number.isFinite(distance))return null;
+        const previous=obstacle.distance;obstacle.distance=distance;
+        return {index,previous,distance,note:'diagnostic authoring override; restart required; reload restores source'};
+      },
+      sceneryResources:()=>Object.entries(this.bundle.assets.sceneryTemplates??{}).map(([resource,object])=>({resource,loaded:Boolean(object)})),
+      previewScenery:(resource:string,side=10,ahead=22)=>{
+        const old=this.bundle.scene.getObjectByName('native-scenery-preview');if(old)this.bundle.scene.remove(old);
+        const object=buildNativeScenery(this.bundle.assets,resource);if(!object)return null;
+        const point=this.path.at(this.distance+ahead);
+        object.name='native-scenery-preview';object.position.set(point.x+Math.cos(point.heading)*side,0,point.z+Math.sin(point.heading)*side);
+        this.bundle.scene.add(object);this.renderOnce();
+        return {resource,position:object.position.toArray(),bounds:new THREE.Box3().setFromObject(object).getSize(new THREE.Vector3()).toArray()};
+      },
       jumpTo: (distance: number) => this.jumpTo(distance),
       start: () => this.start(),
       restart: () => this.restart(),
@@ -1287,6 +1307,7 @@ export class Game {
     const heading = this.path.at(Math.max(0, at - 0.05)).heading;
     group.position.set(point.x, this.meshY(at), point.z);
     group.rotation.y = heading;
+    alignNativeSceneryRoots(group);
     return group;
   }
 
@@ -1373,6 +1394,7 @@ export class Game {
       const point = this.path.at(distance);
       group.position.set(point.x, this.meshY(distance), point.z);
       group.rotation.y = point.heading;
+      alignNativeSceneryRoots(group);
       this.cutTileSurface(group, distance);
       this.bundle.scene.add(group);
       const entity = this.world.createEntity();

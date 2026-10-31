@@ -20,7 +20,7 @@ assert.equal(retained.assigned,true); // recycled into first available new cell 
 assert.equal(grid.slots.some(s=>s.assigned&&s.cellX===2&&s.cellZ===0),false,'new road occupancy evicts assigned slot');
 console.log('Native scenery lifecycle: X-major traversal, entrance mask, hidden assignment retention, cell-boundary RNG calls and road eviction pass. Source RNG state unresolved; rendering integration pending.');
 
-import {initializeSceneryResources} from '../target/temple-run/web/src/game/nativeSceneryGrid';
+import {initializeSceneryResources,sceneryResourcePath} from '../target/temple-run/web/src/game/nativeSceneryGrid';
 for(let roll=0;roll<21;roll++){
  let count=0;
  const resources=initializeSceneryResources((_min,max)=>{count++;return max===21?roll:max-1;});
@@ -29,4 +29,21 @@ for(let roll=0;roll<21;roll++){
  assert.deepEqual(resources[0],expected);
  assert.equal(count,361*(roll<=16?2:1),'fixed branches do not consume a variant RNG draw');
 }
-console.log('All21 pool initialization branches and conditional variant RNG draws pass; native non-tree resource names remain opaque.');
+console.log('All21 pool initialization branches and conditional variant RNG draws pass; resource identities are decoded independently from native literals.');
+
+assert.equal(sceneryResourcePath({type:1,group:'fixedType1',variant:0}),'Trees/overgrowthTrees');
+assert.equal(sceneryResourcePath({type:1,group:'tree',variant:3}),'Trees/treeAlone4');
+assert.equal(sceneryResourcePath({type:2,group:'group2',variant:1}),'Trees/rock2');
+assert.equal(sceneryResourcePath({type:3,group:'group3',variant:2}),'Trees/cliff3');
+assert.equal(sceneryResourcePath({type:4,group:'fixedType4',variant:0}),'Trees/groundPatchTemple');
+assert.equal(sceneryResourcePath({type:5,group:'fixedType5',variant:0}),'Trees/templeHead');
+
+// Cross-check selected resource identities against independently decoded native string data.
+import {readFileSync} from 'node:fs';
+const native=JSON.parse(readFileSync('target/temple-run/analysis/native-scenery-manager-source.json','utf8'));
+for(const group of native.initialPoolResources){
+ for(let variant=0;variant<group.resources.length;variant++){
+  const resource=initializeSceneryResources((_min,max)=>max===21?group.roll[0]:variant)[0];
+  assert.equal(sceneryResourcePath(resource),group.resources[variant]);
+ }
+}

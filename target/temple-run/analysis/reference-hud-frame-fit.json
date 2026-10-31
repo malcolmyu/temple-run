@@ -1,0 +1,316 @@
+{
+  "method": "sparse opaque atlas RGB absolute error; masks exclude totem/timer/score overlays; limited integer search, not full frame similarity",
+  "fits": {
+    "hud-vines": [
+      {
+        "frame": 21,
+        "best": [
+          {
+            "width": 438,
+            "height": 148,
+            "x": -73,
+            "y": -2,
+            "error": 13.61458260672433,
+            "samples": 224
+          },
+          {
+            "width": 436,
+            "height": 147,
+            "x": -72,
+            "y": -1,
+            "error": 13.995098039215685,
+            "samples": 204
+          },
+          {
+            "width": 434,
+            "height": 146,
+            "x": -70,
+            "y": -1,
+            "error": 14.03814302510883,
+            "samples": 201
+          },
+          {
+            "width": 435,
+            "height": 147,
+            "x": -71,
+            "y": -1,
+            "error": 14.073552807731808,
+            "samples": 213
+          }
+        ]
+      },
+      {
+        "frame": 22,
+        "best": [
+          {
+            "width": 438,
+            "height": 148,
+            "x": -73,
+            "y": -2,
+            "error": 13.885416303362165,
+            "samples": 224
+          },
+          {
+            "width": 437,
+            "height": 147,
+            "x": -72,
+            "y": -1,
+            "error": 14.033491654829545,
+            "samples": 209
+          },
+          {
+            "width": 437,
+            "height": 147,
+            "x": -72,
+            "y": -2,
+            "error": 14.215781391530797,
+            "samples": 207
+          },
+          {
+            "width": 441,
+            "height": 149,
+            "x": -75,
+            "y": -3,
+            "error": 14.28764846724302,
+            "samples": 197
+          }
+        ]
+      },
+      {
+        "frame": 30,
+        "best": [
+          {
+            "width": 433,
+            "height": 146,
+            "x": -69,
+            "y": -1,
+            "error": 15.342995169082126,
+            "samples": 207
+          },
+          {
+            "width": 438,
+            "height": 148,
+            "x": -73,
+            "y": -2,
+            "error": 15.59970201764788,
+            "samples": 224
+          },
+          {
+            "width": 436,
+            "height": 147,
+            "x": -72,
+            "y": -1,
+            "error": 15.650325999540442,
+            "samples": 204
+          },
+          {
+            "width": 442,
+            "height": 149,
+            "x": -76,
+            "y": -2,
+            "error": 15.763888041178385,
+            "samples": 192
+          }
+        ]
+      }
+    ],
+    "hud-right": [
+      {
+        "frame": 21,
+        "best": [
+          {
+            "width": 83,
+            "height": 211,
+            "x": 349,
+            "y": -1,
+            "error": 13.343571685686861,
+            "samples": 293
+          },
+          {
+            "width": 84,
+            "height": 214,
+            "x": 348,
+            "y": -2,
+            "error": 13.76286408085151,
+            "samples": 298
+          },
+          {
+            "width": 83,
+            "height": 211,
+            "x": 349,
+            "y": 0,
+            "error": 13.908163265306122,
+            "samples": 294
+          },
+          {
+            "width": 85,
+            "height": 216,
+            "x": 348,
+            "y": -2,
+            "error": 14.57986111111111,
+            "samples": 288
+          }
+        ]
+      },
+      {
+        "frame": 22,
+        "best": [
+          {
+            "width": 83,
+            "height": 211,
+            "x": 349,
+            "y": -1,
+            "error": 13.612058047141637,
+            "samples": 293
+          },
+          {
+            "width": 84,
+            "height": 214,
+            "x": 348,
+            "y": -2,
+            "error": 13.823265126887584,
+            "samples": 298
+          },
+          {
+            "width": 83,
+            "height": 211,
+            "x": 349,
+            "y": 0,
+            "error": 13.962585034013605,
+            "samples": 294
+          },
+          {
+            "width": 85,
+            "height": 216,
+            "x": 348,
+            "y": -3,
+            "error": 14.967592027452257,
+            "samples": 288
+          }
+        ]
+      },
+      {
+        "frame": 30,
+        "best": [
+          {
+            "width": 83,
+            "height": 211,
+            "x": 349,
+            "y": -1,
+            "error": 13.534697965550341,
+            "samples": 293
+          },
+          {
+            "width": 84,
+            "height": 214,
+            "x": 348,
+            "y": -2,
+            "error": 13.776286899643456,
+            "samples": 298
+          },
+          {
+            "width": 83,
+            "height": 211,
+            "x": 349,
+            "y": 0,
+            "error": 13.828797632334183,
+            "samples": 294
+          },
+          {
+            "width": 85,
+            "height": 216,
+            "x": 348,
+            "y": -2,
+            "error": 14.534722222222221,
+            "samples": 288
+          }
+        ]
+      }
+    ]
+  },
+  "decision": {
+    "right": "consistent83x211 at349,-1; update CSS",
+    "vines": "normal orientation438x148 at-73,-2; stable neighborhood, all seven dense validations improve; source30 sparse best differs by5px width"
+  },
+  "validation": [
+    {
+      "frame": 11,
+      "sourceSHA256": "24c9325c781e5f2bcb0f8dc09c9db0c389ac26361afa31824e1badd34889b1eb",
+      "previous": 31.636953353881836,
+      "corrected": 13.365368843078613
+    },
+    {
+      "frame": 21,
+      "sourceSHA256": "896f93e5679cb7995ec933e0174fd724c2f477ce2a5d25a88d4d4bb0e36e5c47",
+      "previous": 31.565441131591797,
+      "corrected": 13.302336692810059
+    },
+    {
+      "frame": 22,
+      "sourceSHA256": "6ec3ead11af5c8bb20b70bdc57e46948bc73282f0a21aa9015321ad12815ce2f",
+      "previous": 31.72329330444336,
+      "corrected": 13.411786079406738
+    },
+    {
+      "frame": 30,
+      "sourceSHA256": "ae0b9c87afdc187183420cf469278a7d1b4726e36e7f48dc4160cc5aff688471",
+      "previous": 31.57478141784668,
+      "corrected": 13.380581855773926
+    },
+    {
+      "frame": 90,
+      "sourceSHA256": "f80f090bb67663a6282a0faff90cf382ddbd6425000cfb902efe5b50139f6008",
+      "previous": 31.590192794799805,
+      "corrected": 13.332450866699219
+    },
+    {
+      "frame": 150,
+      "sourceSHA256": "8f7ebb76c627a8895a49b59b1d2dec9be0695ee08165e883d4181021ab316190",
+      "previous": 31.607179641723633,
+      "corrected": 13.186137199401855
+    },
+    {
+      "frame": 250,
+      "sourceSHA256": "8c192d35321715998131dc54c2883e2ab92b5b41a4817fe57c7283b5c71bdd3f",
+      "previous": 31.57624053955078,
+      "corrected": 13.191173553466797
+    }
+  ],
+  "vineValidation": [
+    {
+      "frame": 11,
+      "previous": 43.03852844238281,
+      "corrected": 13.521673202514648
+    },
+    {
+      "frame": 21,
+      "previous": 43.14822006225586,
+      "corrected": 13.855729103088379
+    },
+    {
+      "frame": 22,
+      "previous": 42.919334411621094,
+      "corrected": 14.201704978942871
+    },
+    {
+      "frame": 30,
+      "previous": 37.959434509277344,
+      "corrected": 15.962072372436523
+    },
+    {
+      "frame": 90,
+      "previous": 38.02104187011719,
+      "corrected": 15.932596206665039
+    },
+    {
+      "frame": 150,
+      "previous": 43.38695526123047,
+      "corrected": 13.252420425415039
+    },
+    {
+      "frame": 250,
+      "previous": 43.364749908447266,
+      "corrected": 13.309059143066406
+    }
+  ]
+}

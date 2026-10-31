@@ -4,6 +4,10 @@ import type { DefId } from './obstacles/catalog';
 // once; independent score interpolation can otherwise insert a missing cell.
 const narrowClusters:readonly (readonly number[])[]=[[1719,1725],[1765,1771,1777],[1801,1807,1813],[2359,2363,2367]];
 function referenceObstacleDistance(legacy:number):number {
+ // Source006/007 branch projections plus first stumble7.2..7.3 constrain this
+ // center better than the old score/20 bracket, which includes travel past it.
+ // This is a reviewed physical fit, not a global change of grid phase.
+ if(legacy===63)return 108;
  const cluster=narrowClusters.find(c=>c.includes(legacy));
  return cluster?referenceJunctionDistance(cluster[0])+12*cluster.indexOf(legacy):referenceJunctionDistance(legacy);
 }

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
-import {buildSceneryTree,type Assets} from '../target/temple-run/web/src/game/render';
+import {buildSceneryTree,alignNativeSceneryRoots,type Assets} from '../target/temple-run/web/src/game/render';
 import {attachNativeLightmapUV} from '../target/temple-run/web/src/game/nativeLightmap';
 const manifest=JSON.parse(readFileSync('target/temple-run/analysis/native-scenery-trees/source.json','utf8'));
 const trees=[];
@@ -27,6 +27,15 @@ for(let i=0;i<4;i++){
 console.log('Four standalone tree prefabs: original scale/pivot, submerged roots, native UV1 and correct asset family. Spawn layout remains fitted.');
 
 import {referenceAmbientTree,REFERENCE_TREE_REVIEW_END} from '../target/temple-run/web/src/game/referenceScenery';
-assert.equal(referenceAmbientTree(84)?.side,1);assert.equal(referenceAmbientTree(444)?.side,1);
+assert.equal(referenceAmbientTree(84),null,'first obstacle supplies its own trunk; no duplicate ambient tree');assert.equal(referenceAmbientTree(444)?.side,1);
 for(const d of [48,228,408])assert.equal(referenceAmbientTree(d),null,'remove unsupported periodic opening trunks');
 assert.equal(referenceAmbientTree(REFERENCE_TREE_REVIEW_END+12),undefined,'unreviewed suffix is not claimed as source reconstruction');
+
+for(const heading of [0,Math.PI/2,Math.PI,-Math.PI/2])for(const roadY of [0,-3])for(const side of [-1,1]){
+ const road=new THREE.Group();road.position.set(20,roadY,30);road.rotation.y=heading;
+ const tree=buildSceneryTree(assets,side)!;road.add(tree);alignNativeSceneryRoots(road);road.updateMatrixWorld(true);
+ const q=tree.getWorldQuaternion(new THREE.Quaternion());
+ assert.ok(q.angleTo(new THREE.Quaternion())<1e-7,'native scenery root retains zero world Euler under every road heading');
+ assert.ok(Math.abs(tree.getWorldPosition(new THREE.Vector3()).y)<1e-7,'native scenery root is independent of stone/wood height');
+}
+console.log('Native scenery roots preserve world orientation and Y0 under all four road headings and both ground heights.');

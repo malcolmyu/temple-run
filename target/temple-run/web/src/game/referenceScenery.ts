@@ -29,11 +29,10 @@ export function overlapsReferenceGate(tileDistance: number): boolean {
    || REFERENCE_OPENING_TURNS.some(t=>t.gate==='exit'&&Math.abs(t.distance+REFERENCE_EXIT_GATE_OFFSET-(tileDistance+6))<=36);
 }
 
-/** Observed opening background trunks; positions are fitted to source005/006
- * and021/022, not recovered generator output. Variant1 is the native standalone
+/** Observed background trunk fitted to source021/022, not generator output.
+ * Source005/006 trunk belongs to the first obstacle; no extra tree at84. Variant1 is the native standalone
  * family default; exact source variant remains unverified. */
 export const REFERENCE_OPENING_AMBIENT_TREES = [
- {tileDistance:84,side:1 as const,variant:0,frames:[5,6]},
  {tileDistance:444,side:1 as const,variant:0,frames:[21,22]},
 ];
 export const REFERENCE_TREE_REVIEW_END=REFERENCE_OPENING_TURNS[2].distance;

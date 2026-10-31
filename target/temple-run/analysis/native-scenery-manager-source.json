@@ -113,5 +113,136 @@
   ],
   "RNG": "UnityEngine.Random.Range(int,int), helper24b3ee8; shared runtime state; original seed/state not recovered",
   "sentinel": "-99999 initializes previous grid coordinates, NOT a random seed",
-  "scope": "source evidence only; native grid/occupancy/pool distribution and scenery collision integration remain pending; current opening tree placements are fitted"
+  "scope": "source evidence only; native grid/occupancy/pool distribution and scenery collision integration remain pending; current opening tree placements are fitted",
+  "resourceStringProof": [
+    {
+      "got": "0x2866840",
+      "literal": "Trees/treeAlone"
+    },
+    {
+      "got": "0x2866898",
+      "literal": "Trees/treeAlone2"
+    },
+    {
+      "got": "0x2866888",
+      "literal": "Trees/treeAlone3"
+    },
+    {
+      "got": "0x2866830",
+      "literal": "Trees/treeAlone4"
+    },
+    {
+      "got": "0x2866858",
+      "literal": "Trees/rock"
+    },
+    {
+      "got": "0x2866850",
+      "literal": "Trees/rock2"
+    },
+    {
+      "got": "0x2866868",
+      "literal": "Trees/rock3"
+    },
+    {
+      "got": "0x2866880",
+      "literal": "Trees/cliff"
+    },
+    {
+      "got": "0x2866878",
+      "literal": "Trees/cliff2"
+    },
+    {
+      "got": "0x28668a0",
+      "literal": "Trees/cliff3"
+    },
+    {
+      "got": "0x2866870",
+      "literal": "Trees/overgrowthTrees"
+    },
+    {
+      "got": "0x2866838",
+      "literal": "Trees/templeHead"
+    },
+    {
+      "got": "0x2866848",
+      "literal": "Trees/groundPatchTemple"
+    }
+  ],
+  "initialPoolResources": [
+    {
+      "roll": [
+        0,
+        10
+      ],
+      "type": 1,
+      "variants": 4,
+      "resources": [
+        "Trees/treeAlone",
+        "Trees/treeAlone2",
+        "Trees/treeAlone3",
+        "Trees/treeAlone4"
+      ]
+    },
+    {
+      "roll": [
+        11,
+        14
+      ],
+      "type": 2,
+      "variants": 3,
+      "resources": [
+        "Trees/rock",
+        "Trees/rock2",
+        "Trees/rock3"
+      ]
+    },
+    {
+      "roll": [
+        15,
+        16
+      ],
+      "type": 3,
+      "variants": 3,
+      "resources": [
+        "Trees/cliff",
+        "Trees/cliff2",
+        "Trees/cliff3"
+      ]
+    },
+    {
+      "roll": [
+        17,
+        18
+      ],
+      "type": 1,
+      "variants": 1,
+      "note": "fixed resource distinct from four trees",
+      "resources": [
+        "Trees/overgrowthTrees"
+      ]
+    },
+    {
+      "roll": [
+        19,
+        19
+      ],
+      "type": 5,
+      "variants": 1,
+      "resources": [
+        "Trees/templeHead"
+      ]
+    },
+    {
+      "roll": [
+        20,
+        20
+      ],
+      "type": 4,
+      "variants": 1,
+      "resources": [
+        "Trees/groundPatchTemple"
+      ]
+    }
+  ],
+  "resourceLifetime": "Start selects once per pool slot; Simulate repositions but does not reselect. Only variants>1 consume an additional Range call. All resource names decoded from IL2CPP encoded string literals."
 }

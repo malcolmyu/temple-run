@@ -34,7 +34,7 @@ export class NativeSceneryGrid {
 }
 
 /** Start fixes a resource per pool slot once; recycling does not choose a new variant.
- * Resource groups 2..5 retain opaque identities until native string literals are decoded.
+ * Resource names resolved independently from IL2CPP encoded string literals.
  * 17/18 use a fixed resource but share native Type=1 with trees.
  */
 export type NativeSceneryResource = { type: 1|2|3|4|5; group: 'tree'|'group2'|'group3'|'fixedType1'|'fixedType5'|'fixedType4'; variant: number };
@@ -48,4 +48,17 @@ export function initializeSceneryResources(random: SceneryRandom): NativeScenery
     if(roll===19)return {type:5,group:'fixedType5',variant:0};
     return {type:4,group:'fixedType4',variant:0};
   });
+}
+
+/** Order matches native Start string arrays, not alphabetical asset order. */
+export const NATIVE_SCENERY_RESOURCES: Readonly<Record<NativeSceneryResource['group'],readonly string[]>> = {
+ tree:['Trees/treeAlone','Trees/treeAlone2','Trees/treeAlone3','Trees/treeAlone4'],
+ group2:['Trees/rock','Trees/rock2','Trees/rock3'],
+ group3:['Trees/cliff','Trees/cliff2','Trees/cliff3'],
+ fixedType1:['Trees/overgrowthTrees'],
+ fixedType5:['Trees/templeHead'],
+ fixedType4:['Trees/groundPatchTemple'],
+};
+export function sceneryResourcePath(resource: NativeSceneryResource): string {
+ return NATIVE_SCENERY_RESOURCES[resource.group][resource.variant];
 }

@@ -43,3 +43,5 @@ for(const[a,b,c]of [[1765,1771,1777],[1801,1807,1813],[2359,2363,2367]]){
  const tiles=[a,b,c].map(legacy=>REFERENCE_OPENING_OBSTACLES.find(o=>o.legacyDistance===legacy)!);
  assert.equal(tiles[1].distance-tiles[0].distance,12);assert.equal(tiles[2].distance-tiles[1].distance,12);
 }
+
+assert.equal(REFERENCE_OPENING_OBSTACLES[0].distance,108,'first trunk center fits source006/007 projections and visible first stumble');

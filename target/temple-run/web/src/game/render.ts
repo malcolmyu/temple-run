@@ -1,3 +1,4 @@
+import {NATIVE_SCENERY_RESOURCES} from './nativeSceneryGrid';
 import { nativeCoinMaterial } from './nativeCoinMaterial';
 import { nativeWaterGeometry, NATIVE_WATER_HEIGHT } from './nativeWater';
 import { buildNativePower } from './nativePower';
@@ -51,6 +52,7 @@ export interface Assets {
   plankCorner?: THREE.Group | null;
   tree: THREE.Group | null;
   standaloneTrees?: ReadonlyArray<THREE.Group | null>;
+  sceneryTemplates?: Readonly<Record<string,THREE.Group|null>>;
   gate: THREE.Group | null;
   towerGate?: THREE.Group | null;
   enemy: THREE.Group | null;
@@ -87,7 +89,7 @@ const loadObj = async (url: string): Promise<THREE.Group | null> => {
     if(!response.ok)return null;
     const obj=new OBJLoader().parse(await response.text());
     const name=url.split('/').pop()?.replace(/\.obj$/, '') ?? '';
-    if(lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
+    if(name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
       const uv=await fetch(url.replace(/\.obj$/, '.uv1.json'));
       if(!uv.ok)throw new Error('Missing native lightmap UV: '+name);
       attachNativeLightmapUV(obj, await uv.json());
@@ -226,6 +228,8 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     water: new THREE.MeshBasicMaterial({ color: 0x0b2b27, transparent: true, opacity: 0.72 }),
   };
 
+  const sceneryPaths=Object.entries(NATIVE_SCENERY_RESOURCES).filter(([group])=>group!=='tree').flatMap(([,paths])=>paths);
+  const sceneryLoad=Promise.all(sceneryPaths.map(path=>loadObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`)));
   const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
@@ -345,6 +349,9 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   }
 
   const standaloneTrees=[treeTemplate,tree2,tree3,tree4].map(obj=>paint(obj,nativeTreeMaterial,false));
+  const sceneryTemplates:Record<string,THREE.Group|null>=Object.fromEntries(NATIVE_SCENERY_RESOURCES.tree.map((path,i)=>[path,standaloneTrees[i]]));
+  const sceneryObjects=await sceneryLoad;
+  sceneryPaths.forEach((path,i)=>{sceneryTemplates[path]=paint(sceneryObjects[i],path==='Trees/templeHead'||path==='Trees/groundPatchTemple'?nativeRoadMaterial:nativeTreeMaterial,false);});
   return {
     renderer,
     scene,
@@ -371,6 +378,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       coin: paint(coinMesh, coinMaterial, false),
       tree: standaloneTrees[0],
       standaloneTrees,
+      sceneryTemplates,
       gate: extractNativeGate(paint(gateTemplate, nativeRoadMaterial, false)),
       towerGate: extractNativeGate(obstacles['tower-arch'], 'tower'),
       enemy: enemyMesh,
@@ -711,9 +719,29 @@ export function buildSceneryTree(assets: Assets, side: number, variant = 0): THR
   const tree=source.clone(true);tree.name=native?'native-standalone-tree':'legacy-scenery-tree';
   tree.scale.setScalar(native?1:.12);
   tree.position.set(side*6.2,native?0:-2,-2.5);
-  tree.rotation.y=side>0?Math.PI:0;
+  tree.rotation.y=native?0:side>0?Math.PI:0;
   tree.userData.nativeTreeVariant=native?variant+1:null;
   return tree;
+}
+
+/** Clone one verified native resource without rescaling or recentering its authored pivot. */
+export function buildNativeScenery(assets:Assets,resource:string):THREE.Group|null {
+  const template=assets.sceneryTemplates?.[resource];if(!template)return null;
+  const object=template.clone(true);object.name='native-scenery';
+  object.position.set(0,0,0);object.rotation.set(0,0,0);object.scale.setScalar(1);
+  object.userData.nativeSceneryResource=resource;
+  return object;
+}
+
+/** SceneryElement.Instantiate clears root Euler; it is independent of road heading.
+ * Current fitted scenery is parented under road groups, so cancel that parent basis.
+ * These groups are direct scene children with yaw-only rotation and unit scale.
+ */
+export function alignNativeSceneryRoots(road: THREE.Group): void {
+  for(const child of road.children)if(child.name==='native-standalone-tree') {
+    child.quaternion.copy(road.quaternion).invert();
+    child.position.y=-road.position.y;
+  }
 }
 
 /** Use authored portal geometry; procedural masonry is an asset fallback. */
