@@ -1,6 +1,13 @@
 import {SeededRandom} from './obstacles/rng';
 import type {CourseFeature,CourseObstacle,CourseTurn} from './coursePlan';
 
+/** Old fixed prefix retained only for historical geometry/generator fixtures.
+ * Full video replay remains a separate explicit reference route. */
+export function historicalCourseFixture():{turns:CourseTurn[];obstacles:CourseObstacle[];features:CourseFeature[];extent:number}{
+ return {turns:[{distance:153,direction:1,junction:'corner'},{distance:321,direction:1,junction:'corner'},{distance:489,direction:-1,junction:'tee'}],
+  obstacles:[{distance:108,defId:'treeTrip',prefab:'tree-trip-left'},{distance:285,defId:'treeJump',prefab:'tree-jump-left'},{distance:366,defId:'treeJump',prefab:'tree-jump-right'},{distance:453,defId:'pit',prefab:'pit'}],features:[],extent:489};
+}
+
 /** Product design,not native probability recovery:three readable stone groups,
  * independent seeded order/length/turns,one simple action per group.
  * Opening RNG never consumes the suffix/coin/power streams. */

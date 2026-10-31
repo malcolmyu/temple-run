@@ -86,7 +86,10 @@
     "temple:test:utility-objectives": "esbuild tools/test-utility-objectives.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-utility-objectives.mjs >/dev/null && node /tmp/temple-utility-objectives.mjs",
     "temple:test:character-objectives": "esbuild tools/test-character-objectives.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-character-objectives.mjs >/dev/null && node /tmp/temple-character-objectives.mjs",
     "temple:test:input-router": "esbuild tools/test-input-router.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-input-router.mjs >/dev/null && node /tmp/temple-input-router.mjs",
-    "temple:test:game-session": "esbuild tools/test-game-session.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-game-session.mjs >/dev/null && node /tmp/temple-game-session.mjs"
+    "temple:test:game-session": "esbuild tools/test-game-session.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-game-session.mjs >/dev/null && node /tmp/temple-game-session.mjs",
+    "temple:test:generated-opening": "esbuild tools/test-generated-opening.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-generated-opening.mjs >/dev/null && node /tmp/temple-generated-opening.mjs",
+    "temple:test:encounter-safety": "esbuild tools/test-encounter-safety.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-encounter-safety.mjs >/dev/null && node /tmp/temple-encounter-safety.mjs",
+    "temple:test:action-safety": "esbuild tools/test-action-safety.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-action-safety.mjs >/dev/null && node /tmp/temple-action-safety.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

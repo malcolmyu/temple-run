@@ -13,7 +13,7 @@ for(let seed=1;seed<=100;seed++){
  for(const f of p.features.filter(f=>f.extraObstacleAt!==undefined)){
   count++;assert.ok(!f.fastTurn);assert.ok(f.to-f.extraObstacleAt!>=36);
   const obs=p.obstacles.filter(o=>o.distance>f.from&&o.distance<f.to);
-  assert.equal(obs.length,2);assert.equal(obs[1].distance-obs[0].distance,36);assert.equal(obs[1].defId,obs[0].defId);
+  assert.equal(obs.length,2);assert.equal(obs[1].distance-obs[0].distance,48);assert.equal(obs[1].defId,obs[0].defId);
  }
 }
-assert.ok(count>100);console.log('Native obstacle gate: no-draw exclusions, exact spacing/probability boundaries,100-seed compatible pairs and36m corner clearance pass; pairs='+count);
+assert.ok(count>100);console.log('Native obstacle gate: no-draw exclusions, exact spacing/probability boundaries,100-seed48m action-budget pairs and36m corner clearance pass; pairs='+count);

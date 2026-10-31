@@ -1,5 +1,6 @@
 import {stepNativeMagnetCoin,MAGNET_PICKUP_RADIUS} from './nativeMagnet';
 import {GameSession} from './gameSession';
+import {longGapSafety} from './encounterSafety';
 import {CLIFF_MESH_Y,nativeCliffSupported} from './nativeCliff';
 import { NativeThemePacing } from './nativeThemePacing';
 import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups';
@@ -14,7 +15,7 @@ import { levelOf } from './upgrades';
 import { RESURRECTION_BOOST_PROGRESS, RESURRECTION_STUMBLE_AGE, resurrectionSpeed } from './nativeResurrection';
 import { boostProgress } from './upgrades';
 import { addNativeCoinMeter } from './nativeCoinMeter';
-import { CoursePlan, activeCourse, setActiveCourse, MIN_LONG_GAP_SPEED } from './coursePlan';
+import { CoursePlan, activeCourse, setActiveCourse } from './coursePlan';
 import { BonusSpawnDirector,WEB_BONUS_AVAILABILITY } from './nativeBonusSpawn';
 import { nativeBoostSpeedLimit, boostAcceleration, consumeBoostProgress } from './nativeBoost';
 import { createPowerEffects, activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
@@ -176,6 +177,7 @@ export class Game {
   private courseCoinIndex=0;
   private courseCoins=new CourseCoinDirector();
   private longGapFallbacks:number[]=[];
+  private longGapDecisions:({distance:number;replacement:'pit'|null}&ReturnType<typeof longGapSafety>)[]=[];
   private difficulty: DifficultyConfig = getDifficulty();
   private lastObstacleDistance = 0;
   private lastObstacleSide = 0;
@@ -457,7 +459,7 @@ export class Game {
       angelWings: {...this.angelWings,stock:progress.wings,permanentStock:progress.permaWings,pendingRevive:this.wingRevivePending},
       themePacing:{level:this.themePacing.level,elapsed:this.themePacing.elapsed,changes:[...this.themeChanges]},
       fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
-      course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
+      course: activeCourse()?{opening:activeCourse()!.opening,coinStart:activeCourse()!.coinStart,turns:activeCourse()!.turns.map(t=>({...t})),extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks],longGapDecisions:this.longGapDecisions.map(d=>({...d})),layoutRejections:activeCourse()!.rejectedEncounters.map(r=>({...r,reasons:[...r.reasons]}))}:null,
       generation: {enabled:{...this.bonusDirector.config},seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
       powers: effects,
@@ -627,7 +629,7 @@ export class Game {
     this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765),this.difficulty.name==='classic'&&!this.referenceReplay?powerAvailability():WEB_BONUS_AVAILABILITY);
     this.generatedBonuses=[];
     setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,0):null);
-    this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector(activeCourse()?.coinStart??489);this.longGapFallbacks=[];
+    this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector(activeCourse()?.coinStart??489);this.longGapFallbacks=[];this.longGapDecisions=[];
     if(activeCourse())this.nextSpawn=Infinity;
     this.deathTimer = 0;this.deathElapsed=0;
     this.hintCooldown = 0;
@@ -1642,7 +1644,10 @@ export class Game {
         const lane='lane' in recorded?recorded.lane??1:1;
         if(activeCourse()&&recorded.defId==='pitLongB'){
           const boost=this.world.require(this.runnerEntity,Power).boost;
-          if(Math.min(this.speed,boost.active?boost.speedBefore:this.speed)<MIN_LONG_GAP_SPEED){
+          const safety=longGapSafety(Math.min(this.speed,boost.active?boost.speedBefore:this.speed));
+          this.longGapDecisions.push({distance:recorded.distance,replacement:safety.allowed?null:'pit',...safety});
+          if(this.longGapDecisions.length>128)this.longGapDecisions.shift();
+          if(!safety.allowed){
             this.spawnDef(DEFS.pit,1,recorded.distance,'pit');this.referenceObstacleIndex++;this.longGapFallbacks.push(recorded.distance);continue;
           }
         }

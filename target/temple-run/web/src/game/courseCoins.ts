@@ -16,7 +16,7 @@ export class CourseCoinDirector {
  private row=0;
  private previousEnd:number|null=null;
  readonly state=new NativeCoinRunState();
- constructor(private from=489){this.next=12*Math.ceil((from+6)/12);}
+ constructor(private from=0){this.next=12*Math.ceil((from+6)/12);}
  takeThrough(to:number,course:CoursePlan):GeneratedCourseCoin[]{
   const coins:GeneratedCourseCoin[]=[];
   this.sideRandom??=new SeededRandom(course.seed^0x726f7773);
