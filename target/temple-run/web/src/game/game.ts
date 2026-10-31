@@ -1,8 +1,9 @@
+import {nativeCliffSupported} from './nativeCliff';
 import { NativeThemePacing } from './nativeThemePacing';
 import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups';
 import { createRunChallenges, stepRunChallenges, summarizeRunChallenges } from './nativeRunChallenges';
-import { createAngelWings, startAngelWings, stepAngelWings } from './nativeAngelWings';
-import { MEGA_START_PRICE, MEGA_START_PROGRESS } from './megaStart';
+import { createAngelWings, startAngelWings, stepAngelWings, consumeAngelWings } from './nativeAngelWings';
+import { HEAD_START_PROGRESS, MEGA_START_PROGRESS, headStartWindow } from './megaStart';
 import { courseCoinRun } from './courseCoins';
 import { NativeFastTurnState } from './nativeFastTurn';
 import { COURSE_LOOKAHEAD, nativePathPacing } from './nativePathPacing';
@@ -17,7 +18,7 @@ import { nativeBoostSpeedLimit, boostAcceleration, consumeBoostProgress } from '
 import { createPowerEffects, activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
 import {newEnemyJump, queueEnemyJump, stepEnemyJump} from './enemyJump';
 import { startNativeCameraShake, stepNativeCameraShake, type NativeCameraShake } from './nativeCameraShake';
-import { NATIVE_RESULT_DELAY, stepNativeDeathTimer, nativeGroundContact } from './nativeDeath';
+import { NATIVE_RESULT_DELAY, stepNativeDeathTimer, nativeGroundContact, rebaseNativeGroundY } from './nativeDeath';
 import { nativeAnimationSpeed } from './nativeAnimation';
 import { NATIVE_TILT_OFFSET_MAX, stepNativeSteering, nativeTiltAllowed } from './steering';
 import { nativePickupWithinReach } from './nativePickupCollision';
@@ -158,6 +159,7 @@ export class Game {
   private referenceObstacleIndex = 0;
   private obstacleRng = new SeededRandom(0x51ed270b);
   private runSeed=0;
+  private runHeadStart:'normal'|'mega'|null=null;
   private fastTurnState=new NativeFastTurnState();
   private themePacing=new NativeThemePacing();
   private themeRng=new SeededRandom(4);
@@ -298,6 +300,8 @@ export class Game {
       toMenu: () => this.toMenu(),
       pause: () => this.togglePause(),
       revive: () => this.revive(),
+      usePermaWings:()=>this.usePermaWings(),
+      useHeadStart:(kind:'normal'|'mega')=>this.useHeadStart(kind),
       progress: () => ({ ...progress }),
       spawnMonkey: () => this.spawnMonkey(this.distance + 10),
       audio: () => sfx.stats(),
@@ -416,7 +420,7 @@ export class Game {
           animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
-      scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length }),
+      scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length,cliffLoaded:!!this.bundle.assets.cliffTile,nativeCliffTiles:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliff).length }),
       terrain: (d: number) => terrainAt(d, this.path),
       narrow: (d: number) => this.narrowAt(d, this.path),
       sidePath: (d: number) => this.sidePathAt(d, this.path),
@@ -439,11 +443,14 @@ export class Game {
       phase: mutateUi.phase,
       equipped: progress.equipped,
       scoreMultiplier: this.runScoreMultiplier,
+      headStart:this.runHeadStart,
+      headStartReady:this.canUseHeadStart(),
+      headStartStock:{normal:progress.headStarts,mega:progress.megaStarts},
       coinSpawnLevel: this.coinSpawnLevel,
       generationPacing: nativePathPacing(stats.distance),
       powerPickups:{...this.runPowerPickups},
       runChallenges:{...this.runChallenges,summary:summarizeRunChallenges(this.runChallenges,stats.distance)},
-      angelWings: {...this.angelWings,stock:progress.wings,pendingRevive:this.wingRevivePending},
+      angelWings: {...this.angelWings,stock:progress.wings,permanentStock:progress.permaWings,pendingRevive:this.wingRevivePending},
       themePacing:{level:this.themePacing.level,elapsed:this.themePacing.elapsed,changes:[...this.themeChanges]},
       fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
@@ -606,6 +613,7 @@ export class Game {
     const seedParam=new URLSearchParams(window.location.search).get('seed');
     this.runSeed=seedParam!==null&&/^\d+$/.test(seedParam)?Number(seedParam)>>>0:(Date.now()^0x9e3779b9)>>>0;
     this.obstacleRng = new SeededRandom(this.runSeed);
+    this.runHeadStart=null;
     this.themePacing=new NativeThemePacing();this.themeRng=new SeededRandom(this.runSeed^0x7468656d);this.themeChanges=[];
     this.fastTurnState.reset();
     this.fastTurnRng=new SeededRandom(this.runSeed^0x66617374);
@@ -672,15 +680,29 @@ export class Game {
     this.startLoop();
   }
 
-  /** Price and cruise budget are explicit web economy choices, not recovered APK config. */
-  startMegaBoost(): boolean {
-    if(mutateUi.phase!=='menu'||!mutateUi.ready||progress.coins<MEGA_START_PRICE)return false;
-    this.start();
-    progress.coins-=MEGA_START_PRICE;saveProgress();
-    this.activateTimedPower('boost',MEGA_START_PROGRESS,true);
-    setHint('超级起跑！');
-    this.syncHud(0);
+  canUseHeadStart():boolean {
+    return mutateUi.phase==='playing'&&!this.paused&&!this.runHeadStart&&headStartWindow(this.world.require(this.runnerEntity,RunStats).distance);
+  }
+
+  useHeadStart(kind:'normal'|'mega'):boolean {
+    if((kind!=='normal'&&kind!=='mega')||!this.canUseHeadStart())return false;
+    const key=kind==='mega'?'megaStarts':'headStarts';
+    if(progress[key]<1)return false;
+    const target=kind==='mega'?MEGA_START_PROGRESS:HEAD_START_PROGRESS;
+    const distance=this.world.require(this.runnerEntity,RunStats).distance;
+    progress[key]--;saveProgress();syncBanks();this.runHeadStart=kind;
+    this.activateTimedPower('boost',target-distance,false);
+    setHint(kind==='mega'?'超级起跑！':'普通起跑！');this.syncHud(0);
     return true;
+  }
+
+  canUsePermaWings():boolean {
+    return mutateUi.phase==='playing'&&!this.paused&&headStartWindow(this.world.require(this.runnerEntity,RunStats).distance)&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
+  }
+  usePermaWings():boolean {
+    if(!this.canUsePermaWings()||progress.permaWings<1)return false;
+    if(!startAngelWings(this.angelWings,true))return false;
+    progress.permaWings--;saveProgress();syncBanks();setHint('本局永久翼已激活');this.syncHud(0);return true;
   }
 
   useAngelWings():boolean {
@@ -1038,6 +1060,7 @@ export class Game {
 
   private nativeGroundSupported(distance:number,side:number,laneIndex:number):boolean {
     if(!nativeTransitionSupported(distance))return false;
+    if(surfaceAt(distance).level===3&&!nativeCliffSupported(side))return false;
     const branch=this.sidePathAt(distance,this.path);
     if(branch&&!this.sideFork&&Math.abs(side)<.55)return false;
     const narrow=branch?null:this.narrowAt(distance,this.path);
@@ -1150,8 +1173,8 @@ export class Game {
     if(nativeMotion){
       const ground=this.groundY();
       if(ground!==this.nativeGroundHeight) {
-        jump.y+=this.nativeGroundHeight-ground;
-        if(ground>this.nativeGroundHeight&&!this.nativeFalling&&jump.y<=0) {
+        jump.y=rebaseNativeGroundY(jump.y,this.nativeGroundHeight,ground);
+        if(ground>this.nativeGroundHeight&&!this.nativeFalling&&jump.y<=0&&(invisible||boost||this.world.elapsed<this.invincibleUntil)) {
           jump.y=0;jump.v=0;jump.airborne=false;
         }
         this.nativeGroundHeight=ground;
@@ -1266,6 +1289,8 @@ export class Game {
     }
     mutateUi.wingsRemaining=this.angelWings.remaining;
     mutateUi.wingsCooldown=this.angelWings.cooldown;
+    mutateUi.headStartReady=this.canUseHeadStart();
+    mutateUi.permaWingsReady=this.canUsePermaWings();mutateUi.wingsPermanent=!!this.angelWings.permanent;
     mutateUi.wingsReady=mutateUi.phase==='playing'&&this.runElapsed>=3&&progress.wings>0&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
     mutateUi.distance = Math.floor(stats.distance);
     mutateUi.speed = currentSpeed;
@@ -2075,6 +2100,8 @@ export class Game {
         this.pickups.splice(i, 1);
         mutateUi.wingsRemaining=this.angelWings.remaining;
     mutateUi.wingsCooldown=this.angelWings.cooldown;
+    mutateUi.headStartReady=this.canUseHeadStart();
+    mutateUi.permaWingsReady=this.canUsePermaWings();mutateUi.wingsPermanent=!!this.angelWings.permanent;
     mutateUi.wingsReady=mutateUi.phase==='playing'&&this.runElapsed>=3&&progress.wings>0&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
     mutateUi.distance = Math.floor(stats.distance);
     mutateUi.coins = stats.coins;
@@ -2182,6 +2209,8 @@ export class Game {
     const power = this.world.require(this.runnerEntity, Power);
     mutateUi.wingsRemaining=this.angelWings.remaining;
     mutateUi.wingsCooldown=this.angelWings.cooldown;
+    mutateUi.headStartReady=this.canUseHeadStart();
+    mutateUi.permaWingsReady=this.canUsePermaWings();mutateUi.wingsPermanent=!!this.angelWings.permanent;
     mutateUi.wingsReady=mutateUi.phase==='playing'&&this.runElapsed>=3&&progress.wings>0&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
     mutateUi.distance = Math.floor(stats.distance);
     mutateUi.coins = stats.coins;
@@ -2328,7 +2357,7 @@ export class Game {
   private die(reason: string, kind: 'impact' | 'fall' | 'water' | 'caught' | 'missed'): void {
     if (mutateUi.phase !== 'playing') return;
     if (this.world.elapsed < this.invincibleUntil) return;
-    if(this.angelWings.remaining>0){this.angelWings.remaining=0;this.wingRevivePending=true;}
+    if(consumeAngelWings(this.angelWings))this.wingRevivePending=true;
     if (this.stepLoop) {
       sfx.stopLoop(this.stepLoop, 0.15);
       this.stepLoop = null;

@@ -1,3 +1,4 @@
+import {NATIVE_UTILITY_PRICES} from './nativeStorePrices';
 import { createPowerPickupCounts, sanitizePowerPickupCounts, POWER_PICKUP_KINDS, type PowerPickupCounts } from './nativePowerPickups';
 import type { RunChallengeSummary } from './nativeRunChallenges';
 import { reactive } from 'vue';
@@ -9,6 +10,9 @@ export interface Progress {
   coins: number;
   gems: number;
   wings: number;
+  permaWings:number;
+  headStarts:number;
+  megaStarts:number;
   runs: number;
   bestDistance: number;
   totalDistance: number;
@@ -92,6 +96,8 @@ function load(): Progress {
     coins: 0,
     gems: 0,
     wings: 0,
+    permaWings:0,
+    headStarts:0,megaStarts:0,
     runs: 0,
     bestDistance: 0,
     totalDistance: 0,
@@ -124,10 +130,12 @@ function load(): Progress {
       id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
     )])];
     if (!merged.owned.includes(merged.equipped)) merged.equipped = SKINS[0].id;
-    for (const key of ['coins', 'gems', 'wings', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance'] as const) {
+    for (const key of ['coins', 'gems', 'wings','permaWings','headStarts','megaStarts', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance'] as const) {
       const value = merged[key];
       merged[key] = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
     }
+    merged.permaWings=Math.min(99,merged.permaWings);
+    merged.headStarts=Math.min(99,merged.headStarts);merged.megaStarts=Math.min(99,merged.megaStarts);
     // Earlier v2 builds could create the new key with defaults before the player ever ran.
     // In that case still import the legacy save instead of treating the empty v2 key as real.
     const meaningful =
@@ -235,4 +243,18 @@ export function recordRun(distance: number, coins: number, gems: number, score: 
 export function buyAngelWings():boolean {
  if(progress.coins<ANGEL_WINGS_PRICE||progress.wings>=99)return false;
  progress.coins-=ANGEL_WINGS_PRICE;progress.wings++;saveProgress();return true;
+}
+
+/** Native consumable inventory;99-slot cap is a web storage/UI adapter. */
+export function buyHeadStart(kind:'normal'|'mega'):boolean {
+ if(kind!=='normal'&&kind!=='mega')return false;
+ const key=kind==='mega'?'megaStarts':'headStarts',cost=kind==='mega'?NATIVE_UTILITY_PRICES.megaStart:NATIVE_UTILITY_PRICES.headStart;
+ if(progress.coins<cost||progress[key]>=99)return false;
+ progress.coins-=cost;progress[key]++;saveProgress();return true;
+}
+
+export function buyPermaWings():boolean {
+ const cost=NATIVE_UTILITY_PRICES.permanentWings;
+ if(progress.coins<cost||progress.permaWings>=99)return false;
+ progress.coins-=cost;progress.permaWings++;saveProgress();return true;
 }

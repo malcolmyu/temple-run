@@ -1,0 +1,120 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "defaultTablesByFieldOffset": {
+    "0x28": [
+      250,
+      1000,
+      2500,
+      5000,
+      7500,
+      25000
+    ],
+    "0x30": [
+      250,
+      1000,
+      2500,
+      5000,
+      7500,
+      25000
+    ],
+    "0x38": [
+      250,
+      1000,
+      2500,
+      5000,
+      7500,
+      25000
+    ],
+    "0x40": [
+      250,
+      1000,
+      2500,
+      5000,
+      7500,
+      25000
+    ],
+    "0x48": [
+      250,
+      1000,
+      2500,
+      5000,
+      7500,
+      25000
+    ],
+    "0x50": [
+      500,
+      10000,
+      2500,
+      10000
+    ],
+    "0x58": [
+      10000,
+      10000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000,
+      25000
+    ],
+    "0x60": [
+      5000,
+      5000,
+      5000
+    ]
+  },
+  "fieldOffsets": {
+    "PromoKeyword": "0x0",
+    "_PowerupMegaCoinUpgradeCostByLevelKey": "0x0",
+    "PowerupMegaCoinUpgradeCostByLevel": "0x28",
+    "_PowerupCoinMagnetUpgradeCostByLevelKey": "0x0",
+    "PowerupCoinMagnetUpgradeCostByLevel": "0x30",
+    "_PowerupInvisibilityUpgradeCostByLevelKey": "0x0",
+    "PowerupInvisibilityUpgradeCostByLevel": "0x38",
+    "_PowerupBoostUpgradeCostByLevelKey": "0x0",
+    "PowerupBoostUpgradeCostByLevel": "0x40",
+    "_PowerupCoinValueUpgradeCostByLevelKey": "0x0",
+    "PowerupCoinValueUpgradeCostByLevel": "0x48",
+    "_UtilityCostListKey": "0x0",
+    "UtilityCostList": "0x50",
+    "_CharacterCostListKey": "0x0",
+    "CharacterCostList": "0x58",
+    "_WallpaperCostListKey": "0x0",
+    "WallpaperCostList": "0x60"
+  },
+  "upgradeRouting": {
+    "magnet": "0x30",
+    "shield": "0x38",
+    "bonus": "0x28",
+    "coinSpawn": "0x48",
+    "boost": "0x40"
+  },
+  "utilities": {
+    "wings": 500,
+    "headStart": 10000,
+    "megaStart": 2500,
+    "permanentWings": 10000
+  },
+  "priceIndex": "StoreItem.UpdatePrice passes current saved level to GetPriceForUpgradeType; no+1",
+  "instructionChecks": {
+    "0x128de90": "0xf9401900",
+    "0x128decc": "0xf9401d00",
+    "0x128df08": "0xf9401500",
+    "0x128df44": "0xf9402500",
+    "0x128e5a4": "0xf9402100",
+    "0x12d3b64": "0x2a1403e2",
+    "0x12d3b6c": "0x97fee843"
+  },
+  "limits": [
+    "StoreConfigData.FromDict can overwrite defaults; active remote configuration not recovered.",
+    "Web compact tiers bundle the sum of skipped native-tier costs. Native maximum tiers and complete effect mapping remain separate gaps.",
+    "Legacy web coin multiplier has no equivalent confirmed native item.",
+    "Permanent wings/headstart prices do not imply these mechanics are implemented."
+  ]
+}

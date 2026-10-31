@@ -17,6 +17,9 @@ export interface MilestoneState {
 export interface HudState {
   phase: Phase;
   ready: boolean;
+  headStartReady:boolean;
+  permaWingsReady:boolean;
+  wingsPermanent:boolean;
   distance: number;
   score: number;
   charge: number;
@@ -61,6 +64,8 @@ const defaults = (): HudState => ({
   wingsRemaining:0,wingsCooldown:0,wingsReady:false,
   phase: 'menu',
   ready: false,
+  headStartReady:false,
+  permaWingsReady:false,wingsPermanent:false,
   distance: 0,
   score: 0,
   charge: 0,

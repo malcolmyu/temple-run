@@ -1,3 +1,4 @@
+import {CLIFF_MESH_Y} from './nativeCliff';
 import {NATIVE_SCENERY_RESOURCES} from './nativeSceneryGrid';
 import { nativeCoinMaterial } from './nativeCoinMaterial';
 import { nativeWaterGeometry, NATIVE_WATER_HEIGHT } from './nativeWater';
@@ -37,6 +38,7 @@ export interface Assets {
   };
   material: Record<string, THREE.Material>;
   roadTile: THREE.Group | null;
+  cliffTile?:THREE.Group|null;
   wall: THREE.Group | null;
   corner?: THREE.Group | null;
   transitionA?: THREE.Group | null;
@@ -89,7 +91,7 @@ const loadObj = async (url: string): Promise<THREE.Group | null> => {
     if(!response.ok)return null;
     const obj=new OBJLoader().parse(await response.text());
     const name=url.split('/').pop()?.replace(/\.obj$/, '') ?? '';
-    if(name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
+    if(name==='cliff-road-tile' || name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
       const uv=await fetch(url.replace(/\.obj$/, '.uv1.json'));
       if(!uv.ok)throw new Error('Missing native lightmap UV: '+name);
       attachNativeLightmapUV(obj, await uv.json());
@@ -230,7 +232,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
 
   const sceneryPaths=Object.entries(NATIVE_SCENERY_RESOURCES).filter(([group])=>group!=='tree').flatMap(([,paths])=>paths);
   const sceneryLoad=Promise.all(sceneryPaths.map(path=>loadObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`)));
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4, cliffTile] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
     loadObj(`${BASE}assets/track/decor-tree-native-1.obj`),
@@ -251,6 +253,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadObj(`${BASE}assets/track/stone-plank-cap-a.obj`),
     loadObj(`${BASE}assets/track/stone-plank-cap-b.obj`),
     ...[2,3,4].map(i=>loadObj(`${BASE}assets/track/decor-tree-native-${i}.obj`)),
+    loadObj(`${BASE}assets/track/cliff-road-tile.obj`),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;
@@ -363,6 +366,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       texture: { wall, tree, leaf, flame, spark, coinFace, wings: wingsTexture, glow: glowTexture, safetyNet: safetyNetAtlas },
       material,
       roadTile: paint(roadTile, nativeRoadMaterial, false),
+      cliffTile: paint(cliffTile,nativeTreeMaterial,false),
       wall: paint(wallTemplate, nativeRoadMaterial, true),
       corner: paint(cornerMesh, nativeRoadMaterial, true),
       transitionA: paint(transitionA, nativeRoadMaterial, true),
@@ -773,7 +777,11 @@ export function buildTile(
   group.userData.tileIndex = index;
   group.userData.terrain = terrain;
 
-  if (surface === 'stone' && assets.roadTile) {
+  if(terrain==='cliff'&&surface==='stone'&&assets.cliffTile){
+    group.userData.nativeCliff=true;
+    const cliff=assets.cliffTile.clone(true);cliff.name='native-cliff-straight';cliff.position.y=CLIFF_MESH_Y;
+    cliff.traverse(part=>{if((part as THREE.Mesh).isMesh)part.userData.walkableSurface=true;});group.add(cliff);
+  } else if (surface === 'stone' && assets.roadTile) {
     const road = assets.roadTile.clone(true);
     road.traverse(part => { if ((part as THREE.Mesh).isMesh) part.userData.walkableSurface = true; });
     road.position.y = ROAD_TILE_Y;
@@ -798,7 +806,7 @@ export function buildTile(
   } else if (terrain === 'hall') {
     buildHallInterior(assets, group);
   } else if (terrain === 'cliff') {
-    buildCanyonEdges(assets, group);
+    if(!assets.cliffTile)buildCanyonEdges(assets, group);
   } else if (assets.wall && !assets.roadTile) {
     // The original road prefab already includes both parapets. Only the fallback
     // slab needs separate wall meshes; adding them to the prefab doubles the walls.
@@ -815,7 +823,7 @@ export function buildTile(
   }
 
   // The reference giant trunks stand close to the parapets, alternating sides.
-  if (surface === 'stone' && !clearScenery && assets.tree && index >= 0 && index % 3 === 1) {
+  if (surface === 'stone' && terrain!=='cliff' && !clearScenery && assets.tree && index >= 0 && index % 3 === 1) {
     const side = index % 6 === 1 ? -1 : 1;
     const tree=buildSceneryTree(assets,side);
     if(tree)group.add(tree);

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { ANGEL_WINGS_PRICE } from '../game/nativeAngelWings';
-import { MEGA_START_PRICE } from '../game/megaStart';
-import { progress, buyAngelWings, buySkin, equipSkin, isOwned, canAfford } from '../game/progress';
+import { ANGEL_WINGS_PRICE, PERMA_WINGS_PRICE } from '../game/nativeAngelWings';
+import { HEAD_START_PRICE, MEGA_START_PRICE } from '../game/megaStart';
+import { progress, buyPermaWings, buyHeadStart, buyAngelWings, buySkin, equipSkin, isOwned, canAfford } from '../game/progress';
 import { SKINS, skinById } from '../game/skins';
 import { getGame } from '../game/boot';
 import { syncBanks } from '../game/state';
@@ -19,13 +19,14 @@ const owned = computed(() => isOwned(selected.value));
 const afford = computed(() => canAfford(selected.value));
 const priceLabel = computed(() => (skin.value.currency === 'gems' ? `◆ ${skin.value.price}` : `● ${skin.value.price}`));
 
+function buyPermanent():void {notice.value=buyPermaWings()?'本局永久翼已加入库存':'金币不足或库存已满';syncBanks();}
+
 function buyWings():void {
  notice.value=buyAngelWings()?'天使之翼已加入库存':'金币不足或库存已满';syncBanks();
 }
 
-function megaStart(): void {
-  if(getGame()?.startMegaBoost()) {syncBanks();emit('close');}
-  else notice.value='金币不足或游戏尚未准备好';
+function purchaseStart(kind:'normal'|'mega'):void {
+ notice.value=buyHeadStart(kind)?'起跑道具已加入库存':'金币不足或库存已满';syncBanks();
 }
 
 function select(id: string): void {
@@ -60,10 +61,13 @@ function buy(): void {
       <h2 class="title">角色与道具</h2>
       <p class="bank">● {{ progress.coins }} &nbsp; ◆ {{ progress.gems }}</p>
 
-      <button class="primary store-action" :disabled="progress.coins < MEGA_START_PRICE" @click="megaStart"><span>超级起跑 · ● {{ MEGA_START_PRICE }}</span><em>↗</em></button>
-      <p class="notice">本次开跑自动转弯并加速。重新开始需再次购买。</p>
-      <button class="primary store-action" :disabled="progress.coins < ANGEL_WINGS_PRICE || progress.wings >= 99" @click="buyWings"><span>天使之翼 · ● {{ ANGEL_WINGS_PRICE }}</span><em>×{{ progress.wings }}</em></button>
+      <button class="primary store-action" :disabled="progress.coins < HEAD_START_PRICE" @click="purchaseStart('normal')"><span>普通起跑 · ● {{ HEAD_START_PRICE }}</span><em>×{{ progress.headStarts }}</em></button>
+      <button class="primary store-action" :disabled="progress.coins < MEGA_START_PRICE" @click="purchaseStart('mega')"><span>超级起跑 · ● {{ MEGA_START_PRICE }}</span><em>×{{ progress.megaStarts }}</em></button>
+      <p class="notice">购买后存入库存。开跑25～100米间点击使用，自动转弯并加速至普通950米／超级2350米附近。</p>
+      <button class="primary store-action" :disabled="progress.coins < ANGEL_WINGS_PRICE || progress.wings >= 99" @click="buyWings"><span>天使之翼 · ● {{ ANGEL_WINGS_PRICE, PERMA_WINGS_PRICE }}</span><em>×{{ progress.wings }}</em></button>
       <p class="notice">跑动时点击激活，30 秒内保留一次复活机会；冷却 45 秒。</p>
+      <button class="primary store-action" :disabled="progress.coins < PERMA_WINGS_PRICE || progress.permaWings >= 99" @click="buyPermanent"><span>本局永久翼 · ● {{ PERMA_WINGS_PRICE }}</span><em>×{{ progress.permaWings }}</em></button>
+      <p class="notice">开跑25～100米间激活；本局首次死亡前持续有效，复活后结束。每次激活消耗一件。</p>
       <StorePreview :skin-id="selected" />
 
       <div class="preview-meta">

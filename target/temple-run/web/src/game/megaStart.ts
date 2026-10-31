@@ -1,4 +1,10 @@
-/** Web economy/headstart settings. Original shop price and mega cruise budget
- * have not been recovered; speed multiplier/braking target are native rules. */
-export const MEGA_START_PRICE=1000;
-export const MEGA_START_PROGRESS=1000;
+import {NATIVE_UTILITY_PRICES} from './nativeStorePrices';
+/** Scene defaults:HeadStartBoostDistance950,HeadStartMegaBoostDistance2350.
+ * UseHeadStart/UseHeadStartMega subtract current metric progress and both pass false
+ * to CharacterPlayer.StartBoost. Store purchases inventory; activation uses the native window. */
+export const HEAD_START_PRICE=NATIVE_UTILITY_PRICES.headStart;
+export const HEAD_START_PROGRESS=950;
+export const MEGA_START_PRICE=NATIVE_UTILITY_PRICES.megaStart;
+export const MEGA_START_PROGRESS=2350;
+
+export const headStartWindow=(distance:number):boolean=>distance>25&&distance<100;

@@ -7,6 +7,17 @@
     "AngelWingsRechargeTimeLeft": "0x168"
   },
   "verified": {
+    "permanent": {
+      "itemType": 3,
+      "consumeOneOnActivation": true,
+      "windowExclusive": [
+        25,
+        100
+      ],
+      "durationDoesNotTick": true,
+      "postDeathCooldown": 15,
+      "priceDefault": 10000
+    },
     "activeSeconds": 30,
     "rechargeSeconds": 45,
     "consume": "one stock on activation, not on death",
@@ -14,11 +25,19 @@
     "death": "GameController.Update126d3bc tests HasAngelWings before resurrection flow"
   },
   "limits": [
-    "Permanent wings are not implemented.",
-    "Web price500, inventory cap99, HUD button and intro3s guard are adapters; complete native use guards/economy not recovered.",
+    "Permanent wings now use consumed inventory,25<progress<100 activation,nonexpiring protection and15s post-death cooldown; full native use exclusions not ported.",
+    "Normal/permanent prices500/10000 are native constructor defaults; inventory cap99, HUD button and normal-wing intro3s guard are adapters; complete native use guards/economy not recovered.",
     "Web reuses existing death delay/resurrection safety clear and native resurrection boost; full original resurrection animation/conditional timing not ported."
   ],
   "instructionChecks": {
+    "0x1277804": "0x52800021",
+    "0x1277860": "0x12800003",
+    "0x127785c": "0x52800062",
+    "0x1298c78": "0x39058008",
+    "0x1298c80": "0x370000c1",
+    "0x1297530": "0x35000408",
+    "0x126d3cc": "0x52a82e09",
+    "0x126d3d0": "0xb9016909",
     "0x1298c74": "0x39058409",
     "0x1298c7c": "0xbd016400",
     "0x1298c88": "0x52a84689",

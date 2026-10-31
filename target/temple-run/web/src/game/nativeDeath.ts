@@ -24,3 +24,6 @@ export function nativeGroundContact(y:number,supported:boolean,wasFalling:boolea
  const dead=deathType!==null;
  return {dead,deathType,landed:!dead&&supported&&y<=0,stumble:!dead&&supported&&wasFalling&&y<-.4};
 }
+
+/** Changing support planes must preserve absolute player Y before contact tests. */
+export const rebaseNativeGroundY=(relativeY:number,previousGround:number,nextGround:number):number=>relativeY+previousGround-nextGround;

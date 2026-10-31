@@ -56,8 +56,13 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
       <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
     </div>
 
+    <div v-if="ui.phase==='playing' && (ui.headStartReady || ui.permaWingsReady) && (progress.headStarts>0 || progress.megaStarts>0 || progress.permaWings>0)" class="head-start-actions">
+      <button v-if="ui.headStartReady && progress.headStarts>0" @click.stop="getGame()?.useHeadStart('normal')">普通起跑 ×{{ progress.headStarts }}</button>
+      <button v-if="ui.headStartReady && progress.megaStarts>0" @click.stop="getGame()?.useHeadStart('mega')">超级起跑 ×{{ progress.megaStarts }}</button>
+      <button v-if="ui.permaWingsReady && progress.permaWings>0" @click.stop="getGame()?.usePermaWings()">本局永久翼 ×{{ progress.permaWings }}</button>
+    </div>
     <button v-if="ui.phase==='playing' && (progress.wings>0 || ui.wingsRemaining>0 || ui.wingsCooldown>0)" class="wings-action" :disabled="!ui.wingsReady" @click.stop="getGame()?.useAngelWings()">
-      {{ ui.wingsRemaining>0 ? `天使之翼 ${Math.ceil(ui.wingsRemaining)}s` : ui.wingsCooldown>0 ? `冷却 ${Math.ceil(ui.wingsCooldown)}s` : `天使之翼 ×${progress.wings}` }}
+      {{ ui.wingsPermanent ? '本局永久翼已激活' : ui.wingsRemaining>0 ? `天使之翼 ${Math.ceil(ui.wingsRemaining)}s` : ui.wingsCooldown>0 ? `冷却 ${Math.ceil(ui.wingsCooldown)}s` : `天使之翼 ×${progress.wings}` }}
     </button>
     <div v-if="ui.milestone" :key="ui.milestone.id" class="milestone" :class="ui.milestone.art">
       <img class="milestone-board" :src="uiAsset('hud-milestone.png')" alt="" />
@@ -84,4 +89,8 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 .coin-meter{position:absolute;left:18px;bottom:24px;width:158px;color:#eed89b;text-shadow:0 1px 3px #000;pointer-events:none}
 .coin-meter small{font-size:11px}.coin-meter>div{height:5px;background:#17251ccc;border:1px solid #ba9a54;border-radius:4px;overflow:hidden;margin-top:4px}
 .coin-meter i{display:block;height:100%;background:#edc65d}
+</style>
+
+<style scoped>
+.head-start-actions{position:absolute;left:18px;bottom:108px;display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}.head-start-actions button{min-height:44px;padding:8px 12px;background:#28382e;border:1px solid #b99c61;color:#f4dfac;border-radius:8px}
 </style>
