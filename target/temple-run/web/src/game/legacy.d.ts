@@ -8,7 +8,7 @@ declare module '*/runnerRig.js' {
   export interface RunnerRig {
     object: Object3D;
     setClip(name: string, restart?: boolean): void;
-    update(dt: number, timeScale?: number): void;
+    update(dt: number, timeScale?: number, scaleAllClips?: boolean): void;
     setTime(t: number): void;
     joints?(): Record<string, [number, number, number]>;
   }

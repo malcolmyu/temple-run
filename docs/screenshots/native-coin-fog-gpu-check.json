@@ -1,0 +1,84 @@
+{
+  "backPixel": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "passed": true,
+  "rows": [
+    {
+      "expected": [
+        255,
+        200,
+        0,
+        255
+      ],
+      "name": "near",
+      "passed": true,
+      "pixel": [
+        255,
+        200,
+        0,
+        255
+      ],
+      "x": 0,
+      "z": -10
+    },
+    {
+      "expected": [
+        153,
+        141,
+        43,
+        255
+      ],
+      "name": "middle",
+      "passed": true,
+      "pixel": [
+        152,
+        141,
+        43,
+        255
+      ],
+      "x": 0,
+      "z": -50
+    },
+    {
+      "expected": [
+        153,
+        141,
+        43,
+        255
+      ],
+      "name": "offAxisSameRadius",
+      "passed": true,
+      "pixel": [
+        152,
+        141,
+        43,
+        255
+      ],
+      "x": 30,
+      "z": -40
+    },
+    {
+      "expected": [
+        50,
+        82,
+        86,
+        255
+      ],
+      "name": "far",
+      "passed": true,
+      "pixel": [
+        50,
+        82,
+        86,
+        255
+      ],
+      "x": 0,
+      "z": -90
+    }
+  ],
+  "scope": "Radial Gamma fog, opaque alpha and culling only; native diffuse/lightmap binding remains unresolved"
+}

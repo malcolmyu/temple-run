@@ -34,5 +34,11 @@ jobs:
         run: npm run temple:typecheck
       - name: Obstacle spawner test
         run: npm run temple:test:spawner
+      - name: Steering test
+        run: npm run temple:test:steering
+      - name: Surface geometry test
+        run: npm run temple:test:surface
+      - name: Turn input test
+        run: npm run temple:test:turn
       - name: Build
         run: npm run temple:build

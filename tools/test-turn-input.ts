@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { acceptsTurn } from '../target/temple-run/web/src/game/turnInput';
+assert.equal(acceptsTurn(1, 1, 48, false), false, 'distant cue cannot confirm a turn');
+assert.equal(acceptsTurn(1, 1, 6.01, false), false);
+assert.equal(acceptsTurn(1, 1, 6, false), true);
+assert.equal(acceptsTurn(-1, -1, 0, false), true);
+assert.equal(acceptsTurn(-1, -1, -2, false), true);
+assert.equal(acceptsTurn(-1, -1, -2.01, false), false);
+assert.equal(acceptsTurn(1, -1, 1, false), false, 'wrong direction is not a successful turn');
+assert.equal(acceptsTurn(0, 1, 1, false), false, 'no upcoming turn');
+assert.equal(acceptsTurn(1, 1, 1, true), false, 'do not consume twice');
+assert.equal(acceptsTurn(0, 0, 0, false), false);
+assert.equal(acceptsTurn(1, 1, NaN, false), false);
+console.log('Turn input OK: early cue rejection, both directions, approach/late edges, duplicate and invalid input');

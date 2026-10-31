@@ -1,0 +1,75 @@
+{
+  "source": "BV1ypuKzPErT",
+  "reviewedSeconds": [
+    178,
+    210
+  ],
+  "turns": [
+    {
+      "legacy": 1683,
+      "direction": 1,
+      "videoSecond": 185.2,
+      "junction": "corner"
+    },
+    {
+      "legacy": 1711,
+      "direction": 1,
+      "videoSecond": 189.0,
+      "junction": "corner"
+    },
+    {
+      "legacy": 1747,
+      "direction": 1,
+      "videoSecond": 193.8,
+      "junction": "corner"
+    },
+    {
+      "legacy": 1791,
+      "direction": 1,
+      "videoSecond": 199.2,
+      "junction": "corner"
+    },
+    {
+      "legacy": 1829,
+      "direction": 1,
+      "videoSecond": 203.8,
+      "junction": "corner"
+    },
+    {
+      "legacy": 1861,
+      "direction": 1,
+      "videoSecond": 207.2,
+      "junction": "corner"
+    }
+  ],
+  "shield": {
+    "legacy": 1637,
+    "lane": 1,
+    "height": 3,
+    "videoPickupBracket": [
+      181.4,
+      181.6
+    ],
+    "nativeDuration": 25,
+    "upgradeLevelsPossible": [
+      5,
+      6
+    ]
+  },
+  "narrowSource": {
+    "serializedSafePolygon": "Region2D11 from each original prefab",
+    "leftStripMeans": "narrow-wall-right",
+    "rightStripMeans": "narrow-wall-left",
+    "corrections": [
+      "source187 and191 previously authored full-width pits; enlarged frames show surviving right strip",
+      "source195..197 and200..202 fitted as three adjacent native narrow-wall-right tiles"
+    ]
+  },
+  "limits": [
+    "exact tile counts and positions fitted to sampled world calibration, not native generator recovery",
+    "Long vs Small narrow prefab identity outside the clearly reviewed181 shot remains a visual fit",
+    "native long-hole endcaps restored but not inserted into recording from uncertain visual evidence",
+    "central moss medallion at207 corner still not matched",
+    "continuous integration replay uses invincibility for supported source sequences, not source timing/input identity"
+  ]
+}

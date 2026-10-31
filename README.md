@@ -1,5 +1,7 @@
 # Temple Run · Web Edition
 
+当前还原主参考：用户指定的 [BV1ypuKzPErT](https://www.bilibili.com/video/BV1ypuKzPErT/)。已保存 271 张逐秒图和本地交互浏览页；[新参考分析与未完成差异](docs/reference/BV1ypuKzPErT-analysis.md)。整体还原仍在进行，旧版文档中的“一模一样/原版对齐”不代表本轮验收通过。
+
 [![CI](https://github.com/malcolmyu/temple-run/actions/workflows/ci.yml/badge.svg)](https://github.com/malcolmyu/temple-run/actions/workflows/ci.yml)
 
 用 Three.js 复刻的原版 Temple Run 1.39（Unity）网页版，并保留工程内的原版资源（骨骼角色、路面/转角/障碍 mesh、UI 图集、音效等）。

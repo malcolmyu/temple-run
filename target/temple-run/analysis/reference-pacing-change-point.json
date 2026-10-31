@@ -1,0 +1,19 @@
+{
+  "source": "BV1ypuKzPErT",
+  "observations": 36,
+  "method": "continuous two-line least squares across19.5..23.0; raw20-point quantization retained; knot grid.01s is not source timestamp precision",
+  "best": {
+    "changeSecond": 19.860000000000024,
+    "rmsePoints": 5.365540160813198,
+    "beforePointsPerSecond": 199.23996455502976,
+    "afterPointsPerSecond": 154.53490734222257,
+    "beforeRmsSpeed": 21.867233819851826,
+    "afterRmsSpeed": 19.258343065314165
+  },
+  "caveats": [
+    "video fps-bin uncertainty +/- .05s",
+    "native distance formula assumes smoothDeltaTime follows actual frame step",
+    "rate change does not identify its gameplay cause",
+    "trip vocal alone is weak, but simultaneous gruntTrip+monkeys composite matches.954 at20.211s; event cause and audio/video latency remain unresolved"
+  ]
+}

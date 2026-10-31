@@ -1,0 +1,36 @@
+{
+  "source": "reference-audio-events.json",
+  "shieldWindows": [
+    {
+      "start": 145.950136,
+      "end": 170.950136
+    },
+    {
+      "start": 181.704761,
+      "end": 206.704761
+    }
+  ],
+  "stumblesDuringShield": [
+    {
+      "kind": "stumble",
+      "audioSecond": 147.742136,
+      "ncc": 0.9118947940034077,
+      "shieldIndex": 1
+    },
+    {
+      "kind": "stumble",
+      "audioSecond": 160.200761,
+      "ncc": 0.9351194637687873,
+      "shieldIndex": 1
+    },
+    {
+      "kind": "stumble",
+      "audioSecond": 186.44076099999998,
+      "ncc": 0.9386993160406779,
+      "shieldIndex": 2
+    }
+  ],
+  "minStumbleSpacing": 11.008000000000003,
+  "basis": "two pickups visually verified as25-second shields; fixed audio/video latency cancels in interval inclusion",
+  "inference": "ordinary shield-suppressed obstacle/landing collisions cannot alone explain these events; failed swipe input remains a supported mechanism, exact gestures unobserved"
+}

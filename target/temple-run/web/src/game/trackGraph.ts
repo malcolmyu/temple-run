@@ -30,6 +30,13 @@ export class TrackGraph {
     this.active = active;
   }
 
+  reset(active = new TrackPath()): void {
+    this.active=active;
+    this.forks.length=0;
+    this.nodes.length=0;
+    this.nextNodeId=1;
+  }
+
   fork(at: number): TrackGraphFork {
     const left = this.active.clone();
     const right = this.active.clone();

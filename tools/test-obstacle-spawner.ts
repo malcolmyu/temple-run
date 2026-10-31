@@ -1,3 +1,4 @@
+import { referenceTileDistance as T } from '../target/temple-run/web/src/game/referenceCoordinates';
 import { ASSET_DEFS, DEFS, PLAYABLE_DEFS } from '../target/temple-run/web/src/game/obstacles/catalog';
 import { ORIGINAL_SPAWNER_CONFIG, pickObstacle } from '../target/temple-run/web/src/game/obstacles/spawner';
 import { SeededRandom } from '../target/temple-run/web/src/game/obstacles/rng';
@@ -9,9 +10,20 @@ import { resolve } from 'node:path';
 
 const issues: string[] = [];
 if (surfaceAt(0).kind !== 'stone') issues.push('surface 0 should be stone');
-if (surfaceAt(168).kind !== 'wood') issues.push('surface 168 should be wood');
-if (surfaceAt(312).kind !== 'stone') issues.push('surface 312 should be stone');
-if (surfaceAt(456).kind !== 'wood') issues.push('surface 456 should be wood');
+if (surfaceAt(168).kind !== 'stone') issues.push('opening causeway must still be stone at 168m');
+if (surfaceAt(T(564)).kind !== 'wood') issues.push('first bridge should begin at estimated 564m');
+if (surfaceAt(T(976)).kind !== 'stone') issues.push('first bridge should end at estimated legacy976');
+if (surfaceAt(T(1908)).kind !== 'wood') issues.push('second bridge should begin at estimated 1908m');
+if (surfaceAt(T(2172)).kind !== 'stone') issues.push('second bridge should end at estimated 2172m');
+for (const distance of [-36, -12, 0, 6]) {
+  const surface = surfaceAt(distance);
+  if (surface.kind !== 'stone' || surface.first || surface.last) issues.push(`entrance ${distance} has a spurious surface threshold`);
+}
+for (const boundary of [564,976,1908,2172].map(T)) {
+  if (!surfaceAt(boundary).first || !surfaceAt(boundary-12).last || surfaceAt(boundary+12).first) issues.push(`surface threshold flags wrong at ${boundary}`);
+  if (surfaceAt(boundary).from !== boundary) issues.push(`surface uses local rather than global boundary at ${boundary}`);
+}
+if (surfaceAt(3000).kind !== 'stone') issues.push('unobserved tail must not invent another short wooden cycle');
 const graph = new TrackGraph();
 const graphFork = graph.fork(30);
 const leftPoint = graph.choose(graphFork, 'left').at(35);
@@ -35,8 +47,8 @@ if (activeLeft[0] !== 0 || Math.abs(activeLeft[1] - 3.8) > 0.01) issues.push('in
 const fork = sidePathAt(180);
 if (!fork || fork.safe.join(',') !== '0,2') issues.push('side path at 180 should expose lanes 0 and 2');
 const assets = Object.keys(ASSET_DEFS);
-if (assets.length !== 23) issues.push(`expected 23 OBJ mappings, got ${assets.length}`);
-if (PLAYABLE_DEFS.length !== 9) issues.push(`expected 9 playable definitions, got ${PLAYABLE_DEFS.length}`);
+if (assets.length !== 29) issues.push(`expected 29 OBJ mappings, got ${assets.length}`);
+if (PLAYABLE_DEFS.some(d=>d.kind==='gapLong'||d.id==='fireWall')) issues.push('standalone long-hole caps and invented fireWall cannot enter the native obstacle pool');
 const assetRoot = resolve('target/temple-run/web/public/assets/obstacles');
 for (const asset of assets) {
   if (!existsSync(resolve(assetRoot, `${asset}.obj`))) issues.push(`missing OBJ: ${asset}`);
@@ -76,4 +88,4 @@ if (issues.length) {
   console.error(`${issues.length} issues`);
   process.exit(1);
 }
-console.log('M1/M3 OK: 23 OBJ files present, all variants mapped, 9 playable defs, 10000 seeds');
+console.log('M1/M3 OK: 29 OBJ files present, all variants mapped, native standalone obstacle pool, 10000 seeds');

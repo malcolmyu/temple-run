@@ -1,0 +1,121 @@
+{
+  "source": "BV1ypuKzPErT",
+  "reviewedVideoFrames": [
+    86,
+    113
+  ],
+  "newTurns": [
+    {
+      "legacyScoreCoordinate": 837,
+      "direction": "left",
+      "junction": "corner",
+      "frames": [
+        96,
+        97,
+        98
+      ]
+    },
+    {
+      "legacyScoreCoordinate": 957,
+      "direction": "left",
+      "junction": "corner",
+      "frames": [
+        108,
+        109,
+        110
+      ]
+    }
+  ],
+  "newObstacles": [
+    {
+      "kind": "plankBeam",
+      "legacyScoreCoordinate": 745,
+      "frames": [
+        87,
+        88,
+        89
+      ]
+    },
+    {
+      "kind": "plankBeam",
+      "legacyScoreCoordinate": 777,
+      "frames": [
+        90,
+        91,
+        92
+      ]
+    },
+    {
+      "kind": "plankBeam",
+      "legacyScoreCoordinate": 857,
+      "frames": [
+        99,
+        100,
+        101
+      ]
+    },
+    {
+      "kind": "plankBeam",
+      "legacyScoreCoordinate": 887,
+      "frames": [
+        102,
+        103,
+        104
+      ]
+    },
+    {
+      "kind": "plankPit",
+      "legacyScoreCoordinate": 817,
+      "frames": [
+        95,
+        96,
+        97
+      ]
+    },
+    {
+      "kind": "plankPit",
+      "legacyScoreCoordinate": 937,
+      "frames": [
+        107,
+        108,
+        109
+      ]
+    }
+  ],
+  "coinRuns": [
+    {
+      "lane": "right",
+      "legacyRange": [
+        778,
+        806.5
+      ]
+    },
+    {
+      "lane": "left",
+      "legacyRange": [
+        856,
+        887.5
+      ]
+    },
+    {
+      "lane": "right",
+      "legacyRange": [
+        960,
+        991.5
+      ]
+    }
+  ],
+  "woodExit": {
+    "frameBefore": 111,
+    "scoreBefore": 19400,
+    "frameAfter": 112,
+    "scoreAfter": 19620,
+    "chosenLegacyCoordinate": 976
+  },
+  "limits": [
+    "event order, obstacle identity and turn direction visually reviewed",
+    "exact centers, coin counts and spacing remain fitted",
+    "world conversion uses the previously documented sampled physical estimate",
+    "96m full-width visibility buffer and later random boundary are presentation policy, not source generator rules"
+  ]
+}

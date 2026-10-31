@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import * as THREE from 'three';
+import {buildRunnerRig} from '../target/temple-run/web/src/runnerRig.js';
+const rig=buildRunnerRig(JSON.parse(readFileSync('target/temple-run/web/public/assets/characters/rig-orig_02___Default.json','utf8')));
+const base=rig.mesh.material;
+assert.equal(base.type,'MeshBasicMaterial','original actor shader is unlit');
+assert.equal(base.toneMapped,false,'do not apply ACES to native actor textures');
+assert.equal(base.fog,false,'native opaque actor variant has no fog stage');
+assert.equal(base.color.getHex(),0xffffff,'saved unused _Color must not tint the actor');
+rig.setInvincibility(true,new THREE.Texture());
+const glow=rig.mesh.material;
+assert.notEqual(base,glow);assert.ok(glow.transparent);assert.equal(glow.depthWrite,false);assert.equal(glow.opacity,.55);
+rig.setInvincibility(true);assert.equal(rig.mesh.material,glow,'do not allocate a material every animation frame');
+rig.setInvincibility(false);assert.equal(rig.mesh.material,base,'expiry restores the exact skin material');
+console.log('Native invisibility material activates, reuses and restores the original skin');

@@ -1,0 +1,108 @@
+{
+  "source": "BV1ypuKzPErT",
+  "turns": [
+    {
+      "legacyScoreCoordinate": 1055,
+      "direction": -1,
+      "junction": "tee",
+      "approxVideoSecond": 120.9
+    },
+    {
+      "legacyScoreCoordinate": 1081,
+      "direction": 1,
+      "junction": "corner",
+      "approxVideoSecond": 123.7
+    },
+    {
+      "legacyScoreCoordinate": 1103,
+      "direction": 1,
+      "junction": "corner",
+      "approxVideoSecond": 126.0
+    },
+    {
+      "legacyScoreCoordinate": 1127,
+      "direction": 1,
+      "junction": "corner",
+      "approxVideoSecond": 128.2
+    },
+    {
+      "legacyScoreCoordinate": 1147,
+      "direction": -1,
+      "junction": "corner",
+      "approxVideoSecond": 130.4
+    },
+    {
+      "legacyScoreCoordinate": 1165,
+      "direction": 1,
+      "junction": "corner",
+      "approxVideoSecond": 132.8
+    },
+    {
+      "legacyScoreCoordinate": 1187,
+      "direction": 1,
+      "junction": "corner",
+      "approxVideoSecond": 135.2
+    },
+    {
+      "legacyScoreCoordinate": 1207,
+      "direction": 1,
+      "junction": "corner",
+      "approxVideoSecond": 137.4
+    },
+    {
+      "legacyScoreCoordinate": 1231,
+      "direction": 1,
+      "junction": "corner",
+      "approxVideoSecond": 140.2
+    },
+    {
+      "legacyScoreCoordinate": 1253,
+      "direction": -1,
+      "junction": "corner",
+      "approxVideoSecond": 142.4
+    }
+  ],
+  "newObstacles": [
+    {
+      "kind": "treeSlide",
+      "legacy": 1007,
+      "frames": [
+        114,
+        115,
+        116
+      ]
+    },
+    {
+      "kind": "flameTower",
+      "legacy": 1031,
+      "frames": [
+        116,
+        117,
+        118,
+        119
+      ]
+    },
+    {
+      "kind": "treeJump",
+      "legacy": 1271,
+      "frames": [
+        143,
+        144,
+        145
+      ]
+    }
+  ],
+  "pickup": {
+    "kind": "shield",
+    "lane": 1,
+    "legacy": 1290,
+    "frameBefore": 145,
+    "frameAfter": 146
+  },
+  "limits": [
+    "turn direction confirmed from5FPS subsecond frames120..145",
+    "exact centers/counts/heights are fitted estimates",
+    "shield pickup position is interpolated within the500-point score jump",
+    "tree root classification and flame lane hitboxes still need exact source collision calibration"
+  ]
+}

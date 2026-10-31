@@ -1,8 +1,17 @@
+import { nativeCoinMaterial } from './nativeCoinMaterial';
+import { nativeWaterGeometry, NATIVE_WATER_HEIGHT } from './nativeWater';
+import { buildNativePower } from './nativePower';
+import { buildNativeFlame } from './nativeFlame';
+import { extractNativeGate } from './nativeGate';
+import { nativeUnlitMaterial } from '../nativeUnlit.js';
+import { nativeLightmapMaterial, attachNativeLightmapUV } from './nativeLightmap';
+import { cutSurfaceGeometry } from './cutSurface';
+import { NARROW_EDGE } from './terrain';
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { repairObjNormals } from '../objNormals.js';
-import { LANES, PLAYER_Z, TILE } from './config';
+import { CAMERA_FOV, LANES, PLAYER_Z, TILE } from './config';
 import type { ObstacleKind, PickupKind } from './components';
 import type { TrackPath } from './path';
 import type { NarrowSection, TerrainKind } from './terrain';
@@ -22,12 +31,23 @@ export interface Assets {
     spark: THREE.Texture;
     coinFace: THREE.Texture;
     wings: THREE.Texture | null;
+    glow?: THREE.Texture;
+    safetyNet?: THREE.Texture;
   };
   material: Record<string, THREE.Material>;
   roadTile: THREE.Group | null;
   wall: THREE.Group | null;
+  corner?: THREE.Group | null;
+  tJunction?: THREE.Group | null;
+  plankTJunction?: THREE.Group | null;
+  coin?: THREE.Group | null;
+  coinRed?: THREE.Group | null;
+  coinBlue?: THREE.Group | null;
+  plankTile?: THREE.Group | null;
+  plankCorner?: THREE.Group | null;
   tree: THREE.Group | null;
   gate: THREE.Group | null;
+  towerGate?: THREE.Group | null;
   enemy: THREE.Group | null;
   obstacles: Record<string, THREE.Group | null>;
 }
@@ -55,10 +75,21 @@ const loadTexture = (url: string): Promise<THREE.Texture> =>
     );
   });
 
-const loadObj = (url: string): Promise<THREE.Group | null> =>
-  new Promise((resolve) => {
-    new OBJLoader().load(url, (obj: THREE.Group) => resolve(obj), undefined, () => resolve(null));
-  });
+const lightmappedMeshes = new Set(['temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
+const loadObj = async (url: string): Promise<THREE.Group | null> => {
+  try {
+    const response=await fetch(url);
+    if(!response.ok)return null;
+    const obj=new OBJLoader().parse(await response.text());
+    const name=url.split('/').pop()?.replace(/\.obj$/, '') ?? '';
+    if(lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
+      const uv=await fetch(url.replace(/\.obj$/, '.uv1.json'));
+      if(!uv.ok)throw new Error('Missing native lightmap UV: '+name);
+      attachNativeLightmapUV(obj, await uv.json());
+    }
+    return obj;
+  } catch(error) { console.warn('Unable to load OBJ', url, error); return null; }
+};
 
 export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundle> {
   // Mobile GPUs are fill-rate bound: lower the render resolution and skip the shadow pass.
@@ -70,16 +101,16 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.18;
+  renderer.toneMappingExposure = 1.35;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0x193b31, 30, 145);
+  scene.fog = new THREE.Fog(0x325256, 20, 80);
 
-  const camera = new THREE.PerspectiveCamera(58, 1, 0.1, 190);
+  const camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 190);
   camera.position.set(0, 5.25, PLAYER_Z + 7.5);
 
-  scene.add(new THREE.HemisphereLight(0xb8d6bc, 0x0b1712, 1.55));
-  const sun = new THREE.DirectionalLight(0xc8d6ae, 2.55);
+  scene.add(new THREE.HemisphereLight(0xe4dfca, 0x253c36, 1.9));
+  const sun = new THREE.DirectionalLight(0xffe5ac, 2.25);
   sun.position.set(-12, 22, -24);
   sun.castShadow = !mobile;
   sun.shadow.mapSize.set(1024, 1024);
@@ -95,46 +126,57 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   fill.position.set(10, 8, 8);
   scene.add(fill);
 
-  // Dark jungle canopy light: the reference video is teal-green, not blue daylight.
+  // BV1ypuKzPErT: blue-grey mist over open water, warm sunlit masonry.
   const sky = new THREE.Mesh(
     new THREE.SphereGeometry(160, 24, 16),
     new THREE.ShaderMaterial({
       side: THREE.BackSide,
+      toneMapped: false,
       depthWrite: false,
-      uniforms: { top: { value: new THREE.Color(0x143b33) }, mid: { value: new THREE.Color(0x275345) }, bottom: { value: new THREE.Color(0x0a1512) } },
+      uniforms: { top: { value: new THREE.Color(0x325256) }, mid: { value: new THREE.Color(0x325256) }, bottom: { value: new THREE.Color(0x325256) } },
       vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
       fragmentShader:
         'varying vec3 vP; uniform vec3 top; uniform vec3 mid; uniform vec3 bottom;' +
         'void main(){ float h = clamp(normalize(vP).y * 0.5 + 0.5, 0.0, 1.0);' +
         'vec3 c = h > 0.5 ? mix(mid, top, (h - 0.5) * 2.0) : mix(bottom, mid, h * 2.0);' +
-        'gl_FragColor = vec4(c, 1.0); }',
+        'gl_FragColor = vec4(c, 1.0);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}',
     }),
   );
   sky.frustumCulled = false;
   scene.add(sky);
 
-  // Jungle floor far below the corridor: gives the scenery something to sit on.
-  const ground = new THREE.Mesh(
-    new THREE.BoxGeometry(260, 3, 260),
-    new THREE.MeshStandardMaterial({ map: null, color: 0x13241b, roughness: 0.98 }),
+  // Water material in sharedassets0 references terrainTexture (path ID 58).
+  const waterTexture = await loadTexture(asset('terrainTexture.webp'));
+  // Native PlayerSettings m_ActiveColorSpace=0 (Gamma): sample and fog-mix encoded RGB.
+  waterTexture.colorSpace = THREE.NoColorSpace;
+  waterTexture.wrapS = waterTexture.wrapT = THREE.RepeatWrapping;
+  waterTexture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
+  // Native Water_Plane UV0, geometry and scene height; no invented texture drift.
+  const water = new THREE.Mesh(
+    nativeWaterGeometry(),
+    new THREE.ShaderMaterial({
+      toneMapped: false,
+      uniforms: { waterTexture: { value: waterTexture }, fogColor: { value: new THREE.Color(50/255,82/255,86/255) } },
+      vertexShader: `varying vec2 waterUv; varying float waterFog;
+        void main(){vec4 p=modelMatrix*vec4(position,1.);waterUv=uv;
+        waterFog=clamp((distance(p.xyz,cameraPosition)-20.)/60.,0.,1.);
+        gl_Position=projectionMatrix*viewMatrix*p;}`,
+      fragmentShader: `varying vec2 waterUv; varying float waterFog; uniform vec3 fogColor;
+        uniform sampler2D waterTexture;
+        void main(){
+          vec3 color=texture2D(waterTexture,waterUv).rgb;
+          color=mix(color,fogColor,waterFog);
+          gl_FragColor=vec4(color,1.);
+          #include <tonemapping_fragment>
+          // Gamma project: native encoded RGB is already the display output.
+        }`,
+    }),
   );
-  ground.position.y = -3.4;
-  scene.add(ground);
+  water.name = 'reference-water';
+  water.position.y = NATIVE_WATER_HEIGHT;
+  scene.add(water);
 
-  // Sparse firefly/ember points in the jungle layer; cheap and non-colliding.
-  const flyPositions = new Float32Array(180 * 3);
-  for (let i = 0; i < 180; i++) {
-    flyPositions[i * 3] = (Math.random() - 0.5) * 30;
-    flyPositions[i * 3 + 1] = 1 + Math.random() * 7;
-    flyPositions[i * 3 + 2] = -80 + Math.random() * 90;
-  }
-  const flyGeo = new THREE.BufferGeometry();
-  flyGeo.setAttribute('position', new THREE.BufferAttribute(flyPositions, 3));
-  const fireflies = new THREE.Points(flyGeo, new THREE.PointsMaterial({ color: 0xb9e08a, size: 0.08, transparent: true, opacity: 0.7, depthWrite: false, blending: THREE.AdditiveBlending }));
-  fireflies.frustumCulled = false;
-  scene.add(fireflies);
-
-  const [wall, tree, leaf, flame, spark, coinFace, wingsTexture] = await Promise.all([
+  const [wall, tree, leaf, flame, spark, coinFace, wingsTexture, glowTexture, safetyNetAtlas] = await Promise.all([
     loadTexture(asset('wallTexture.webp')),
     loadTexture(asset('treeTexture.webp')),
     loadTexture(asset('leafTexture.webp')),
@@ -142,9 +184,15 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadTexture(`${BASE}assets/ui/fx-spark.png`),
     loadTexture(`${BASE}assets/ui/coin-face.png`),
     loadTexture(`${BASE}assets/ui/wings.png`).catch(() => null),
+    loadTexture(asset('playerGlowTexture.webp')),
+    loadTexture(`${BASE}assets/ui/EffectsTexture2x.png`),
   ]);
   leaf.wrapS = leaf.wrapT = THREE.RepeatWrapping;
 
+  const bakedLight=await loadTexture(asset('lightMapTexture.webp'));
+  const nativeRoadMaterial=nativeLightmapMaterial(wall,bakedLight);
+  const nativeTreeMaterial=nativeLightmapMaterial(tree,bakedLight);
+  const coinMaterial=nativeCoinMaterial(wall);
   const material: Record<string, THREE.Material> = {
     road: new THREE.MeshStandardMaterial({
       map: wall,
@@ -152,7 +200,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       side: THREE.DoubleSide,
       roughness: 0.95,
       emissive: 0x5a3f1c,
-      emissiveIntensity: 0.85,
+      emissiveIntensity: 0.35,
     }),
     facade: new THREE.MeshStandardMaterial({
       map: wall,
@@ -160,9 +208,9 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       side: THREE.DoubleSide,
       roughness: 0.95,
       emissive: 0x3a2f1e,
-      emissiveIntensity: 0.6,
+      emissiveIntensity: 0.25,
     }),
-    tree: new THREE.MeshStandardMaterial({ color: 0x26331f, side: THREE.DoubleSide, roughness: 0.98, emissive: 0x0d1409, emissiveIntensity: 0.6 }),
+    tree: new THREE.MeshStandardMaterial({ map: tree, color: 0xc7bc98, side: THREE.DoubleSide, roughness: 0.98 }),
     leaf: new THREE.MeshStandardMaterial({ map: leaf, color: 0x4f7057, side: THREE.DoubleSide, roughness: 0.95, emissive: 0x0d1a11, emissiveIntensity: 0.55 }),
     stone: new THREE.MeshStandardMaterial({ color: 0x9f947c, map: wall, roughness: 0.95 }),
     wood: new THREE.MeshStandardMaterial({ map: tree, color: 0x8e7b5e, roughness: 0.97 }),
@@ -173,24 +221,26 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     water: new THREE.MeshBasicMaterial({ color: 0x0b2b27, transparent: true, opacity: 0.72 }),
   };
 
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
     loadObj(`${BASE}assets/track/decor-tree-a.obj`),
     loadObj(`${BASE}assets/track/track-gate-a.obj`),
     loadObj(asset('mesh-96-enemy.obj')),
     loadTexture(asset('texture-53-enemyTexture.webp')).catch(() => null),
+    loadObj(`${BASE}assets/track/temple-entrance.obj`),
+    loadObj(`${BASE}assets/track/track-wall-corner-a.obj`),
+    loadObj(`${BASE}assets/track/coin-yellow.obj`),
+    loadObj(`${BASE}assets/track/plank-road-tile.obj`),
+    loadObj(`${BASE}assets/track/plank-corner.obj`),
+    loadObj(`${BASE}assets/track/coin-red.obj`),
+    loadObj(`${BASE}assets/track/coin-blue.obj`),
+    loadObj(`${BASE}assets/track/temple-t-junction.obj`),
+    loadObj(`${BASE}assets/track/plank-t-junction.obj`),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;
-    const enemyMaterial = new THREE.MeshStandardMaterial({
-      map: enemyTexture,
-      color: 0x9c7a66,
-      emissive: 0x8a5a3a,
-      emissiveIntensity: 0.5,
-      roughness: 0.95,
-      side: THREE.DoubleSide,
-    });
+    const enemyMaterial = nativeUnlitMaterial(enemyTexture, THREE.DoubleSide);
     enemyMesh.traverse((part: THREE.Object3D) => {
       const meshPart = part as THREE.Mesh;
       if (meshPart.isMesh) {
@@ -217,7 +267,6 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
 
   // Original obstacle prefabs, exported from the APK. Keep their authored origin (road at
   // y=0) and use the same 0.18 player-matched scale the APK analysis recommends.
-  const obstacleTreeMat = new THREE.MeshStandardMaterial({ map: tree, side: THREE.DoubleSide, roughness: 0.95, alphaTest: 0.4 });
   const obstacleStoneMat = new THREE.MeshStandardMaterial({ map: wall, color: 0xd8c8a8, side: THREE.DoubleSide, roughness: 0.95 });
   const obstacleNames = [
     'tree-jump-left',
@@ -234,10 +283,16 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     'flame-tower-vert',
     'pit',
     'pit-vert',
+    'plank-pit',
+    'plank-beam',
     'pit-long-a',
     'pit-long-b',
     'tower-arch',
     'tower-arch-vert',
+    'narrow-wall-left-a',
+    'narrow-wall-left-b',
+    'narrow-wall-right-a',
+    'narrow-wall-right-b',
     'narrow-wall-left',
     'narrow-wall-right',
     'narrow-beam-left',
@@ -253,13 +308,29 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       obstacles[name] = null;
       continue;
     }
-    paint(obj, name.startsWith('tree') ? obstacleTreeMat : obstacleStoneMat, !name.startsWith('pit'));
+    paint(obj, name === 'stone-pedestal' ? obstacleStoneMat : name.startsWith('tree') ? nativeTreeMaterial : nativeRoadMaterial, !name.startsWith('pit'));
     // The exporter baked the prefab-root frame: origin is the track-tile centre and y=0
     // is the road. Do NOT re-centre on the bounding box; a tree's canopy would move into
     // the running lane. Just match the player scale.
-    obj.rotation.y = Math.PI;
-    obj.scale.setScalar(name.startsWith('tree') ? 0.14 : 0.18);
+    const bakedWorld=['tree-trip-left','tree-trip-right','tree-jump-left','tree-jump-right'].includes(name)||name.startsWith('plank-')||name.startsWith('pit-long-')||name.startsWith('narrow-')||name==='flame-tower';
+    obj.rotation.y = bakedWorld?0:Math.PI;
+    obj.scale.setScalar(bakedWorld?1:name==='tree-slide' ? .2 : name.startsWith('tree') ? 0.14 : name==='pit'||name==='pit-vert' ? .2 : .18);
     obstacles[name] = obj;
+  }
+
+  if (entranceMesh) {
+    const entrance = new THREE.Group();
+    // The close entrance in reference 002/003 retains its black mouth. Use the
+    // original shader's no-vertex-fog variant, not the road's fogged variant.
+    paint(entranceMesh, nativeLightmapMaterial(wall, bakedLight, false), true);
+    entrance.add(entranceMesh);
+    entrance.name = 'reference-entrance';
+    entrance.visible = false;
+    // Native player starts at UnityZ=-10; map it to PLAYER_Z=3.
+    entrance.position.set(0, 0, 1);
+    entrance.scale.setScalar(1);
+    entrance.rotation.set(0, 0, 0);
+    scene.add(entrance);
   }
 
   return {
@@ -270,12 +341,21 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     sky,
     material,
     assets: {
-      texture: { wall, tree, leaf, flame, spark, coinFace, wings: wingsTexture },
+      texture: { wall, tree, leaf, flame, spark, coinFace, wings: wingsTexture, glow: glowTexture, safetyNet: safetyNetAtlas },
       material,
-      roadTile: paint(roadTile, material.road, false),
-      wall: paint(wallTemplate, material.facade, true),
-      tree: paint(treeTemplate, material.tree, false),
-      gate: paint(gateTemplate, material.facade, false),
+      roadTile: paint(roadTile, nativeRoadMaterial, false),
+      wall: paint(wallTemplate, nativeRoadMaterial, true),
+      corner: paint(cornerMesh, nativeRoadMaterial, true),
+      tJunction: paint(tJunction, nativeRoadMaterial, true),
+      plankTJunction: paint(plankTJunction, nativeRoadMaterial, true),
+      plankCorner: paint(plankCorner, nativeRoadMaterial, true),
+      plankTile: paint(plankMesh, nativeRoadMaterial, true),
+      coinRed: paint(redCoin, coinMaterial, false),
+      coinBlue: paint(blueCoin, coinMaterial, false),
+      coin: paint(coinMesh, coinMaterial, false),
+      tree: paint(treeTemplate, nativeTreeMaterial, false),
+      gate: extractNativeGate(paint(gateTemplate, nativeRoadMaterial, false)),
+      towerGate: extractNativeGate(obstacles['tower-arch'], 'tower'),
       enemy: enemyMesh,
       obstacles,
     },
@@ -355,15 +435,17 @@ function ropeMaterial(): THREE.MeshStandardMaterial {
 export function mergeStaticMeshes(root: THREE.Object3D): void {
   root.updateMatrixWorld(true);
   const inverse = root.matrixWorld.clone().invert();
-  const byMaterial = new Map<THREE.Material, THREE.Mesh[]>();
+  const byMaterial = new Map<string, THREE.Mesh[]>();
   root.traverse((object) => {
     const mesh = object as THREE.Mesh;
     if (!mesh.isMesh || Array.isArray(mesh.material)) return;
-    const list = byMaterial.get(mesh.material) ?? [];
+    const key = `${mesh.material.uuid}:${mesh.userData.walkableSurface ? 1 : 0}`;
+    const list = byMaterial.get(key) ?? [];
     list.push(mesh);
-    byMaterial.set(mesh.material, list);
+    byMaterial.set(key, list);
   });
-  for (const [material, meshes] of byMaterial) {
+  for (const meshes of byMaterial.values()) {
+    const material = meshes[0].material as THREE.Material;
     if (meshes.length < 2) continue;
     const geometries: THREE.BufferGeometry[] = [];
     let castShadow = false;
@@ -381,6 +463,7 @@ export function mergeStaticMeshes(root: THREE.Object3D): void {
     const mergedMesh = new THREE.Mesh(merged, material);
     mergedMesh.castShadow = castShadow;
     mergedMesh.receiveShadow = true;
+    mergedMesh.userData.walkableSurface = meshes.some(mesh => mesh.userData.walkableSurface);
     root.add(mergedMesh);
     for (const mesh of meshes) mesh.removeFromParent();
   }
@@ -388,42 +471,85 @@ export function mergeStaticMeshes(root: THREE.Object3D): void {
 
 const LANE_SIDE = [-1.3, 0, 1.3] as const;
 
-/** Muddy plank bridge: deck, rope rails, lantern posts and the gorge underneath. */
+/** Timber causeway: reference 68s/76s shows cross-planks, bound piles and skulls. */
 function buildBridgeDeck(assets: Assets, group: THREE.Group): void {
-  const deck = new THREE.Mesh(new THREE.PlaneGeometry(7.2, TILE + 0.2), plankMaterial(assets));
-  deck.rotation.x = -Math.PI / 2;
-  deck.position.y = 0.02;
-  deck.receiveShadow = true;
-  group.add(deck);
-  const water = new THREE.Mesh(
-    new THREE.PlaneGeometry(30, TILE + 1),
-    new THREE.MeshStandardMaterial({ color: 0x8fd0bd, map: assets.texture.leaf, transparent: true, opacity: 0.9, roughness: 0.3, metalness: 0.15 }),
-  );
-  water.rotation.x = -Math.PI / 2;
-  water.position.y = -1.35;
-  group.add(water);
-  for (const side of [-1, 1] as const) {
-    for (const z of [-4.5, -1.5, 1.5, 4.5]) {
-      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.18, 1.9, 8), lightsMaterial());
-      post.position.set(side * 3.5, 0.95, z);
-      post.castShadow = true;
-      group.add(post);
-      for (const y of [1.15, 1.65]) {
-        const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 2.5, 5), ropeMaterial());
-        rope.rotation.x = Math.PI / 2;
-        rope.position.set(side * 3.5, y, z + 1.5);
-        group.add(rope);
+  if (assets.plankTile) {
+    const deck = assets.plankTile.clone(true);
+    deck.traverse(part => { if ((part as THREE.Mesh).isMesh) part.userData.walkableSurface = true; });
+    group.add(deck);
+    return;
+  }
+  const wood = plankMaterial(assets);
+  const grain = croppedTexture(assets.texture.wall, 8, 268, 224, 1, 1);
+  grain.center.set(.5, .5);
+  grain.rotation = Math.PI / 2;
+  const boardMat = new THREE.MeshStandardMaterial({ map: grain, color: 0xe2d3ad, roughness: 1, emissive: 0x705025, emissiveIntensity: .32 });
+  // Board pitch divides the tile exactly: prototypes meet without overlapping boards.
+  const count = 24;
+  for (let i = 0; i < count; i++) {
+    const width = 7.05 + Math.sin(i * 2.1) * .16;
+    const board = new THREE.Mesh(new THREE.BoxGeometry(width, .16, .475), boardMat);
+    board.position.set(Math.sin(i * 1.7) * .055, -.07, -TILE / 2 + (i + .5) * TILE / count);
+    board.rotation.z = Math.sin(i * 2.8) * .005;
+    board.receiveShadow = true;
+    board.userData.walkableSurface = true;
+    group.add(board);
+  }
+  const rope = new THREE.MeshStandardMaterial({
+    map: croppedTexture(assets.texture.wall, 778, 446, 128, 1, 2), color: 0xa69d80, roughness: 1,
+  });
+  // The atlas uses an ochre packing background, not alpha. Remove that colour
+  // from the skull patch so the ornament has a silhouette instead of a square sign.
+  const skullSource = croppedTexture(assets.texture.wall, 916, 446, 96, 1, 1);
+  const skullCanvas = document.createElement('canvas');
+  skullCanvas.width = skullCanvas.height = 96;
+  const ctx = skullCanvas.getContext('2d')!;
+  ctx.drawImage(skullSource.image as HTMLCanvasElement, 0, 0);
+  const pixels = ctx.getImageData(0, 0, 96, 96);
+  for (let i = 0; i < pixels.data.length; i += 4) {
+    const r = pixels.data[i], g = pixels.data[i + 1], b = pixels.data[i + 2];
+    if (r > 70 && r > g * 1.15 && b < r * .65) pixels.data[i + 3] = 0;
+  }
+  ctx.putImageData(pixels, 0, 0);
+  const skullTexture = new THREE.CanvasTexture(skullCanvas);
+  skullTexture.colorSpace = THREE.SRGBColorSpace;
+  const skull = new THREE.MeshBasicMaterial({ map: skullTexture, side: THREE.DoubleSide, transparent: true, alphaTest: .5 });
+  const brace = (x: number, a: THREE.Vector3, b: THREE.Vector3): void => {
+    const delta = b.clone().sub(a);
+    const beam = new THREE.Mesh(new THREE.BoxGeometry(.22, delta.length(), .22), wood);
+    beam.position.copy(a).add(b).multiplyScalar(.5);
+    beam.position.x = x;
+    beam.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), delta.normalize());
+    group.add(beam);
+  };
+  for (const side of [-1, 1]) {
+    const stringer = new THREE.Mesh(new THREE.BoxGeometry(.35, .38, TILE), wood);
+    stringer.position.set(side * 2.9, -.32, 0);
+    group.add(stringer);
+    const positions = [-4.5, -1.5, 1.5, 4.5];
+    for (const z of positions) {
+      const pile = new THREE.Mesh(new THREE.CylinderGeometry(.25, .32, 3.2, 6), wood);
+      pile.position.set(side * 3.35, -.45, z);
+      pile.castShadow = true;
+      group.add(pile);
+      for (const y of [-.12, .8]) {
+        const binding = new THREE.Mesh(new THREE.CylinderGeometry(.34, .34, .46, 8), rope);
+        binding.position.set(side * 3.35, y, z);
+        group.add(binding);
       }
+      // Original skull atlas patch on a small plaque at the top of the pile.
+      const ornament = new THREE.Mesh(new THREE.PlaneGeometry(.55, .55), skull);
+      ornament.position.set(side * 3.35, 1.27, z + .26);
+      ornament.rotation.z = side * -.18;
+      group.add(ornament);
     }
-    for (const z of [-3, 3]) {
-      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.12, 2.0, 8), lightsMaterial());
-      pole.position.set(side * 3.2, 1.0, z);
-      group.add(pole);
-      const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.5, 0.38), new THREE.MeshStandardMaterial({ color: 0xffdc9a, emissive: 0xffb43a, emissiveIntensity: 1.1 }));
-      lamp.position.set(side * 3.2, 2.25, z);
-      group.add(lamp);
+    for (let i = 0; i < positions.length - 1; i++) {
+      const from = positions[i], to = positions[i + 1];
+      brace(side * 3.1, new THREE.Vector3(0, -1.65, from), new THREE.Vector3(0, -.35, to));
+      brace(side * 3.1, new THREE.Vector3(0, -.35, from), new THREE.Vector3(0, -1.65, to));
     }
   }
+  // The global world-space water remains visible between planks and outside the piles.
 }
 
 /** Colonnade hall: columns, overhead beams, red carpet. */
@@ -465,71 +591,34 @@ function buildCanyonEdges(assets: Assets, group: THREE.Group): void {
     for (let i = 0; i < 5; i++) {
       const slab = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.22, 1.6), assets.material.stone);
       slab.position.set(side * 3.7, 0.08, -4.8 + i * 2.4);
+      slab.userData.walkableSurface = true;
       slab.rotation.y = side * (0.1 + i * 0.05);
       group.add(slab);
     }
-    if (assets.roadTile === null) continue;
-    const abyss = new THREE.Mesh(new THREE.PlaneGeometry(16, TILE + 1), assets.material.void);
-    abyss.rotation.x = -Math.PI / 2;
-    abyss.position.set(side * 12.2, -2.6, 0);
-    group.add(abyss);
+
   }
 }
 
 /** Half-road: one side of the slab has fallen into the canyon, leaving a ragged lip. */
 export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'left' | 'right', firstTile: boolean, surface: SurfaceKind = 'stone', short = false): void {
   const dir = side === 'left' ? 1 : -1; // missing half is on this side (+1 = right)
-  const edge = 0.55 * dir;
-  const width = 3.6;
-  const center = edge + (dir * width) / 2;
-  // Dark teal water/abyss rather than a flat black rectangle; the video's broken
-  // right edge reads as depth, not a missing texture.
-  const abyss = new THREE.MeshBasicMaterial({ color: 0x06241f });
-  const hole = new THREE.Mesh(new THREE.PlaneGeometry(width, TILE + 0.02), abyss);
-  hole.rotation.x = -Math.PI / 2;
-  hole.position.set(center, 0.062, 0);
-  group.add(hole);
+  const edge = NARROW_EDGE * dir;
   // Vertical cliff face under the broken lip.
   const face = new THREE.Mesh(new THREE.BoxGeometry(0.35, 3.6, TILE + 0.02), assets.material.stone);
-  face.position.set(edge, -1.8, 0);
+  face.position.set(edge - dir * .175, -1.8, 0);
   group.add(face);
-  const deep = new THREE.Mesh(new THREE.PlaneGeometry(width * 1.3, TILE + 3), new THREE.MeshBasicMaterial({ color: 0x0b3b34 }));
-  deep.rotation.x = -Math.PI / 2;
-  deep.position.set(center, -2.1, 0);
-  group.add(deep);
-  // APK narrow-wall prefab as the surviving broken lip, rather than a generic box.
-  const lipName = short
-    ? side === 'left' ? 'narrow-beam-right' : 'narrow-beam-left'
-    : side === 'left' ? 'narrow-wall-right' : 'narrow-wall-left';
-  const lip = assets.obstacles[lipName];
-  if (lip) {
-    const edge = lip.clone(true);
-    edge.position.set(dir * 3.05, 0, 0);
-    edge.rotation.y = dir > 0 ? Math.PI : 0;
-    group.add(edge);
-  }
+  // The missing floor and its outer parapet are cut by the tile geometry system.
   // Broken paving/planks tumbling off the edge.
   for (let i = 0; i < 6; i++) {
     const slab = new THREE.Mesh(
       new THREE.BoxGeometry(surface === 'wood' ? 0.75 + (i % 2) * 0.25 : 0.55 + (i % 2) * 0.25, surface === 'wood' ? 0.12 : 0.2, 0.75),
       surface === 'wood' ? plankMaterial(assets) : assets.material.stone,
     );
-    slab.position.set(edge + dir * (0.25 + (i % 3) * 0.32), 0.07 - (i % 2) * 0.06, -4.6 + i * 1.9);
+    slab.position.set(edge + dir * (0.25 + (i % 3) * 0.32), -0.2 - (i % 3) * 0.22, -4.6 + i * 1.9);
     slab.rotation.set((i % 2 ? 0.12 : -0.08), i * 0.37, (i % 2 ? 0.18 : -0.12));
     group.add(slab);
   }
-  if (!firstTile) return;
-  // Gold chevrons on the surviving slab, pointing to the safe side.
-  for (let i = 0; i < 3; i++) {
-    const arrow = new THREE.Mesh(
-      new THREE.ConeGeometry(0.4, 0.9, 3),
-      new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.8 }),
-    );
-    arrow.rotation.x = Math.PI / 2;
-    arrow.rotation.z = dir * Math.PI / 2;
-    arrow.position.set(-dir * 1.3, 0.13, -3.5 + i * 1.4);
-    group.add(arrow);
-  }
+
 }
 
 /** Broken centre of a left/right fork: both outer lanes survive, middle falls. */
@@ -597,6 +686,31 @@ export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: 
   }
 }
 
+// The legacy gate OBJ contains a complete longitudinal prefab; scaling that
+// bounding box as an arch produced suspended triangular masonry across the view.
+// Build the visible cross-road arch from the original masonry and idol atlas regions.
+export function buildStoneGate(assets: Assets, tower = false): THREE.Group {
+  if(tower && assets.towerGate)return assets.towerGate.clone(true);
+  if(assets.gate)return assets.gate.clone(true);
+  const gate = new THREE.Group();
+  const stone = new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 0, 0, 256, 1, 2), color: 0xc8b47e, roughness: 1 });
+  const glyph = new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 0, 640, 160, 1, 1), roughness: 1 });
+  const block = (w: number, h: number, d: number, x: number, y: number) => {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), stone);
+    mesh.position.set(x, y, 0); mesh.castShadow = true; mesh.receiveShadow = true; gate.add(mesh);
+  };
+  for (const side of [-1, 1]) {
+    block(1.1, 5.5, 1.2, side * 3.6, 2.75);
+    block(1.65, .5, 1.7, side * 3.6, .25);
+    block(1.6, .35, 1.6, side * 3.6, 5.35);
+    const face = new THREE.Mesh(new THREE.PlaneGeometry(.85, 1.1), glyph);
+    face.position.set(side * 3.6, 2.3, .61); gate.add(face);
+  }
+  block(8.3, 1.05, 1.3, 0, 5.65);
+  block(8.7, .28, 1.6, 0, 6.3);
+  return gate;
+}
+
 /** One 12 m road tile with its walls, torches and jungle dressing. */
 export function buildTile(
   assets: Assets,
@@ -619,6 +733,7 @@ export function buildTile(
 
   if (surface === 'stone' && assets.roadTile) {
     const road = assets.roadTile.clone(true);
+    road.traverse(part => { if ((part as THREE.Mesh).isMesh) part.userData.walkableSurface = true; });
     road.position.y = ROAD_TILE_LIFT;
     road.scale.x = 0.84;
     group.add(road);
@@ -626,8 +741,10 @@ export function buildTile(
     const slab = new THREE.Mesh(new THREE.BoxGeometry(7.0, 0.65, TILE + 0.1), lightsMaterial());
     slab.position.y = -0.38;
     slab.receiveShadow = true;
+    slab.userData.walkableSurface = true;
     group.add(slab);
     const paving = new THREE.Mesh(new THREE.PlaneGeometry(6.9, TILE), new THREE.MeshStandardMaterial({ map: assets.texture.wall, color: 0xb59c76, roughness: 0.96 }));
+    paving.userData.walkableSurface = true;
     paving.rotation.x = -Math.PI / 2;
     paving.position.y = -0.03;
     group.add(paving);
@@ -639,78 +756,31 @@ export function buildTile(
     buildHallInterior(assets, group);
   } else if (terrain === 'cliff') {
     buildCanyonEdges(assets, group);
-  } else if (assets.wall) {
+  } else if (assets.wall && !assets.roadTile) {
+    // The original road prefab already includes both parapets. Only the fallback
+    // slab needs separate wall meshes; adding them to the prefab doubles the walls.
     for (const side of [-1, 1] as const) {
       const wall = assets.wall.clone(true);
+      wall.traverse(part => { if ((part as THREE.Mesh).isMesh) part.userData.walkableSurface = true; });
       wall.scale.setScalar(WALL_SCALE);
       wall.position.set(side * WALL_X, LOW_WALL_SINK, 0);
       wall.rotation.y = side > 0 ? 0 : Math.PI;
       group.add(wall);
-      for (const z of [-3.3, 3.3]) torch(group, assets, side * 3.05, z);
+      // Reference stone causeways have crenellated parapets, not rows of torches.
+      if (index % 14 === 9) torch(group, assets, side * 3.05, 0);
     }
   }
 
-  // Jungle fringing the ruin wall (skipped on bridges, where the gorge opens up).
-  if (terrain !== 'bridge' && !clearScenery) {
-    for (const side of [-1, 1] as const) {
-      for (let i = 0; i < 3; i++) {
-        const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
-        bush.scale.set(1.4 + i * 0.2, 0.65, 1.2);
-        bush.position.set(side * (7.8 + i * 0.6), 1.35 + (i % 2) * 0.4, -4 + i * 3.4);
-        bush.castShadow = false;
-        group.add(bush);
-      }
-      for (let i = 0; i < 2; i++) {
-        const bush = new THREE.Mesh(new THREE.SphereGeometry(1, 6, 4), assets.material.tree);
-        bush.scale.set(3.2 + i, 1.6, 2.6);
-        bush.position.set(side * (14 + i * 3), 0.4, -3 + i * 5);
-        group.add(bush);
-      }
-    }
+  // The reference giant trunks stand close to the parapets, alternating sides.
+  if (surface === 'stone' && !clearScenery && assets.tree && index >= 0 && index % 3 === 1) {
+    const side = index % 6 === 1 ? -1 : 1;
+    const tree = assets.tree.clone(true);
+    tree.scale.setScalar(0.12);
+    tree.position.set(side * 6.2, -2.0, -2.5);
+    tree.rotation.y = side > 0 ? Math.PI : 0;
+    group.add(tree);
   }
 
-  // Dark canopy and hanging vines, matching the reference video's enclosed jungle.
-  if (terrain !== 'hall' && !clearScenery) {
-    for (const side of [-1, 1] as const) {
-      for (let i = 0; i < 4; i++) {
-        const canopy = new THREE.Mesh(new THREE.SphereGeometry(1, 7, 5), assets.material.leaf);
-        canopy.scale.set(3.1 + i * 0.35, 0.75, 2.4);
-        canopy.position.set(side * (6.8 + i * 0.4), 7.6 + (i % 2) * 0.5, -5.5 + i * 3.2);
-        group.add(canopy);
-      }
-      for (let i = 0; i < 4; i++) {
-        const vine = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 4.6 + i * 0.5, 5), assets.material.moss);
-        vine.position.set(side * (5.0 + i * 0.35), 4.2 - i * 0.25, -5.0 + i * 3.4);
-        vine.rotation.z = side * (0.06 + i * 0.04);
-        group.add(vine);
-        const leaves = new THREE.Mesh(new THREE.SphereGeometry(1, 5, 4), assets.material.leaf);
-        leaves.scale.set(0.55, 0.35, 0.5);
-        leaves.position.set(side * (5.1 + i * 0.35), 6.2 - i * 0.25, -5.0 + i * 3.4);
-        group.add(leaves);
-      }
-      if (assets.tree && index % 3 === 0) {
-        const tree = assets.tree.clone(true);
-        tree.scale.setScalar(0.09);
-        tree.position.set(side * 9.6, 0, -2.5);
-        tree.rotation.y = side > 0 ? Math.PI : 0;
-        group.add(tree);
-      }
-    }
-  }
-
-  if (surfaceFirst || surfaceLast) {
-    // A short threshold makes the long surface switch read as a built transition,
-    // not a texture pop between two 12 m tiles.
-    const capMat = surface === 'wood' ? assets.material.stone : plankMaterial(assets);
-    const z = surfaceFirst ? -TILE / 2 + 0.45 : TILE / 2 - 0.45;
-    const cap = new THREE.Mesh(new THREE.BoxGeometry(7.22, 0.14, 0.9), capMat);
-    cap.position.set(0, 0.075, z);
-    cap.receiveShadow = true;
-    group.add(cap);
-    const trim = new THREE.Mesh(new THREE.BoxGeometry(7.24, 0.05, 0.12), assets.material.gold);
-    trim.position.set(0, 0.15, z);
-    group.add(trim);
-  }
   if (narrow) {
     const firstTile = index === Math.floor((narrow.from + 9) / TILE);
     const short = narrow.to - narrow.from <= TILE + 1;
@@ -718,11 +788,6 @@ export function buildTile(
   }
   if (sidePath) buildSidePathOverlay(assets, group, index === -1, sidePathLast, branchOffset, surface);
 
-  if (assets.obstacles['tower-arch'] && terrain === 'temple' && index % 7 === 3 && !clearScenery) {
-    const tower = assets.obstacles['tower-arch'].clone(true);
-    tower.scale.setScalar(0.07);
-    group.add(tower);
-  }
   if (terrain === 'anniversary' && !clearScenery) {
     // Golden anniversary set-piece: banners and braziers frame the surviving corridor.
     const bannerMat = new THREE.MeshStandardMaterial({ color: 0x8e2f2a, side: THREE.DoubleSide, roughness: 0.9, emissive: 0x2a0806, emissiveIntensity: 0.35 });
@@ -736,18 +801,16 @@ export function buildTile(
       group.add(banner);
     }
   }
-  if (assets.gate && index % 5 === 2 && (terrain === 'temple' || terrain === 'anniversary')) {
-    const gate = assets.gate.clone(true);
-    gate.scale.setScalar(0.2);
-    gate.position.set(0, 0, -TILE / 2);
-    gate.rotation.y = Math.PI;
+  if (index % 7 === 2 && terrain === 'temple' && !clearScenery) {
+    const gate = buildStoneGate(assets);
+    gate.position.z = -TILE / 2;
     group.add(gate);
   }
   return group;
 }
 
 /** Turn platform: square paving, rim stones and three glowing arrows. */
-export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath, at: number): THREE.Group {
+export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath, at: number, surface: SurfaceKind = 'stone'): THREE.Group {
   const group = new THREE.Group();
   const point = path.at(at);
   // Rotate to the incoming heading: the corner paving belongs to the approach side.
@@ -755,60 +818,87 @@ export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath
   const heading = path.at(Math.max(0, at - 0.05)).heading;
   group.position.set(point.x, 0, point.z);
   group.rotation.y = heading;
-  // The 12 m tile that straddles the turn is skipped, so one 12 m paving square covers the
-  // hole; a larger apron sits underneath so any hairline shows paving instead of the gorge.
-  const pad = new THREE.Mesh(
-    new THREE.PlaneGeometry(12, 12),
-    new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 516, 6, 250, 3, 1), color: 0xb59c76, roughness: 0.96 }),
-  );
-  pad.rotation.x = -Math.PI / 2;
-  pad.position.y = -0.012;
-  pad.receiveShadow = true;
-  group.add(pad);
-  const apron = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 20),
-    new THREE.MeshStandardMaterial({
-      map: croppedTexture(assets.texture.wall, 516, 6, 250, 5, 1.67),
-      color: 0x9e8f6e,
-      roughness: 0.96,
-      side: THREE.DoubleSide,
-    }),
-  );
-  apron.rotation.x = -Math.PI / 2;
-  apron.position.y = -0.03;
-  apron.receiveShadow = true;
-  group.add(apron);
-  for (const [x, z] of [[-4.2, 4.2], [4.2, 4.2], [-4.2, -4.2], [4.2, -4.2]] as const) {
-    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.36, 1.8, 8), cachedLightMat ?? lightsMaterial());
-    post.position.set(x, 0.9, z);
-    post.castShadow = true;
-    group.add(post);
-    group.add(flameSprite(assets, 0.9).clone());
-    const flame = group.children[group.children.length - 1] as THREE.Sprite;
-    flame.position.set(x, 2.05, z);
-  }
-  // Low wing walls frame the corner without blocking the view.
-  const wallMat = new THREE.MeshStandardMaterial({ map: croppedTexture(assets.texture.wall, 256, 0, 256, 3, 1), color: 0xcbb693, roughness: 0.95 });
-  for (const side of [-1, 1] as const) {
-    for (const z of [-3.4, 3.4]) {
-      const wall = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1.1, 2.6), wallMat);
-      wall.position.set(side * 3.9, 0.55, z);
-      wall.castShadow = true;
-      group.add(wall);
+  if (surface === 'wood' && assets.plankCorner && assets.plankTile) {
+    const corner = assets.plankCorner.clone(true);
+    corner.rotation.y = Math.PI;
+    corner.scale.x = -direction;
+    group.add(corner);
+    for (const outgoing of [false, true]) {
+      const arm = assets.plankTile.clone(true);
+      arm.traverse(part => {
+        const mesh = part as THREE.Mesh;
+        if (!mesh.isMesh) return;
+        const first = cutSurfaceGeometry(mesh.geometry, -100, -3);
+        const kept = cutSurfaceGeometry(first, 3, 100);
+        first.dispose();
+        mesh.geometry = kept;
+      });
+      arm.position.set(outgoing ? direction * 9 : 0, 0, outgoing ? 0 : 9);
+      if (outgoing) arm.rotation.y = direction * Math.PI / 2;
+      group.add(arm);
     }
+    return group;
   }
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.06, 6, 40), new THREE.MeshStandardMaterial({ color: 0xd9b36a, metalness: 0.6, roughness: 0.35, emissive: 0x3a2a10, emissiveIntensity: 0.4 }));
-  ring.rotation.x = Math.PI / 2;
-  ring.position.y = 0.04;
-  group.add(ring);
-
-  // Flat golden chevrons across the approach, pointing into the turn.
-  const arrowMat = new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.7, roughness: 0.4, metalness: 0.3 });
-  for (let i = 0; i < 3; i++) {
-    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.85, 3), arrowMat);
-    arrow.rotation.z = direction > 0 ? -Math.PI / 2 : Math.PI / 2;
-    arrow.position.set(0, 0.09, 2.2 - i * 1.3);
-    group.add(arrow);
+  // Replace the skipped tile with two road-width arms, keeping water visible
+  // inside the bend. The reference has parapets, without a plaza or floor arrows.
+  const roadMat = new THREE.MeshStandardMaterial({
+    map: croppedTexture(assets.texture.wall, 516, 6, 250, 1, 1),
+    color: 0xd8c394, roughness: .96, side: THREE.DoubleSide,
+  });
+  const addDeck = (width: number, length: number, x: number, z: number): void => {
+    const geometry = new THREE.PlaneGeometry(width, length);
+    const positions = geometry.getAttribute('position');
+    const uv = geometry.getAttribute('uv');
+    for (let i = 0; i < positions.count; i++) {
+      uv.setXY(i, (positions.getX(i) + x) / 7, (-positions.getY(i) + z) / 7);
+    }
+    const deck = new THREE.Mesh(geometry, roadMat);
+    deck.rotation.x = -Math.PI / 2;
+    deck.position.set(x, -.012, z);
+    deck.receiveShadow = true;
+    group.add(deck);
+    const support = new THREE.Mesh(new THREE.BoxGeometry(width, .65, length), assets.material.stone);
+    support.position.set(x, -.36, z);
+    group.add(support);
+  };
+  // The original road mesh includes tall base geometry out to x=4, but its
+  // visible parapets stand near x=2 after scaling. Match the walking span.
+  addDeck(4, 4, 0, 0);
+  addDeck(4, 10, 0, 7);
+  addDeck(10, 4, direction * 7, 0);
+  const parapet = (x: number, z: number, length: number, horizontal: boolean): void => {
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(horizontal ? length : .5, .75, horizontal ? .5 : length), assets.material.facade);
+    wall.position.set(x, .375, z);
+    wall.castShadow = true;
+    group.add(wall);
+    const count = Math.floor(length / 2.4);
+    for (let i = 0; i <= count; i++) {
+      const offset = -length / 2 + .3 + (length - .6) * i / Math.max(1, count);
+      const post = new THREE.Mesh(new THREE.BoxGeometry(.7, .5, .7), assets.material.facade);
+      post.position.set(x + (horizontal ? offset : 0), 1, z + (horizontal ? 0 : offset));
+      post.castShadow = true;
+      group.add(post);
+    }
+  };
+  if (assets.corner) {
+    // Authored outer corner is at (-17.5,-17.5), inside corner near (+5,+5).
+    // Recenter the two road axes rather than centering the mesh bounding box.
+    const corner = assets.corner.clone(true);
+    corner.name = 'original-stone-corner';
+    corner.scale.set(direction * .18, .2, .18);
+    corner.position.set(direction * 1.08, -6, 1.08);
+    group.add(corner);
+    // The authored corner reaches ~5.6 m along both arms; connect to the
+    // global 12 m tile grid without putting a second parapet over the prefab.
+    parapet(-direction * 2.1, 8.8, 6.4, false);
+    parapet(direction * 8.8, -2.1, 6.4, true);
+    parapet(direction * 2.1, 8.8, 6.4, false);
+    parapet(direction * 8.8, 2.1, 6.4, true);
+  } else {
+  parapet(-direction * 2.1, 4.95, 14.1, false);
+  parapet(direction * 4.95, -2.1, 14.1, true);
+  parapet(direction * 2.1, 7.05, 9.9, false);
+  parapet(direction * 7.05, 2.1, 9.9, true);
   }
   return group;
 }
@@ -829,16 +919,7 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
   // track-tile centre and y=0 is the road surface.
   const prefab = assets.obstacles[prefabName] ?? null;
   if (prefab) {
-    if (kind === 'gap' || kind === 'gapLong') {
-      // The APK pit is an open shaft, but the web tile underneath still has a stone top.
-      // Cover that top with void so the hole reads as a hole, not a painted road.
-      const mouth = new THREE.Mesh(new THREE.PlaneGeometry(kind === 'gapLong' ? 8.4 : 7.6, kind === 'gapLong' ? 11 : 9.4), assets.material.void);
-      mouth.rotation.x = -Math.PI / 2;
-      mouth.position.y = 0.046;
-      group.add(mouth);
-    }
     const clone = prefab.clone(true);
-    if (kind === 'gap' || kind === 'gapLong') clone.position.y = 0.05;
     group.add(clone);
     if (def.id === 'fireWall') {
       const base = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.2, 1.4), assets.material.stone);
@@ -851,13 +932,8 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
       }
       return group;
     }
-    if (kind === 'fire') {
-      // The APK flame is a particle system (no mesh); put the two jets on the real pedestals.
-      for (const x of [-2.75, 2.75] as const) {
-        const flame = flameSprite(assets, 1.15);
-        flame.position.set(x, 2.5, 0);
-        group.add(flame);
-      }
+    if (def.id === 'flameTower' && assets.texture.safetyNet) {
+      group.add(buildNativeFlame(assets.texture.safetyNet));
     }
     return group;
   }
@@ -976,7 +1052,9 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
   return group;
 }
 
-export function buildCoin(assets: Assets): THREE.Object3D {
+export function buildCoin(assets: Assets, value = 1): THREE.Object3D {
+  const native = value === 2 ? assets.coinRed : value === 3 ? assets.coinBlue : assets.coin;
+  if (native) return native.clone(true);
   const group = new THREE.Group();
   const face = new THREE.MeshStandardMaterial({ map: assets.texture.coinFace, metalness: 0.32, roughness: 0.38, emissive: 0x8a5a12, emissiveIntensity: 0.6, transparent: true, alphaTest: 0.35, side: THREE.DoubleSide });
   const side = new THREE.MeshStandardMaterial({ color: 0xc98a26, metalness: 0.7, roughness: 0.35 });
@@ -1005,21 +1083,11 @@ export function buildGem(): THREE.Object3D {
   return group;
 }
 
-export function buildPower(kind: PickupKind): THREE.Object3D {
-  const colors: Record<string, number> = { magnet: 0xff5c5c, shield: 0x7fd4ff, boost: 0x7dff9b, bonus: 0xffd76a };
-  const group = new THREE.Group();
-  const core = new THREE.Mesh(
-    new THREE.OctahedronGeometry(0.36, 0),
-    new THREE.MeshStandardMaterial({ color: colors[kind] ?? 0xffffff, emissive: colors[kind] ?? 0xffffff, emissiveIntensity: 0.8, metalness: 0.3, roughness: 0.25 }),
-  );
-  group.add(core);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.52, 0.04, 6, 20), new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: colors[kind] ?? 0xffffff, emissiveIntensity: 0.9 }));
-  ring.rotation.x = Math.PI / 2;
-  group.add(ring);
-  return group;
+export function buildPower(kind: PickupKind, assets: Assets): THREE.Object3D {
+  return buildNativePower(kind, assets.texture.safetyNet!);
 }
 
-export function buildChaser(assets: Assets): THREE.Object3D {
+function buildChaserBody(assets: Assets): THREE.Object3D {
   const group = new THREE.Group();
   if (assets.enemy) {
     group.add(assets.enemy.clone(true));
@@ -1040,5 +1108,36 @@ export function buildChaser(assets: Assets): THREE.Object3D {
   return group;
 }
 
+/** The reference pursuit is a pack of three demon monkeys abreast. */
+export function buildChaser(assets: Assets): THREE.Object3D {
+  const pack = new THREE.Group();
+  for (let i = 0; i < 3; i++) {
+    const monkey = buildChaserBody(assets);
+    monkey.position.set((i - 1) * 1.25, 0, i === 1 ? 0.25 : 0);
+    pack.add(monkey);
+  }
+  return pack;
+}
+
 /** Lane index -> world side offset. */
 export const sideOfLane = (lane: number): number => LANES[Math.max(0, Math.min(2, lane))];
+
+/** Native TUp at the node origin; the incoming grid tile joins at z=3. */
+export function buildTJunction(assets: Assets, surface: SurfaceKind = 'stone'): THREE.Group {
+  const group=new THREE.Group();group.name=surface==='wood'?'original-plank-t-junction':'original-t-junction';
+  const source=surface==='wood'?assets.plankTJunction:assets.tJunction;
+  const road=surface==='wood'?assets.plankTile:assets.roadTile;
+  if(!source)return group;
+  const centre=source.clone(true);
+  centre.traverse(o=>{const mesh=o as THREE.Mesh;if(mesh.isMesh){mesh.geometry=cutSurfaceGeometry(mesh.geometry,3,100);mesh.userData.walkableSurface=true;}});
+  group.add(centre);
+  if(road)for(const side of [-1,1]){
+    const arm=road.clone(true);
+    arm.traverse(o=>{const mesh=o as THREE.Mesh;if(!mesh.isMesh)return;
+      const first=cutSurfaceGeometry(mesh.geometry,-100,-1.52);
+      mesh.geometry=cutSurfaceGeometry(first,1.52,100);first.dispose();mesh.userData.walkableSurface=true;
+    });
+    arm.position.set(side*7.5,surface==='wood'?0:ROAD_TILE_LIFT,0);arm.rotation.y=side*Math.PI/2;arm.scale.x=surface==='wood'?1:.84;group.add(arm);
+  }
+  return group;
+}

@@ -1,3 +1,5 @@
+import { TiltSteering } from './steering';
+
 export type Action = 'left' | 'right' | 'jump' | 'slide' | 'pause' | 'start';
 
 type Handler = (action: Action) => void;
@@ -32,10 +34,25 @@ export class Input {
 
   private tiltEnabled = false;
   private tiltListening = false;
-  private lastTiltAt = 0;
+  private readonly tilt = new TiltSteering();
+
+  private classicControls=false;
+  private leanLeft=false;
+  private leanRight=false;
+  setClassicControls(enabled:boolean):void {
+    this.classicControls=enabled;this.leanLeft=false;this.leanRight=false;
+  }
+  // Desktop equivalent of holding a phone tilted; arrows/swipes remain turns.
+  get steeringAxis(): number | null {
+    if(this.classicControls&&(this.leanLeft||this.leanRight))return Number(this.leanRight)-Number(this.leanLeft);
+    return this.tiltEnabled?this.tilt.axis:this.classicControls?0:null;
+  }
+  get isTiltEnabled(): boolean { return this.tiltEnabled; }
 
   /** Opt-in device orientation steering (the original's "tilt to turn"). */
   async enableTilt(): Promise<boolean> {
+    if (typeof DeviceOrientationEvent === 'undefined') return false;
+    this.tilt.reset();
     this.tiltEnabled = true;
     const anyOrientation = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> };
     if (typeof anyOrientation.requestPermission === 'function') {
@@ -54,12 +71,7 @@ export class Input {
       this.tiltListening = true;
       window.addEventListener('deviceorientation', (event) => {
         if (!this.tiltEnabled) return;
-        const now = performance.now();
-        if (now - this.lastTiltAt < 280) return;
-        const gamma = event.gamma ?? 0;
-        if (Math.abs(gamma) < 18) return;
-        this.lastTiltAt = now;
-        this.push(gamma > 0 ? 'right' : 'left');
+        this.tilt.sample(event.gamma);
       });
     }
     return true;
@@ -67,11 +79,17 @@ export class Input {
 
   disableTilt(): void {
     this.tiltEnabled = false;
+    this.tilt.reset();
   }
 
   attach(windowTarget: Window, canvas: HTMLCanvasElement): void {
     windowTarget.addEventListener('keydown', (event) => {
       if (event.repeat) return;
+      if(this.classicControls&&(event.code==='KeyA'||event.code==='KeyD')){
+        event.preventDefault();
+        if(event.code==='KeyA')this.leanLeft=true;else this.leanRight=true;
+        return;
+      }
       const map: Record<string, Action> = {
         ArrowLeft: 'left',
         KeyA: 'left',
@@ -92,6 +110,12 @@ export class Input {
         this.push(action);
       }
     });
+
+    windowTarget.addEventListener('keyup',event=>{
+      if(event.code==='KeyA')this.leanLeft=false;
+      if(event.code==='KeyD')this.leanRight=false;
+    });
+    windowTarget.addEventListener('blur',()=>{this.leanLeft=false;this.leanRight=false;});
 
     canvas.addEventListener('pointerdown', (event) => {
       this.touchStart = { x: event.clientX, y: event.clientY };

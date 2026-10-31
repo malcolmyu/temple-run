@@ -2,7 +2,6 @@
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import { bootGame, getGame } from '../game/boot';
 import { mutableUi as ui } from '../game/state';
-import { progress } from '../game/progress';
 import Hud from './Hud.vue';
 import MenuOverlay from './MenuOverlay.vue';
 import PauseOverlay from './PauseOverlay.vue';
@@ -12,7 +11,6 @@ import SettingsOverlay from './SettingsOverlay.vue';
 import StatsOverlay from './StatsOverlay.vue';
 import ObjectivesOverlay from './ObjectivesOverlay.vue';
 import UpgradesOverlay from './UpgradesOverlay.vue';
-import QrCard from './QrCard.vue';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const loading = shallowRef(true);
@@ -132,17 +130,6 @@ function dismissTutorial(): void {
         <div class="loading-card error"><strong>启动失败</strong><span>{{ error }}</span></div>
       </div>
     </div>
-    <aside class="side">
-      <p class="eyebrow">A LOST RELIC AWAITS</p>
-      <h1>一直向前，<br /><em>直到世界尽头。</em></h1>
-      <p class="lead">三条石径，瞬息变化的障碍，和藏在密林深处的古老遗迹。新版由 TypeScript + ECS 驱动玩法、Vue 3 渲染界面。</p>
-      <div class="stats-line">
-        <div><span>最远</span><strong>{{ progress.bestDistance }} m</strong></div>
-        <div><span>金币 / 宝石</span><strong>{{ progress.coins }} / {{ progress.gems }}</strong></div>
-        <div><span>帧率</span><strong>{{ ui.fps }} fps</strong></div>
-      </div>
-      <QrCard />
-      <p class="edition">TYPESCRIPT · ECS · VUE 3 · THREE.JS</p>
-    </aside>
+
   </div>
 </template>

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import * as T from 'three';
+import {nativeCoinMaterial} from '../target/temple-run/web/src/game/nativeCoinMaterial';
+const texture=new T.Texture();texture.colorSpace=T.SRGBColorSpace;
+const material=nativeCoinMaterial(texture);
+assert.equal(texture.colorSpace,T.SRGBColorSpace,'keep fallback/shared texture unchanged');
+assert.notEqual(material.uniforms.mainTexture.value,texture);
+assert.equal(material.uniforms.mainTexture.value.colorSpace,T.NoColorSpace);
+assert.equal(material.side,T.FrontSide);assert.equal(material.transparent,false);assert.equal(material.toneMapped,false);
+assert.equal(material.uniforms.fogStart.value,20);assert.equal(material.uniforms.fogEnd.value,80);
+assert.deepEqual(material.uniforms.fogColor.value.toArray(),[50/255,82/255,86/255]);
+assert.ok(material.vertexShader.includes('distance(world.xyz,cameraPosition)'));
+console.log('Coin source texture remains sRGB; encoded sampling clone, native radial fog, opaque front faces verified. Native diffuse/light bindings unresolved.');
