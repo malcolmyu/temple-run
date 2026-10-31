@@ -1,3 +1,4 @@
+import {UPGRADE_SCHEMA,migrateUpgradeLevels} from './upgradeLevels';
 import {NATIVE_UTILITY_PRICES} from './nativeStorePrices';
 import { createPowerPickupCounts, sanitizePowerPickupCounts, POWER_PICKUP_KINDS, type PowerPickupCounts } from './nativePowerPickups';
 import type { RunChallengeSummary } from './nativeRunChallenges';
@@ -26,6 +27,7 @@ export interface Progress {
   equipped: string;
   claimed: string[];
   upgrades: Record<string, number>;
+  upgradeSchema:number;
   music: boolean;
   sound: boolean;
 }
@@ -76,10 +78,10 @@ function migrateLegacy(defaults: Progress): Progress | null {
     owned,
     equipped,
     claimed: [],
-    upgrades: {
+    upgrades: migrateUpgradeLevels({
       magnet: Math.max(0, Math.min(3, num(upgrades.magnet))),
       coin: Math.max(0, Math.min(3, num(upgrades.coin))),
-    },
+    }),
     music: settings.music !== false,
     sound: settings.sfx !== false,
   };
@@ -109,7 +111,7 @@ function load(): Progress {
     owned: [SKINS[0].id],
     equipped: SKINS[0].id,
     claimed: [],
-    upgrades: { magnet: 0, coin: 0 },
+    upgrades: { magnet: 0, coin: 0 },upgradeSchema:UPGRADE_SCHEMA,
     music: true,
     sound: true,
   };
@@ -122,7 +124,7 @@ function load(): Progress {
       ...saved,
       owned: Array.isArray(saved.owned) && saved.owned.length ? saved.owned : defaults.owned,
       claimed: Array.isArray(saved.claimed) ? saved.claimed : [],
-      upgrades: { magnet: 0, coin: 0, ...(saved.upgrades ?? {}) },
+      upgrades: migrateUpgradeLevels(saved.upgrades,saved.upgradeSchema),upgradeSchema:UPGRADE_SCHEMA,
     };
     merged.bestPowerPickups=sanitizePowerPickupCounts(saved.bestPowerPickups);
     // A removed/unknown character must never stay equipped or unlock a catalogue entry.

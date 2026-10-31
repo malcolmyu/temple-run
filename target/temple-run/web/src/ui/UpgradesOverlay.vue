@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { UPGRADES, levelOf, nextCost, purchase } from '../game/upgrades';
+import { UPGRADES, levelOf, nextCost, purchase,isPowerUpgrade,upgradeEffect } from '../game/upgrades';
 import { progress } from '../game/progress';
 import { syncBanks } from '../game/state';
 
@@ -8,8 +8,9 @@ const emit = defineEmits<{ close: [] }>();
 const notice = ref('');
 
 function buy(id: string): void {
+  const unlocking=isPowerUpgrade(id)&&levelOf(id)===0;
   if (purchase(id)) {
-    notice.value = '升级成功';
+    notice.value = unlocking?'解锁成功':'升级成功';
     syncBanks();
   } else {
     notice.value = '金币不足或已满级';
@@ -31,7 +32,8 @@ function buy(id: string): void {
             <span>Lv.{{ levelOf(upgrade.id) }} / {{ upgrade.costs.length }}</span>
           </div>
           <small>{{ upgrade.sub }}</small>
-          <button v-if="nextCost(upgrade.id) !== null" class="mini" @click="buy(upgrade.id)">升级 · ● {{ nextCost(upgrade.id) }}</button>
+          <small v-if="isPowerUpgrade(upgrade.id)">{{ upgradeEffect(upgrade.id) }}<template v-if="nextCost(upgrade.id)!==null"> → {{ upgradeEffect(upgrade.id,levelOf(upgrade.id)+1) }}</template></small>
+          <button v-if="nextCost(upgrade.id) !== null" class="mini" @click="buy(upgrade.id)">{{ isPowerUpgrade(upgrade.id)&&levelOf(upgrade.id)===0?'解锁':'升级' }} · ● {{ nextCost(upgrade.id) }}</button>
           <span v-else class="notice">已满级</span>
         </div>
       </div>

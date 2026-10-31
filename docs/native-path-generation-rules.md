@@ -30,3 +30,7 @@ Native type3..6 dispatch gives five L points with along-path offsets-5,-2.5,0,2.
 ## Round48 T coin exclusion correction
 
 The prior “T coin geometry pending” entry is superseded: AddCoins explicitly rejects types9/10/7/8 before creating coins. The original16-byte metadata initializer was resolved and its SHA256 matches the private field name. `native-coin-type-exclusions.json` contains the complete pointer/metadata chain and instruction checks. Runtime now names this native exclusion;T-node absence is intentional,not a missing feature. Adjacent-arm coins and other eligibility are separate. Twelve targeted trusted-input/no-input/settlement checks pass;no claim of newly repeated long-run suite.
+
+## Round49 upgrade availability replaces all-enabled classic assumption
+
+LoadLevelInformation writes each power probability0,then levels1..6 enable.2;AddBonusItems uses positivity as eligibility. Classic runtime now derives its pool from purchased native levels;reference/arcade retain their explicit compatibility pool. Native maxima are6 for four powers and5 for high coins;default price tiers restored. Old compact saves migrate once via upgradeSchema2 without lowering effects. Remote overrides,magnet strength and complete native economy remain unresolved.

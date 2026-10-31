@@ -1,3 +1,4 @@
+import {stepNativeMagnetCoin,MAGNET_PICKUP_RADIUS} from './nativeMagnet';
 import {CLIFF_MESH_Y,nativeCliffSupported} from './nativeCliff';
 import { NativeThemePacing } from './nativeThemePacing';
 import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups';
@@ -13,7 +14,7 @@ import { RESURRECTION_BOOST_PROGRESS, RESURRECTION_STUMBLE_AGE, resurrectionSpee
 import { boostProgress } from './upgrades';
 import { addNativeCoinMeter } from './nativeCoinMeter';
 import { CoursePlan, activeCourse, setActiveCourse, MIN_LONG_GAP_SPEED } from './coursePlan';
-import { BonusSpawnDirector } from './nativeBonusSpawn';
+import { BonusSpawnDirector,WEB_BONUS_AVAILABILITY } from './nativeBonusSpawn';
 import { nativeBoostSpeedLimit, boostAcceleration, consumeBoostProgress } from './nativeBoost';
 import { createPowerEffects, activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
 import {newEnemyJump, queueEnemyJump, stepEnemyJump} from './enemyJump';
@@ -94,7 +95,7 @@ import { sidePathAt } from './sidePath';
 import { getDifficulty, type DifficultyConfig } from './difficulty';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
-import { coinMultiplier, magnetDuration, shieldDuration, coinBonusReward } from './upgrades';
+import { coinMultiplier, magnetDuration, shieldDuration, coinBonusReward,powerAvailability,magnetMultiplier } from './upgrades';
 import { MAX_COINS_PER_RUN, MIN_BONUS_ITEM_SPACING, MIN_TURN_SPACING } from './pathRules';
 import { DEFS, KIND_TO_DEF, type DefId } from './obstacles/catalog';
 import type { ObstacleAction, ObstacleDef, ObstaclePlan } from './obstacles/types';
@@ -416,7 +417,7 @@ export class Game {
       pickupDetails: () => this.pickups.map(entity=>{
         const p=this.world.require(entity,Pickup),o=p.object;
         const bounds=o?new THREE.Box3().setFromObject(o,true):null;
-        return {kind:p.kind,value:p.value,lane:p.lane,side:p.side,pattern:p.pattern,distance:p.distance,baseY:p.baseY,
+        return {kind:p.kind,value:p.value,lane:p.lane,side:p.side,pattern:p.pattern,magnet:p.magnet?{position:[...p.magnet.position],velocity:[...p.magnet.velocity]}:null,distance:p.distance,baseY:p.baseY,
           animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
@@ -454,7 +455,7 @@ export class Game {
       themePacing:{level:this.themePacing.level,elapsed:this.themePacing.elapsed,changes:[...this.themeChanges]},
       fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
-      generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
+      generation: {enabled:{...this.bonusDirector.config},seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
       powers: effects,
       power: primary?.kind??null,
@@ -620,7 +621,7 @@ export class Game {
     this.fastTurnRng=new SeededRandom(this.runSeed^0x66617374);
     this.routeRng=new SeededRandom(this.runSeed^0x726f7574);
     this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
-    this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765));
+    this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765),this.difficulty.name==='classic'&&!this.referenceReplay?powerAvailability():WEB_BONUS_AVAILABILITY);
     this.generatedBonuses=[];
     setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,489):null);
     this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector();this.longGapFallbacks=[];
@@ -2038,23 +2039,28 @@ export class Game {
     const laneXNow = this.world.require(this.runnerEntity, TrackPos).side;
     const jump = this.world.require(this.runnerEntity, Jump);
     const slide = this.world.require(this.runnerEntity, Slide);
+    const runnerPoint=this.path.at(distance,laneXNow,true);
+    const runnerWorld=[runnerPoint.x,jump.y+this.groundY(),runnerPoint.z]as [number,number,number];
     for (let i = this.pickups.length - 1; i >= 0; i--) {
       const entity = this.pickups[i];
       const pickup = this.world.require(entity, Pickup);
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
       const pickupY=pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem');
-      if (pickup.object) {
-        const point = this.path.at(pickup.distance, (pickup.side??LANES[pickup.lane]));
-        pickup.object.position.set(point.x, pickupY+this.groundY(pickup.distance), point.z);
-        pickup.object.rotation.y = nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
-
+      const point=this.path.at(pickup.distance,pickup.side??LANES[pickup.lane]);
+      const origin=[point.x,pickupY+this.groundY(pickup.distance),point.z]as [number,number,number];
+      const magnet=pickup.kind==='coin'&&hasPower(power,'magnet',this.world.elapsed);
+      const pull=nativeCoin?stepNativeMagnetCoin(pickup.magnet??null,origin,runnerWorld,magnet,dt):null;
+      if(pull?.state)pickup.magnet=pull.state;
+      const position=pickup.magnet?.position??origin;
+      if(pickup.object){
+       pickup.object.position.set(...position);
+       pickup.object.rotation.y=nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
       }
-      const ahead = pickup.distance - distance;
-      const magnet = pickup.kind === 'coin' && hasPower(power,'magnet',this.world.elapsed);
-      const nativeReach=this.difficulty.name==='classic'&&!magnet&&pickup.kind!=='gem';
-      const close = nativeReach
-        ? nativePickupWithinReach(pickup.kind,pickup.value,(pickup.side??LANES[pickup.lane])-laneXNow,pickupY+this.groundY(pickup.distance)-jump.y-this.groundY(),ahead)
-        : Math.abs(ahead) < (magnet ? 9 : 1.4) && Math.abs(laneXNow - (pickup.side??LANES[pickup.lane])) < (magnet ? 9 : 0.55);
+      const ahead=pickup.distance-distance;
+      const nativeReach=this.difficulty.name==='classic'&&pickup.kind!=='gem';
+      const close=nativeReach
+       ? nativePickupWithinReach(pickup.kind,pickup.value,nativeCoin?position[0]-runnerWorld[0]:(pickup.side??LANES[pickup.lane])-laneXNow,nativeCoin?position[1]-runnerWorld[1]:pickupY+this.groundY(pickup.distance)-jump.y-this.groundY(),nativeCoin?position[2]-runnerWorld[2]:ahead,pull?.pulling?MAGNET_PICKUP_RADIUS:undefined)
+       :Math.abs(ahead)<(magnet?9:1.4)&&Math.abs(laneXNow-(pickup.side??LANES[pickup.lane]))<(magnet?9:.55);
       const heightClose = nativeReach || pickup.kind !== 'coin' || coinHeightWithinReach(
         pickupY, jump.y, slide.remaining>0, magnet,
       );
@@ -2067,7 +2073,7 @@ export class Game {
           stats.score += NATIVE_POWER_SCORE_VALUE * this.runScoreMultiplier;
         }
         if (pickup.kind === 'coin') {
-          this.coinValueAcc += coinMultiplier() * pickup.value;
+          this.coinValueAcc += coinMultiplier()*pickup.value*(this.difficulty.name==='classic'&&magnet?magnetMultiplier():1);
           const whole = Math.floor(this.coinValueAcc);
           this.coinValueAcc -= whole;
           this.addRunCoins(Math.max(1, whole));
@@ -2347,7 +2353,8 @@ export class Game {
       if (!pickup.object) continue;
       const point = this.path.at(pickup.distance, (pickup.side??LANES[pickup.lane]));
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
-      pickup.object.position.set(point.x,this.groundY(pickup.distance)+pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem'),point.z);
+      if(pickup.magnet)pickup.object.position.set(...pickup.magnet.position);
+      else pickup.object.position.set(point.x,this.groundY(pickup.distance)+pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem'),point.z);
       pickup.object.rotation.y=nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
         if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,dt,this.bundle.camera);
     }

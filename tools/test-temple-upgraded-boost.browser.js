@@ -1,4 +1,4 @@
-// Run after UI purchasing boost level4; preserve/restore save outside test.
+// Run after UI purchasing native boost level6; preserve/restore save outside test.
 (()=>{
  const g=window.__templeGame,checks=[],check=(name,ok)=>{checks.push({name,passed:!!ok});if(!ok)throw Error(name);};
  g.restart();g.freeze();g.advance(1700);g.spawnPickup('boost',1,3,1.35);g.advance(300);
@@ -13,6 +13,6 @@
  s=g.state();check('upgraded boost traverses corners and exits alive',s.phase==='playing'&&!s.boost.active&&s.turnCount>=2);
  check('upgraded boost brakes and keeps normal speed cap',braking&&maxSpeed<=84.01&&s.speed<maxSpeed);
  g.advance(60000);check('post-boost failure reaches results',g.state().phase==='ended');g.restart();g.freeze();
- check('restart clears boost and retains upgrade save',!g.state().boost.active&&JSON.parse(localStorage.getItem('temple.v2.progress')).upgrades.boost===4);
+ check('restart clears boost and retains upgrade save',!g.state().boost.active&&JSON.parse(localStorage.getItem('temple.v2.progress')).upgrades.boost===6);
  return {checks,passed:checks.filter(c=>c.passed).length,total:checks.length,last:s};
 })()

@@ -3,7 +3,7 @@ import { MIN_BONUS_ITEM_SPACING, PATH_GRID_METERS } from './pathRules';
 export const BONUS_KINDS = ['bonus','shield','magnet','boost'] as const;
 export type BonusKind = typeof BONUS_KINDS[number];
 export type BonusAvailability = Record<BonusKind,number>;
-/** Runtime config has not been recovered. Enable all requested mechanics in the web game. */
+/** Compatibility default for reference/arcade;classic runtime supplies saved native upgrade unlocks. */
 export const WEB_BONUS_AVAILABILITY: BonusAvailability = {bonus:1,shield:1,magnet:1,boost:1};
 /** PathElement.AddBonusItems12e6100..62b0: positive values enable candidates;
  * a Range(0,2)==0 gate precedes a uniform Range(0,candidateCount).

@@ -1,3 +1,4 @@
+import type {NativeMagnetCoin} from './nativeMagnet';
 import { createPowerEffects, type PowerEffects } from './powerEffects';
 import { FIRST_TURN_DISTANCE } from './pacing';
 import type { Object3D } from 'three';
@@ -90,6 +91,7 @@ export const Pickup = defineComponent<{
   kind: PickupKind;
   side?:number;
   pattern?:number;
+  magnet?:NativeMagnetCoin;
   lane: number;
   distance: number;
   baseY: number;

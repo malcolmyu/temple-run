@@ -16,5 +16,5 @@ values={0x126a460:250,0x126a468:375,0x126a44c:500,0x126a454:625,0x126a438:750}
 levels=[250]+[values[0x126a438+x*4] for x in table]
 assert levels==[250,250,375,500,625,750,750]
 out=Path(__file__).resolve().parents[1]/'target/temple-run/analysis/native-boost-upgrades.json'
-result=dict(binarySHA256=hashlib.sha256(binary).hexdigest(),tableAddress='0x6b7888',branchBase='0x126a438',jumpTable=table,nativeLevels=levels,webNativeLevelMapping=[0,2,3,4,5],source='GameController.LoadLevelInformation126a414..126a470',priceSource='web assumption; native shop prices not decoded')
+result=dict(binarySHA256=hashlib.sha256(binary).hexdigest(),tableAddress='0x6b7888',branchBase='0x126a438',jumpTable=table,nativeLevels=levels,webNativeLevelMapping=list(range(7)),legacyCompactMapping=[0,2,3,4,5],source='GameController.LoadLevelInformation126a414..126a470',priceSource='native StoreConfigData defaults decoded separately;remote overrides unknown')
 out.write_text(json.dumps(result,indent=2));print(json.dumps(result,indent=2))

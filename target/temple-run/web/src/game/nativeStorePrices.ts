@@ -1,7 +1,7 @@
 /** StoreConfigData.ctor12aa7d0..12abcc4 defaults; remote overrides unresolved. */
 export const NATIVE_UPGRADE_PRICES=[250,1000,2500,5000,7500,25000] as const;
 export const NATIVE_UTILITY_PRICES={wings:500,headStart:10000,megaStart:2500,permanentWings:10000} as const;
-/** Web compact tiers skip unchanged effects; charge all intervening native tiers. */
+/** Legacy compact-price audit helper;runtime now uses full native tiers. */
 export function bundledUpgradeCosts(levels:readonly number[]):number[] {
  return levels.slice(1).map((next,i)=>{
   const from=levels[i];
