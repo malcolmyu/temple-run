@@ -44,7 +44,13 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 
     <div v-if="assist && ui.multiplier > 1" class="multi-badge">×{{ ui.multiplier }}</div>
     <div v-if="ui.phase==='playing' && ui.reviveProtectionRemaining>2.4" class="revive-arrival" aria-hidden="true" :style="{opacity:Math.min(1,(ui.reviveProtectionRemaining-2.4)/.6)}" />
-    <div v-if="ui.powers.length || reviveProtected" class="power-badge" role="status"><div v-if="reviveProtected" class="revive-protection">复活保护 {{ Math.ceil(Math.max(0,ui.reviveProtectionRemaining-1e-6)) }}s</div><div v-for="effect in ui.powers" :key="effect.kind">{{ effect.slowing ? '减速' : powerNames[effect.kind] }} {{ Math.ceil(Math.max(0,effect.remaining-1e-6)) }}{{ effect.unit }}</div></div>
+    <div v-if="ui.powers.length || reviveProtected" class="power-badge" role="status">
+      <div v-if="reviveProtected" class="revive-protection">复活保护 {{ Math.ceil(Math.max(0,ui.reviveProtectionRemaining-1e-6)) }}s</div>
+      <div v-for="effect in ui.powers" :key="effect.kind">
+        <template v-if="effect.unit === 'progress'">加速中</template>
+        <template v-else>{{ effect.slowing ? '减速' : powerNames[effect.kind] }} {{ Math.ceil(Math.max(0,effect.remaining-1e-6)) }}s</template>
+      </div>
+    </div>
     <div v-if="assist && cueLabel && !turnLabel" class="action-cue">{{ cueLabel }}</div>
 
     <div v-if="assist && turnLabel" class="turn-cue" :class="{ ready: ui.turnQueued }">

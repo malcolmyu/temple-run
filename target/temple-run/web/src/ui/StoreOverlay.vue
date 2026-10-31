@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useModalDialog } from './useModalDialog';
 import { computed, ref } from 'vue';
 import { ANGEL_WINGS_PRICE, PERMA_WINGS_PRICE } from '../game/nativeAngelWings';
 import { HEAD_START_PRICE, MEGA_START_PRICE } from '../game/megaStart';
@@ -9,6 +10,7 @@ import { syncBanks } from '../game/state';
 import StorePreview from './StorePreview.vue';
 
 const emit = defineEmits<{ close: [] }>();
+const dialog=useModalDialog(()=>emit('close'));
 const BASE = import.meta.env.BASE_URL;
 const selected = ref(progress.equipped);
 const notice = ref('');
@@ -55,7 +57,7 @@ function buy(): void {
 </script>
 
 <template>
-  <section class="overlay soft" @click.self="emit('close')">
+  <section ref="dialog" tabindex="-1" class="overlay soft" role="dialog" aria-modal="true" aria-label="角色与道具" @click.self="emit('close')">
     <div class="card store-card">
       <p class="kicker">STORE</p>
       <h2 class="title">角色与道具</h2>

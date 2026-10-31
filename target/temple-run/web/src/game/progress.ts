@@ -10,6 +10,7 @@ import { SKINS } from './skins';
 
 /** Durable meta-progression: currency banks, unlocks, lifetime stats. */
 export interface Progress {
+  legacyMigrationComplete: boolean;
   coins: number;
   gems: number;
   wings: number;
@@ -39,6 +40,7 @@ export interface Progress {
 }
 
 const KEY = 'temple.v2.progress';
+const PROGRESS_COUNTERS = ['coins', 'gems', 'wings','permaWings','headStarts','megaStarts', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance','bestPowerFreeScore','bestCoinMeterFills','bestWingResurrections','headStartUsed'] as const;
 
 /** One-time import of the legacy (pre-v2) keys, so existing players keep their progress. */
 function migrateLegacy(defaults: Progress): Progress | null {
@@ -71,6 +73,7 @@ function migrateLegacy(defaults: Progress): Progress | null {
   const upgrades = (chars.upgrades ?? {}) as Record<string, unknown>;
   const migrated: Progress = {
     ...defaults,
+    legacyMigrationComplete: true,
     coins: num(chars.bank),
     gems: num(chars.gems),
     runs: num(stats.runs),
@@ -100,8 +103,9 @@ function migrateLegacy(defaults: Progress): Progress | null {
   return migrated;
 }
 
-function load(): Progress {
+export function loadProgress(): Progress {
   const defaults: Progress = {
+    legacyMigrationComplete: false,
     coins: 0,
     gems: 0,
     wings: 0,
@@ -133,6 +137,7 @@ function load(): Progress {
       owned: Array.isArray(saved.owned) && saved.owned.length ? saved.owned : defaults.owned,
       claimed: Array.isArray(saved.claimed) ? saved.claimed : [],
       upgrades: migrateUpgradeLevels(saved.upgrades,saved.upgradeSchema),upgradeSchema:UPGRADE_SCHEMA,
+      legacyMigrationComplete: saved.legacyMigrationComplete === true,
     };
     merged.bestPowerPickups=sanitizePowerPickupCounts(saved.bestPowerPickups);
     // A removed/unknown character must never stay equipped or unlock a catalogue entry.
@@ -140,7 +145,7 @@ function load(): Progress {
       id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
     )])];
     if (!merged.owned.includes(merged.equipped)) merged.equipped = SKINS[0].id;
-    for (const key of ['coins', 'gems', 'wings','permaWings','headStarts','megaStarts', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance','bestPowerFreeScore','bestCoinMeterFills','bestWingResurrections','headStartUsed'] as const) {
+    for (const key of PROGRESS_COUNTERS) {
       const value = merged[key];
       merged[key] = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
     }
@@ -149,11 +154,8 @@ function load(): Progress {
     // Earlier v2 builds could create the new key with defaults before the player ever ran.
     // In that case still import the legacy save instead of treating the empty v2 key as real.
     const meaningful =
-      Number(saved.bestDistance) > 0 || Number(saved.bestScore)>0 || Number(saved.bestRunCoins)>0 || Number(saved.bestCoinFreeStart)>0 || Number(saved.bestCleanRunDistance)>0 ||
-      Number(saved.coins) > 0 ||
-      Number(saved.gems) > 0 ||
-      Number(saved.runs) > 0 || Number(saved.wings)>0 ||
-      Number(saved.totalDistance) > 0 ||
+      merged.legacyMigrationComplete ||
+      PROGRESS_COUNTERS.some(key => merged[key] > 0) ||
       (Array.isArray(saved.owned) && saved.owned.length > 1) ||
       (Array.isArray(saved.claimed) && saved.claimed.length > 0) ||
       Object.values(merged.bestPowerPickups).some(count=>count>0) ||
@@ -174,9 +176,12 @@ function load(): Progress {
   }
 }
 
-export const progress = reactive<Progress>(load());
+export const progress = reactive<Progress>(loadProgress());
 
 export function saveProgress(): void {
+  // Once this version has saved a real action, an empty bank/inventory is a
+  // valid current profile, not permission to import stale pre-v2 values again.
+  progress.legacyMigrationComplete = true;
   try {
     localStorage.setItem(KEY, JSON.stringify(progress));
   } catch {

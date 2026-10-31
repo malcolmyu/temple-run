@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useModalDialog } from './useModalDialog';
 import { computed, ref } from 'vue';
 import { OBJECTIVES, claim, objectiveClaimed, nextRunScoreMultiplier } from '../game/objectives';
 import { progress, saveProgress } from '../game/progress';
 import { syncBanks } from '../game/state';
 
 const emit = defineEmits<{ close: [] }>();
+const dialog=useModalDialog(()=>emit('close'));
 const notice = ref('');
 const category=ref('全部');
 const categories=['全部','距离','分数','金币','道具','其他'];
@@ -26,7 +28,7 @@ function onClaim(id: string): void {
 </script>
 
 <template>
-  <section class="overlay soft" @click.self="emit('close')">
+  <section ref="dialog" tabindex="-1" class="overlay soft" role="dialog" aria-modal="true" aria-label="目标" @click.self="emit('close')">
     <div class="card">
       <p class="kicker">OBJECTIVES</p>
       <h2 class="title">目标</h2>

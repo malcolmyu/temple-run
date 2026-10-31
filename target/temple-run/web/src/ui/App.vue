@@ -11,6 +11,7 @@ import SettingsOverlay from './SettingsOverlay.vue';
 import StatsOverlay from './StatsOverlay.vue';
 import ObjectivesOverlay from './ObjectivesOverlay.vue';
 import UpgradesOverlay from './UpgradesOverlay.vue';
+import HelpOverlay from './HelpOverlay.vue';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
 const loading = shallowRef(true);
@@ -21,9 +22,10 @@ const showStats = shallowRef(false);
 const showObjectives = shallowRef(false);
 const showUpgrades = shallowRef(false);
 const showTutorial = shallowRef(false);
+const showHelp = shallowRef(false);
 
-watch([showStore,showSettings,showStats,showObjectives,showUpgrades,showTutorial,loading,error],
-  () => getGame()?.setModalInputBlocked(showStore.value||showSettings.value||showStats.value||showObjectives.value||showUpgrades.value||showTutorial.value||loading.value||!!error.value),
+watch([showStore,showSettings,showStats,showObjectives,showUpgrades,showTutorial,showHelp,loading,error],
+  () => getGame()?.setModalInputBlocked(showStore.value||showSettings.value||showStats.value||showObjectives.value||showUpgrades.value||showTutorial.value||showHelp.value||loading.value||!!error.value),
   {flush:'sync'});
 
 onMounted(async () => {
@@ -85,6 +87,7 @@ function dismissTutorial(): void {
         @objectives="showObjectives = true"
         @upgrades="showUpgrades = true"
         @settings="showSettings = true"
+        @help="showHelp = true"
       />
 
       <PauseOverlay
@@ -93,6 +96,7 @@ function dismissTutorial(): void {
         @restart="getGame()?.restart()"
         @menu="getGame()?.toMenu()"
         @settings="showSettings = true"
+        @help="showHelp = true"
       />
 
       <GameOverOverlay
@@ -106,6 +110,7 @@ function dismissTutorial(): void {
         :reason="ui.deathReason"
         :kind="ui.deathKind"
         :cause="ui.deathCause"
+        :skin="ui.skin"
         :revive-available="ui.reviveAvailable"
         :revive-cost="ui.reviveCost"
         @restart="getGame()?.restart()"
@@ -119,6 +124,7 @@ function dismissTutorial(): void {
       <ObjectivesOverlay v-if="showObjectives" @close="showObjectives = false" />
       <UpgradesOverlay v-if="showUpgrades" @close="showUpgrades = false" />
       <SettingsOverlay v-if="showSettings" @close="showSettings = false" />
+      <HelpOverlay v-if="showHelp" @close="showHelp = false" />
 
       <section v-if="showTutorial" class="overlay tutorial-overlay">
         <div class="card tutorial-card">

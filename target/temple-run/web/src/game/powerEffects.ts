@@ -27,12 +27,12 @@ export function activatePower(power: PowerEffects, kind: string, now: number, du
 export function hasPower(power: PowerEffects, kind: TimedPower, now: number): boolean {
   return kind==='boost'?power.boost.active:power.expires[kind]>now;
 }
-export interface ActivePower {kind:TimedPower;remaining:number;unit:'s'|'m';slowing?:boolean;}
+export interface ActivePower {kind:TimedPower;remaining:number;unit:'s'|'progress';slowing?:boolean;}
 export function activePowers(power: PowerEffects, now: number): ActivePower[] {
   return TIMED_POWERS.filter(kind=>hasPower(power,kind,now)).map(kind=>{
     if(kind==='boost'){
       const slowing=power.boost.left<=BOOST_BRAKING_PROGRESS;
-      return {kind,slowing,remaining:slowing?Math.max(0,power.expires.shield-now):power.boost.left-BOOST_BRAKING_PROGRESS,unit:slowing?'s':'m'};
+      return {kind,slowing,remaining:slowing?Math.max(0,power.expires.shield-now):power.boost.left-BOOST_BRAKING_PROGRESS,unit:slowing?'s':'progress'};
     }
     return {kind,remaining:power.expires[kind]-now,unit:'s'};
   });

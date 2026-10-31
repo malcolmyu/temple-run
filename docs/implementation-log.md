@@ -758,3 +758,54 @@ Round101补充验证：angel-wings单测通过（原30/45秒计时、购买边�
 - 正常路线五类致命障碍分别实际到达/碰撞，DOM原图decode均512×256、deathKind仍impact、cause各对应；每次实际点再跑一次回playing且cause清空。火墙死亡后实际宝石复活同runId，再漏转ended的cause=missed、图Water，未沿用Burnt。15项输入回归通过，20组核心、类型检查与构建通过。
 - 浏览器路线用25ms推进、UI实际点击，非真人/真机；用户主存档字节相同，隔离源还原。证据native-burn-result.json、gameplay-native-death-art-{art,revive,input,summary}.json、gameplay-native-burn-result.png。截图已检查正确烧灼插画，不再是撞树人物图。
 - 来源区分：原资源来自当前APK，cause到图选择是网页呈现策略；Burnt不一定与视频版本红色火焰图相同，未宣称全部角色图或所有版本逐像素一致。剩余代表性道具循环、逐主题/角色表现、真机/真人及原生成来源等。
+
+## Round116 — 原ImageData角色选图与观察纠正
+
+- 找到sharedassets0的ImageData TextAsset，原表按deathtype/character列候选图。CharacterPlayer场景Characters数组经组件SHA/原字节PPtr核对，ID0 Jhony、1 girl、3 china、4 indi、5 conquis；AssignDeathDetails读取ActiveCharacterId0x188并有0回退/随机索引，相关指令校验。新增export-native-death-profiles.py，保存原ImageData、来源和纹理哈希，导出24选项/21张PNG及runtime nativeDeathProfiles.json。
+- Scarlett/Karma/Barry/征服者按已确认rig家族选图；其余四个现代网页角色保持默认，不猜身份。原表中征服者Tree直接使用IndiTree而非ConqTreeB，严格依表；Karma/Barry无专用Burnt，回退0。网页固定第一候选，水类优先Water命名图，是明示适配而非原版随机选图/文案完全复现。
+- 九角色14个自然正常路线致命接触（五确认/默认角色树根+火墙、其余四角色树根）图像decode正确，每次实际点再跑一次回playing且cause空；角色通过诊断setSkin(force=true)装备，非本轮商店购买验证；无spawn/seek/强制power，推进25ms。15项输入回归通过。新来源一致性测试核24候选池选择、21PNG哈希/尺寸与未知角色回退，纳入21组核心；类型/构建通过。
+- 重要纠正：Round114/115曾因红色视觉把视频末段图归为火焰，这是错误分类。与原图、ImageData和当前Scarlett截图核对，它是deathIllustrationGirlTree。已撤回活跃观察文档中的烧灼结论，保留本日志纠正链；Burnt接入仍由独立APK资源支持，不再用该片段当火类依据。
+- 证据native-death-profile-source.json、native-death-image-data.txt、gameplay-character-death-{cases,input,summary}.json/checks.log、gameplay-character-death-cards.png。截图已检查为GirlTree，与参考末段外形相符，不据此倒推原视频手势。主存档字节相同，隔离源还原，测试tab关闭。
+- 余项：未确认角色身份、完整图/文案随机选择属于来源/表现范围，不挤占核心玩法；代表性道具全循环、真人/真机、原生成参数等继续未证。
+
+## Round117 — 道具外观连续过程补核
+
+- 长视频正常连续播放345.00–390.03秒，1349解码回调，46张约1秒间隔样本，保存continuous117审计与四张联系图。355–356秒接近彩色光球，357秒起出现半透明，380秒后恢复实体；补到外观进入、持续、恢复的连续关系。
+- 星状效果在350秒、半透明前已存在，不能作为某种保护生效的唯一判据。374秒又有远处发光物体，不能据时间差恢复持续参数或排除叠加。道具身份、碰撞豁免与等级仍未知，不据片段改玩法规则。
+- 本轮无生产代码或新功能修改，未重跑操作回归；最近有效验证仍为Round116的15项输入、九角色14死亡/重开及21组核心/构建。不能把参考录像观察写成网页实际试玩。
+- 剩余：道具身份及各类机制的视频交叉证据、真人手感/目标设备验证、未提取原生成参数。继续按可玩性排序，不恢复逐帧或数值一致门槛。
+
+## Round118 — 修正加速预算的错误米数提示
+
+- 复现HUD将原版进度预算显示成“加速209m”。隔离浏览器实测道路17.3375→60.0625（42.725m），预算247.694885→208.103659（39.591226），减少量实际等于progressDistance差值；不能当世界道路米数。nativeBoost已有StartBoost/ComputeDistanceTraveled来源，未从视频猜参数。
+- ActivePower巡航单位从m改为progress，HUD显示“加速中”；减速阶段及其他限时效果继续显示秒数。此为网页反馈策略，未改原预算、速度、免疫、减速或地图生成；不把内部进度数暴露成另一种玩家距离。
+- 浏览器诊断生成boost，实际经过巡航→减速4s→powers清空且playing→停止输入失败结算→实际点再跑一次→playing且cause/powers清空。此用spawn隔离反馈，不冒称自然收集。本轮15项输入浏览器回归通过；已有power-effects测试（独立计时/刷新/冻结尾段/减速/Mega）、类型检查和构建通过。
+- 证据gameplay-boost-status118-checks.json与gameplay-boost-status118.png，截图已检查“无敌4s/加速中”。用户主源localStorage前后字节相同；隔离源恢复备份，测试tab关闭。没有新增来源未明的玩法规则。
+- 剩余仍为实际道具身份交叉证据、真人/目标设备手感、未取到的原生成参数；本轮未重跑四种道具自然收集，不用窄范围反馈测试替代此前专项证据。
+
+## Round119 — 修复刷新丢起跑/永久翼与旧档重复导入
+
+- 从实际loadProgress入口复现：旧atb_temple_run_chars仍在，恰好花完余额购买普通起跑后，库存1在重新加载变0。旧meaningful只查普通翼，遗漏三种新库存和部分累计统计，会重复导入旧档，既丢库存也恢复旧余额。
+- 先写真实购买→存储→加载回归，修前normal库存断言0!==1。修复统一PROGRESS_COUNTERS清洗/判断，覆盖新库存和累计统计；增加严格布尔legacyMigrationComplete，真实保存/成功迁移设置true。否则用完最后一件、尚未提交第一局时仍可能重新导入。旧键保留，真正空早期档仍兼容导入，坏库存不能冒充有效进展。这是网页存档契约，不称原IL2CPP规则。
+- test-progress-load覆盖普通/超级/永久翼真实购买到余额0、刷新保留、无新标记旧版库存保留、用完再存仍不恢复旧银行、四个累计计数、真正空档导入和非法库存。最初永久翼测试误写价格键permaWings导致NaN，已改为实际permanentWings再通过；不是生产价格缺陷。
+- 最终浏览器隔离档旧余额73/当前余额10000，实际点普通起跑购买→余额0库存1→刷新仍1且迁移标记true→实际开跑/教程→3100ms推进到窗口→点普通起跑→库存0且正常boost激活→立即刷新仍0/余额0→新跑失败结算→点再跑一次playing。除测试初档外未spawn/seek/强制power，模拟推进非真人实时。15项输入回归仍通过。
+- 22组核心（新增progress-load）、类型检查、构建通过。证据gameplay-inventory-reload119.json、gameplay-inventory-reload119-core.log及实际使用截图gameplay-inventory-reload119.png。用户主存档字节相同，隔离档随后还原，测试tab/服务关闭。
+- 仍缺视频道具身份交叉证据、真人/目标设备手感和部分原生成参数；本轮没有宣称全部商店商品都做了浏览器购买，三种持久化分支由真实加载/交易代码回归覆盖。
+
+## Round120 — 补齐可随时查阅的玩法说明
+
+- 现有首次教程只有按键，没有教半边路持续靠侧、火塔/火墙区别、护盾仍需转弯等。新增HelpOverlay，主菜单/暂停均可进入三分类：操作道路、障碍失误、道具成长。沿用现有绿金卡片，不改变碰撞或生成参数；文字依据当前机制，网页火墙/经济等仍为已标明网页设计，不包装为原版全部规则。
+- 与App模态输入阻断统一接入，打开说明聚焦分类按钮，Tab/ShiftTab环绕分类与返回，Esc关闭并恢复入口焦点。初稿只接入输入阻断但焦点留在后台入口，已补焦点边界，防止键盘操作后台按钮。无需新增生产玩法测试来镜像静态文案。
+- 桌面Chrome375×812下三个分类实际切换，横向无溢出，检查截图内容与返回按钮可见。主菜单Enter/左右不启动，Tab双向环绕；暂停→说明→左右/Enter→advance2000计时/距离/车道都不变→Esc回暂停→实际继续→原生Left到0/Right到1且playing→无输入失败→实际再跑一次。
+- 两段正常seed1路线仅通过诊断power激活效果，不spawn障碍/seek：shield无操作穿首障后仍在157.8m因漏转dying且护盾在；boost无操作通过153m拐角，165.64m仍playing且turnCount1。证明说明的关键差别，不冒称自然道具收集。15项输入浏览器回归与modal-input检查、类型检查、构建通过。
+- 证据gameplay-help120.json/png；截图已人工图像检查完整三分类、道具说明和返回。主存档字节相同，隔离源恢复，视口还原，tab/服务关闭。
+- 剩余：真人学习/手感与真机、未提取原生成参数和视频道具身份交叉证据。新说明使规则可读，但不把说明存在当成真人已学会或所有设备可玩证明。
+
+## Round121 — 修复商店键盘焦点穿透而误开跑
+
+- 原生浏览器复现：菜单点STORE后焦点仍在后台STORE，ShiftTab聚焦后台开始奔跑，Enter后phase从menu变playing且商店仍可见。原Input.setBlocked只拦游戏命令，不能拦原生按钮click，属于真实后台开跑bug。
+- 从HelpOverlay提取useModalDialog，接入商店/升级/设置/统计/目标/玩法说明六面板。挂载聚焦有效控件，动态过滤禁用/隐藏/负tabIndex控件，Tab/ShiftTab边界循环，document focusin将后台焦点重定向，Esc关闭且阻止冒泡，卸载还原有效入口并移除监听。summary保留原生键盘行为，面板增加dialog语义；无生成或原版玩法参数变化。
+- 原生六面板双向Tab/Esc验证，原STORE→ShiftTab→Enter重放现在只关闭商店且仍menu；设置内Tab四次到summary，Space正常展开。暂停设置内左右/反向Tab/推进2000→Esc后仍paused，计时/距离不变。实际失败→点再跑一次playing/lane1。
+- 新test-temple-modal-focus.browser.js在真实挂载Vue/DOM测试36项：进入、双向边界、后台focus重定向、Esc不启动、入口焦点恢复，全部通过；脚本派发DOM键用于边界，原生ShiftTab/Enter另存证据，不混称所有测试都是可信硬件键。15项输入回归、modal-input、类型/构建通过。
+- 证据gameplay-modal-focus121.json/png，截图检查设置summary展开与焦点环。首次普通截图因捕获缩放过小，换用同一CUA CDP375×812截图重新核对，未重绘图片。主存档字节相同，隔离档/视口恢复，tab/服务关闭。
+- 规则来源为网页交互修复；原版机制不变。剩余真人/设备手感、原生成参数与视频道具身份交叉证据仍未证明，不因模态测试通过扩大完成声明。

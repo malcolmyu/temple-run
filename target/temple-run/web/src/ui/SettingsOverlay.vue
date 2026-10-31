@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useModalDialog } from './useModalDialog';
 import { ref } from 'vue';
 import { mutableUi as ui, setAudioSettings } from '../game/state';
 import { progress } from '../game/progress';
@@ -7,6 +8,7 @@ import { getGame } from '../game/boot';
 import { getDifficulty, setDifficulty, type DifficultyName } from '../game/difficulty';
 
 const emit = defineEmits<{ close: [] }>();
+const dialog=useModalDialog(()=>emit('close'));
 const music = ref(progress.music);
 const sound = ref(progress.sound);
 const tiltBusy = ref(false);
@@ -52,7 +54,7 @@ function toggleSound(): void {
 </script>
 
 <template>
-  <section class="overlay soft" @click.self="emit('close')">
+  <section ref="dialog" tabindex="-1" class="overlay soft" role="dialog" aria-modal="true" aria-label="选项" @click.self="emit('close')">
     <div class="card">
       <p class="kicker">OPTIONS</p>
       <h2 class="title">选项</h2>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const emit = defineEmits<{ resume: []; restart: []; menu: []; settings: [] }>();
+const emit = defineEmits<{ resume: []; restart: []; menu: []; settings: []; help: [] }>();
 </script>
 
 <template>
@@ -12,6 +12,7 @@ const emit = defineEmits<{ resume: []; restart: []; menu: []; settings: [] }>();
       <div class="menu-row">
         <button class="menu-btn" @click="emit('restart')">重新开始</button>
         <button class="menu-btn" @click="emit('settings')">OPTIONS</button>
+        <button class="menu-btn" @click="emit('help')">玩法说明</button>
       </div>
       <button class="ghost-btn" @click="emit('menu')">返回主菜单</button>
     </div>

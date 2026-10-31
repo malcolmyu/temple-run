@@ -63,3 +63,7 @@
 ## 课程职责拆分证据
 
 [草稿发布对照](../target/temple-run/analysis/gameplay-course-draft-summary.json)：障碍/支撑草稿预检后发布，100种子×正常/参考两模式×10阶段的30km序列与改前JSON输出哈希一致，含主题/急转/金币；当前道路30项、窄路金币20项、输入15项浏览器回归通过。不提升为所有种子/真机总证明，规则版本仍为行为相同的beats-v7。
+
+## 角色结算呈现
+
+[四组原生角色映射](../target/temple-run/analysis/native-death-profile-source.json)来自ImageData、场景prefab次序和ActiveCharacterId选图指令；[九角色14次实际死亡/重开](../target/temple-run/analysis/gameplay-character-death-summary.json)核对专用图与默认回退，另24选项/21PNG来源哈希校验通过。角色由诊断接口装备，不替代已有商店购买专项；选择代表图为网页策略，未恢复原版完整随机选图/文案。

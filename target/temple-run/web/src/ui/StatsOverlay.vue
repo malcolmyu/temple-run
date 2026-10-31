@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useModalDialog } from './useModalDialog';
 import { progress } from '../game/progress';
 const emit = defineEmits<{ close: [] }>();
+const dialog=useModalDialog(()=>emit('close'));
 </script>
 
 <template>
-  <section class="overlay soft" @click.self="emit('close')">
+  <section ref="dialog" tabindex="-1" class="overlay soft" role="dialog" aria-modal="true" aria-label="统计" @click.self="emit('close')">
     <div class="card">
       <p class="kicker">STATS</p>
       <h2 class="title">统计</h2>

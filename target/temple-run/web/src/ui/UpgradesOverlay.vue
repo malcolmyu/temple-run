@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useModalDialog } from './useModalDialog';
 import { ref } from 'vue';
 import { UPGRADES, levelOf, nextCost, purchase,isPowerUpgrade,upgradeEffect } from '../game/upgrades';
 import { progress } from '../game/progress';
 import { syncBanks } from '../game/state';
 
 const emit = defineEmits<{ close: [] }>();
+const dialog=useModalDialog(()=>emit('close'));
 const notice = ref('');
 
 function buy(id: string): void {
@@ -20,7 +22,7 @@ function buy(id: string): void {
 </script>
 
 <template>
-  <section class="overlay soft" @click.self="emit('close')">
+  <section ref="dialog" tabindex="-1" class="overlay soft" role="dialog" aria-modal="true" aria-label="升级" @click.self="emit('close')">
     <div class="card">
       <p class="kicker">UPGRADES</p>
       <h2 class="title">升级</h2>
