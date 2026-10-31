@@ -28,8 +28,15 @@ for(let seed=1;seed<=100;seed++){
   const a=plan.surfaces[i-1],b=plan.surfaces[i];assert.notEqual(a.level,b.level);assert.ok(a.level!==1||b.level===2,'plank only changes to temple before an upward cliff transition');assert.equal(a.to,b.from);
   assert.equal(b.kind,b.level===1?'wood':'stone');
   const f=plan.features.find(f=>f.kind==='transition'&&f.from<=b.from&&f.to>=b.from)!;
-  assert.ok(f&&f.to-f.from>=120);assert.ok(f.themeRequestedAtProgress!==undefined);
+  assert.ok(f&&f.to-f.from>=120);assert.ok(b.from-12-f.from>=36,'departure cap has at least3 clear cells since preceding turn');assert.ok(f.themeRequestedAtProgress!==undefined);
   assert.ok(!plan.obstacles.some(o=>o.distance>f.from&&o.distance<f.to));
  }
 }
 console.log('Native theme thresholds, strict gate/reset, transition graph and100 streamed seeds passed');
+const cliffCourse=new CoursePlan(7,489);cliffCourse.requestTheme(3,2000);cliffCourse.ensureThrough(10000,2000);
+const cliffFeatures=cliffCourse.features.filter(f=>f.pathLevel===3&&f.kind!=='transition');
+for(const f of cliffFeatures)assert.ok(['treeJump','treeTrip','treeSlide','cliffGap','cliffStraight'].includes(f.kind),f.kind);
+assert.ok(cliffFeatures.some(f=>f.kind==='cliffGap'));assert.ok(cliffFeatures.some(f=>f.kind==='treeSlide'));
+for(const o of cliffCourse.obstacles.filter(o=>o.defId==='cliffGapA'))assert.ok(cliffCourse.obstacles.some(b=>b.defId==='cliffGapB'&&b.distance===o.distance+12));
+assert.ok(cliffCourse.obstacles.filter(o=>o.defId==='treeSlide').every(o=>o.prefab==='cliff-tree-slide'));
+console.log('Cliff feature pool excludes unsupported stone pieces;native cap pairs and cliff slide reachable');

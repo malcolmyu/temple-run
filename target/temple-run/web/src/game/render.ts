@@ -40,6 +40,7 @@ export interface Assets {
   roadTile: THREE.Group | null;
   cliffTile?:THREE.Group|null;
   cliffTJunction?:THREE.Group|null;
+  cliffSlide?:THREE.Group|null;
   cliffCapA?:THREE.Group|null;
   cliffCapB?:THREE.Group|null;
   cliffCornerLeft?:THREE.Group|null;
@@ -96,7 +97,7 @@ const loadObj = async (url: string): Promise<THREE.Group | null> => {
     if(!response.ok)return null;
     const obj=new OBJLoader().parse(await response.text());
     const name=url.split('/').pop()?.replace(/\.obj$/, '') ?? '';
-    if(name.startsWith('cliff-cap-') || name.startsWith('cliff-t-') || name.startsWith('cliff-turn-') || name==='cliff-road-tile' || name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
+    if(name==='cliff-tree-slide' || name.startsWith('cliff-cap-') || name.startsWith('cliff-t-') || name.startsWith('cliff-turn-') || name==='cliff-road-tile' || name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
       const uv=await fetch(url.replace(/\.obj$/, '.uv1.json'));
       if(!uv.ok)throw new Error('Missing native lightmap UV: '+name);
       attachNativeLightmapUV(obj, await uv.json());
@@ -237,7 +238,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
 
   const sceneryPaths=Object.entries(NATIVE_SCENERY_RESOURCES).filter(([group])=>group!=='tree').flatMap(([,paths])=>paths);
   const sceneryLoad=Promise.all(sceneryPaths.map(path=>loadObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`)));
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4, cliffTile, cliffCornerLeft, cliffCornerRight, cliffTJunction, cliffCapA, cliffCapB] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4, cliffTile, cliffCornerLeft, cliffCornerRight, cliffTJunction, cliffCapA, cliffCapB, cliffSlide] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
     loadObj(`${BASE}assets/track/decor-tree-native-1.obj`),
@@ -264,6 +265,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadObj(`${BASE}assets/track/cliff-t-down.obj`),
     loadObj(`${BASE}assets/track/cliff-cap-a.obj`),
     loadObj(`${BASE}assets/track/cliff-cap-b.obj`),
+    loadObj(`${BASE}assets/track/cliff-tree-slide.obj`),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;
@@ -380,6 +382,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       cliffTJunction:paint(cliffTJunction,nativeTreeMaterial,false),
       cliffCapA:paint(cliffCapA,nativeTreeMaterial,false),
       cliffCapB:paint(cliffCapB,nativeTreeMaterial,false),
+      cliffSlide:paint(cliffSlide,nativeTreeMaterial,false),
       cliffCornerLeft:paint(cliffCornerLeft,nativeTreeMaterial,false),
       cliffCornerRight:paint(cliffCornerRight,nativeTreeMaterial,false),
       wall: paint(wallTemplate, nativeRoadMaterial, true),
@@ -1006,9 +1009,10 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
   const kind = def.kind as ObstacleKind;
   // Use the actual APK prefab. The exporter baked the prefab-root frame: origin is the
   // track-tile centre and y=0 is the road surface.
-  const prefab = assets.obstacles[prefabName] ?? null;
+  const cliffSource=def.id==='cliffGapA'?assets.cliffCapA:def.id==='cliffGapB'?assets.cliffCapB:prefabName==='cliff-tree-slide'?assets.cliffSlide:null;
+  const prefab = cliffSource??assets.obstacles[prefabName]??(prefabName==='cliff-tree-slide'?assets.obstacles['tree-slide']:null);
   if (prefab) {
-    const clone = prefab.clone(true);
+    const clone = prefab.clone(true);if(cliffSource)clone.position.y=CLIFF_MESH_Y;
     group.add(clone);
     if (def.id === 'fireWall') {
       const base = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.2, 1.4), assets.material.stone);

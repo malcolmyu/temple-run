@@ -1,3 +1,5 @@
+import {nativeThemeCaps,transitionSupportOffsets} from './nativeThemeTransition';
+import type {NativePathLevel} from './nativeThemePacing';
 import { activeCourse } from './coursePlan';
 import { referenceTileDistance } from './referenceCoordinates';
 export type SurfaceKind = 'stone' | 'wood';
@@ -39,48 +41,39 @@ export function surfaceAt(distance: number): SurfaceSection {
   };
 }
 
-/** Transition cells replace the last stone cell before wood and the first
- * stone cell after wood. Placement follows the current fitted reference grid. */
-export function nativeTransitionAt(distance:number):'a'|'b'|null {
- for(const section of activeCourse()?.surfaces??REFERENCE_SURFACES)if(section.kind==='wood'){
-  if(Math.abs(distance-(section.from-12))<.01)return 'a';
-  if(Math.abs(distance-section.to)<.01)return 'b';
+const levelOfSurface=(s:{kind:SurfaceKind;level?:NativePathLevel}):NativePathLevel=>s.level??(s.kind==='wood'?1:2);
+function capAt(distance:number):string|null {
+ const sections=activeCourse()?.surfaces??REFERENCE_SURFACES;
+ for(let i=1;i<sections.length;i++){
+  const boundary=sections[i].from,pair=nativeThemeCaps(levelOfSurface(sections[i-1]),levelOfSurface(sections[i]));
+  if(Math.abs(distance-(boundary-12))<.01&&pair.departure)return pair.departure;
+  if(Math.abs(distance-boundary)<.01&&pair.arrival)return pair.arrival;
  }
  return null;
 }
-/** Canonical Vert cliff caps:A ends cliff,B starts cliff. Direct wood links
- * retain the existing wood adapter until mixed native transitions are ported. */
+export function nativeTransitionAt(distance:number):'a'|'b'|null {
+ const cap=capAt(distance);return cap==='stoneA'?'a':cap==='stoneB'?'b':null;
+}
 export function nativeCliffTransitionAt(distance:number):'a'|'b'|null {
- const sections=activeCourse()?.surfaces;if(!sections)return null;
- for(let i=0;i<sections.length;i++){
-  const s=sections[i];if(s.level!==3)continue;
-  if(i>0&&sections[i-1].level===2&&Math.abs(distance-s.from)<.01)return 'b';
-  if(sections[i+1]?.level===2&&Math.abs(distance-(s.to-12))<.01)return 'a';
- }
- return null;
+ const cap=capAt(distance);return cap==='cliffA'?'a':cap==='cliffB'?'b':null;
 }
 export function nativeTransitionSupported(distance:number):boolean {
  const sections=activeCourse()?.surfaces??REFERENCE_SURFACES;
- if(sections.some(s=>s.kind==='wood'&&(distance>s.from-12&&distance<s.from-6||distance>s.to-6&&distance<s.to)))return false;
- if(activeCourse())for(let i=0;i<sections.length;i++){
-  const s=sections[i] as SurfaceSection;if(s.level!==3)continue;
-  if(i>0&&(sections[i-1] as SurfaceSection).level===2&&distance>s.from-6&&distance<s.from+1)return false;
-  if((sections[i+1] as SurfaceSection|undefined)?.level===2&&distance>s.to-13&&distance<s.to-6)return false;
+ for(let i=1;i<sections.length;i++){
+  const b=sections[i].from,offsets=transitionSupportOffsets(levelOfSurface(sections[i-1]),levelOfSurface(sections[i]));
+  if(distance>b+offsets.oldEnd&&distance<b+offsets.newStart)return false;
  }
  return true;
 }
-/** First plank region starts six metres before its centre; the exit cap's
- * stone support starts at its centre. Missing regions retain the previous level. */
+/** Retain the previous support height through a gap;switch at first new support. */
 export function nativeGroundHeightAt(distance:number):number {
  const sections=activeCourse()?.surfaces??REFERENCE_SURFACES;
- if(sections.some(s=>s.kind==='wood'&&distance>=s.from-6&&distance<s.to))return -3;
- if(activeCourse())for(let i=0;i<sections.length;i++){
-  const s=sections[i] as SurfaceSection;if(s.level!==3)continue;
-  const start=(sections[i-1] as SurfaceSection|undefined)?.level===2?s.from+1:s.from-6;
-  const end=(sections[i+1] as SurfaceSection|undefined)?.level===2?s.to-6:s.to;
-  if(distance>=start&&distance<end)return 3;
+ let level=levelOfSurface(sections[0]);
+ for(let i=1;i<sections.length;i++){
+  const from=levelOfSurface(sections[i-1]),to=levelOfSurface(sections[i]);
+  if(distance>=sections[i].from+transitionSupportOffsets(from,to).newStart)level=to;
  }
- return 0;
+ return level===1?-3:level===3?3:0;
 }
 /** Existing plank exports add raw15.25; undo graphical normalization only. */
 export const nativeMeshHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3.05:surfaceAt(distance).level===3?3:0;

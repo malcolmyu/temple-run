@@ -2,10 +2,10 @@
 (()=>{
  const g=window.__templeGame,checks=[],runs=[];const check=(name,ok)=>checks.push({name,passed:!!ok});
  for(const exit of [false,true])for(const jump of [false,true]){
-  g.restart();g.freeze();g.advance(1600);g.press('left');g.planTheme(3,600);g.planTheme(2,600);
-  const cliff=g.state().course.surfaces.find(s=>s.level===3),at=exit?cliff.to-17:cliff.from-10;
-  g.jumpTo(at);const before=g.state(),scene=g.scene();if(jump)g.press('jump');g.advance(1500);
-  const after=g.state();check((exit?'exit':'entry')+(jump?' jump clears native cap gap':(exit?' walk descends safely':' walk fails rising cap gap')),jump||exit?after.phase==='playing'&&!after.falling:after.phase==='ended');
+  g.restart();g.freeze();g.advance(1600);g.press('left');while(g.state().distanceExact<250&&g.state().phase==='playing'){const s=g.state();if(s.nextTurn-s.distanceExact<5&&!s.turnQueued)g.press(s.turnDirection<0?'left':'right');if(s.obstacles.some(o=>o.ahead>0&&o.ahead<9)&&!s.airborne)g.press('jump');g.advance(25);}g.planTheme(3,600);g.planTheme(2,600);
+  const cliff=g.state().course.surfaces.find(s=>s.level===3),at=exit?cliff.to-17:cliff.from-16;
+  g.jumpTo(at);const before=g.state(),scene=g.scene();if(jump)g.press('jump');g.advance(1200);
+  const after=g.state();check((exit?'exit':'entry')+(jump?' jump clears native cap gap':' walk fails complete cap gap'),jump?after.phase==='playing'&&!after.falling:after.phase==='ended');
   check('cap model instantiated',scene.cliffCapsLoaded&&scene.nativeCliffCaps>0);
   runs.push({exit,jump,before,scene,after,death:g.death()});
  }

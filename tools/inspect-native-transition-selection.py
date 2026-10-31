@@ -1,0 +1,10 @@
+"""Verify native per-level cap selection and minimum clear-cell gate statically."""
+import sys,struct,json,hashlib
+from pathlib import Path
+reader=Path(__file__).with_name('inspect-native-runtime-methods.py');n={'__file__':str(reader)}
+exec(compile(reader.read_text().split('for typeName,methodName in ')[0],str(reader),'exec'),n)
+b,off=n['binary'],n['off'];checks={0x12e4178:0x51000729,0x12e417c:0x7100053f,0x12e4184:0x3940f269,0x12e418c:0xb9407a69,0x12e4190:0x71000d3f,0x12e4198:0xb9407e69,0x12e419c:0x71000d3f,0x12e48b4:0x52800049,0x12e48bc:0x29062668,0x12e4b7c:0x7100091f,0x12e4b9c:0x7100051f,0x12e4bc0:0x29065668,0x12e4a10:0x71000ebf,0x12e4a1c:0x7100091f,0x12e4a2c:0x1a9f17e8,0x12e4a38:0x71000abf,0x12e4a40:0x710006bf,0x12e4a6c:0xb868d938}
+for a,value in checks.items():assert struct.unpack_from('<I',b,off(a))[0]==value,hex(a)
+a=struct.unpack_from('<4i',b,off(0x697d20));arrival=struct.unpack_from('<4i',b,off(0x698020));assert a==(35,33,36,34)and arrival==(36,34,35,33)
+result=dict(binarySHA256=hashlib.sha256(b).hexdigest(),method='PathElement.GetRandomPathElementForSide12e3e48..12e4bf4',clearGate=dict(type=[1,2],hasObstacles=False,spacesSinceLastTurnMin=3,spacesSinceLastObstacleMin=3),departureTable=a,arrivalTable=arrival,capPairs={'2to1':['templeA','plainPlank'],'1to2':['plainPlank','templeB'],'2to3':['templeA','cliffB'],'3to2':['cliffA','templeB'],'3to1':['cliffA','plainPlank']},verified='3to1 uses the same departure-cap branch as3to2;arrival-cap condition covers3to2,2to3,1to2 only.No intervening temple cell is selected in3to1 cap branch.',instructionChecks={hex(a):hex(v)for a,v in checks.items()},limits=['This recovers cap pair selection,not the entire candidate/weight/length generator.','Browser12m grid gap lengths13/7/6 are adapter results using native support polygons;exact native placement remains unresolved.'])
+p=Path('target/temple-run/analysis/native-generation/transition-selection.json');p.write_text(json.dumps(result,indent=2)+'\n');print('Verified cap pairs,3-clear-cell gate and direct cliff→plain-plank transition')

@@ -22,10 +22,10 @@ const {CoursePlan,setActiveCourse}=await import('../target/temple-run/web/src/ga
 const {nativeCliffTransitionAt}=await import('../target/temple-run/web/src/game/surface');
 const plan=new CoursePlan(1,489);plan.surfaces.splice(0,plan.surfaces.length,{kind:'stone',level:2,from:0,to:600},{kind:'stone',level:3,from:600,to:900},{kind:'stone',level:2,from:900,to:Infinity});setActiveCourse(plan);
 assert.equal(nativeCliffTransitionAt(600),'b');assert.equal(nativeCliffTransitionAt(888),'a');assert.equal(nativeCliffTransitionAt(612),null);
-for(const d of [594,601,887,894])assert.equal(nativeTransitionSupported(d),true,`boundary${d}`);
-for(const d of [594.001,600,600.999,887.001,890,893.999])assert.equal(nativeTransitionSupported(d),false,`gap${d}`);
-for(const d of [590,605,880,897])assert.equal(nativeTransitionSupported(d),true);
-assert.equal(nativeGroundHeightAt(600.999),0);assert.equal(nativeGroundHeightAt(601),3);assert.equal(nativeGroundHeightAt(893.999),3);assert.equal(nativeGroundHeightAt(894),0);
+for(const d of [588,601,887,900])assert.equal(nativeTransitionSupported(d),true,`boundary${d}`);
+for(const d of [588.001,600,600.999,887.001,890,899.999])assert.equal(nativeTransitionSupported(d),false,`gap${d}`);
+for(const d of [580,605,880,905])assert.equal(nativeTransitionSupported(d),true);
+assert.equal(nativeGroundHeightAt(600.999),0);assert.equal(nativeGroundHeightAt(601),3);assert.equal(nativeGroundHeightAt(899.999),3);assert.equal(nativeGroundHeightAt(900),0);
 const family=JSON.parse(readFileSync('target/temple-run/analysis/native-cliff-road/family.json','utf8'));
 for(const [label,sign]of [['A',1],['B',-1]]as const){
  const r=family.records.find((r:any)=>r.names.includes(`cliffToTempleCap${label}Vert_prefab`));assert.equal(r.regions[0].heightWorld,3);
@@ -33,5 +33,7 @@ for(const [label,sign]of [['A',1],['B',-1]]as const){
  const p=`target/temple-run/web/public/assets/track/cliff-cap-${label.toLowerCase()}`;const object=new OBJLoader().parse(readFileSync(p+'.obj','utf8'));
  attachNativeLightmapUV(object,JSON.parse(readFileSync(p+'.uv1.json','utf8')));assert.ok(object.children.length);
 }
+assert.equal(nativeTransitionAt(588),'a');assert.equal(nativeTransitionAt(900),'b');
+plan.surfaces[2].level=1;plan.surfaces[2].kind='wood';assert.equal(nativeCliffTransitionAt(888),'a');assert.equal(nativeTransitionAt(888),null);assert.equal(nativeTransitionSupported(893.999),false);assert.equal(nativeTransitionSupported(894),true);assert.equal(nativeGroundHeightAt(894),-3);
 plan.surfaces[0].level=1;plan.surfaces[0].kind='wood';assert.equal(nativeCliffTransitionAt(600),null,'mixed wood cliff link retains existing adapter');
-setActiveCourse(null);console.log('Cliff caps:canonical half-floor orientation, first/last cell selection,7m grid gap edges and mixed-link exclusion pass');
+setActiveCourse(null);console.log('Cliff caps:canonical half-floor orientation, first/last cell selection,13m temple/cliff and7m cliff/plank gap edges and cap pairs pass');

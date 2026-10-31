@@ -1,0 +1,15 @@
+// Diagnostic seek isolates each transition; no protection is forced.
+(()=>{
+ const g=window.__templeGame,checks=[],runs=[];const check=(name,ok)=>checks.push({name,passed:!!ok});
+ for(const target of [1,2])for(const jump of [false,true]){
+  g.restart();g.freeze();g.advance(1600);g.press('left');while(g.state().distanceExact<250&&g.state().phase==='playing'){const s=g.state();if(s.nextTurn-s.distanceExact<5&&!s.turnQueued)g.press(s.turnDirection<0?'left':'right');if(s.obstacles.some(o=>o.ahead>0&&o.ahead<9)&&!s.airborne)g.press('jump');g.advance(25);}g.planTheme(3,600);g.planTheme(target,600);
+  const cliff=g.state().course.surfaces.find(s=>s.level===3),at=cliff.to-17;
+  g.jumpTo(at);const before=g.state(),scene=g.scene();if(jump)g.press('jump');g.advance(1200);
+  const after=g.state();check((target===1?'cliff→plank':'cliff→temple')+(jump?' jump clears':target===1?' walking descent':' unjumped gap fails'),jump||target===1?after.phase==='playing'&&!after.falling&&after.groundY===(target===1?-3:0):after.phase==='ended');
+  check('cap model instantiated',scene.cliffCapsLoaded&&scene.nativeCliffCaps>0);
+  runs.push({target,jump,before,scene,after,death:g.death()});
+ }
+ g.advance(60000);check('successful crossing can later fail to results',g.state().phase==='ended');g.restart();g.freeze();
+ check('restart clears falling state',g.state().phase==='playing'&&!g.state().falling&&g.state().distanceExact===-2);
+ return {checks,runs};
+})()

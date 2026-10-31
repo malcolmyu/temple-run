@@ -64,3 +64,21 @@ const heightPlan=new CoursePlan(1,489);heightPlan.surfaces.splice(0,heightPlan.s
 tile.position.y=nativeMeshHeightAt(100);tile.updateMatrixWorld(true);const worldBox=new THREE.Box3().setFromObject(tile);
 assert.equal(tile.position.y,3);assert.ok(worldBox.max.y>2.9&&worldBox.max.y<3.01,'world cliff floor restores native3m');setActiveCourse(null);
 console.log('Native cliff world elevation restored by3m parent and relative mesh template');
+
+const {DEFS}=await import('../target/temple-run/web/src/game/obstacles/catalog');
+const {collisionWouldHit}=await import('../target/temple-run/web/src/game/obstacles/collision');
+const {buildObstacle}=await import('../target/temple-run/web/src/game/render');
+const state={prevDistance:0,distance:0,laneIndex:1,side:0,jumpY:0,jumpV:0,slideRemaining:0,lastJumpAt:-100,lastSlideAt:-100,now:100,jumpWindow:0,slideWindow:0};
+for(const side of [-1.3,0,1.3])for(const distance of [81.9,82,86,87,93,99,100,106,106.1]){
+ const a=collisionWouldHit({def:DEFS.cliffGapA,lane:1,distance:88},{...state,distance,prevDistance:distance,side});
+ const b=collisionWouldHit({def:DEFS.cliffGapB,lane:1,distance:100},{...state,distance,prevDistance:distance,side});
+ assert.equal(a||b,distance>87&&distance<101,`paired cliff support ${side}/${distance}`);
+}
+assets.obstacles={};
+assets.cliffCapA=new OBJLoader().parse(readFileSync('target/temple-run/web/public/assets/track/cliff-cap-a.obj','utf8'));assets.cliffCapB=new OBJLoader().parse(readFileSync('target/temple-run/web/public/assets/track/cliff-cap-b.obj','utf8'));
+assets.cliffSlide=new OBJLoader().parse(readFileSync('target/temple-run/web/public/assets/track/cliff-tree-slide.obj','utf8'));
+for(const[id,prefab,source]of [['cliffGapA','cliff-gap-a',assets.cliffCapA],['cliffGapB','cliff-gap-b',assets.cliffCapB],['treeSlide','cliff-tree-slide',assets.cliffSlide]]as const){
+ const o=buildObstacle(assets,DEFS[id],prefab);assert.ok(o.children.length);assert.equal(o.children[0].position.y,-3);assert.equal(source.position.y,0);
+}
+assert.equal(DEFS.treeSlide.hitbox.y[1],1.6);
+console.log('Cliff pool: paired14m ground gap across all lane centres; independent native templates and relative1.6m slide collider pass');

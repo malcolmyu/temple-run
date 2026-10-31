@@ -1,0 +1,9 @@
+// Isolated generated obstacles using QA plan/seek; no invincibility or collision overrides.
+(()=>{const g=window.__templeGame,checks=[],runs=[];const check=(name,passed)=>checks.push({name,passed:!!passed});
+function prep(kind){g.restart();g.freeze();g.advance(1600);g.press('left');let ticks=0;
+while(g.state().phase==='playing'&&g.state().distanceExact<250&&ticks++<10000){const s=g.state();if(s.nextTurn-s.distanceExact<5&&!s.turnQueued)g.press(s.turnDirection===-1?'left':'right');const o=s.obstacles.find(o=>o.ahead>0&&o.ahead<9);if(o&&!s.airborne&&!s.sliding)g.press(o.kind==='arch'?'slide':'jump');g.advance(25);}
+g.planTheme(3,2500);const f=g.state().course.features.find(f=>f.pathLevel===3&&f.kind===kind);if(!f)throw Error('missing '+kind);const mid=12*Math.round((f.from+f.to)/24);g.jumpTo(mid-40);g.advance(25);return mid;}
+for(const kind of ['cliffGap','treeSlide'])for(const action of [false,true]){const mid=prep(kind),before=g.state();let applied=false,ticks=0;
+while(g.state().phase==='playing'&&g.state().distanceExact<mid+10&&ticks++<1000){const s=g.state();if(action&&!applied&&s.distanceExact>mid-(kind==='cliffGap'?20:8)){g.press(kind==='cliffGap'?'jump':'slide');applied=true;}g.advance(25);}
+if(g.state().phase==='dying')g.advance(1000);const end=g.state();check(kind+(action?' correct action passes':' no action fails'),action?end.phase==='playing'&&end.distanceExact>=mid+10:end.phase==='ended');check('test is unprotected',!before.boost.active&&!before.powers.some(p=>p.kind==='shield'));runs.push({kind,action,mid,before,end,death:g.death()});g.advance(60000);check('failure reaches results',g.state().phase==='ended');g.restart();g.freeze();check('restart resets',g.state().distanceExact===-2&&g.state().phase==='playing');}
+prep('treeSlide');g.captureFrame();return {checks,runs,screenshotState:g.state()};})()

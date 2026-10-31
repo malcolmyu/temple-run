@@ -53,7 +53,7 @@ export const DEFS = {
     lanes: 'all',
     hitbox: box([-2,2], [1.6,1.6], [-.6,.6]),
     kill: true,
-    prefabs: ['tree-slide'],
+    prefabs: ['tree-slide','cliff-tree-slide'],
     placement: 'straight',
     weight: 3,
     note: 'Native tree-slide Obstacle21 is slide-only/fatal; Region24 canonical Z+/-0.6 at height1.6. Exported tree excludes floor, so retain the base road.',
@@ -109,6 +109,16 @@ export const DEFS = {
     groundSupportRegion:longSupport('pit-long-b'),kill:true,
     prefabs:['pit-long-b'],placement:'straight',weight:0,
     note:'Native near endcap: local Z5..6 supports ground; must precede the far endcap in a complete long-hole span.',
+  },
+  cliffGapA:{
+    id:'cliffGapA',kind:'gapLong',action:'jump',lanes:'all',hitbox:box([-1.3,1.3],[-6,.08],[-6,6]),surfaceCut:[-6,6],
+    groundSupportRegion:[[-1.3,1],[-1.3,6],[1.3,6],[1.3,1]],kill:true,prefabs:['cliff-gap-a'],placement:'straight',weight:0,
+    note:'Native cliff long-hole alias uses near A cap;local+Z1..6 support,14m paired gap in12m web grid.'
+  },
+  cliffGapB:{
+    id:'cliffGapB',kind:'gapLong',action:'jump',lanes:'all',hitbox:box([-1.3,1.3],[-6,.08],[-6,6]),surfaceCut:[-6,6],
+    groundSupportRegion:[[-1.3,-6],[-1.3,-1],[1.3,-1],[1.3,-6]],kill:true,prefabs:['cliff-gap-b'],placement:'straight',weight:0,
+    note:'Native cliff long-hole alias uses far B cap;local-Z-6..-1 support.'
   },
   fireWall: {
     id: 'fireWall',

@@ -1,0 +1,134 @@
+{
+  "worldScale": 0.2,
+  "rootTranslationExcluded": true,
+  "productionIntegrated": true,
+  "runtimeVariants": [
+    "Vert"
+  ],
+  "runtimeTranslationY": -3,
+  "runtimeParentTranslationY": 3,
+  "limits": [
+    "Vert A/B cap halves retain their native support polygon; runtime placement follows existing12m tile grid.",
+    "Connectors still use the existing web global grid;parent groups now restore native3m ground;exact native grid placement is not recovered."
+  ],
+  "records": {
+    "Vert": {
+      "prefab": "16aad202bc05c448980efd90e22913b4",
+      "prefabSHA256": "b5463c3989d0f0892c26c93e7d33ae7e6560a9af9240db6a8a3244ddb1f236b3",
+      "mesh": "95c35b303e2fb4e898ac41e47bcec672",
+      "transforms": [
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 2
+          },
+          "m_LocalRotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.7071068286895752,
+            "w": 0.7071067690849304
+          },
+          "m_LocalPosition": {
+            "x": 1055.349609375,
+            "y": 1389.9521484375,
+            "z": 28.000001907348633
+          },
+          "m_LocalScale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "m_Children": [],
+          "m_Father": {
+            "m_FileID": 0,
+            "m_PathID": 6
+          }
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 3
+          },
+          "m_LocalRotation": {
+            "x": -0.7071068286895752,
+            "y": 0.0,
+            "z": -0.0,
+            "w": 0.7071068286895752
+          },
+          "m_LocalPosition": {
+            "x": -10.0,
+            "y": -15.0,
+            "z": 0.0
+          },
+          "m_LocalScale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "m_Children": [
+            {
+              "m_FileID": 0,
+              "m_PathID": 5
+            }
+          ],
+          "m_Father": {
+            "m_FileID": 0,
+            "m_PathID": 4
+          }
+        },
+        {
+          "m_GameObject": {
+            "m_FileID": 0,
+            "m_PathID": 1
+          },
+          "m_LocalRotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "w": 1.0
+          },
+          "m_LocalPosition": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "m_LocalScale": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+          },
+          "m_Children": [
+            {
+              "m_FileID": 0,
+              "m_PathID": 6
+            }
+          ],
+          "m_Father": {
+            "m_FileID": 0,
+            "m_PathID": 0
+          }
+        }
+      ],
+      "bounds": [
+        [
+          -6.452976054472401,
+          5.720853316370358
+        ],
+        [
+          -7.321648639192046,
+          41.32760580857766
+        ],
+        [
+          -4.819281427576827,
+          6.977325778074655
+        ]
+      ],
+      "vertices": 195,
+      "expandedUV1Vertices": 348,
+      "horizontalUp": 0,
+      "horizontalDown": 0,
+      "objSHA256": "2f9a798976fcf08c05a405566b1481af6251680b8ec2f77259778fb824ad4228",
+      "uv1SHA256": "5133f659011016e23711fe3bba857a0614196e589b2c0dd1f726bdfed8164080"
+    }
+  }
+}

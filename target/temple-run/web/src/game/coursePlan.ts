@@ -28,6 +28,7 @@ export class CoursePlan {
  private readonly rng:SeededRandom;
  private readonly pairRng:SeededRandom;
  private bag:string[]=[];
+ private cliffBag:string[]=[];
  private blocks=0;
  private pendingThemes:{level:NativePathLevel;progress:number}[]=[];
  requestTheme(level:NativePathLevel,progress:number):void {
@@ -42,6 +43,11 @@ export class CoursePlan {
   if(progress!==undefined&&((progress<500&&(feature==='treeSlide'||feature==='flameTower'))||(progress<1500&&(feature==='narrowSmall'||feature==='narrowLong')))){this.bag.push(feature);return 'pit';}
   if(feature==='longGap'&&at<1400){this.bag.push(feature);return 'pit';}
   return feature;
+ }
+ // Native prefab availability; shuffled coverage/weights remain a web assumption.
+ private cliffFeature():string {
+  if(!this.cliffBag.length){this.cliffBag=['treeJump','treeTrip','treeSlide','cliffGap','cliffStraight'];for(let i=this.cliffBag.length-1;i>0;i--){const j=this.rng.int(i+1);[this.cliffBag[i],this.cliffBag[j]]=[this.cliffBag[j],this.cliffBag[i]];}}
+  return this.cliffBag.shift()!;
  }
  ensureThrough(distance:number,progress?:number,fastTurn=false):void {
   while(this.extent<distance){
@@ -66,19 +72,20 @@ export class CoursePlan {
     this.surfaces.push({kind:surface,from:boundary,to:Infinity,level});
     if(requested)this.pendingThemes.shift();
     kind='transition';
-   }else kind=surface==='wood'?(this.rng.int(2)===0?'plankPit':'plankBeam'):this.stoneFeature(mid,progress);
+   }else kind=surface==='wood'?(this.rng.int(2)===0?'plankPit':'plankBeam'):level===3?this.cliffFeature():this.stoneFeature(mid,progress);
    const add=(defId:DefId,prefab:string,at=mid,lane?:number)=>this.obstacles.push({defId,prefab,distance:at,lane});
    const right=this.rng.int(2)===0;
    switch(kind){
     case 'transition':break;
     case 'treeJump':add('treeJump',right?'tree-jump-right':'tree-jump-left');break;
     case 'treeTrip':add('treeTrip',right?'tree-trip-right':'tree-trip-left');break;
-    case 'treeSlide':add('treeSlide','tree-slide');break;
+    case 'treeSlide':add('treeSlide',level===3?'cliff-tree-slide':'tree-slide');break;
     case 'flameTower':add('flameTower','flame-tower');break;
     case 'stonePedestal':add('stonePedestal','stone-pedestal',mid,this.rng.int(3));break;
     case 'pit':add('pit','pit');break;
     case 'plankPit':add('plankPit','plank-pit');break;
     case 'plankBeam':add('plankBeam','plank-beam');break;
+    case 'cliffGap':add('cliffGapA','cliff-gap-a',mid-12);add('cliffGapB','cliff-gap-b',mid);break;
     case 'longGap':add('pitLongB','pit-long-b',mid-12);add('pitLongA','pit-long-a',mid);break;
     case 'narrowSmall':{
      add(right?'narrowBeamRight':'narrowBeamLeft',right?'narrow-beam-right':'narrow-beam-left');
