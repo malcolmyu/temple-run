@@ -1,0 +1,63 @@
+{
+  "result": {
+    "type": "object",
+    "value": {
+      "afterCoins": 163,
+      "beforeCoins": 81,
+      "checks": [
+        {
+          "name": "first collection reaches80 coins",
+          "passed": true
+        },
+        {
+          "name": "first failure reaches results",
+          "passed": true
+        },
+        {
+          "name": "revive preserves session coins",
+          "passed": true
+        },
+        {
+          "name": "post-revive coins accumulate in same session",
+          "passed": true
+        },
+        {
+          "name": "later failure reaches results",
+          "passed": true
+        },
+        {
+          "name": "settlement records full pre/post revive total as best",
+          "passed": true
+        },
+        {
+          "name": "restart cannot double-bank or double count session",
+          "passed": true
+        }
+      ],
+      "finalCoins": 189,
+      "nextMultiplier": 11,
+      "saved": {
+        "bestDistance": 406,
+        "bestRunCoins": 189,
+        "bestScore": 18510,
+        "claimed": [],
+        "coins": 189,
+        "equipped": "jhony",
+        "gems": 0,
+        "lifetimeCoins": 189,
+        "music": true,
+        "owned": [
+          "jhony"
+        ],
+        "runs": 1,
+        "sound": true,
+        "totalDistance": 406,
+        "upgrades": {
+          "coin": 0,
+          "magnet": 0
+        },
+        "wings": 0
+      }
+    }
+  }
+}

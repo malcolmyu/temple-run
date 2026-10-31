@@ -1,3 +1,4 @@
+import type { RunChallengeSummary } from './nativeRunChallenges';
 import { reactive } from 'vue';
 import { ANGEL_WINGS_PRICE } from './nativeAngelWings';
 import { SKINS } from './skins';
@@ -12,6 +13,9 @@ export interface Progress {
   totalDistance: number;
   lifetimeCoins: number;
   bestScore: number;
+  bestRunCoins: number;
+  bestCoinFreeStart:number;
+  bestCleanRunDistance:number;
   owned: string[];
   equipped: string;
   claimed: string[];
@@ -60,6 +64,8 @@ function migrateLegacy(defaults: Progress): Progress | null {
     totalDistance: num(stats.totalDistance),
     lifetimeCoins: num(stats.totalCoins),
     bestScore: 0,
+    bestRunCoins: 0,
+    bestCoinFreeStart:0,bestCleanRunDistance:0,
     owned,
     equipped,
     claimed: [],
@@ -88,6 +94,8 @@ function load(): Progress {
     totalDistance: 0,
     lifetimeCoins: 0,
     bestScore: 0,
+    bestRunCoins: 0,
+    bestCoinFreeStart:0,bestCleanRunDistance:0,
     owned: [SKINS[0].id],
     equipped: SKINS[0].id,
     claimed: [],
@@ -111,14 +119,14 @@ function load(): Progress {
       id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
     )])];
     if (!merged.owned.includes(merged.equipped)) merged.equipped = SKINS[0].id;
-    for (const key of ['coins', 'gems', 'wings', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore'] as const) {
+    for (const key of ['coins', 'gems', 'wings', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance'] as const) {
       const value = merged[key];
       merged[key] = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
     }
     // Earlier v2 builds could create the new key with defaults before the player ever ran.
     // In that case still import the legacy save instead of treating the empty v2 key as real.
     const meaningful =
-      Number(saved.bestDistance) > 0 ||
+      Number(saved.bestDistance) > 0 || Number(saved.bestScore)>0 || Number(saved.bestRunCoins)>0 || Number(saved.bestCoinFreeStart)>0 || Number(saved.bestCleanRunDistance)>0 ||
       Number(saved.coins) > 0 ||
       Number(saved.gems) > 0 ||
       Number(saved.runs) > 0 || Number(saved.wings)>0 ||
@@ -201,7 +209,7 @@ export function buyUpgrade(id: string, cost: number): boolean {
   return true;
 }
 
-export function recordRun(distance: number, coins: number, gems: number, score: number): void {
+export function recordRun(distance: number, coins: number, gems: number, score: number,challenges?:RunChallengeSummary): void {
   progress.runs += 1;
   progress.coins += coins;
   progress.gems += gems;
@@ -209,6 +217,11 @@ export function recordRun(distance: number, coins: number, gems: number, score: 
   progress.lifetimeCoins += coins;
   progress.bestDistance = Math.max(progress.bestDistance, Math.floor(distance));
   progress.bestScore = Math.max(progress.bestScore, Math.floor(score));
+  progress.bestRunCoins = Math.max(progress.bestRunCoins, Math.floor(coins));
+  if(challenges){
+    progress.bestCoinFreeStart=Math.max(progress.bestCoinFreeStart,Math.floor(challenges.coinFreeStart));
+    progress.bestCleanRunDistance=Math.max(progress.bestCleanRunDistance,Math.floor(challenges.cleanDistance));
+  }
   saveProgress();
 }
 

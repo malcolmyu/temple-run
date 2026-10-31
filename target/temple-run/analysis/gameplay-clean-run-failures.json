@@ -1,0 +1,96 @@
+{
+  "result": {
+    "type": "object",
+    "value": {
+      "checks": [
+        {
+          "name": "ordinary left is safe and does not mark stumble",
+          "passed": true
+        },
+        {
+          "name": "ordinary right is safe and does not mark stumble",
+          "passed": true
+        },
+        {
+          "name": "first coin locks a short opening prefix",
+          "passed": true
+        },
+        {
+          "name": "actual obstacle marks stumble",
+          "passed": true
+        },
+        {
+          "name": "failure reaches results",
+          "passed": true
+        },
+        {
+          "name": "paid revive does not erase action conditions",
+          "passed": true
+        },
+        {
+          "name": "revived run can fail to results",
+          "passed": true
+        },
+        {
+          "name": "stumbled run cannot establish clean-run record",
+          "passed": true
+        },
+        {
+          "name": "later coin-free period cannot replace opening prefix",
+          "passed": true
+        },
+        {
+          "name": "restart clears condition flags",
+          "passed": true
+        }
+      ],
+      "opening": 49.60342297312461,
+      "revived": {
+        "challenges": {
+          "firstCoinDistance": 49.60342297312461,
+          "stumbled": true,
+          "summary": {
+            "cleanDistance": 0,
+            "coinFreeStart": 49.60342297312461
+          }
+        },
+        "phase": "playing"
+      },
+      "saved": {
+        "bestCleanRunDistance": 0,
+        "bestCoinFreeStart": 49,
+        "bestDistance": 404,
+        "bestRunCoins": 1,
+        "bestScore": 4090,
+        "claimed": [],
+        "coins": 1,
+        "equipped": "jhony",
+        "gems": 0,
+        "lifetimeCoins": 1,
+        "music": true,
+        "owned": [
+          "jhony"
+        ],
+        "runs": 1,
+        "sound": true,
+        "totalDistance": 404,
+        "upgrades": {
+          "coin": 0,
+          "magnet": 0
+        },
+        "wings": 0
+      },
+      "stumbled": {
+        "challenges": {
+          "firstCoinDistance": 49.60342297312461,
+          "stumbled": true,
+          "summary": {
+            "cleanDistance": 0,
+            "coinFreeStart": 49.60342297312461
+          }
+        },
+        "phase": "playing"
+      }
+    }
+  }
+}

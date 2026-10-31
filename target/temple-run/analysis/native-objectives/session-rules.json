@@ -1,0 +1,126 @@
+{
+  "fields": {
+    "Score": "0x138",
+    "CoinCountTotal": "0x148"
+  },
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "records": [
+    {
+      "id": "score25000",
+      "got": "0x28628b8",
+      "threshold": 25000.0,
+      "loadAddress": "0x1274230",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score50000",
+      "got": "0x2862930",
+      "threshold": 50000.0,
+      "loadAddress": "0x1274320",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score100000",
+      "got": "0x2862918",
+      "threshold": 100000.0,
+      "loadAddress": "0x1274410",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score250000",
+      "got": "0x2862830",
+      "threshold": 250000.0,
+      "loadAddress": "0x1274500",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score500000",
+      "got": "0x2862858",
+      "threshold": 500000.0,
+      "loadAddress": "0x12745f0",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score1000000",
+      "got": "0x28627c8",
+      "threshold": 1000000.0,
+      "loadAddress": "0x12746e0",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score2500000",
+      "got": "0x28627e0",
+      "threshold": 2500000.0,
+      "loadAddress": "0x12747d0",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score5000000",
+      "got": "0x2862928",
+      "threshold": 5000000.0,
+      "loadAddress": "0x12748c0",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "score10000000",
+      "got": "0x28627e8",
+      "threshold": 10000000.0,
+      "loadAddress": "0x1274aa0",
+      "fieldOffset": "0x138"
+    },
+    {
+      "id": "coins100",
+      "got": "0x28627a0",
+      "threshold": 100.0,
+      "loadAddress": "0x1274b90",
+      "fieldOffset": "0x148"
+    },
+    {
+      "id": "coins250",
+      "got": "0x2862850",
+      "threshold": 250.0,
+      "loadAddress": "0x1274c70",
+      "fieldOffset": "0x148"
+    },
+    {
+      "id": "coins500",
+      "got": "0x28627f8",
+      "threshold": 500.0,
+      "loadAddress": "0x1274d58",
+      "fieldOffset": "0x148"
+    },
+    {
+      "id": "coins750",
+      "got": "0x2862878",
+      "threshold": 750.0,
+      "loadAddress": "0x1274e40",
+      "fieldOffset": "0x148"
+    },
+    {
+      "id": "coins1000",
+      "got": "0x28627a8",
+      "threshold": 1000.0,
+      "loadAddress": "0x1274f28",
+      "fieldOffset": "0x148"
+    },
+    {
+      "id": "coins2500",
+      "got": "0x28627d8",
+      "threshold": 2500.0,
+      "loadAddress": "0x1275010",
+      "fieldOffset": "0x148"
+    },
+    {
+      "id": "coins5000",
+      "got": "0x2862810",
+      "threshold": 5000.0,
+      "loadAddress": "0x12750f8",
+      "fieldOffset": "0x148"
+    }
+  ],
+  "formula": "current CharacterPlayer.Score or CoinCountTotal / target *100; completion at percentage>=100",
+  "limits": [
+    "Web persists best session score/coin total at settlement, not original runtime achievement-update timing.",
+    "These are16 simple branches only; no-power, no-coins and other compound objectives are excluded."
+  ]
+}

@@ -1,3 +1,4 @@
+import { createRunChallenges, stepRunChallenges, summarizeRunChallenges } from './nativeRunChallenges';
 import { createAngelWings, startAngelWings, stepAngelWings } from './nativeAngelWings';
 import { MEGA_START_PRICE, MEGA_START_PROGRESS } from './megaStart';
 import { courseCoinRun } from './courseCoins';
@@ -128,6 +129,7 @@ export class Game {
   private runnerGroup = new THREE.Group();
   private wingsGroup = new THREE.Group();
   private angelWings=createAngelWings();
+  private runChallenges=createRunChallenges();
   private wingRevivePending=false;
   private wingSprites: THREE.Sprite[] = [];
   private chaserGroup = new THREE.Group();
@@ -431,6 +433,7 @@ export class Game {
       scoreMultiplier: this.runScoreMultiplier,
       coinSpawnLevel: this.coinSpawnLevel,
       generationPacing: nativePathPacing(stats.distance),
+      runChallenges:{...this.runChallenges,summary:summarizeRunChallenges(this.runChallenges,stats.distance)},
       angelWings: {...this.angelWings,stock:progress.wings,pendingRevive:this.wingRevivePending},
       fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
@@ -533,6 +536,7 @@ export class Game {
   private coinSpawnIndex = 0;
 
   private resetWorld(): void {
+    this.runChallenges=createRunChallenges();
     this.angelWings=createAngelWings();this.wingRevivePending=false;
     this.coinSpawnLevel=levelOf('coinSpawn');this.coinSpawnIndex=0;
     this.runScoreMultiplier = this.difficulty.name !== 'classic' || this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
@@ -818,6 +822,8 @@ export class Game {
     this.drainInput();
     this.updateTurnCue();
     this.updateRunner(dt);
+    const challengeStats=this.world.require(this.runnerEntity,RunStats);
+    stepRunChallenges(this.runChallenges,challengeStats.distance,challengeStats.coins);
     this.ensureTiles();
     this.spawnWaves();
     this.updateObstacles(dt);
@@ -1946,6 +1952,7 @@ export class Game {
   private stumble(): void {
     this.nativeSwipeStumbleDelay=null;
     if (this.world.elapsed < this.invincibleUntil) return;
+    this.runChallenges.stumbled=true;
     const chase = this.world.require(this.runnerEntity, Chase);
     if (this.difficulty.name==='classic' ? nativeStumbleIsFatal(this.nativeTimeSinceStumble) : this.stumbleCooldown > 0) {
       chase.gap = 1.2;
@@ -2323,7 +2330,7 @@ export class Game {
     if (this.runCommitted) return;
     const stats = this.world.require(this.runnerEntity, RunStats);
     if (stats.distance <= 0) return;
-    recordRun(stats.distance, stats.coins, stats.gems, stats.score);
+    recordRun(stats.distance, stats.coins, stats.gems, stats.score,summarizeRunChallenges(this.runChallenges,stats.distance));
     syncBanks();
     this.runCommitted = true;
   }

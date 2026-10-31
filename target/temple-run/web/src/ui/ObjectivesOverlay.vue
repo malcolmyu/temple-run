@@ -6,11 +6,16 @@ import { syncBanks } from '../game/state';
 
 const emit = defineEmits<{ close: [] }>();
 const notice = ref('');
+const category=ref('全部');
+const categories=['全部','距离','分数','金币','其他'];
+const categoryOf=(id:string)=>id.startsWith('score')?'分数':id.startsWith('coins')||id==='coin-hoard'?'金币':id.startsWith('distance')||id.startsWith('notrip')||id==='first-500'||id==='marathon'?'距离':'其他';
+const visibleObjectives=computed(()=>OBJECTIVES.filter(item=>category.value==='全部'||categoryOf(item.id)===category.value));
 const scoreMultiplier = computed(nextRunScoreMultiplier);
 
 function onClaim(id: string): void {
   if (claim(id)) {
-    notice.value = '奖励已领取';
+    const objective=OBJECTIVES.find(item=>item.id===id);
+    notice.value = objective?.coins || objective?.gems ? '奖励已领取' : '目标已确认';
     syncBanks();
   } else {
     notice.value = '尚未完成';
@@ -26,8 +31,11 @@ function onClaim(id: string): void {
       <p class="kicker">OBJECTIVES</p>
       <h2 class="title">目标</h2>
       <p>下局得分倍率 {{ scoreMultiplier }}× · 每完成一项目标 +1</p>
+      <div class="menu-row objective-filter" role="group" aria-label="目标分类">
+        <button v-for="item in categories" :key="item" class="menu-btn" :aria-pressed="category===item" @click="category=item">{{ item }}</button>
+      </div>
       <div class="objective-list">
-        <div v-for="objective in OBJECTIVES" :key="objective.id" class="objective" :class="{ done: objective.done() }">
+        <div v-for="objective in visibleObjectives" :key="objective.id" class="objective" :class="{ done: objective.done() }">
           <div class="objective-head">
             <strong>{{ objective.title }}</strong>
             <span v-if="objectiveClaimed(objective.id)">{{ objective.coins || objective.gems ? '已领取' : '已确认' }}</span>
@@ -46,3 +54,8 @@ function onClaim(id: string): void {
     </div>
   </section>
 </template>
+
+<style scoped>
+.objective-filter .menu-btn{min-width:0;min-height:44px;flex:1 1 0}
+.objective-filter .menu-btn[aria-pressed="true"]{background:#645031;border-color:#e1be78;color:#fff0c2}
+</style>

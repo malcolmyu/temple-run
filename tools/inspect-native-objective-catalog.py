@@ -30,5 +30,7 @@ for line in asm.splitlines():
    records.append(dict(call=hex(int(a[1],16)),id=args[0],name=args[1],before=args[2],after=args[3]))
   for i in range(19):regs.pop(i,None)
 assert len(records)>20 and len({r['id']for r in records})==len(records)
-result=dict(binarySHA256=hashlib.sha256(b).hexdigest(),methodRange=[hex(start),hex(end)],records=records,limits=['Descriptions are catalogue evidence, not independent proof of each completion condition.','Native reward/economic and session stat checks require further recovery.'])
+assert memory(n['r'][0x2862818])=='distance1000'
+for address,word in {0x1273c14:0xbd412780,0x1273c18:0x52a88f48,0x1273c24:0x1e211800,0x1273c2c:0x1e210800}.items():assert struct.unpack_from('<I',b,off(address))[0]==word
+result=dict(distance1000Condition=dict(idGOT='0x2862818',distanceLoad='0x1273c14',field='GameController.DistanceTraveled0x124',threshold=1000,percent='current distance /1000 *100'),binarySHA256=hashlib.sha256(b).hexdigest(),methodRange=[hex(start),hex(end)],records=records,limits=['Descriptions are catalogue evidence, not independent proof of each completion condition.','Native reward/economic and session stat checks require further recovery.'])
 root=Path('target/temple-run/analysis/native-objectives');root.mkdir(exist_ok=True);(root/'SetupAchievements.asm').write_text(asm);(root/'catalog.json').write_text(json.dumps(result,indent=2));print(json.dumps(records,indent=2))
