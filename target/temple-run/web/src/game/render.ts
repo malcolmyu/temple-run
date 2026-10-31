@@ -1206,7 +1206,7 @@ export function buildTJunction(assets: Assets, surface: SurfaceKind = 'stone'): 
   const road=surface==='wood'?assets.plankTile:assets.roadTile;
   if(!source)return group;
   const centre=source.clone(true);
-  centre.traverse(o=>{const mesh=o as THREE.Mesh;if(mesh.isMesh){mesh.geometry=cutSurfaceGeometry(mesh.geometry,3,100);mesh.userData.walkableSurface=true;}});
+  centre.traverse(o=>{const mesh=o as THREE.Mesh;if(mesh.isMesh){mesh.userData.walkableSurface=true;}});
   group.add(centre);
   if(road)for(const side of [-1,1]){
     const arm=road.clone(true);

@@ -1,4 +1,4 @@
-import { junctionGapCuts } from '../target/temple-run/web/src/game/junctionCuts';
+import { junctionGapCuts,tJunctionApproachCut,tJunctionExitCut } from '../target/temple-run/web/src/game/junctionCuts';
 import { cutSurfaceGeometry } from '../target/temple-run/web/src/game/cutSurface';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -15,7 +15,7 @@ for(const side of [-1,1])for(let x=0;x<8.9;x+=.1){
  const hits=new THREE.Raycaster(new THREE.Vector3(side*x,.25,0),new THREE.Vector3(0,-1,0),0,.5).intersectObject(junction,true);
  assert.ok(hits.some(hit=>Math.abs(hit.point.y)<.03),`crossbar floor at ${side*x}`);
 }
-for(let z=0;z<2.9;z+=.1)assert.ok(new THREE.Raycaster(new THREE.Vector3(0,.25,z),new THREE.Vector3(0,-1,0),0,.5).intersectObject(junction,true).length>0,'incoming stem joins the crossbar');
+for(let z=0;z<5.9;z+=.1)assert.ok(new THREE.Raycaster(new THREE.Vector3(0,.25,z),new THREE.Vector3(0,-1,0),0,.5).intersectObject(junction,true).length>0,'incoming stem joins the crossbar');
 assert.ok(new THREE.Raycaster(new THREE.Vector3(0,.2,0),new THREE.Vector3(0,0,-1),0,5).intersectObject(junction,true).length>0,'front parapet closes the straight-ahead route');
 junction.traverse((o:any)=>{if(o.isMesh)assert.equal(o.geometry.attributes.uv1.count,o.geometry.attributes.position.count);});
 console.log('Native T: left/right crossbar support through9m, incoming stem, front parapet and merged UV1 verified.');
@@ -62,3 +62,36 @@ for(const surface of ['stone','wood']as const)for(const direction of [-1,1]as co
  group.traverse((o:any)=>{if(o.isMesh)assert.equal(o.geometry.attributes.uv1.count,o.geometry.attributes.position.count);});
 }
 console.log('Adjacent-hole cuts follow left/right exits in rotated paths, preserve unused arms, near support and UV1.');
+
+// Reproduce the former six-metre approach gap when a turn lands at tile phase3.
+for(const at of [495,498,501]){
+ const native=buildTJunction({tJunction:load('temple-t-junction'),roadTile:load('temple-road-tile')}as any);
+ const tileDistance=Math.floor(at/12)*12;
+ const tile=load('temple-road-tile');const cut=tJunctionApproachCut(tileDistance,at);
+ if(cut)tile.traverse((o:any)=>{if(o.isMesh)o.geometry=cutSurfaceGeometry(o.geometry,cut[1],cut[2]);});
+ tile.position.z=at-tileDistance;native.add(tile);native.updateMatrixWorld(true);
+ for(let z=3.2;z<at-tileDistance+5.8;z+=.2){
+  const hits=new THREE.Raycaster(new THREE.Vector3(0,.25,z),new THREE.Vector3(0,-1,0),0,.5).intersectObject(native,true).filter(h=>Math.abs(h.point.y)<.03);
+  assert.ok(hits.length>0,`no invented approach gap at turn${at},localZ${z}`);
+  if(z<5.8)assert.equal(hits.length,1,'authored stem owns approach floor without coplanar duplicate');
+ }
+}
+console.log('Full authored six-metre T stem joins trimmed incoming tiles across three coordinate phases without missing/duplicate floor.');
+
+for(const at of [495,498,501]){
+ const cut=tJunctionExitCut(Math.ceil(at/12)*12,at);assert.ok(cut);
+ assert.equal(cut[2],100,'exit straight is trimmed behind the authored nine-metre arm');
+}
+for(const at of [495,498,501])for(const direction of [-1,1]){
+ const native=buildTJunction({tJunction:load('temple-t-junction'),roadTile:load('temple-road-tile')}as any);
+ const tileDistance=Math.ceil(at/12)*12;
+ const tile=load('temple-road-tile');const cut=tJunctionExitCut(tileDistance,at)!;
+ tile.traverse((o:any)=>{if(o.isMesh)o.geometry=cutSurfaceGeometry(o.geometry,cut[1],cut[2]);});
+ tile.position.x=direction*(tileDistance-at);tile.rotation.y=-direction*Math.PI/2;native.add(tile);native.updateMatrixWorld(true);
+ for(let x=3.2;x<tileDistance-at+5.8;x+=.2){
+  const hits=new THREE.Raycaster(new THREE.Vector3(direction*x,.25,0),new THREE.Vector3(0,-1,0),0,.5).intersectObject(native,true).filter(h=>Math.abs(h.point.y)<.03);
+  assert.ok(hits.length>0,`exit floor continuous at turn${at},side${direction},x${x}`);
+  if(x>6.2&&Math.abs(x-9)>.01)assert.equal(hits.length,1,`native arm and outgoing straight overlap at turn${at},side${direction},x${x}; hits${hits.map(h=>h.point.toArray())}`);
+ }
+}
+console.log('Both outgoing exits join without extra missing or overlapping floor across coordinate phases.');

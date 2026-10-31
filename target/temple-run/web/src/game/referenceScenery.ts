@@ -42,3 +42,13 @@ export function referenceAmbientTree(distance:number):typeof REFERENCE_OPENING_A
  if(distance<0||distance>REFERENCE_TREE_REVIEW_END)return undefined;
  return REFERENCE_OPENING_AMBIENT_TREES.find(t=>Math.abs(t.tileDistance-distance)<.01)??null;
 }
+
+const DEFAULT_JUNCTION_TREES=[{variant:0,ahead:10}] as const;
+/** Source025 silhouette: straight near trunk plus a separate fork behind it.
+ * Relative12m separation is a visual fit, not recovered RNG/cell coordinates.
+ */
+export function referenceJunctionTrees(index:number,at:number):readonly {variant:number;ahead:number}[]{
+ const turn=REFERENCE_OPENING_TURNS[index];
+ return index===2&&turn&&Math.abs(turn.distance-at)<.01
+  ?[{variant:0,ahead:10},{variant:2,ahead:22}]:DEFAULT_JUNCTION_TREES;
+}

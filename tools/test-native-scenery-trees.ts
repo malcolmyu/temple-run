@@ -39,3 +39,10 @@ for(const heading of [0,Math.PI/2,Math.PI,-Math.PI/2])for(const roadY of [0,-3])
  assert.ok(Math.abs(tree.getWorldPosition(new THREE.Vector3()).y)<1e-7,'native scenery root is independent of stone/wood height');
 }
 console.log('Native scenery roots preserve world orientation and Y0 under all four road headings and both ground heights.');
+
+import {referenceJunctionTrees} from '../target/temple-run/web/src/game/referenceScenery';
+import {REFERENCE_OPENING_TURNS} from '../target/temple-run/web/src/game/referenceRoute';
+const treesAtThird=referenceJunctionTrees(2,REFERENCE_OPENING_TURNS[2].distance);
+assert.deepEqual(treesAtThird,[{variant:0,ahead:10},{variant:2,ahead:22}]);
+assert.equal(referenceJunctionTrees(2,900).length,1,'custom route does not inherit source tree cluster');
+assert.equal(referenceJunctionTrees(3,REFERENCE_OPENING_TURNS[3].distance).length,1,'unreviewed T keeps its existing provisional tree');

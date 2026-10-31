@@ -4,8 +4,8 @@ import { NATIVE_RESULT_DELAY, stepNativeDeathTimer, nativeGroundContact } from '
 import { nativeAnimationSpeed } from './nativeAnimation';
 import { NATIVE_TILT_OFFSET_MAX, stepNativeSteering, nativeTiltAllowed } from './steering';
 import { nativePickupWithinReach } from './nativePickupCollision';
-import { junctionGapCuts, type SurfaceCut } from './junctionCuts';
-import { referenceStraightGate, referenceAmbientTree, referenceFullWidthAt, overlapsReferenceGate, REFERENCE_EXIT_GATE_OFFSET } from './referenceScenery';
+import { junctionGapCuts, tJunctionApproachCut, tJunctionExitCut, type SurfaceCut } from './junctionCuts';
+import { referenceStraightGate, referenceAmbientTree, referenceJunctionTrees, referenceFullWidthAt, overlapsReferenceGate, REFERENCE_EXIT_GATE_OFFSET } from './referenceScenery';
 import { STUMBLE_KILL_WINDOW, NATIVE_STUMBLE_RESET_AGE, nativeStumbleIsFatal, nativeIntroHeld, stepNativeRunClock, nativeStumbleDuration, NATIVE_REJECTED_TURN_DELAY, NATIVE_REJECTED_TURN_OFFSET, stepNativeStumbleDelay } from './nativeRunnerRules';
 import { nativeWaterAnchor } from './nativeWater';
 import { nativeCoinBonusValue, NATIVE_POWER_SCORE_VALUE, NATIVE_COIN_SCORE_VALUE, NATIVE_BASE_POWER_DURATION } from './nativeCoinBonus';
@@ -236,6 +236,13 @@ export class Game {
         if(!obstacle||!Number.isFinite(distance))return null;
         const previous=obstacle.distance;obstacle.distance=distance;
         return {index,previous,distance,note:'diagnostic authoring override; restart required; reload restores source'};
+      },
+      previewJunctionTree:(at:number,variant:number|string,yaw=0,appendAhead=0)=>{
+        const group=this.junctions.get(at);const old=group?.children.find(o=>o.name==='native-standalone-tree');
+        const template=typeof variant==='string'?this.bundle.assets.sceneryTemplates?.[variant]:this.bundle.assets.standaloneTrees?.[variant];if(!group||!old||!template)return null;
+        const extra=group.children.find(o=>o.name==='native-junction-tree-preview-secondary');if(extra)group.remove(extra);
+        const tree=template.clone(true);tree.name=appendAhead?'native-junction-tree-preview-secondary':'native-standalone-tree';tree.position.copy(old.position);tree.position.z-=appendAhead;tree.quaternion.copy(group.quaternion).invert();tree.rotateY(yaw);tree.userData.nativeTreeVariant=typeof variant==='number'?variant+1:variant;
+        if(!appendAhead)group.remove(old);group.add(tree);this.renderOnce();return{at,variant:typeof variant==='number'?variant+1:variant};
       },
       sceneryResources:()=>Object.entries(this.bundle.assets.sceneryTemplates??{}).map(([resource,object])=>({resource,loaded:Boolean(object)})),
       previewScenery:(resource:string,side=10,ahead=22)=>{
@@ -1212,6 +1219,12 @@ export class Game {
   /** Surface holes share the obstacle's longitudinal collision interval. */
   private cutTileSurface(group: THREE.Object3D, distance: number): void {
     const cuts: SurfaceCut[] = [];
+    for(let index=1;index<this.path.segments.length;index++){
+      const at=this.path.segments[index].start;
+      if(this.difficulty.name==='classic'&&referenceJunction(index-1,at)==='tee'){
+        const cut=tJunctionApproachCut(distance,at)??tJunctionExitCut(distance,at);if(cut)cuts.push(cut);
+      }
+    }
     const narrow = group.userData.narrowSection as ReturnType<typeof narrowAt>;
     if (narrow) {
       const span = [distance - narrow.to, distance - narrow.from] as const;
@@ -1296,8 +1309,11 @@ export class Game {
     }
     const group = prototype.clone(true);
     if(kind==='tee' && this.bundle.assets.tree) {
-      const tree=buildSceneryTree(this.bundle.assets,0);
-      if(tree){tree.position.z=-10;if(this.bundle.assets.standaloneTrees)tree.position.y=-this.meshY(at);group.add(tree);}
+      const trees=this.difficulty.name==='classic'?referenceJunctionTrees(turnState.count,at):[{variant:0,ahead:10}];
+      for(const record of trees){
+        const tree=buildSceneryTree(this.bundle.assets,0,record.variant);
+        if(tree){tree.position.z=-record.ahead;if(this.bundle.assets.standaloneTrees)tree.position.y=-this.meshY(at);group.add(tree);}
+      }
     }
     const turn=this.world.require(this.runnerEntity,Turn);
     const recordedGate=this.difficulty.name==='classic'?referenceGate(turn.count,at):null;
@@ -1370,7 +1386,7 @@ export class Game {
       if(this.difficulty.name==='classic'&&index<=0)continue;
       // A 12 m tile that straddles a corner cannot be rotated to both headings: its walls
       // cut across the other leg. Drop it and let the road-width corner fill the gap.
-      const crossesTurn = this.path.segments.some((segment, segmentIndex) => segmentIndex > 0 && Math.abs(segment.start - distance) < TILE / 2 - 0.01);
+      const crossesTurn = this.path.segments.some((segment, segmentIndex) => segmentIndex > 0 && !(this.difficulty.name==='classic'&&referenceJunction(segmentIndex-1,segment.start)==='tee') && Math.abs(segment.start - distance) < TILE / 2 - 0.01);
       if (crossesTurn) {
         const stale = this.tiles.get(index);
         if (stale) {
