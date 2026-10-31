@@ -91,6 +91,8 @@ export const Pickup = defineComponent<{
   kind: PickupKind;
   side?:number;
   pattern?:number;
+  baseAnchored?:boolean;
+  branch?:'left'|'right';
   magnet?:NativeMagnetCoin;
   lane: number;
   distance: number;

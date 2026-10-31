@@ -1,6 +1,7 @@
 /** Original IDs and labels; sticky-stumble/opening-coin-free gates from IL2CPP.
  * Web records only at settlement; complete native runtime update timing pending. */
 export const NATIVE_CHALLENGE_OBJECTIVES = [
+  {id:'score1000000nopowers',target:1000000,metric:'bestPowerFreeScore',title:'斯巴达',detail:'不使用强化道具获得1000000分；起跑、翅膀和复活也会终止无道具计分'},
   {
     "id": "distance500NoCoins",
     "target": 500,

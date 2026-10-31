@@ -17,10 +17,11 @@ for(const row of NATIVE_LIFETIME_OBJECTIVES) {
 const before={runs:p.progress.runs,coins:p.progress.lifetimeCoins,distance:p.progress.totalDistance};
 p.claimObjective('test-web-reward',1000000,2);
 assert.equal(p.progress.lifetimeCoins,before.coins,'reward must not inflate lifetime collection');
-p.progress.coins=2000000;p.buyUpgrade('coin',1000);
+p.progress.coins=2000000;p.buyUpgrade('coin');
 assert.equal(p.progress.lifetimeCoins,before.coins,'shop spending must not reduce lifetime collection');
 assert.equal(p.progress.runs,before.runs);assert.equal(p.progress.totalDistance,before.distance);
 const catalog=JSON.parse(readFileSync('target/temple-run/analysis/native-objectives/catalog.json','utf8'));
 const missing=catalog.records.filter((row:{id:string})=>!OBJECTIVES.some(o=>o.id===row.id)).map((row:{id:string})=>row.id);
 console.log('Eight native lifetime objectives:exact boundary via settlement,no double confirmation/currency,no reward/shop inflation pass');
-console.log('Registered native catalogue still missing:',JSON.stringify(missing));
+assert.deepEqual(missing,[],'all55 native ids must remain registered');
+console.log('All55 native catalogue ids registered;behaviour verification is separate.');

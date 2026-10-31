@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import {createRunChallenges,stepRunChallenges,summarizeRunChallenges} from '../target/temple-run/web/src/game/nativeRunChallenges';
-const s=createRunChallenges();stepRunChallenges(s,600,0);assert.deepEqual(summarizeRunChallenges(s,600),{coinFreeStart:600,cleanDistance:600});
+const s=createRunChallenges();stepRunChallenges(s,600,0);assert.deepEqual(summarizeRunChallenges(s,600),{coinFreeStart:600,cleanDistance:600,powerFreeScore:0});
 stepRunChallenges(s,650,1);stepRunChallenges(s,1500,40);assert.equal(summarizeRunChallenges(s,1500).coinFreeStart,650,'later empty windows cannot replace opening record');
 s.stumbled=true;assert.equal(summarizeRunChallenges(s,5500).cleanDistance,0,'late stumble disqualifies clean settlement');
 stepRunChallenges(s,6000,40);assert.ok(s.stumbled,'continuing/revival does not reset challenge state');
-assert.deepEqual(createRunChallenges(),{firstCoinDistance:null,stumbled:false});
+assert.deepEqual(createRunChallenges(),{firstCoinDistance:null,stumbled:false,usedPower:false,powerFreeScore:0});
 Object.assign(globalThis,{localStorage:{getItem:()=>JSON.stringify({bestDistance:10000,bestRunCoins:500}),setItem:()=>{}}});
 const p=await import('../target/temple-run/web/src/game/progress');const o=await import('../target/temple-run/web/src/game/objectives');
 assert.equal(p.progress.bestCoinFreeStart,0);assert.equal(p.progress.bestCleanRunDistance,0,'old run totals cannot infer unstored action conditions');

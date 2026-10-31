@@ -1,27 +1,10 @@
 import {nativeMagnetMultiplier} from './nativeMagnet';
-import {NATIVE_UPGRADE_PRICES} from './nativeStorePrices';
+import {UPGRADES,upgradeCost} from './upgradeCatalog';
+export {UPGRADES,type UpgradeDef} from './upgradeCatalog';
 import type {BonusAvailability} from './nativeBonusSpawn';
 import { nativeBoostProgress } from './nativeBoost';
 import { progress, buyUpgrade, upgradeLevel } from './progress';
 import { nativeCoinBonusValue, nativeInvincibilityDuration, nativeVacuumDuration } from './nativeCoinBonus';
-
-export interface UpgradeDef {
-  id: string;
-  name: string;
-  sub: string;
-  costs: number[];
-}
-
-// Native level1 unlocks generation; unchanged effect tiers must not be silently skipped.
-const nativeCosts=[...NATIVE_UPGRADE_PRICES];
-export const UPGRADES: UpgradeDef[] = [
-  { id: 'coinSpawn', name: '高值金币', sub: '红币1500→1000；蓝币3000→2500→2000距离进度解锁', costs: nativeCosts.slice(0,5) },
-  { id: 'boost', name: '加速距离', sub: '先解锁加速道具，距离250至750；末档完成升级', costs: nativeCosts },
-  { id: 'magnet', name: '磁铁时长', sub: '解锁后15至25秒，金币收入最高3倍', costs: nativeCosts },
-  { id: 'shield', name: '护盾时长', sub: '先解锁护盾，持续15至25秒；末档完成升级', costs: nativeCosts },
-  { id: 'bonus', name: '金币奖励', sub: '先解锁奖励道具，奖励50至150金币；末档完成升级', costs: nativeCosts },
-  { id: 'coin', name: '金币价值', sub: '每级 +25% 金币收益', costs: [300, 600, 1200] },
-];
 
 export function levelOf(id: string): number {
   const max = UPGRADES.find(u => u.id === id)?.costs.length ?? 0;
@@ -30,8 +13,7 @@ export function levelOf(id: string): number {
 }
 
 export function nextCost(id: string): number | null {
-  const def = UPGRADES.find(u => u.id === id);
-  return def?.costs[levelOf(id)] ?? null;
+  return upgradeCost(id,levelOf(id));
 }
 
 export function purchase(id: string): boolean {

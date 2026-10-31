@@ -1,3 +1,4 @@
+import {CourseDirector,COURSE_RULE_VERSION,type BeatDecision} from './courseDirector';
 import type { NativePathLevel } from './nativeThemePacing';
 import { nativeObstacleEligible } from './nativeObstacleGate';
 import { nativePathPacing, COURSE_GROUP_MIN_LENGTH } from './nativePathPacing';
@@ -6,20 +7,23 @@ import type { DefId } from './obstacles/catalog';
 import { SeededRandom } from './obstacles/rng';
 import {generateCourseOpening,historicalCourseFixture} from './courseOpening';
 import {validateEncounterLayout} from './encounterSafety';
-import {repeatActionSpacing} from './actionSafety';
+import {repeatActionSpacing,NORMAL_SAFETY_SPEED} from './actionSafety';
+import {lateralTravelSeconds} from './lateralSafety';
 export {MIN_LONG_GAP_SPEED} from './encounterSafety';
 export interface CourseTurn {distance:number;direction:1|-1;junction:'corner'|'tee';}
 export interface CourseObstacle {distance:number;defId:DefId;prefab:string;lane?:number;}
 export interface CourseSurface {kind:'stone'|'wood';from:number;to:number;level?:NativePathLevel;}
 export interface CourseNarrow {from:number;to:number;side:'left'|'right';}
 export interface CourseBranch {from:number;to:number;}
-export interface CourseFeature {kind:string;from:number;to:number;surface:'stone'|'wood';generatedAtProgress?:number;minTurnSpaces?:number;nativeStageKnown?:boolean;fastTurn?:boolean;extraObstacleAt?:number;pathLevel?:NativePathLevel;themeRequestedAtProgress?:number;}
+export interface CourseFeature {kind:string;from:number;to:number;surface:'stone'|'wood';generatedAtProgress?:number;minTurnSpaces?:number;nativeStageKnown?:boolean;fastTurn?:boolean;extraObstacleAt?:number;combo?:'repeat'|'jump-slide'|'slide-jump';pathLevel?:NativePathLevel;themeRequestedAtProgress?:number;beatIntent?:BeatDecision['intent'];}
 const STONE_FEATURES=['treeJump','treeTrip','treeSlide','flameTower','stonePedestal','pit','narrowSmall','narrowLong','branch','longGap'] as const;
 /** Web course design, not recovered native generation weights.
  * Native constraints:12m grid, progress-dependent turn minimums, paired long-hole caps and support polygons.
- * A shuffled coverage bag makes all requested mechanics reachable; jitter, coverage bag and the120m grouped-geometry floor are web assumptions.
+ * Normal mode uses independent weighted beat selection; fixture retains coverage bags.
+ * Jitter, weights/recovery beats and the120m grouped-geometry floor are web assumptions.
  */
 export class CoursePlan {
+ readonly rulesVersion=COURSE_RULE_VERSION;
  readonly turns:CourseTurn[]=[];
  readonly obstacles:CourseObstacle[]=[];
  readonly surfaces:CourseSurface[]=[{kind:'stone',from:0,to:Infinity,level:2}];
@@ -29,6 +33,7 @@ export class CoursePlan {
  readonly rejectedEncounters:{from:number;to:number;kind:string;reasons:string[]}[]=[];
  private readonly rng:SeededRandom;
  private readonly pairRng:SeededRandom;
+ private readonly director:CourseDirector;
  private bag:string[]=[];
  private cliffBag:string[]=[];
  private blocks=0;
@@ -40,6 +45,7 @@ export class CoursePlan {
  extent=0;
  readonly coinStart:number;
  constructor(readonly seed:number,initialExtent=6000,readonly opening:'generated'|'fixture'='generated'){
+  this.director=new CourseDirector(seed);
   this.rng=new SeededRandom(seed^0x636f7572);this.pairRng=new SeededRandom(seed^0x70616972);
   this.coinStart=opening==='generated'?0:489;
   const plan=opening==='generated'?generateCourseOpening(seed):historicalCourseFixture();
@@ -52,6 +58,7 @@ export class CoursePlan {
   }
   this.turns.push(...plan.turns);this.obstacles.push(...plan.obstacles);
   this.features.push(...plan.features);this.extent=plan.extent;
+  for(const f of plan.features)this.director.record(f.kind);
   this.ensureThrough(initialExtent);
  }
  private stoneFeature(at:number,progress?:number):string {
@@ -77,10 +84,11 @@ export class CoursePlan {
    const minimum=pacing?Math.max(fast?48:COURSE_GROUP_MIN_LENGTH,pacing.minTurnSpaces*12):144;
    const from=this.extent,length=minimum+this.rng.int(3)*(fast?12:24);
    let to=from+length;
-   const mid=12*Math.round((from+length/2)/12);
+   let mid=12*Math.round((from+length/2)/12);
    let surface=this.surfaces.at(-1)!.kind;
    let level=this.surfaces.at(-1)!.level??(surface==='wood'?1:2);
    let kind:string;
+   let beat:BeatDecision|undefined;
    if(fast)kind='fastTurn';
    else if(transition){
     const boundary=mid;
@@ -90,7 +98,16 @@ export class CoursePlan {
     this.surfaces.push({kind:surface,from:boundary,to:Infinity,level});
     if(requested)this.pendingThemes.shift();
     kind='transition';
-   }else kind=surface==='wood'?(this.rng.int(2)===0?'plankPit':'plankBeam'):level===3?this.cliffFeature():this.stoneFeature(mid,progress);
+   }else if(this.opening==='generated'){beat=this.director.choose(level,progress??2000,mid);kind=beat.kind;}
+   else kind=surface==='wood'?(this.rng.int(2)===0?'plankPit':'plankBeam'):level===3?this.cliffFeature():this.stoneFeature(mid,progress);
+   if(kind==='narrowSmall'||kind==='narrowLong'){
+    // Keep the mechanic: allocate a draft approach/exit instead of rejecting
+    // short groups. No already-published turn is moved.
+    const half=kind==='narrowLong'?18:6;
+    const reserve=NORMAL_SAFETY_SPEED*lateralTravelSeconds(1,0);
+    mid=Math.max(mid,12*Math.ceil((from+half+reserve)/12));
+    to+=12*Math.ceil(Math.max(0,mid+half+reserve-to)/12);
+   }
    const obstacleStart=this.obstacles.length,narrowStart=this.narrows.length,branchStart=this.branches.length;
    const add=(defId:DefId,prefab:string,at=mid,lane?:number)=>this.obstacles.push({defId,prefab,distance:at,lane});
    const right=this.rng.int(2)===0;
@@ -120,22 +137,34 @@ export class CoursePlan {
    // Web candidate adapter: reserve motion recovery and corner clearance.
    // Candidate25% is not a native weight;spacing comes from actionSafety.
    let extraObstacleAt:number|undefined;
+   let combo:CourseFeature['combo'];
    const repeatable=['treeJump','treeTrip','treeSlide','flameTower','plankBeam'];
    const first=this.obstacles.at(-1),candidate=mid+(first?repeatActionSpacing(first.defId):36);
-   if(pacing&&!fast&&repeatable.includes(kind)&&first?.distance===mid&&this.pairRng.int(4)===0
+   if(pacing&&!fast&&(beat?.allowCombination??true)&&repeatable.includes(kind)&&first?.distance===mid&&this.pairRng.int(4)===0
      &&nativeObstacleEligible(Math.floor((candidate-from)/12),1,3,pacing.minObstacleSpaces,pacing.doubleObstaclePercent,()=>this.pairRng.int(1000))){
     // Reserve the unpublished exit tail instead of deleting all combinations
     // when the longer recovery spacing does not fit the original group.
     to+=12*Math.ceil(Math.max(0,candidate+36-to)/12);
-    this.obstacles.push({...first,distance:candidate});extraObstacleAt=candidate;
+    let second={...first,distance:candidate};combo='repeat';
+    // Web encounter variety,not recovered native pairing probabilities.
+    // Keep fixture routes stable; wood has its own repeated beam grammar.
+    if(this.opening==='generated'&&surface==='stone'&&this.pairRng.int(2)===0){
+     if(first.defId==='treeJump'||first.defId==='treeTrip'){
+      second={...second,defId:'treeSlide',prefab:level===3?'cliff-tree-slide':right?'tree-slide-right':'tree-slide-left'};combo='jump-slide';
+     }else if(first.defId==='treeSlide'){
+      second={...second,defId:'treeJump',prefab:right?'tree-jump-right':'tree-jump-left'};combo='slide-jump';
+     }
+    }
+    this.obstacles.push(second);extraObstacleAt=candidate;
    }
    const reasons=validateEncounterLayout({from,to,fastTurn:fast,obstacles:this.obstacles.slice(obstacleStart),narrows:this.narrows.slice(narrowStart),branches:this.branches.slice(branchStart)});
    if(reasons.length){
     this.rejectedEncounters.push({from,to,kind,reasons});if(this.rejectedEncounters.length>128)this.rejectedEncounters.shift();
     this.obstacles.length=obstacleStart;this.narrows.length=narrowStart;this.branches.length=branchStart;
-    kind='recovery';extraObstacleAt=undefined;
+    kind='recovery';extraObstacleAt=undefined;combo=undefined;
    }
-   this.features.push({kind,from,to,surface,pathLevel:level,...(requested?{themeRequestedAtProgress:requested.progress}:{}),...(extraObstacleAt!==undefined?{extraObstacleAt}:{}),...(pacing?{generatedAtProgress:progress,minTurnSpaces:pacing.minTurnSpaces,nativeStageKnown:pacing.known,fastTurn:fast}:{})});
+   if(this.opening==='generated')this.director.record(kind);
+   this.features.push({kind,from,to,surface,pathLevel:level,...(beat?{beatIntent:beat.intent}:{}),...(requested?{themeRequestedAtProgress:requested.progress}:{}),...(extraObstacleAt!==undefined?{extraObstacleAt,combo}:{}),...(pacing?{generatedAtProgress:progress,minTurnSpaces:pacing.minTurnSpaces,nativeStageKnown:pacing.known,fastTurn:fast}:{})});
    this.turns.push({distance:to,direction:right?1:-1,junction:this.rng.int(4)===0?'tee':'corner'});
    this.extent=to;this.blocks++;
   }

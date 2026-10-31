@@ -1,3 +1,4 @@
+import {upgradeCost} from './upgradeCatalog';
 import {UPGRADE_SCHEMA,migrateUpgradeLevels} from './upgradeLevels';
 import type {RunUtilitySummary} from './nativeUtilityObjectives';
 import {NATIVE_UTILITY_PRICES} from './nativeStorePrices';
@@ -24,6 +25,7 @@ export interface Progress {
   bestPowerPickups:PowerPickupCounts;
   bestCoinFreeStart:number;
   bestCleanRunDistance:number;
+  bestPowerFreeScore:number;
   bestCoinMeterFills:number;
   bestWingResurrections:number;
   headStartUsed:number;
@@ -78,7 +80,7 @@ function migrateLegacy(defaults: Progress): Progress | null {
     bestScore: 0,
     bestRunCoins: 0,
     bestPowerPickups:createPowerPickupCounts(),
-    bestCoinFreeStart:0,bestCleanRunDistance:0,
+    bestCoinFreeStart:0,bestCleanRunDistance:0,bestPowerFreeScore:0,
     bestCoinMeterFills:0,bestWingResurrections:0,headStartUsed:0,
     owned,
     equipped,
@@ -112,7 +114,7 @@ function load(): Progress {
     bestScore: 0,
     bestRunCoins: 0,
     bestPowerPickups:createPowerPickupCounts(),
-    bestCoinFreeStart:0,bestCleanRunDistance:0,
+    bestCoinFreeStart:0,bestCleanRunDistance:0,bestPowerFreeScore:0,
     bestCoinMeterFills:0,bestWingResurrections:0,headStartUsed:0,
     owned: [SKINS[0].id],
     equipped: SKINS[0].id,
@@ -138,7 +140,7 @@ function load(): Progress {
       id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
     )])];
     if (!merged.owned.includes(merged.equipped)) merged.equipped = SKINS[0].id;
-    for (const key of ['coins', 'gems', 'wings','permaWings','headStarts','megaStarts', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance','bestCoinMeterFills','bestWingResurrections','headStartUsed'] as const) {
+    for (const key of ['coins', 'gems', 'wings','permaWings','headStarts','megaStarts', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance','bestPowerFreeScore','bestCoinMeterFills','bestWingResurrections','headStartUsed'] as const) {
       const value = merged[key];
       merged[key] = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
     }
@@ -223,8 +225,11 @@ export function upgradeLevel(id: string): number {
   return progress.upgrades[id] ?? 0;
 }
 
-export function buyUpgrade(id: string, cost: number): boolean {
-  if (progress.coins < cost) return false;
+/** The catalogue owns the debit. A supplied quote must still match the current
+ * tier, so stale/invalid callers cannot buy free, unknown or over-max levels. */
+export function buyUpgrade(id: string, quotedCost?: number): boolean {
+  const level=upgradeLevel(id),cost=upgradeCost(id,level);
+  if(cost===null||(quotedCost!==undefined&&quotedCost!==cost)||!Number.isFinite(progress.coins)||progress.coins<cost)return false;
   progress.coins -= cost;
   progress.upgrades[id] = upgradeLevel(id) + 1;
   saveProgress();
@@ -247,6 +252,8 @@ export function recordRun(distance: number, coins: number, gems: number, score: 
   }
   if(pickups)for(const kind of POWER_PICKUP_KINDS)progress.bestPowerPickups[kind]=Math.max(progress.bestPowerPickups[kind],pickups[kind]);
   if(challenges){
+    const free=challenges.powerFreeScore;
+    if(typeof free==='number'&&Number.isFinite(free))progress.bestPowerFreeScore=Math.max(progress.bestPowerFreeScore,Math.max(0,Math.floor(free)));
     progress.bestCoinFreeStart=Math.max(progress.bestCoinFreeStart,Math.floor(challenges.coinFreeStart));
     progress.bestCleanRunDistance=Math.max(progress.bestCleanRunDistance,Math.floor(challenges.cleanDistance));
   }

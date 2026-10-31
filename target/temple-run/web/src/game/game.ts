@@ -1,10 +1,12 @@
+import {branchRewards} from './branchRewards';
+import {boostHandoverReasons} from './boostHandover';
 import {stepNativeMagnetCoin,MAGNET_PICKUP_RADIUS} from './nativeMagnet';
 import {GameSession} from './gameSession';
 import {longGapSafety} from './encounterSafety';
 import {CLIFF_MESH_Y,nativeCliffSupported} from './nativeCliff';
 import { NativeThemePacing } from './nativeThemePacing';
 import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups';
-import { createRunChallenges, stepRunChallenges, summarizeRunChallenges } from './nativeRunChallenges';
+import { createRunChallenges,markChallengePowerUsed,recordPowerFreeScore, stepRunChallenges, summarizeRunChallenges } from './nativeRunChallenges';
 import { createAngelWings, startAngelWings, stepAngelWings, consumeAngelWings } from './nativeAngelWings';
 import { HEAD_START_PROGRESS, MEGA_START_PROGRESS, headStartWindow } from './megaStart';
 import { CourseCoinDirector } from './courseCoins';
@@ -421,7 +423,7 @@ export class Game {
       pickupDetails: () => this.pickups.map(entity=>{
         const p=this.world.require(entity,Pickup),o=p.object;
         const bounds=o?new THREE.Box3().setFromObject(o,true):null;
-        return {kind:p.kind,value:p.value,lane:p.lane,side:p.side,pattern:p.pattern,magnet:p.magnet?{position:[...p.magnet.position],velocity:[...p.magnet.velocity]}:null,distance:p.distance,baseY:p.baseY,
+        return {kind:p.kind,value:p.value,lane:p.lane,side:p.side,pattern:p.pattern,baseAnchored:p.baseAnchored,branch:p.branch,magnet:p.magnet?{position:[...p.magnet.position],velocity:[...p.magnet.velocity]}:null,distance:p.distance,baseY:p.baseY,
           animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
@@ -459,9 +461,10 @@ export class Game {
       angelWings: {...this.angelWings,stock:progress.wings,permanentStock:progress.permaWings,pendingRevive:this.wingRevivePending},
       themePacing:{level:this.themePacing.level,elapsed:this.themePacing.elapsed,changes:[...this.themeChanges]},
       fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
-      course: activeCourse()?{opening:activeCourse()!.opening,coinStart:activeCourse()!.coinStart,turns:activeCourse()!.turns.map(t=>({...t})),extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks],longGapDecisions:this.longGapDecisions.map(d=>({...d})),layoutRejections:activeCourse()!.rejectedEncounters.map(r=>({...r,reasons:[...r.reasons]}))}:null,
+      course: activeCourse()?{rulesVersion:activeCourse()!.rulesVersion,opening:activeCourse()!.opening,coinStart:activeCourse()!.coinStart,turns:activeCourse()!.turns.map(t=>({...t})),extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks],longGapDecisions:this.longGapDecisions.map(d=>({...d})),layoutRejections:activeCourse()!.rejectedEncounters.map(r=>({...r,reasons:[...r.reasons]}))}:null,
       generation: {enabled:{...this.bonusDirector.config},seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
+      boostHandover:{...this.boostHandover,reasons:[...this.boostHandover.reasons]},
       powers: effects,
       power: primary?.kind??null,
       powerRemaining: primary?.remaining??0,
@@ -640,6 +643,7 @@ export class Game {
     this.basePath = null;
     this.lastMilestone = 0;
     this.invincibleUntil = 0;
+    this.boostHandover={deferred:0,reasons:[]};
     this.stepAccumulator = 0;
     this.coinValueAcc = 0;
     this.enemyJumps = Array.from({length:8}, newEnemyJump);
@@ -706,12 +710,14 @@ export class Game {
   usePermaWings():boolean {
     if(!this.canUsePermaWings()||progress.permaWings<1)return false;
     if(!startAngelWings(this.angelWings,true))return false;
+    markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
     progress.permaWings--;saveProgress();syncBanks();setHint('本局永久翼已激活');this.syncHud(0);return true;
   }
 
   useAngelWings():boolean {
     if(mutateUi.phase!=='playing'||this.runElapsed<3||progress.wings<1)return false;
     if(!startAngelWings(this.angelWings))return false;
+    markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
     progress.wings--;saveProgress();syncBanks();
     setHint('天使之翼已激活');this.syncHud(0);return true;
   }
@@ -858,11 +864,12 @@ export class Game {
     this.updateTurnCue();
     this.updateRunner(dt);
     const challengeStats=this.world.require(this.runnerEntity,RunStats);
-    stepRunChallenges(this.runChallenges,challengeStats.distance,challengeStats.coins);
+    stepRunChallenges(this.runChallenges,challengeStats.distance,challengeStats.coins,challengeStats.score);
     this.ensureTiles();
     this.spawnWaves();
     this.updateObstacles(dt);
     this.updatePickups(dt);
+    recordPowerFreeScore(this.runChallenges,challengeStats.score);
     this.updateChase(dt);
     // Native GameController280 produces force after CharacterPlayer220's
     // movement and action expiry. Input next frame cannot erase that force.
@@ -1112,6 +1119,20 @@ export class Game {
     }
     const distance = this.distance;
     const power = this.world.require(this.runnerEntity, Power);
+    // Normal generated courses use a web safety adapter at the native tail
+    // boundary. Keep auto-turn and protection active together during deferral.
+    if(!power.boost.active)this.boostHandover.reasons=[];
+    if(activeCourse()&&power.boost.active&&power.expires.shield<=this.world.elapsed){
+      const lane=this.world.require(this.runnerEntity,Lane),jump=this.world.require(this.runnerEntity,Jump);
+      const hazards=this.obstacles.filter(entity=>{const o=this.world.require(entity,Obstacle);return DEFS[o.defId as DefId]?.action!=='run';}).map(entity=>{
+        const o=this.world.require(entity,Obstacle);
+        return {from:o.distance+o.hitbox.z[0]-distance,to:o.distance+o.hitbox.z[1]-distance};
+      });
+      for(const span of [...activeCourse()!.narrows,...activeCourse()!.branches])hazards.push({from:span.from-distance,to:span.to-distance});
+      const reasons=boostHandoverReasons({speed:this.speed,supported:this.nativeGroundSupported(distance,lane.x,lane.index),airborne:jump.airborne,turnAhead:this.world.require(this.runnerEntity,Turn).next-distance,hazards});
+      this.boostHandover.reasons=reasons;
+      if(reasons.length){power.expires.shield=this.world.elapsed+dt;this.boostHandover.deferred+=dt;}
+    }
     stepPowerEffects(power,this.world.elapsed,dt);
     const nativeMotion = this.difficulty.name === 'classic';
     if(nativeMotion&&this.nativeSwipeStumbleDelay!==null){
@@ -1259,7 +1280,7 @@ export class Game {
     if (side) {
       if (!this.sideWarned) {
         this.sideWarned = true;
-        setHint(this.sideBranch?`已选择${this.sideBranch==='left'?'左':'右'}侧分路`:'左右分路 · 选一边！');
+        setHint(this.sideBranch?`已选择${this.sideBranch==='left'?'左':'右'}侧分路`:this.branchChoiceHint(side));
       }
       if (!nativeMotion && !invisible && !this.sideFork && Math.abs(lane.x)<.55) {
         this.die('踩空坠下分路缺口', this.difficulty.name==='classic'?'water':'fall');
@@ -1277,7 +1298,7 @@ export class Game {
       }
     } else if (!this.narrowWarned) {
       const ahead = this.sidePathAt(trackPos.distance + 24, this.path);
-      if (ahead) setHint('前方左右分路 · 选一边！');
+      if (ahead) setHint(this.branchChoiceHint(ahead));
     }
     this.updateFootsteps(trackPos.distance, currentSpeed);
     if (!nativeMotion) {
@@ -1707,7 +1728,13 @@ export class Game {
       const pedestal=course.obstacles.find(o=>o.defId==='stonePedestal'&&o.distance===mid);
       const lane=narrow?(narrow.side==='left'?0:2):feature.kind==='branch'?this.obstacleRng.pick([0,2]):pedestal?((pedestal.lane??1)+1)%3:1;
 
-      if(this.obstacleRng.next()>.86)this.spawnGem(lane,feature.from+36);
+      if(feature.kind==='branch'){
+       const span=course.branches.find(b=>b.from>=feature.from&&b.to<=feature.to);
+       if(span)for(const reward of branchRewards(this.runSeed,span.from,span.to)){
+        if(reward.kind==='coin')this.spawnCoin(reward.branch==='left'?0:2,reward.distance,COIN_Y,reward.side,undefined,true,reward.branch);
+        else this.spawnGem(reward.branch==='left'?0:2,reward.distance,reward.side,true,reward.branch);
+       }
+      }else if(this.obstacleRng.next()>.86)this.spawnGem(lane,feature.from+36);
     }
     if(this.referenceReplay){
     while (this.nextPickup < this.distance + 90) {
@@ -1834,6 +1861,7 @@ export class Game {
 
   private activateTimedPower(kind:PickupKind,budget=boostProgress(),mega=false):void {
     const power=this.world.require(this.runnerEntity,Power);
+    markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
     activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed,budget,mega);
     // StartBoost1298d28..1298d34 advances catch safety age on every refresh.
     if(kind==='boost'&&this.difficulty.name==='classic')this.nativeTimeSinceStumble+=10;
@@ -1863,6 +1891,7 @@ export class Game {
     const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
     const kind = kinds[this.rewardRng.int(kinds.length)];
     if (kind === 'bonus') {
+      markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
       this.world.require(this.runnerEntity, RunStats).coins += coinBonusReward();
       setHint(`金币奖励 +${coinBonusReward()}`);
       sfx.play('meterFull', { gain: 0.8 });
@@ -1879,7 +1908,19 @@ export class Game {
     this.spawnDef(def, def.lanes === 'one' ? lane : 1, distance);
   }
 
-  private spawnCoin(lane: number, distance: number, y = COIN_Y,side?:number,pattern?:number): void {
+  private branchChoiceHint(span:{from:number;to:number}):string {
+    if(!activeCourse())return '前方左右分路 · 选一边！';
+    const rewards=branchRewards(this.runSeed,span.from,span.to);
+    const label=(side:'left'|'right')=>rewards.some(r=>r.branch===side&&r.kind==='gem')?'宝石':`金币×${rewards.filter(r=>r.branch===side).length}`;
+    return `分路选择 · 左${label('left')} / 右${label('right')}`;
+  }
+
+  private pickupPoint(pickup:{distance:number;side?:number;lane:number;baseAnchored?:boolean}) {
+    const path=pickup.baseAnchored?(this.basePath??this.path):this.path;
+    return path.at(pickup.distance,pickup.side??LANES[pickup.lane]);
+  }
+
+  private spawnCoin(lane: number, distance: number, y = COIN_Y,side?:number,pattern?:number,baseAnchored=false,branch?:'left'|'right'): void {
     if (distance < 4) return;
     const entity = this.world.createEntity();
     const value = this.difficulty.name==='classic'&&!this.referenceReplay
@@ -1888,14 +1929,14 @@ export class Game {
     const group = this.acquirePickup('coin', value);
     group.userData.nativeCoinSpawnTime=this.world.elapsed;
     if(this.difficulty.name==='classic')y=nativeCoinRootHeight(y,COIN_Y);
-    this.world.add(entity, Pickup, { kind: 'coin', lane,side,pattern, distance, baseY: y, value, taken: false, object: group });
+    this.world.add(entity, Pickup, { kind: 'coin', lane,side,pattern,baseAnchored,branch, distance, baseY: y, value, taken: false, object: group });
     this.pickups.push(entity);
   }
 
-  private spawnGem(lane: number, distance: number): void {
+  private spawnGem(lane: number, distance: number,side?:number,baseAnchored=false,branch?:'left'|'right'): void {
     const entity = this.world.createEntity();
     const group = this.acquirePickup('gem');
-    this.world.add(entity, Pickup, { kind: 'gem', lane, distance, baseY: 1.15, taken: false, object: group });
+    this.world.add(entity, Pickup, { kind: 'gem', lane,side,baseAnchored,branch, distance, baseY: 1.15, taken: false, object: group });
     this.pickups.push(entity);
   }
 
@@ -2059,7 +2100,7 @@ export class Game {
       const pickup = this.world.require(entity, Pickup);
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
       const pickupY=pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem');
-      const point=this.path.at(pickup.distance,pickup.side??LANES[pickup.lane]);
+      const point=this.pickupPoint(pickup);
       const origin=[point.x,pickupY+this.groundY(pickup.distance),point.z]as [number,number,number];
       const magnet=pickup.kind==='coin'&&hasPower(power,'magnet',this.world.elapsed);
       const pull=nativeCoin?stepNativeMagnetCoin(pickup.magnet??null,origin,runnerWorld,magnet,dt):null;
@@ -2071,7 +2112,9 @@ export class Game {
       }
       const ahead=pickup.distance-distance;
       const nativeReach=this.difficulty.name==='classic'&&pickup.kind!=='gem';
-      const close=nativeReach
+      const close=pickup.baseAnchored&&!nativeCoin
+       ?Math.hypot(position[0]-runnerWorld[0],position[2]-runnerWorld[2])<1.4&&Math.abs(position[1]-runnerWorld[1])<3
+       :nativeReach
        ? nativePickupWithinReach(pickup.kind,pickup.value,nativeCoin?position[0]-runnerWorld[0]:(pickup.side??LANES[pickup.lane])-laneXNow,nativeCoin?position[1]-runnerWorld[1]:pickupY+this.groundY(pickup.distance)-jump.y-this.groundY(),nativeCoin?position[2]-runnerWorld[2]:ahead,pull?.pulling?MAGNET_PICKUP_RADIUS:undefined)
        :Math.abs(ahead)<(magnet?9:1.4)&&Math.abs(laneXNow-(pickup.side??LANES[pickup.lane]))<(magnet?9:.55);
       const heightClose = nativeReach || pickup.kind !== 'coin' || coinHeightWithinReach(
@@ -2083,6 +2126,7 @@ export class Game {
         const generated=this.generatedBonuses.find(record=>record.distance===pickup.distance&&record.kind===pickup.kind);
         if(generated)generated.collected=true;
         if (pickup.kind !== 'coin' && pickup.kind !== 'gem') {
+          markChallengePowerUsed(this.runChallenges,stats.score);
           stats.score += NATIVE_POWER_SCORE_VALUE * this.runScoreMultiplier;
         }
         if (pickup.kind === 'coin') {
@@ -2364,7 +2408,7 @@ export class Game {
     for (const entity of this.pickups) {
       const pickup = this.world.require(entity, Pickup);
       if (!pickup.object) continue;
-      const point = this.path.at(pickup.distance, (pickup.side??LANES[pickup.lane]));
+      const point = this.pickupPoint(pickup);
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
       if(pickup.magnet)pickup.object.position.set(...pickup.magnet.position);
       else pickup.object.position.set(point.x,this.groundY(pickup.distance)+pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem'),point.z);
@@ -2375,6 +2419,7 @@ export class Game {
     // path.at() for every live tile each frame was pure GC churn.
   }
 
+  private boostHandover={deferred:0,reasons:[] as string[]};
   private invincibleUntil = 0;
   private publishSession():void {setPhase(this.session.phase);}
 
@@ -2435,6 +2480,7 @@ export class Game {
   }
 
   private restoreRunnerAfterDeath():void {
+    markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
     // Clear the road immediately around the player so the revive is not an instant re-death.
     for (let i = this.obstacles.length - 1; i >= 0; i--) {
       const entity = this.obstacles[i];
