@@ -475,7 +475,18 @@ export function buildRunnerRig(data, options = {}) {
   applyPose(0);
   skin();
 
+  let disposed = false;
   return {
+    dispose() {
+      if (disposed) return;
+      disposed = true;
+      holder.removeFromParent();
+      geometry.dispose();
+      material.dispose();
+      glowMaterial?.map?.dispose();
+      glowMaterial?.dispose();
+      if (options.ownsTexture) options.texture?.dispose();
+    },
     object: holder,
     mesh,
     material,
@@ -542,6 +553,7 @@ export function buildRunnerRig(data, options = {}) {
 }
 
 export async function loadRunnerRig(url, textureUrl, options = {}) {
+  let failed = false, ownedTexture = null;
   const [data, texture] = await Promise.all([
     fetch(url).then((r) => {
       if (!r.ok) throw new Error(`runner rig ${url}: ${r.status}`);
@@ -550,13 +562,19 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
     textureUrl
       ? new Promise((resolve, reject) => {
           new THREE.TextureLoader().load(textureUrl, (tex) => {
+            ownedTexture = tex;
+            if (failed) tex.dispose();
             tex.colorSpace = THREE.SRGBColorSpace;
             tex.flipY = true; // Unity bakes these UVs for a non-flipped V (verified against the atlas regions)
             resolve(tex);
           }, undefined, reject);
         })
       : Promise.resolve(null),
-  ]);
+  ]).catch(error => {
+    failed = true;
+    ownedTexture?.dispose();
+    throw error;
+  });
   let fallbackClips = options.fallbackClips || null, fallbackRig = options.fallbackRig || null;
   if ((!fallbackClips || !fallbackRig) && options.clipFallbackUrl) {
     try {
@@ -572,7 +590,12 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
     const bip01 = data.bones.some((b) => /^bip0?1/i.test(String(b.name || '')));
     if (!bip01) forceFallbackClips = true;
   }
-  return buildRunnerRig(data, { ...options, texture, fallbackClips, fallbackRig, forceFallbackClips });
+  try {
+    return buildRunnerRig(data, { ...options, texture, ownsTexture: true, fallbackClips, fallbackRig, forceFallbackClips });
+  } catch (error) {
+    texture?.dispose();
+    throw error;
+  }
 }
 
 

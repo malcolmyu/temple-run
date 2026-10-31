@@ -7,6 +7,7 @@ declare module '*/runnerRig.js' {
   import type { Object3D } from 'three';
   export interface RunnerRig {
     object: Object3D;
+    dispose(): void;
     setClip(name: string, restart?: boolean): void;
     update(dt: number, timeScale?: number, scaleAllClips?: boolean): void;
     setTime(t: number): void;

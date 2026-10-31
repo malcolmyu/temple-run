@@ -1,3 +1,4 @@
+import { COURSE_LOOKAHEAD, nativePathPacing } from './nativePathPacing';
 import { nativeCoinValue } from './nativeCoinValues';
 import { levelOf } from './upgrades';
 import { RESURRECTION_BOOST_PROGRESS, RESURRECTION_STUMBLE_AGE, resurrectionSpeed } from './nativeResurrection';
@@ -271,6 +272,7 @@ export class Game {
         this.bundle.scene.add(object);this.renderOnce();
         return {resource,position:object.position.toArray(),bounds:new THREE.Box3().setFromObject(object).getSize(new THREE.Vector3()).toArray()};
       },
+      planAhead: (distance:number,progressHint?:number) => {activeCourse()?.ensureThrough(distance,progressHint??this.world.require(this.runnerEntity,RunStats).distance);return activeCourse()?.extent;},
       jumpTo: (distance: number) => this.jumpTo(distance),
       start: () => this.start(),
       restart: () => this.restart(),
@@ -419,6 +421,7 @@ export class Game {
       equipped: progress.equipped,
       scoreMultiplier: this.runScoreMultiplier,
       coinSpawnLevel: this.coinSpawnLevel,
+      generationPacing: nativePathPacing(stats.distance),
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
       generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
@@ -580,7 +583,7 @@ export class Game {
     this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
     this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765));
     this.generatedBonuses=[];
-    setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed):null);
+    setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,489):null);
     this.courseCoinIndex=0;this.longGapFallbacks=[];
     if(activeCourse())this.nextSpawn=Infinity;
     this.deathTimer = 0;this.deathElapsed=0;
@@ -693,17 +696,20 @@ export class Game {
           clipFallbackUrl: DEFAULT_SKIN_URL,
         },
       );
-      if (token !== this.rigToken || this.disposed) return;
+      if (token !== this.rigToken || this.disposed) { rig.dispose(); return; }
       if (skin.id !== 'jhony') normalizeRigHeight(rig, 1.85);
+      this.releaseRunnerRig();
       this.runnerGroup.clear();
       this.runnerRig = rig;
       this.runnerGroup.add(rig.object);
       this.installWings();
     } catch (error) {
       if (token !== this.rigToken || this.disposed) return;
+      this.releaseRunnerRig();
       this.runnerGroup.clear();
       console.warn('runner rig unavailable, using proxy', error);
       const proxy = new THREE.Mesh(new THREE.CapsuleGeometry(0.35, 1.1, 4, 8), new THREE.MeshStandardMaterial({ color: 0xd6b388 }));
+      proxy.userData.runnerProxy = true;
       proxy.position.y = 1.1;
       this.runnerGroup.add(proxy);
       this.runnerRig = null;
@@ -711,9 +717,22 @@ export class Game {
     }
   }
 
+  private releaseRunnerRig(): void {
+    this.runnerRig?.dispose();
+    this.runnerRig = null;
+    for (const child of this.runnerGroup.children) {
+      if (child.userData.runnerProxy && child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+        materials.forEach(material => material.dispose());
+      }
+    }
+  }
+
   /** Reserved angel-wing artwork; invisibility uses the native cyan body texture. */
   private installWings(): void {
     const texture = this.bundle.assets.texture.wings;
+    this.wingSprites.forEach(wing => wing.material.dispose());
     this.wingsGroup.clear();
     this.wingSprites = [];
     if (!texture) return;
@@ -758,7 +777,7 @@ export class Game {
 
   /** One deterministic simulation step (also used by the regression bot). */
   tick(dt: number): void {
-    activeCourse()?.ensureThrough(this.distance+2000);
+    activeCourse()?.ensureThrough(this.distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance);
     // Advance the ECS clock: gameplay timers (invincibility, powers, jump windows) all read
     // world.elapsed, so without this the whole run freezes at t=0.
     if(this.difficulty.name==='classic')this.nativeRunClock=stepNativeRunClock(this.nativeRunClock,dt);
@@ -2354,6 +2373,7 @@ export class Game {
   }
 
   private jumpTo(distance: number): void {
+    activeCourse()?.ensureThrough(distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance);
     const trackPos = this.world.require(this.runnerEntity, TrackPos);
     const lane = this.world.require(this.runnerEntity, Lane);
     trackPos.distance = distance;
@@ -2420,6 +2440,8 @@ export class Game {
     this.disposed = true;
     cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.resize);
+    this.releaseRunnerRig();
+    this.wingSprites.forEach(wing => wing.material.dispose());
     this.bundle?.renderer.dispose();
   }
 }

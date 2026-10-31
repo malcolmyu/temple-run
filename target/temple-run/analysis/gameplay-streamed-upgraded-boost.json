@@ -1,0 +1,207 @@
+{
+  "checks": [
+    {
+      "name": "max upgrade pickup uses750 plus50 allowance",
+      "passed": true
+    },
+    {
+      "name": "repeat pickup refreshes upgraded budget and preserves baseline speed",
+      "passed": true
+    },
+    {
+      "name": "cruise freezes native4s protection clock",
+      "passed": true
+    },
+    {
+      "name": "upgraded boost traverses corners and exits alive",
+      "passed": true
+    },
+    {
+      "name": "upgraded boost brakes and keeps normal speed cap",
+      "passed": true
+    },
+    {
+      "name": "post-boost failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "restart clears boost and retains upgrade save",
+      "passed": true
+    }
+  ],
+  "last": {
+    "activeBranch": null,
+    "airborne": false,
+    "autoTurnQueued": false,
+    "boost": {
+      "active": false,
+      "left": -103.78637702706456,
+      "speedBefore": 22.25
+    },
+    "chaseGap": 11.5,
+    "coinMeter": {
+      "count": 10,
+      "level": 1,
+      "maxLevel": 0
+    },
+    "coinSpawnLevel": 0,
+    "coins": 10,
+    "course": {
+      "branches": [
+        {
+          "from": 822,
+          "to": 858
+        }
+      ],
+      "extent": 1041,
+      "features": [
+        {
+          "from": 489,
+          "generatedAtProgress": 156.91038448559706,
+          "kind": "pit",
+          "minTurnSpaces": 12,
+          "nativeStageKnown": true,
+          "surface": "stone",
+          "to": 633
+        },
+        {
+          "from": 633,
+          "generatedAtProgress": 406.4563884616402,
+          "kind": "pit",
+          "minTurnSpaces": 10,
+          "nativeStageKnown": true,
+          "surface": "stone",
+          "to": 777
+        },
+        {
+          "from": 777,
+          "generatedAtProgress": 659.6773926293554,
+          "kind": "branch",
+          "minTurnSpaces": 8,
+          "nativeStageKnown": true,
+          "surface": "stone",
+          "to": 897
+        },
+        {
+          "from": 897,
+          "generatedAtProgress": 865.5443904211123,
+          "kind": "transition",
+          "minTurnSpaces": 8,
+          "nativeStageKnown": true,
+          "surface": "wood",
+          "to": 1041
+        }
+      ],
+      "longGapFallbacks": [],
+      "narrows": [],
+      "surfaces": [
+        {
+          "from": 0,
+          "kind": "stone",
+          "to": 972
+        },
+        {
+          "from": 972,
+          "kind": "wood",
+          "to": null
+        }
+      ]
+    },
+    "distance": 655,
+    "distanceExact": 655.2887500000022,
+    "enemyGap": 15,
+    "equipped": "jhony",
+    "falling": false,
+    "fps": 60,
+    "gems": 1,
+    "generation": {
+      "bonuses": [],
+      "lastBonus": 0,
+      "nextBonusCheck": 720,
+      "seed": 262327206
+    },
+    "generationPacing": {
+      "doubleObstaclePercent": 0.05,
+      "from": 500,
+      "known": true,
+      "minCoinRunSpaces": 9,
+      "minObstacleSpaces": 4,
+      "minTurnSpaces": 8
+    },
+    "groundY": 0,
+    "jumpVelocity": 0,
+    "jumpY": 0,
+    "lane": 1,
+    "nextTurn": 777,
+    "obstacles": [
+      {
+        "ahead": 53,
+        "defId": "pit",
+        "full": true,
+        "kind": "gap",
+        "lane": 1
+      }
+    ],
+    "phase": "playing",
+    "pickups": [
+      {
+        "ahead": 17,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 19,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 21,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 23,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 25,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      }
+    ],
+    "position": [
+      312,
+      0,
+      -4.288750000002217
+    ],
+    "power": null,
+    "powerRemaining": 0,
+    "powers": [],
+    "progressDistance": 962.415277220219,
+    "queuedForwardForce": 2,
+    "recoveringFromStumble": false,
+    "rig": "ready",
+    "runElapsed": 12.374954223632812,
+    "score": 10720,
+    "scoreMultiplier": 10,
+    "side": 0,
+    "slideDuration": 0,
+    "sliding": 0,
+    "speed": 21.6,
+    "stumbleAge": 38.37499999999941,
+    "stumbleRemaining": 0,
+    "swipeStumbleDelay": null,
+    "turnCount": 4,
+    "turnDirection": 0,
+    "turnQueued": false,
+    "worldY": 0
+  },
+  "passed": 7,
+  "total": 7
+}

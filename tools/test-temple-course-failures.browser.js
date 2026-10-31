@@ -3,9 +3,9 @@
  const g=window.__templeGame,checks=[];
  const check=(name,ok)=>{checks.push({name,passed:!!ok});};
  const prep=()=>{g.restart();g.freeze();g.advance(1600);};
- prep();const branch=g.state().course.branches[0];g.jumpTo(branch.from-8);g.advance(2000);
+ prep();g.planAhead(6000,3000);const branch=g.state().course.branches[0];g.jumpTo(branch.from-8);g.advance(2000);
  check('centre entry into branch gap falls',g.state().phase==='dying'||g.state().phase==='ended');g.advance(6000);check('branch failure reaches results',g.state().phase==='ended');
- prep();const narrow=g.state().course.narrows[0];g.jumpTo(narrow.from-16);g.press(narrow.side==='left'?'right':'left');g.advance(2400);
+ prep();g.planAhead(6000,3000);const narrow=g.state().course.narrows[0];g.jumpTo(narrow.from-16);g.press(narrow.side==='left'?'right':'left');g.advance(2400);
  check('wrong half of native narrow road falls',g.state().phase==='dying'||g.state().phase==='ended');g.advance(6000);check('narrow failure reaches results',g.state().phase==='ended');
  prep();g.press('left');let stopped=null,ticks=0;
  while(g.state().phase==='playing'&&g.state().distanceExact<8000&&ticks++<13000){

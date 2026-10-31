@@ -11,7 +11,7 @@ const BASE = import.meta.env.BASE_URL;
 let renderer: THREE.WebGLRenderer | null = null;
 let scene: THREE.Scene | null = null;
 let camera: THREE.PerspectiveCamera | null = null;
-let rig: { object: THREE.Object3D; update(dt: number, timeScale?: number): void; setClip(name: string, restart?: boolean): void } | null = null;
+let rig: { dispose(): void; object: THREE.Object3D; update(dt: number, timeScale?: number): void; setClip(name: string, restart?: boolean): void } | null = null;
 const loading = ref(false);
 const failed = ref(false);
 let token = 0;
@@ -91,7 +91,7 @@ async function loadSkin(id: string): Promise<void> {
   const my = ++token;
   loading.value = true;
   failed.value = false;
-  if (rig && scene) scene.remove(rig.object);
+  rig?.dispose();
   rig = null;
   try {
     const loaded = await loadRunnerRig(
@@ -99,7 +99,7 @@ async function loadSkin(id: string): Promise<void> {
       `${BASE}assets/characters/${skin.texture}`,
       { scale: 0.27, yOffset: 0, clipFallbackUrl: DEFAULT_RIG_URL },
     );
-    if (my !== token || !scene) return;
+    if (my !== token || !scene) { loaded.dispose(); return; }
     normalizeRigHeight(loaded, 2.15);
     loaded.setClip('run');
     loaded.object.rotation.y = Math.PI;
@@ -147,7 +147,16 @@ onBeforeUnmount(() => {
   token++;
   cancelAnimationFrame(raf);
   window.removeEventListener('resize', resize);
-  if (rig && scene) scene.remove(rig.object);
+  rig?.dispose();
+  rig = null;
+  scene?.traverse(object => {
+    if (object instanceof THREE.Mesh) {
+      object.geometry.dispose();
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach(material => material.dispose());
+    }
+  });
+  scene = null;
   renderer?.dispose();
 });
 </script>

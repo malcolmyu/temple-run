@@ -1,0 +1,1573 @@
+{
+  "checks": [
+    {
+      "name": "seed1: bounded incremental horizon",
+      "passed": true
+    },
+    {
+      "name": "seed1: generation uses supplied metric progress and unlock gates",
+      "passed": true
+    },
+    {
+      "name": "seed1: generated course reaches7500m",
+      "passed": true
+    },
+    {
+      "name": "seed1: branch choice and merge work",
+      "passed": true
+    },
+    {
+      "name": "seed1: both bridge types and native narrow groups appear",
+      "passed": true
+    },
+    {
+      "name": "seed1: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed1: restart clears branch and course progress",
+      "passed": true
+    },
+    {
+      "name": "seed2: bounded incremental horizon",
+      "passed": true
+    },
+    {
+      "name": "seed2: generation uses supplied metric progress and unlock gates",
+      "passed": true
+    },
+    {
+      "name": "seed2: generated course reaches7500m",
+      "passed": true
+    },
+    {
+      "name": "seed2: branch choice and merge work",
+      "passed": true
+    },
+    {
+      "name": "seed2: both bridge types and native narrow groups appear",
+      "passed": true
+    },
+    {
+      "name": "seed2: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed2: restart clears branch and course progress",
+      "passed": true
+    },
+    {
+      "name": "real long-hole pairs generated and jumped without invincibility",
+      "passed": true
+    },
+    {
+      "name": "seed1: verified4500+ normal stage replaces fallback",
+      "passed": true
+    },
+    {
+      "name": "seed2: verified4500+ normal stage replaces fallback",
+      "passed": true
+    }
+  ],
+  "runs": [
+    {
+      "branches": [
+        "left"
+      ],
+      "death": {
+        "delay": 0,
+        "elapsed": 0,
+        "kind": "",
+        "reason": ""
+      },
+      "end": {
+        "activeBranch": null,
+        "airborne": false,
+        "autoTurnQueued": false,
+        "boost": {
+          "active": false,
+          "left": 0,
+          "speedBefore": 0
+        },
+        "chaseGap": 11.5,
+        "coinMeter": {
+          "count": 69,
+          "level": 2,
+          "maxLevel": 2
+        },
+        "coinSpawnLevel": 0,
+        "coins": 169,
+        "course": {
+          "branches": [
+            {
+              "from": 3030,
+              "to": 3066
+            },
+            {
+              "from": 6582,
+              "to": 6618
+            }
+          ],
+          "extent": 7881,
+          "features": [
+            {
+              "from": 489,
+              "generatedAtProgress": 73.4609316166485,
+              "kind": "treeTrip",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 657
+            },
+            {
+              "from": 657,
+              "generatedAtProgress": 176.802890577259,
+              "kind": "pit",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 825
+            },
+            {
+              "from": 825,
+              "generatedAtProgress": 285.4983841070351,
+              "kind": "pit",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 969
+            },
+            {
+              "from": 969,
+              "generatedAtProgress": 378.3174987356964,
+              "kind": "transition",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1113
+            },
+            {
+              "from": 1113,
+              "generatedAtProgress": 478.79849774804336,
+              "kind": "plankBeam",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1257
+            },
+            {
+              "from": 1257,
+              "generatedAtProgress": 583.1770435380744,
+              "kind": "plankPit",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1401
+            },
+            {
+              "from": 1401,
+              "generatedAtProgress": 685.6138336195085,
+              "kind": "plankBeam",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1545
+            },
+            {
+              "from": 1545,
+              "generatedAtProgress": 791.2166059506201,
+              "kind": "transition",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 1689
+            },
+            {
+              "from": 1689,
+              "generatedAtProgress": 897.9255855843285,
+              "kind": "flameTower",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 1857
+            },
+            {
+              "from": 1857,
+              "generatedAtProgress": 1024.6819037380494,
+              "kind": "treeJump",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 2025
+            },
+            {
+              "from": 2025,
+              "generatedAtProgress": 1153.0334276408028,
+              "kind": "longGap",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 2145
+            },
+            {
+              "from": 2145,
+              "generatedAtProgress": 1249.446802844392,
+              "kind": "transition",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2265
+            },
+            {
+              "from": 2265,
+              "generatedAtProgress": 1342.5757173550053,
+              "kind": "plankBeam",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2385
+            },
+            {
+              "from": 2385,
+              "generatedAtProgress": 1436.1994896927497,
+              "kind": "plankBeam",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2529
+            },
+            {
+              "from": 2529,
+              "generatedAtProgress": 1553.2249958020864,
+              "kind": "plankPit",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2649
+            },
+            {
+              "from": 2649,
+              "generatedAtProgress": 1647.116298739489,
+              "kind": "transition",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 2817
+            },
+            {
+              "from": 2817,
+              "generatedAtProgress": 1786.4064762068551,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 2961
+            },
+            {
+              "from": 2961,
+              "generatedAtProgress": 1900.4988086930664,
+              "kind": "branch",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 3129
+            },
+            {
+              "from": 3129,
+              "generatedAtProgress": 2041.8068717778392,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 3297
+            },
+            {
+              "from": 3297,
+              "generatedAtProgress": 2179.4854234753525,
+              "kind": "transition",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3417
+            },
+            {
+              "from": 3417,
+              "generatedAtProgress": 2278.5221121853588,
+              "kind": "plankPit",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3585
+            },
+            {
+              "from": 3585,
+              "generatedAtProgress": 2419.6730924647864,
+              "kind": "plankBeam",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3705
+            },
+            {
+              "from": 3705,
+              "generatedAtProgress": 2525.599958453221,
+              "kind": "plankPit",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3825
+            },
+            {
+              "from": 3825,
+              "generatedAtProgress": 2625.5888273611563,
+              "kind": "transition",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 3969
+            },
+            {
+              "from": 3969,
+              "generatedAtProgress": 2746.775658113166,
+              "kind": "treeSlide",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 4113
+            },
+            {
+              "from": 4113,
+              "generatedAtProgress": 2875.1698442912493,
+              "kind": "narrowLong",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 4257
+            },
+            {
+              "from": 4257,
+              "generatedAtProgress": 3004.1977034827237,
+              "kind": "treeSlide",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 4377
+            },
+            {
+              "from": 4377,
+              "generatedAtProgress": 3113.040055111921,
+              "kind": "transition",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 4545
+            },
+            {
+              "from": 4545,
+              "generatedAtProgress": 3260.0132983768376,
+              "kind": "plankBeam",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 4689
+            },
+            {
+              "from": 4689,
+              "generatedAtProgress": 3390.434322625471,
+              "kind": "plankBeam",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 4809
+            },
+            {
+              "from": 4809,
+              "generatedAtProgress": 3494.799700661913,
+              "kind": "plankBeam",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 4929
+            },
+            {
+              "from": 4929,
+              "generatedAtProgress": 3598.246328650483,
+              "kind": "transition",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5073
+            },
+            {
+              "from": 5073,
+              "generatedAtProgress": 3722.6158924060446,
+              "kind": "treeJump",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5217
+            },
+            {
+              "from": 5217,
+              "generatedAtProgress": 3853.226382466635,
+              "kind": "flameTower",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5385
+            },
+            {
+              "from": 5385,
+              "generatedAtProgress": 4004.778657816977,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5505
+            },
+            {
+              "from": 5505,
+              "generatedAtProgress": 4115.006027637516,
+              "kind": "transition",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 5673
+            },
+            {
+              "from": 5673,
+              "generatedAtProgress": 4266.604749575044,
+              "kind": "plankPit",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 5841
+            },
+            {
+              "from": 5841,
+              "generatedAtProgress": 4412.5235595345775,
+              "kind": "plankPit",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 5961
+            },
+            {
+              "from": 5961,
+              "generatedAtProgress": 4517.260979185789,
+              "kind": "plankPit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 6105
+            },
+            {
+              "from": 6105,
+              "generatedAtProgress": 4643.129649958932,
+              "kind": "transition",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6249
+            },
+            {
+              "from": 6249,
+              "generatedAtProgress": 4768.998320732064,
+              "kind": "narrowLong",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6369
+            },
+            {
+              "from": 6369,
+              "generatedAtProgress": 4873.636578784368,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6537
+            },
+            {
+              "from": 6537,
+              "generatedAtProgress": 5020.492999872132,
+              "kind": "branch",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6657
+            },
+            {
+              "from": 6657,
+              "generatedAtProgress": 5126.221388959081,
+              "kind": "transition",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 6825
+            },
+            {
+              "from": 6825,
+              "generatedAtProgress": 5277.838926163127,
+              "kind": "plankPit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 6945
+            },
+            {
+              "from": 6945,
+              "generatedAtProgress": 5388.101273389431,
+              "kind": "plankPit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 7113
+            },
+            {
+              "from": 7113,
+              "generatedAtProgress": 5535.539831262434,
+              "kind": "plankPit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 7281
+            },
+            {
+              "from": 7281,
+              "generatedAtProgress": 5682.564317763333,
+              "kind": "transition",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 7425
+            },
+            {
+              "from": 7425,
+              "generatedAtProgress": 5808.28948774903,
+              "kind": "pit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 7593
+            },
+            {
+              "from": 7593,
+              "generatedAtProgress": 5955.145908836809,
+              "kind": "treeTrip",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 7713
+            },
+            {
+              "from": 7713,
+              "generatedAtProgress": 6059.73982772043,
+              "kind": "longGap",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 7881
+            }
+          ],
+          "longGapFallbacks": [],
+          "narrows": [
+            {
+              "from": 3210,
+              "side": "left",
+              "to": 3222
+            },
+            {
+              "from": 4170,
+              "side": "right",
+              "to": 4206
+            },
+            {
+              "from": 6294,
+              "side": "right",
+              "to": 6330
+            },
+            {
+              "from": 6450,
+              "side": "right",
+              "to": 6462
+            }
+          ],
+          "surfaces": [
+            {
+              "from": 0,
+              "kind": "stone",
+              "to": 1044
+            },
+            {
+              "from": 1044,
+              "kind": "wood",
+              "to": 1620
+            },
+            {
+              "from": 1620,
+              "kind": "stone",
+              "to": 2208
+            },
+            {
+              "from": 2208,
+              "kind": "wood",
+              "to": 2736
+            },
+            {
+              "from": 2736,
+              "kind": "stone",
+              "to": 3360
+            },
+            {
+              "from": 3360,
+              "kind": "wood",
+              "to": 3900
+            },
+            {
+              "from": 3900,
+              "kind": "stone",
+              "to": 4464
+            },
+            {
+              "from": 4464,
+              "kind": "wood",
+              "to": 5004
+            },
+            {
+              "from": 5004,
+              "kind": "stone",
+              "to": 5592
+            },
+            {
+              "from": 5592,
+              "kind": "wood",
+              "to": 6180
+            },
+            {
+              "from": 6180,
+              "kind": "stone",
+              "to": 6744
+            },
+            {
+              "from": 6744,
+              "kind": "wood",
+              "to": 7356
+            },
+            {
+              "from": 7356,
+              "kind": "stone",
+              "to": null
+            }
+          ]
+        },
+        "distance": 7500,
+        "distanceExact": 7500.131555405264,
+        "enemyGap": 15,
+        "equipped": "jhony",
+        "falling": false,
+        "fps": 60,
+        "gems": 1,
+        "generation": {
+          "bonuses": [
+            {
+              "collected": false,
+              "distance": 612,
+              "kind": "shield",
+              "lane": 1
+            },
+            {
+              "collected": false,
+              "distance": 1644,
+              "kind": "bonus",
+              "lane": 1
+            },
+            {
+              "collected": false,
+              "distance": 2700,
+              "kind": "magnet",
+              "lane": 1
+            },
+            {
+              "collected": false,
+              "distance": 3876,
+              "kind": "bonus",
+              "lane": 2
+            },
+            {
+              "collected": true,
+              "distance": 4596,
+              "kind": "shield",
+              "lane": 2
+            },
+            {
+              "collected": false,
+              "distance": 5268,
+              "kind": "shield",
+              "lane": 1
+            },
+            {
+              "collected": false,
+              "distance": 6156,
+              "kind": "shield",
+              "lane": 0
+            },
+            {
+              "collected": true,
+              "distance": 7164,
+              "kind": "shield",
+              "lane": 1
+            }
+          ],
+          "lastBonus": 7164,
+          "nextBonusCheck": 7572,
+          "seed": 1
+        },
+        "generationPacing": {
+          "doubleObstaclePercent": 0.2,
+          "from": 4500,
+          "known": true,
+          "minCoinRunSpaces": 6,
+          "minObstacleSpaces": 2,
+          "minTurnSpaces": 2
+        },
+        "groundY": 0,
+        "jumpVelocity": 0,
+        "jumpY": 0,
+        "lane": 1,
+        "nextTurn": 7593,
+        "obstacles": [
+          {
+            "ahead": 12,
+            "defId": "pit",
+            "full": true,
+            "kind": "gap",
+            "lane": 1
+          }
+        ],
+        "phase": "playing",
+        "pickups": [],
+        "position": [
+          -507.1315554052646,
+          0,
+          1074
+        ],
+        "power": "shield",
+        "powerRemaining": 6.974999999998175,
+        "powers": [
+          {
+            "kind": "shield",
+            "remaining": 6.974999999998175,
+            "unit": "s"
+          }
+        ],
+        "progressDistance": 6188.227288355507,
+        "queuedForwardForce": 0,
+        "recoveringFromStumble": false,
+        "rig": "ready",
+        "runElapsed": 195.28907775878903,
+        "score": 75930,
+        "scoreMultiplier": 10,
+        "side": -1.7455024908396858e-114,
+        "slideDuration": 0.75,
+        "sliding": 0,
+        "speed": 42,
+        "stumbleAge": 201.3000000000286,
+        "stumbleRemaining": 0,
+        "swipeStumbleDelay": null,
+        "turnCount": 51,
+        "turnDirection": 0,
+        "turnQueued": false,
+        "worldY": 0
+      },
+      "longJumps": [
+        2068.93245704651
+      ],
+      "merges": 2,
+      "seed": 1,
+      "seen": [
+        "treeTrip",
+        "treeJump",
+        "pit",
+        "plankBeam",
+        "plankPit",
+        "flameTower",
+        "pitLongB",
+        "pitLongA",
+        "stonePedestal",
+        "narrowBeamRight",
+        "treeSlide",
+        "narrowWallLeftB",
+        "narrowWallLeft",
+        "narrowWallLeftA",
+        "narrowBeamLeft"
+      ]
+    },
+    {
+      "branches": [
+        "right"
+      ],
+      "death": {
+        "delay": 0,
+        "elapsed": 0,
+        "kind": "",
+        "reason": ""
+      },
+      "end": {
+        "activeBranch": null,
+        "airborne": false,
+        "autoTurnQueued": false,
+        "boost": {
+          "active": false,
+          "left": -165.8898789803418,
+          "speedBefore": 42
+        },
+        "chaseGap": 11.5,
+        "coinMeter": {
+          "count": 50,
+          "level": 3,
+          "maxLevel": 3
+        },
+        "coinSpawnLevel": 0,
+        "coins": 250,
+        "course": {
+          "branches": [
+            {
+              "from": 1830,
+              "to": 1866
+            },
+            {
+              "from": 5346,
+              "to": 5382
+            }
+          ],
+          "extent": 7953,
+          "features": [
+            {
+              "from": 489,
+              "generatedAtProgress": 73.4609316166485,
+              "kind": "treeTrip",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 681
+            },
+            {
+              "from": 681,
+              "generatedAtProgress": 194.2054792444916,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 825
+            },
+            {
+              "from": 825,
+              "generatedAtProgress": 285.4983841070351,
+              "kind": "pit",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 993
+            },
+            {
+              "from": 993,
+              "generatedAtProgress": 395.4125046518731,
+              "kind": "transition",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1161
+            },
+            {
+              "from": 1161,
+              "generatedAtProgress": 657.6247670672855,
+              "kind": "plankPit",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1281
+            },
+            {
+              "from": 1281,
+              "generatedAtProgress": 794.1891986457808,
+              "kind": "plankBeam",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1449
+            },
+            {
+              "from": 1449,
+              "generatedAtProgress": 904.2464283145408,
+              "kind": "plankBeam",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 1593
+            },
+            {
+              "from": 1593,
+              "generatedAtProgress": 1007.344075103812,
+              "kind": "transition",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 1761
+            },
+            {
+              "from": 1761,
+              "generatedAtProgress": 1130.9527767419977,
+              "kind": "branch",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 1929
+            },
+            {
+              "from": 1929,
+              "generatedAtProgress": 1254.547047977431,
+              "kind": "flameTower",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 2049
+            },
+            {
+              "from": 2049,
+              "generatedAtProgress": 1348.2090203348337,
+              "kind": "pit",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 2217
+            },
+            {
+              "from": 2217,
+              "generatedAtProgress": 1475.8156287596955,
+              "kind": "transition",
+              "minTurnSpaces": 6,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2385
+            },
+            {
+              "from": 2385,
+              "generatedAtProgress": 1604.5602084019483,
+              "kind": "plankBeam",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2529
+            },
+            {
+              "from": 2529,
+              "generatedAtProgress": 1715.4251537884436,
+              "kind": "plankBeam",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2697
+            },
+            {
+              "from": 2697,
+              "generatedAtProgress": 1846.5797160284949,
+              "kind": "plankPit",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 2865
+            },
+            {
+              "from": 2865,
+              "generatedAtProgress": 1978.7081581727473,
+              "kind": "transition",
+              "minTurnSpaces": 5,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 3009
+            },
+            {
+              "from": 3009,
+              "generatedAtProgress": 2092.798984577475,
+              "kind": "longGap",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 3177
+            },
+            {
+              "from": 3177,
+              "generatedAtProgress": 2227.3747522534914,
+              "kind": "treeSlide",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 3321
+            },
+            {
+              "from": 3321,
+              "generatedAtProgress": 2343.238712075278,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 3465
+            },
+            {
+              "from": 3465,
+              "generatedAtProgress": 2461.011582941455,
+              "kind": "transition",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3585
+            },
+            {
+              "from": 3585,
+              "generatedAtProgress": 2559.3238293487657,
+              "kind": "plankPit",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3729
+            },
+            {
+              "from": 3729,
+              "generatedAtProgress": 2677.880751528418,
+              "kind": "plankBeam",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3873
+            },
+            {
+              "from": 3873,
+              "generatedAtProgress": 2802.3974062174048,
+              "kind": "plankBeam",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 3993
+            },
+            {
+              "from": 3993,
+              "generatedAtProgress": 2902.1499021807917,
+              "kind": "transition",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 4113
+            },
+            {
+              "from": 4113,
+              "generatedAtProgress": 3008.100141376889,
+              "kind": "treeJump",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 4257
+            },
+            {
+              "from": 4257,
+              "generatedAtProgress": 3128.807530817335,
+              "kind": "narrowLong",
+              "minTurnSpaces": 4,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 4401
+            },
+            {
+              "from": 4401,
+              "generatedAtProgress": 3250.677167486642,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 4569
+            },
+            {
+              "from": 4569,
+              "generatedAtProgress": 3394.3448573541923,
+              "kind": "transition",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 4689
+            },
+            {
+              "from": 4689,
+              "generatedAtProgress": 3496.5374936376497,
+              "kind": "plankPit",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 4857
+            },
+            {
+              "from": 4857,
+              "generatedAtProgress": 3648.3047365411007,
+              "kind": "plankBeam",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 5025
+            },
+            {
+              "from": 5025,
+              "generatedAtProgress": 3799.925352640585,
+              "kind": "plankBeam",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 5145
+            },
+            {
+              "from": 5145,
+              "generatedAtProgress": 3904.528239068739,
+              "kind": "transition",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5289
+            },
+            {
+              "from": 5289,
+              "generatedAtProgress": 4030.262376599062,
+              "kind": "branch",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5433
+            },
+            {
+              "from": 5433,
+              "generatedAtProgress": 4155.996514129435,
+              "kind": "treeTrip",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5577
+            },
+            {
+              "from": 5577,
+              "generatedAtProgress": 4286.421186695386,
+              "kind": "longGap",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 5745
+            },
+            {
+              "from": 5745,
+              "generatedAtProgress": 4438.524049970393,
+              "kind": "transition",
+              "minTurnSpaces": 3,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 5889
+            },
+            {
+              "from": 5889,
+              "generatedAtProgress": 4565.3115565829285,
+              "kind": "plankPit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 6033
+            },
+            {
+              "from": 6033,
+              "generatedAtProgress": 4691.143876481813,
+              "kind": "plankPit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 6201
+            },
+            {
+              "from": 6201,
+              "generatedAtProgress": 4838.107447482768,
+              "kind": "plankBeam",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 6345
+            },
+            {
+              "from": 6345,
+              "generatedAtProgress": 4963.994297051086,
+              "kind": "transition",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6489
+            },
+            {
+              "from": 6489,
+              "generatedAtProgress": 5089.835724375728,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6633
+            },
+            {
+              "from": 6633,
+              "generatedAtProgress": 5215.677151700399,
+              "kind": "pit",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6777
+            },
+            {
+              "from": 6777,
+              "generatedAtProgress": 5341.4240477279445,
+              "kind": "treeSlide",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 6945
+            },
+            {
+              "from": 6945,
+              "generatedAtProgress": 5488.488052641167,
+              "kind": "transition",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 7089
+            },
+            {
+              "from": 7089,
+              "generatedAtProgress": 5613.229396310826,
+              "kind": "plankBeam",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 7233
+            },
+            {
+              "from": 7233,
+              "generatedAtProgress": 5752.996109569011,
+              "kind": "plankBeam",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 7353
+            },
+            {
+              "from": 7353,
+              "generatedAtProgress": 5951.450233981356,
+              "kind": "plankBeam",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "wood",
+              "to": 7497
+            },
+            {
+              "from": 7497,
+              "generatedAtProgress": 6117.259518405327,
+              "kind": "transition",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 7665
+            },
+            {
+              "from": 7665,
+              "generatedAtProgress": 6268.87958063224,
+              "kind": "treeJump",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 7785
+            },
+            {
+              "from": 7785,
+              "generatedAtProgress": 6373.102889972425,
+              "kind": "flameTower",
+              "minTurnSpaces": 2,
+              "nativeStageKnown": true,
+              "surface": "stone",
+              "to": 7953
+            }
+          ],
+          "longGapFallbacks": [],
+          "narrows": [
+            {
+              "from": 3390,
+              "side": "right",
+              "to": 3402
+            },
+            {
+              "from": 4314,
+              "side": "right",
+              "to": 4350
+            },
+            {
+              "from": 4482,
+              "side": "right",
+              "to": 4494
+            }
+          ],
+          "surfaces": [
+            {
+              "from": 0,
+              "kind": "stone",
+              "to": 1080
+            },
+            {
+              "from": 1080,
+              "kind": "wood",
+              "to": 1680
+            },
+            {
+              "from": 1680,
+              "kind": "stone",
+              "to": 2304
+            },
+            {
+              "from": 2304,
+              "kind": "wood",
+              "to": 2940
+            },
+            {
+              "from": 2940,
+              "kind": "stone",
+              "to": 3528
+            },
+            {
+              "from": 3528,
+              "kind": "wood",
+              "to": 4056
+            },
+            {
+              "from": 4056,
+              "kind": "stone",
+              "to": 4632
+            },
+            {
+              "from": 4632,
+              "kind": "wood",
+              "to": 5220
+            },
+            {
+              "from": 5220,
+              "kind": "stone",
+              "to": 5820
+            },
+            {
+              "from": 5820,
+              "kind": "wood",
+              "to": 6420
+            },
+            {
+              "from": 6420,
+              "kind": "stone",
+              "to": 7020
+            },
+            {
+              "from": 7020,
+              "kind": "wood",
+              "to": 7584
+            },
+            {
+              "from": 7584,
+              "kind": "stone",
+              "to": null
+            }
+          ]
+        },
+        "distance": 7500,
+        "distanceExact": 7500.831118622322,
+        "enemyGap": 15,
+        "equipped": "jhony",
+        "falling": false,
+        "fps": 60,
+        "gems": 4,
+        "generation": {
+          "bonuses": [
+            {
+              "collected": true,
+              "distance": 624,
+              "kind": "boost",
+              "lane": 0
+            },
+            {
+              "collected": false,
+              "distance": 1404,
+              "kind": "boost",
+              "lane": 1
+            },
+            {
+              "collected": false,
+              "distance": 2172,
+              "kind": "boost",
+              "lane": 0
+            },
+            {
+              "collected": false,
+              "distance": 2916,
+              "kind": "magnet",
+              "lane": 0
+            },
+            {
+              "collected": true,
+              "distance": 4212,
+              "kind": "magnet",
+              "lane": 2
+            },
+            {
+              "collected": true,
+              "distance": 5244,
+              "kind": "magnet",
+              "lane": 2
+            },
+            {
+              "collected": false,
+              "distance": 6156,
+              "kind": "boost",
+              "lane": 2
+            },
+            {
+              "collected": true,
+              "distance": 6828,
+              "kind": "boost",
+              "lane": 0
+            }
+          ],
+          "lastBonus": 6828,
+          "nextBonusCheck": 7572,
+          "seed": 2
+        },
+        "generationPacing": {
+          "doubleObstaclePercent": 0.2,
+          "from": 4500,
+          "known": true,
+          "minCoinRunSpaces": 6,
+          "minObstacleSpaces": 2,
+          "minTurnSpaces": 2
+        },
+        "groundY": -3,
+        "jumpVelocity": 0,
+        "jumpY": 0,
+        "lane": 0,
+        "nextTurn": 7665,
+        "obstacles": [],
+        "phase": "playing",
+        "pickups": [
+          {
+            "ahead": -9,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": -7,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": -4,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": -2,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 0,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 47,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 49,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 51,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 53,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 55,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          }
+        ],
+        "position": [
+          -982.7,
+          -3,
+          885.8311186223223
+        ],
+        "power": null,
+        "powerRemaining": 0,
+        "powers": [],
+        "progressDistance": 6438.409306453054,
+        "queuedForwardForce": 0,
+        "recoveringFromStumble": false,
+        "rig": "ready",
+        "runElapsed": 191.68995666503903,
+        "score": 105856,
+        "scoreMultiplier": 12,
+        "side": -1.2999999999999996,
+        "slideDuration": 0.75,
+        "sliding": 0,
+        "speed": 42,
+        "stumbleAge": 217.70000000003063,
+        "stumbleRemaining": 0,
+        "swipeStumbleDelay": null,
+        "turnCount": 50,
+        "turnDirection": 0,
+        "turnQueued": false,
+        "worldY": -3
+      },
+      "longJumps": [
+        3077.404166946399,
+        5645.48111862203
+      ],
+      "merges": 2,
+      "seed": 2,
+      "seen": [
+        "treeTrip",
+        "treeJump",
+        "pit",
+        "stonePedestal",
+        "plankPit",
+        "plankBeam",
+        "flameTower",
+        "pitLongB",
+        "pitLongA",
+        "treeSlide",
+        "narrowBeamLeft",
+        "narrowWallLeftB",
+        "narrowWallLeft",
+        "narrowWallLeftA"
+      ]
+    }
+  ]
+}

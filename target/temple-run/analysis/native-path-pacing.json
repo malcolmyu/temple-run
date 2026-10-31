@@ -21,6 +21,10 @@
     "stage3250": [
       0.17499999701976776,
       6
+    ],
+    "stage4500": [
+      2,
+      0.20000000298023224
     ]
   },
   "gridWorldMetres": 12,
@@ -80,13 +84,21 @@
       "minObstacleSpaces": 3,
       "minCoinRunSpaces": 6,
       "doubleObstaclePercent": 0.175
+    },
+    {
+      "fromProgress": 4500,
+      "toProgressExclusive": null,
+      "minTurnSpaces": 2,
+      "minObstacleSpaces": 2,
+      "minCoinRunSpaces": 6,
+      "doubleObstaclePercent": 0.2
     }
   ],
   "spacingGate": "turns enabled AND SpacesSinceLastTurn>=sMinSpaceBetweenTurns; obstacle gate requires SpacesSinceLastTurn!=1 and BackToBackObstacleCount<sMaxBackToBackObstacles(2); if gap<minimum retain only when Range(0,1000)<doublePercent*1000",
   "candidateChoice": "Range(0,eligibleCount) at12e44e8; eligible list is built first, not a fixed global weight table",
   "limits": [
     "Some later stage entries inherit values set by earlier normal-run stages.",
-    "At4500+ control branches past these writes; fast-turn sections, remote overrides and full candidate filtering remain unaudited.",
+    "4500+ normal stage verified at126f184..126f1a0; fast-turn sections, remote overrides and full candidate filtering remain unaudited.",
     "Minimum spacing is not a fixed road-length distribution.",
     "Current CoursePlan coverage bag,144/168/192 groups, theme cadence and T25% remain explicit web assumptions."
   ],
@@ -109,6 +121,11 @@
     "0x126ec94": "0xf803412d",
     "0x126edf4": "0xb9002d2b",
     "0x126ee4c": "0xb9002d2c",
-    "0x126eecc": "0xb9002d2b"
+    "0x126eecc": "0xb9002d2b",
+    "0x126f18c": "0x528000ca",
+    "0x126f190": "0x5280004b",
+    "0x126f198": "0xb9003d2a",
+    "0x126f19c": "0xb9002d2b",
+    "0x126f1a0": "0xf803412c"
   }
 }

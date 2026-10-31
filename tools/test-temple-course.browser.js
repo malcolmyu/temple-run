@@ -30,6 +30,9 @@
    g.advance(25);
   }
   const end=g.state();runs.push({seed,end,seen:[...seen],branches:[...branches],merges,longJumps,death:g.death()});
+  check(`seed${seed}: bounded incremental horizon`,end.course.extent>=end.distanceExact+350&&end.course.extent<end.distanceExact+560);
+  check(`seed${seed}: generation uses supplied metric progress and unlock gates`,end.course.features.every(f=>Number.isFinite(f.generatedAtProgress)&&f.to-f.from>=Math.max(120,f.minTurnSpaces*12)&&(f.kind!=='flameTower'&&f.kind!=='treeSlide'||f.generatedAtProgress>=500)&&(f.kind!=='narrowSmall'&&f.kind!=='narrowLong'||f.generatedAtProgress>=1500)));
+  check(`seed${seed}: verified4500+ normal stage`,end.generationPacing.from===4500&&end.generationPacing.minTurnSpaces===2&&end.generationPacing.minObstacleSpaces===2&&end.generationPacing.known&&end.course.features.filter(f=>f.generatedAtProgress>=4500).every(f=>f.minTurnSpaces===2&&f.nativeStageKnown));
   check(`seed${seed}: generated course reaches7500m`,end.phase==='playing'&&end.distanceExact>=7500);
   check(`seed${seed}: branch choice and merge work`,branches.has(seed===1?'left':'right')&&merges>0);
   check(`seed${seed}: both bridge types and native narrow groups appear`,seen.has('plankPit')&&seen.has('plankBeam')&&[...seen].some(id=>id.startsWith('narrowWall')));

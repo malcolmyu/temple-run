@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import * as THREE from 'three';
+import {buildRunnerRig} from '../target/temple-run/web/src/runnerRig.js';
+const data=JSON.parse(readFileSync('target/temple-run/web/public/assets/characters/rig-orig_02___Default.json','utf8'));
+const texture=new THREE.Texture(),sharedGlow=new THREE.Texture();
+const rig=buildRunnerRig(data,{texture,ownsTexture:true});
+rig.setInvincibility(true,sharedGlow);
+const owned=[rig.mesh.geometry,rig.material,texture,rig.mesh.material,rig.mesh.material.map];
+const counts=owned.map(()=>0);let sharedCount=0;
+owned.forEach((resource,index)=>resource.addEventListener('dispose',()=>counts[index]++));
+sharedGlow.addEventListener('dispose',()=>sharedCount++);
+const parent=new THREE.Group();parent.add(rig.object);rig.dispose();rig.dispose();
+assert.deepEqual(counts,[1,1,1,1,1]);assert.equal(sharedCount,0);assert.equal(parent.children.length,0);
+const sharedBase=new THREE.Texture();let baseCount=0;sharedBase.addEventListener('dispose',()=>baseCount++);
+buildRunnerRig(data,{texture:sharedBase}).dispose();assert.equal(baseCount,0);
+console.log('Runner disposal: owned geometry/materials/textures freed once, shared textures preserved, object detached.');
