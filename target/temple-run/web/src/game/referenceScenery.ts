@@ -1,3 +1,4 @@
+import { activeCourse } from './coursePlan';
 import { referenceTileDistance,referenceWorldDistance } from './referenceCoordinates';
 import { REFERENCE_OPENING_TURNS } from './referenceRoute';
 /** Fitted physical exit offset; old8 score-coordinate units placed the tower behind the camera too early. */
@@ -13,6 +14,7 @@ export const REFERENCE_STRAIGHT_GATES = [
   { tileDistance:2313, distance:2319, variant:'tower' as const, frames:[256,257,258] },
 ].map(gate=>({...gate,tileDistance:referenceTileDistance(gate.tileDistance),distance:referenceTileDistance(gate.tileDistance)+6}));
 export function referenceStraightGate(tileDistance: number): 'tower' | null {
+ if(activeCourse()&&tileDistance>489)return null;
  return REFERENCE_STRAIGHT_GATES.find(g=>Math.abs(g.tileDistance-tileDistance)<.001)?.variant??null;
 }
 
@@ -20,11 +22,13 @@ export function referenceStraightGate(tileDistance: number): 'tower' | null {
  * policy, not an assertion about unseen source geometry. Explicit pits still cut it.
  */
 export function referenceFullWidthAt(distance: number): boolean {
+ if(activeCourse())return true;
  return distance>=0 && distance<=referenceWorldDistance(2380)+96;
 }
 
 /** Prevent a periodic low portal from duplicating a reviewed tall portal nearby. */
 export function overlapsReferenceGate(tileDistance: number): boolean {
+ if(activeCourse()&&tileDistance>489)return false;
  return REFERENCE_STRAIGHT_GATES.some(g=>Math.abs(g.tileDistance-tileDistance)<=36)
    || REFERENCE_OPENING_TURNS.some(t=>t.gate==='exit'&&Math.abs(t.distance+REFERENCE_EXIT_GATE_OFFSET-(tileDistance+6))<=36);
 }
@@ -39,6 +43,7 @@ export const REFERENCE_TREE_REVIEW_END=REFERENCE_OPENING_TURNS[2].distance;
 /** null suppresses invented periodic trees inside the reviewed opening.
  * undefined leaves the unreviewed suffix's existing approximate policy. */
 export function referenceAmbientTree(distance:number):typeof REFERENCE_OPENING_AMBIENT_TREES[number]|null|undefined {
+ if(activeCourse()&&distance>489)return undefined;
  if(distance<0||distance>REFERENCE_TREE_REVIEW_END)return undefined;
  return REFERENCE_OPENING_AMBIENT_TREES.find(t=>Math.abs(t.tileDistance-distance)<.01)??null;
 }
@@ -48,6 +53,7 @@ const DEFAULT_JUNCTION_TREES=[{variant:0,ahead:10}] as const;
  * Relative12m separation is a visual fit, not recovered RNG/cell coordinates.
  */
 export function referenceJunctionTrees(index:number,at:number):readonly {variant:number;ahead:number}[]{
+ if(activeCourse()&&index>2)return [{variant:index%4,ahead:12}];
  const turn=REFERENCE_OPENING_TURNS[index];
  return index===2&&turn&&Math.abs(turn.distance-at)<.01
   ?[{variant:0,ahead:10},{variant:2,ahead:22}]:DEFAULT_JUNCTION_TREES;

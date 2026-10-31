@@ -1,3 +1,4 @@
+import { BonusSpawnDirector } from './nativeBonusSpawn';
 import { boostAcceleration, consumeBoostProgress } from './nativeBoost';
 import { activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
 import {newEnemyJump, queueEnemyJump, stepEnemyJump} from './enemyJump';
@@ -137,6 +138,12 @@ export class Game {
   private nextSpawn = 80;
   private referenceObstacleIndex = 0;
   private obstacleRng = new SeededRandom(0x51ed270b);
+  private runSeed=0;
+  private routeRng=new SeededRandom(1);
+  private rewardRng=new SeededRandom(2);
+  private bonusDirector=new BonusSpawnDirector(new SeededRandom(1));
+  private generatedBonuses:Array<{distance:number;kind:string;lane:number;collected:boolean}>=[];
+  private readonly referenceReplay=new URLSearchParams(window.location.search).get('route')==='reference';
   private difficulty: DifficultyConfig = getDifficulty();
   private lastObstacleDistance = 0;
   private lastObstacleSide = 0;
@@ -378,6 +385,7 @@ export class Game {
       terrain: (d: number) => terrainAt(d, this.path),
       narrow: (d: number) => this.narrowAt(d, this.path),
       sidePath: (d: number) => this.sidePathAt(d, this.path),
+      groundSupport: (ahead=0) => [0,1,2].map(lane=>this.nativeGroundSupported(this.distance+ahead,LANES[lane],lane)),
       graph: () => ({ forks: this.graph.forks.map((f) => ({ at: f.at, chosen: f.chosen })), activeSegments: this.graph.active.segments.length }),
       death: () => ({ reason: mutateUi.deathReason, kind: mutateUi.deathKind, elapsed:this.deathElapsed, delay:this.deathTimer }),
     };
@@ -394,6 +402,7 @@ export class Game {
     const primary = effects.find(effect=>effect.kind===power.kind)??effects[0];
     return {
       phase: mutateUi.phase,
+      generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
       powers: effects,
       power: primary?.kind??null,
@@ -429,7 +438,7 @@ export class Game {
       chaseGap: chase.gap,
       obstacles: this.obstacles.map((entity) => {
         const o = this.world.require(entity, Obstacle);
-        return { kind: o.kind, lane: o.lane, full: o.full, ahead: Math.round(o.distance - this.distance) };
+        return { kind: o.kind, defId:o.defId, lane: o.lane, full: o.full, ahead: Math.round(o.distance - this.distance) };
       }),
       pickups: this.pickups.map((entity) => {
         const p = this.world.require(entity, Pickup);
@@ -535,7 +544,13 @@ export class Game {
     this.nextPickup = this.difficulty.name==='classic' ? Math.max(MIN_BONUS_ITEM_SPACING,REFERENCE_RANDOM_OBSTACLES_FROM) : MIN_BONUS_ITEM_SPACING;
     this.lastObstacleDistance = 0;
     this.lastObstacleSide = 0;
-    this.obstacleRng = new SeededRandom((Date.now() ^ 0x9e3779b9) >>> 0);
+    const seedParam=new URLSearchParams(window.location.search).get('seed');
+    this.runSeed=seedParam!==null&&/^\d+$/.test(seedParam)?Number(seedParam)>>>0:(Date.now()^0x9e3779b9)>>>0;
+    this.obstacleRng = new SeededRandom(this.runSeed);
+    this.routeRng=new SeededRandom(this.runSeed^0x726f7574);
+    this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
+    this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765));
+    this.generatedBonuses=[];
     this.deathTimer = 0;this.deathElapsed=0;
     this.hintCooldown = 0;
     this.narrowWarned = false;
@@ -851,7 +866,7 @@ export class Game {
     if (turn.direction !== 0 && distance > turn.next - TURN_CUE_DISTANCE && !turn.cueShown) {
       turn.cueShown = true;
       sfx.play('whoosh', { gain: 0.8 });
-      if(this.difficulty.name==='classic')for(const pickup of referencePickupsForTurn(turn.count,turn.next))
+      if(this.referenceReplay&&this.difficulty.name==='classic')for(const pickup of referencePickupsForTurn(turn.count,turn.next))
         this.spawnPickup(pickup.kind,pickup.lane,pickup.distance,pickup.height);
       const recordedCoins=this.difficulty.name==='classic' ? referenceCoinsForTurn(turn.count,turn.next) : null;
       if(recordedCoins) {
@@ -877,7 +892,7 @@ export class Game {
     const turn = this.world.require(this.runnerEntity, Turn);
     if (turn.direction !== 0) return;
     const recordedDirection = this.difficulty.name === 'classic' ? referenceTurnDirection(turn.count, turn.next) : null;
-    const direction: 1 | -1 = recordedDirection ?? (Math.random() > 0.5 ? 1 : -1);
+    const direction: 1 | -1 = recordedDirection ?? (this.routeRng.next() > 0.5 ? 1 : -1);
     turn.direction = direction;
     // Route through TrackGraph rather than mutating the only path object. The chosen
     // branch becomes the active path; the other branch is retained in the fork for the
@@ -901,7 +916,7 @@ export class Game {
     turn.lastDirection = turn.direction;
     turn.lastTurnDistance = turn.next;
     turn.direction = 0;
-    const length = this.difficulty.turnMin + 12 + Math.floor(Math.random() * 3) * 12;
+    const length = this.difficulty.turnMin + 12 + this.routeRng.int(3) * 12;
     const recordedNext = this.difficulty.name === 'classic' ? referenceNextTurnDistance(turn.count, turn.next) : null;
     const reviewedEnd = this.difficulty.name === 'classic' && recordedNext === null
       && referenceTurnDirection(turn.count-1,turn.lastTurnDistance)!==null
@@ -1501,10 +1516,32 @@ export class Game {
       if (this.obstacleRng.next() > 0.86) this.spawnGem(this.obstacleRng.int(3), base + 24);
       this.nextSpawn = base + plan.gap;
     }
+    if(this.referenceReplay){
     while (this.nextPickup < this.distance + 90) {
       const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
       this.spawnPickup(kinds[this.obstacleRng.int(kinds.length)], this.obstacleRng.int(3), this.nextPickup);
       this.nextPickup += MIN_BONUS_ITEM_SPACING + this.obstacleRng.next() * 240;
+    }
+    }else{
+      while(this.bonusDirector.next<this.distance+60){
+        const at=this.bonusDirector.next;
+        const turn=this.world.require(this.runnerEntity,Turn);
+        // Native tile eligibility is richer than this polyline representation.
+        // Protect approach/exit, choose a lane that stays supported, and avoid level changes.
+        // Prefetch60m leaves the +/-24m support check inside the95m obstacle horizon.
+        const lanes=[0,1,2].filter(lane=>this.difficulty.name!=='classic'||[-24,0,24].every(offset=>this.nativeGroundSupported(at+offset,LANES[lane],lane)));
+        const surface=surfaceAt(at);
+        const sameLevelRoom=at-surface.from>=24&&surface.to-at>=24;
+        const safe=sameLevelRoom&&lanes.length>0&&Math.abs(at-turn.next)>=42&&Math.abs(at-turn.lastTurnDistance)>=32
+          &&!this.path.nearTurn(at,32)&&!this.narrowAt(at)&&!this.sidePathAt(at)
+          &&!this.obstacles.some(entity=>Math.abs(this.world.require(entity,Obstacle).distance-at)<18);
+        const plan=this.bonusDirector.attempt(safe);
+        if(!plan)continue;
+        const lane=lanes[this.bonusDirector.rng.int(lanes.length)];
+        this.spawnPickup(plan.kind,lane,plan.distance,1.35);
+        this.generatedBonuses.push({...plan,lane,collected:false});
+        if(this.generatedBonuses.length>128)this.generatedBonuses.shift();
+      }
     }
   }
 
@@ -1580,7 +1617,7 @@ export class Game {
   /** The temple monkey runs beside you for a few seconds, then steals a handful of coins. */
   private updateMonkey(dt: number): void {
     if (!this.monkeyGroup) {
-      if (this.difficulty.name !== 'classic' && this.distance > 260 && Math.random() < dt * 0.02) this.spawnMonkey(this.distance + 12);
+      if (this.difficulty.name !== 'classic' && this.distance > 260 && this.rewardRng.next() < dt * 0.02) this.spawnMonkey(this.distance + 12);
       return;
     }
     this.monkeyTimer -= dt;
@@ -1611,7 +1648,7 @@ export class Game {
   /** Energy bar full: hand out one of the four classic boosts. */
   private grantPower(): void {
     const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
-    const kind = kinds[Math.floor(Math.random() * kinds.length)];
+    const kind = kinds[this.rewardRng.int(kinds.length)];
     if (kind === 'bonus') {
       this.world.require(this.runnerEntity, RunStats).coins += coinBonusReward();
       setHint(`金币奖励 +${coinBonusReward()}`);
@@ -1818,6 +1855,8 @@ export class Game {
       );
       if (!pickup.taken && close && heightClose) {
         pickup.taken = true;
+        const generated=this.generatedBonuses.find(record=>record.distance===pickup.distance&&record.kind===pickup.kind);
+        if(generated)generated.collected=true;
         if (pickup.kind !== 'coin' && pickup.kind !== 'gem') {
           stats.score += NATIVE_POWER_SCORE_VALUE * REFERENCE_SCORE_MULTIPLIER;
         }
@@ -2171,7 +2210,7 @@ export class Game {
     if (turn.direction !== 0 && this.distance >= turn.next) {
       turn.direction = 0;
       turn.queued = false;
-    turn.autoQueued = false;
+      turn.autoQueued = false;
       turn.cueShown = false;
       turn.next = 9 + 12 * Math.max(1, Math.round((this.distance + 72 - 9) / 12));
     }
@@ -2223,6 +2262,8 @@ export class Game {
     this.nextSpawn = this.difficulty.name==='classic' ? Math.max(distance+90,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+90;
     this.referenceObstacleIndex = 0;
     this.nextPickup = this.difficulty.name==='classic' ? Math.max(distance+MIN_BONUS_ITEM_SPACING,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+MIN_BONUS_ITEM_SPACING;
+    this.bonusDirector.skipTo(distance);
+    this.generatedBonuses=[];
     this.lastObstacleDistance = distance;
     this.lastObstacleSide = lane.x;
     this.ensureTiles();

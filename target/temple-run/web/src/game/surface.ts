@@ -1,3 +1,4 @@
+import { activeCourse } from './coursePlan';
 import { referenceTileDistance } from './referenceCoordinates';
 export type SurfaceKind = 'stone' | 'wood';
 
@@ -26,8 +27,9 @@ export const REFERENCE_SURFACES: ReadonlyArray<{ kind: SurfaceKind; from: number
 ] as const).map(section=>({...section,from:referenceTileDistance(section.from),to:referenceTileDistance(section.to)}));
 
 export function surfaceAt(distance: number): SurfaceSection {
-  const index = REFERENCE_SURFACES.findIndex(section => distance < section.to);
-  const section = REFERENCE_SURFACES[index < 0 ? 4 : index];
+  const sections=activeCourse()?.surfaces??REFERENCE_SURFACES;
+  const index = sections.findIndex(section => distance < section.to);
+  const section = sections[index < 0 ? sections.length-1 : index];
   return {
     ...section,
     index: Math.max(0, index),
@@ -39,18 +41,18 @@ export function surfaceAt(distance: number): SurfaceSection {
 /** Transition cells replace the last stone cell before wood and the first
  * stone cell after wood. Placement follows the current fitted reference grid. */
 export function nativeTransitionAt(distance:number):'a'|'b'|null {
- for(const section of REFERENCE_SURFACES)if(section.kind==='wood'){
+ for(const section of activeCourse()?.surfaces??REFERENCE_SURFACES)if(section.kind==='wood'){
   if(Math.abs(distance-(section.from-12))<.01)return 'a';
   if(Math.abs(distance-section.to)<.01)return 'b';
  }
  return null;
 }
 export function nativeTransitionSupported(distance:number):boolean {
- return !REFERENCE_SURFACES.some(section=>section.kind==='wood'&&
+ return !(activeCourse()?.surfaces??REFERENCE_SURFACES).some(section=>section.kind==='wood'&&
   (distance>section.from-12&&distance<section.from-6||distance>section.to-6&&distance<section.to));
 }
 /** First plank region starts six metres before its centre; the exit cap's
  * stone support starts at its centre. Missing regions retain the previous level. */
-export const nativeGroundHeightAt=(distance:number):number=>REFERENCE_SURFACES.some(s=>s.kind==='wood'&&distance>=s.from-6&&distance<s.to)?-3:0;
+export const nativeGroundHeightAt=(distance:number):number=>(activeCourse()?.surfaces??REFERENCE_SURFACES).some(s=>s.kind==='wood'&&distance>=s.from-6&&distance<s.to)?-3:0;
 /** Existing plank exports add raw15.25; undo graphical normalization only. */
 export const nativeMeshHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3.05:0;

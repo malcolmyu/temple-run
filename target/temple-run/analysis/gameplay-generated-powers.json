@@ -1,0 +1,392 @@
+{
+  "checks": [
+    {
+      "name": "seed1: normal run reaches5500m",
+      "passed": true
+    },
+    {
+      "name": "seed1: first generated power before1000m",
+      "passed": true
+    },
+    {
+      "name": "seed1: generated gaps strictly exceed600m",
+      "passed": true
+    },
+    {
+      "name": "seed1: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed1: results restart clears generator",
+      "passed": true
+    },
+    {
+      "name": "seed2: normal run reaches5500m",
+      "passed": true
+    },
+    {
+      "name": "seed2: first generated power before1000m",
+      "passed": true
+    },
+    {
+      "name": "seed2: generated gaps strictly exceed600m",
+      "passed": true
+    },
+    {
+      "name": "seed2: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed2: results restart clears generator",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected bonus",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected shield",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected magnet",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected boost",
+      "passed": true
+    }
+  ],
+  "runs": [
+    {
+      "airborne": false,
+      "autoTurnQueued": false,
+      "boost": {
+        "active": true,
+        "left": 33.88432957276375,
+        "speedBefore": 38.617410278320314
+      },
+      "chaseGap": 11.5,
+      "coins": 908,
+      "distance": 5500,
+      "distanceExact": 5500.728006973287,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [
+          {
+            "collected": true,
+            "distance": 696,
+            "kind": "shield",
+            "lane": 1
+          },
+          {
+            "collected": true,
+            "distance": 1380,
+            "kind": "bonus",
+            "lane": 1
+          },
+          {
+            "collected": true,
+            "distance": 2076,
+            "kind": "magnet",
+            "lane": 1
+          },
+          {
+            "collected": true,
+            "distance": 2784,
+            "kind": "bonus",
+            "lane": 2
+          },
+          {
+            "collected": true,
+            "distance": 4260,
+            "kind": "shield",
+            "lane": 1
+          },
+          {
+            "collected": true,
+            "distance": 4872,
+            "kind": "shield",
+            "lane": 1
+          }
+        ],
+        "lastBonus": 4872,
+        "nextBonusCheck": 5568,
+        "seed": 1
+      },
+      "groundY": 0,
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 2,
+      "nextTurn": 5517,
+      "obstacles": [
+        {
+          "ahead": 64,
+          "defId": "treeSlide",
+          "full": true,
+          "kind": "arch",
+          "lane": 1
+        }
+      ],
+      "phase": "playing",
+      "pickups": [
+        {
+          "ahead": 11,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 13,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 16,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 18,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 20,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 56,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 54,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 52,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 50,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 48,
+          "kind": "coin",
+          "lane": 1
+        }
+      ],
+      "power": "boost",
+      "powerRemaining": 3.900000000000091,
+      "powers": [
+        {
+          "kind": "magnet",
+          "remaining": 1.200000000012551,
+          "unit": "s"
+        },
+        {
+          "kind": "shield",
+          "remaining": 3.900000000000091,
+          "unit": "s"
+        },
+        {
+          "kind": "boost",
+          "remaining": 3.900000000000091,
+          "slowing": true,
+          "unit": "s"
+        }
+      ],
+      "progressDistance": 5131.866624966021,
+      "queuedForwardForce": -30,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 137.6781463623047,
+      "score": 161420,
+      "side": 1.2999999999999987,
+      "slideDuration": 0.75,
+      "sliding": 0,
+      "speed": 81,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "turnCount": 42,
+      "turnDirection": -1,
+      "turnQueued": false,
+      "worldY": 0
+    },
+    {
+      "airborne": false,
+      "autoTurnQueued": false,
+      "boost": {
+        "active": true,
+        "left": -32.003012102258786,
+        "speedBefore": 41.49606628417969
+      },
+      "chaseGap": 11.499999999999996,
+      "coins": 1161,
+      "distance": 5501,
+      "distanceExact": 5501.399276580838,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [
+          {
+            "collected": true,
+            "distance": 708,
+            "kind": "boost",
+            "lane": 0
+          },
+          {
+            "collected": true,
+            "distance": 1380,
+            "kind": "boost",
+            "lane": 1
+          },
+          {
+            "collected": true,
+            "distance": 2028,
+            "kind": "boost",
+            "lane": 0
+          },
+          {
+            "collected": true,
+            "distance": 2688,
+            "kind": "magnet",
+            "lane": 0
+          },
+          {
+            "collected": true,
+            "distance": 3432,
+            "kind": "magnet",
+            "lane": 2
+          },
+          {
+            "collected": true,
+            "distance": 4572,
+            "kind": "magnet",
+            "lane": 2
+          },
+          {
+            "collected": true,
+            "distance": 5256,
+            "kind": "boost",
+            "lane": 1
+          }
+        ],
+        "lastBonus": 5256,
+        "nextBonusCheck": 5568,
+        "seed": 2
+      },
+      "groundY": 0,
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 0,
+      "nextTurn": 5517,
+      "obstacles": [
+        {
+          "ahead": 64,
+          "defId": "flameTower",
+          "full": true,
+          "kind": "fire",
+          "lane": 1
+        }
+      ],
+      "phase": "playing",
+      "pickups": [
+        {
+          "ahead": 56,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 54,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 52,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 50,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 48,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 11,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 13,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 15,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 17,
+          "kind": "coin",
+          "lane": 1
+        },
+        {
+          "ahead": 19,
+          "kind": "coin",
+          "lane": 1
+        }
+      ],
+      "power": "magnet",
+      "powerRemaining": 13.62500000000125,
+      "powers": [
+        {
+          "kind": "magnet",
+          "remaining": 13.62500000000125,
+          "unit": "s"
+        },
+        {
+          "kind": "shield",
+          "remaining": 3.1000000000008185,
+          "unit": "s"
+        },
+        {
+          "kind": "boost",
+          "remaining": 3.1000000000008185,
+          "slowing": true,
+          "unit": "s"
+        }
+      ],
+      "progressDistance": 5309.240877263175,
+      "queuedForwardForce": -30,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 135.22874450683594,
+      "score": 180780,
+      "side": -1.2964630431033244,
+      "slideDuration": 0.75,
+      "sliding": 0,
+      "speed": 62.25,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "turnCount": 42,
+      "turnDirection": 1,
+      "turnQueued": false,
+      "worldY": 0
+    }
+  ]
+}

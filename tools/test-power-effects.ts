@@ -12,7 +12,9 @@ assert.equal(p.boost.left,300,'boost must use configured progress budget, ignori
 assert.equal(p.expires.shield,44,'native first boost replaces invincibility with4 seconds');
 assert.equal(boostAcceleration(p.boost,25,1),30);
 stepPowerEffects(p,40.1,.1);assert.equal(p.expires.shield,44.1,'cruise freezes tail countdown');
-consumeBoostProgress(p.boost,251);assert.equal(p.boost.left,49);
+consumeBoostProgress(p.boost,250);const atBoundary=p.expires.shield;
+stepPowerEffects(p,40.2,.1);assert.equal(p.expires.shield,atBoundary+.1,'50 progress still freezes the native clock');
+consumeBoostProgress(p.boost,1);assert.equal(p.boost.left,49);
 assert.equal(boostAcceleration(p.boost,60,1),-30);assert.equal(boostAcceleration(p.boost,21,1),1);
 const end=p.expires.shield;stepPowerEffects(p,41,.1);assert.equal(p.expires.shield,end,'braking no longer freezes countdown');
 activatePower(p,'boost',41,5,60);assert.equal(p.boost.speedBefore,22,'refresh must retain pre-boost speed');assert.equal(p.boost.left,300);assert.equal(p.expires.shield,end);

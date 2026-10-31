@@ -23,7 +23,7 @@
     "StartBoost sets a distinct flag; initial start also calls invincibility with4 seconds."
   ],
   "limits": [
-    "Web boost remains timed5 seconds, not yet ported native distance-based boost.",
-    "Web presently preserves the existing shield when starting boost; native4-second replacement behavior requires integration with distance/slowdown rules."
+    "The initial5-second web approximation has been superseded by nativeBoost.ts; detailed budget/force verification is in native-boost-rules/source.json.",
+    "Exact native graph-following transitions and remote config overrides remain unresolved."
   ]
 }

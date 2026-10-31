@@ -54,16 +54,22 @@
     "autoTurnQueued": false,
     "boost": {
       "active": false,
-      "left": -103.41408931081575,
+      "left": -103.65708932348922,
       "speedBefore": 22.1
     },
     "chaseGap": 11.5,
     "coins": 0,
     "distance": 340,
-    "distanceExact": 340.11625000000004,
+    "distanceExact": 340.6575,
     "falling": false,
     "fps": 60,
     "gems": 0,
+    "generation": {
+      "bonuses": [],
+      "lastBonus": 0,
+      "nextBonusCheck": 612,
+      "seed": 1
+    },
     "groundY": 0,
     "jumpVelocity": 0,
     "jumpY": 0,
@@ -71,7 +77,8 @@
     "nextTurn": 489,
     "obstacles": [
       {
-        "ahead": 26,
+        "ahead": 25,
+        "defId": "treeJump",
         "full": true,
         "kind": "hurdle",
         "lane": 1
@@ -90,17 +97,17 @@
         "lane": 0
       },
       {
-        "ahead": 37,
+        "ahead": 36,
         "kind": "coin",
         "lane": 0
       },
       {
-        "ahead": 40,
+        "ahead": 39,
         "kind": "coin",
         "lane": 0
       },
       {
-        "ahead": 44,
+        "ahead": 43,
         "kind": "coin",
         "lane": 0
       },
@@ -110,12 +117,12 @@
         "lane": 0
       },
       {
-        "ahead": 51,
+        "ahead": 50,
         "kind": "coin",
         "lane": 0
       },
       {
-        "ahead": 55,
+        "ahead": 54,
         "kind": "coin",
         "lane": 0
       },
@@ -125,12 +132,12 @@
         "lane": 0
       },
       {
-        "ahead": 62,
+        "ahead": 61,
         "kind": "coin",
         "lane": 0
       },
       {
-        "ahead": 66,
+        "ahead": 65,
         "kind": "coin",
         "lane": 0
       },
@@ -140,12 +147,12 @@
         "lane": 0
       },
       {
-        "ahead": 73,
+        "ahead": 72,
         "kind": "coin",
         "lane": 0
       },
       {
-        "ahead": 77,
+        "ahead": 76,
         "kind": "coin",
         "lane": 0
       },
@@ -155,12 +162,12 @@
         "lane": 0
       },
       {
-        "ahead": 84,
+        "ahead": 83,
         "kind": "coin",
         "lane": 0
       },
       {
-        "ahead": 88,
+        "ahead": 87,
         "kind": "coin",
         "lane": 0
       },
@@ -170,12 +177,12 @@
         "lane": 0
       },
       {
-        "ahead": 95,
+        "ahead": 94,
         "kind": "coin",
         "lane": 0
       },
       {
-        "ahead": 99,
+        "ahead": 98,
         "kind": "coin",
         "lane": 0
       }
@@ -183,16 +190,16 @@
     "power": null,
     "powerRemaining": 0,
     "powers": [],
-    "progressDistance": 413.6418997400704,
+    "progressDistance": 413.88602605488586,
     "queuedForwardForce": 2,
     "recoveringFromStumble": false,
     "rig": "ready",
-    "runElapsed": 8.57501220703125,
+    "runElapsed": 8.600011825561523,
     "score": 8760,
     "side": 0,
     "slideDuration": 0,
     "sliding": 0,
-    "speed": 21.6,
+    "speed": 21.65,
     "stumbleRemaining": 0,
     "swipeStumbleDelay": null,
     "turnCount": 2,
@@ -215,6 +222,12 @@
     "falling": false,
     "fps": 60,
     "gems": 0,
+    "generation": {
+      "bonuses": [],
+      "lastBonus": 0,
+      "nextBonusCheck": 612,
+      "seed": 1
+    },
     "groundY": 0,
     "jumpVelocity": 0,
     "jumpY": 0,
@@ -280,16 +293,16 @@
       }
     ],
     "power": "boost",
-    "powerRemaining": 4.000000000000041,
+    "powerRemaining": 4,
     "powers": [
       {
         "kind": "shield",
-        "remaining": 4.000000000000041,
+        "remaining": 4,
         "unit": "s"
       },
       {
         "kind": "boost",
-        "remaining": 4.000000000000041,
+        "remaining": 4,
         "slowing": true,
         "unit": "s"
       }
@@ -327,6 +340,12 @@
     "falling": false,
     "fps": 60,
     "gems": 0,
+    "generation": {
+      "bonuses": [],
+      "lastBonus": 0,
+      "nextBonusCheck": 612,
+      "seed": 1
+    },
     "groundY": 0,
     "jumpVelocity": 0,
     "jumpY": 0,
@@ -335,6 +354,7 @@
     "obstacles": [
       {
         "ahead": 92,
+        "defId": "treeTrip",
         "full": true,
         "kind": "trip",
         "lane": 1
@@ -347,7 +367,7 @@
     "powers": [
       {
         "kind": "shield",
-        "remaining": 4.000000000000002,
+        "remaining": 4,
         "unit": "s"
       },
       {

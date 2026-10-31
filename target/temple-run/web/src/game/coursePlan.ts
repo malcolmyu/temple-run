@@ -1,0 +1,76 @@
+import type { DefId } from './obstacles/catalog';
+import { SeededRandom } from './obstacles/rng';
+export interface CourseTurn {distance:number;direction:1|-1;junction:'corner'|'tee';}
+export interface CourseObstacle {distance:number;defId:DefId;prefab:string;lane?:number;}
+export interface CourseSurface {kind:'stone'|'wood';from:number;to:number;}
+export interface CourseNarrow {from:number;to:number;side:'left'|'right';}
+export interface CourseBranch {from:number;to:number;}
+export interface CourseFeature {kind:string;from:number;to:number;surface:'stone'|'wood';}
+const STONE_FEATURES=['treeJump','treeTrip','treeSlide','flameTower','stonePedestal','pit','narrowSmall','narrowLong','branch','longGap'] as const;
+/** Web course design, not recovered native generation weights.
+ * Native constraints:12m grid, minimum6 spaces, paired long-hole caps and original support polygons.
+ * A shuffled coverage bag makes all requested mechanics reachable; lengths144/168/192 are assumptions.
+ */
+export class CoursePlan {
+ readonly turns:CourseTurn[]=[{distance:153,direction:1,junction:'corner'},{distance:321,direction:1,junction:'corner'},{distance:489,direction:-1,junction:'tee'}];
+ readonly obstacles:CourseObstacle[]=[{distance:108,defId:'treeTrip',prefab:'tree-trip-left'},{distance:285,defId:'treeJump',prefab:'tree-jump-left'},{distance:366,defId:'treeJump',prefab:'tree-jump-right'},{distance:453,defId:'pit',prefab:'pit'}];
+ readonly surfaces:CourseSurface[]=[{kind:'stone',from:0,to:Infinity}];
+ readonly narrows:CourseNarrow[]=[];
+ readonly branches:CourseBranch[]=[];
+ readonly features:CourseFeature[]=[];
+ private readonly rng:SeededRandom;
+ private bag:string[]=[];
+ private blocks=0;
+ extent=489;
+ constructor(readonly seed:number){this.rng=new SeededRandom(seed^0x636f7572);this.ensureThrough(6000);}
+ private stoneFeature(at:number):string {
+  if(!this.bag.length){this.bag=[...STONE_FEATURES];for(let i=this.bag.length-1;i>0;i--){const j=this.rng.int(i+1);[this.bag[i],this.bag[j]]=[this.bag[j],this.bag[i]];}}
+  const feature=this.bag.shift()!;
+  if(feature==='longGap'&&at<1400){this.bag.push(feature);return 'pit';}
+  return feature;
+ }
+ ensureThrough(distance:number):void {
+  while(this.extent<distance){
+   const from=this.extent,length=144+this.rng.int(3)*24,to=from+length;
+   const mid=12*Math.round((from+length/2)/12);
+   let surface=this.surfaces.at(-1)!.kind;
+   const transition=this.blocks%4===3;
+   let kind:string;
+   if(transition){
+    const boundary=mid;
+    this.surfaces.at(-1)!.to=boundary;surface=surface==='stone'?'wood':'stone';
+    this.surfaces.push({kind:surface,from:boundary,to:Infinity});kind='transition';
+   }else kind=surface==='wood'?(this.rng.int(2)===0?'plankPit':'plankBeam'):this.stoneFeature(mid);
+   const add=(defId:DefId,prefab:string,at=mid,lane?:number)=>this.obstacles.push({defId,prefab,distance:at,lane});
+   const right=this.rng.int(2)===0;
+   switch(kind){
+    case 'transition':break;
+    case 'treeJump':add('treeJump',right?'tree-jump-right':'tree-jump-left');break;
+    case 'treeTrip':add('treeTrip',right?'tree-trip-right':'tree-trip-left');break;
+    case 'treeSlide':add('treeSlide','tree-slide');break;
+    case 'flameTower':add('flameTower','flame-tower');break;
+    case 'stonePedestal':add('stonePedestal','stone-pedestal',mid,this.rng.int(3));break;
+    case 'pit':add('pit','pit');break;
+    case 'plankPit':add('plankPit','plank-pit');break;
+    case 'plankBeam':add('plankBeam','plank-beam');break;
+    case 'longGap':add('pitLongB','pit-long-b',mid-12);add('pitLongA','pit-long-a',mid);break;
+    case 'narrowSmall':{
+     add(right?'narrowBeamRight':'narrowBeamLeft',right?'narrow-beam-right':'narrow-beam-left');
+     this.narrows.push({from:mid-6,to:mid+6,side:right?'left':'right'});break;
+    }
+    case 'narrowLong':{
+     if(right){add('narrowWallRightB','narrow-wall-right-b',mid-12);add('narrowWallRight','narrow-wall-right');add('narrowWallRightA','narrow-wall-right-a',mid+12);}
+     else{add('narrowWallLeftB','narrow-wall-left-b',mid-12);add('narrowWallLeft','narrow-wall-left');add('narrowWallLeftA','narrow-wall-left-a',mid+12);}
+     this.narrows.push({from:mid-18,to:mid+18,side:right?'left':'right'});break;
+    }
+    case 'branch':this.branches.push({from:mid-18,to:mid+18});break;
+   }
+   this.features.push({kind,from,to,surface});
+   this.turns.push({distance:to,direction:right?1:-1,junction:this.rng.int(4)===0?'tee':'corner'});
+   this.extent=to;this.blocks++;
+  }
+ }
+}
+let active:CoursePlan|null=null;
+export function setActiveCourse(course:CoursePlan|null):void {active=course;}
+export const activeCourse=():CoursePlan|null=>active;

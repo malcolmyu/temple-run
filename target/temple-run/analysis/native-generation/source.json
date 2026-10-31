@@ -72,9 +72,23 @@
     "sMaxCoinsPerRun": 5,
     "sMinSpacesBetweenBonusItems": 50
   },
+  "verifiedBonusSelection": {
+    "configInterpretation": "positive enables candidate; magnitude is not used as a weight",
+    "candidateEnums": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "gate": "Range(0,2)==0",
+    "choice": "Range(0,enabledCount)",
+    "randomRangeInt": "0x24b3ee8",
+    "spacing": "strictly greater than sMinSpacesBetweenBonusItems",
+    "webAdaptation": "all four enabled; safe lane and height1.35; geometry protections approximate original tile predicates"
+  },
   "limitations": [
     "Static defaults can be overwritten by GameController configuration.",
-    "Method bodies extracted; branching weights, length distribution and runtime probabilities not yet decoded.",
-    "Web gapJitter24, gem14%, equal power weights and theme schedule are not proven native rules."
+    "Road branching weights and length distribution remain undecoded; runtime bonus enable configuration has not been recovered.",
+    "Web gapJitter24, gem14% and theme schedule are not proven native rules; bonus selection now follows the verified gate and enabled pool."
   ]
 }

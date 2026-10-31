@@ -1,3 +1,4 @@
+import { activeCourse } from './coursePlan';
 import { referenceJunctionDistance } from './referenceCoordinates';
 
 /** BV1ypuKzPErT's observed opening, not recovered Unity random-generation code.
@@ -59,20 +60,22 @@ export const REFERENCE_OPENING_TURNS: ReadonlyArray<{
 ] as const).map(turn=>({...turn,legacyDistance:turn.distance,distance:referenceJunctionDistance(turn.distance)}));
 
 export function referenceTurnDirection(index: number, distance: number): 1 | -1 | null {
-  const turn=REFERENCE_OPENING_TURNS[index];
+  const turn=(activeCourse()?.turns??REFERENCE_OPENING_TURNS)[index];
   return turn && Math.abs(turn.distance-distance)<.001 ? turn.direction : null;
 }
 
 export function referenceNextTurnDistance(completedCount: number, previousDistance: number): number | null {
-  const previous=REFERENCE_OPENING_TURNS[completedCount-1];
-  const next=REFERENCE_OPENING_TURNS[completedCount];
+  const turns=activeCourse()?.turns??REFERENCE_OPENING_TURNS;
+  const previous=turns[completedCount-1];
+  const next=turns[completedCount];
   return previous && next && Math.abs(previous.distance-previousDistance)<.001 ? next.distance : null;
 }
 
 export function referenceGate(index: number, distance: number): 'exit' | 'forward' | null {
+  if(activeCourse())return null;
   return referenceTurnDirection(index,distance)===null ? null : REFERENCE_OPENING_TURNS[index].gate;
 }
 
 export function referenceJunction(index: number, distance: number): 'corner' | 'tee' {
-  return referenceTurnDirection(index,distance)===null ? 'corner' : REFERENCE_OPENING_TURNS[index].junction;
+  return referenceTurnDirection(index,distance)===null ? 'corner' : (activeCourse()?.turns??REFERENCE_OPENING_TURNS)[index].junction;
 }
