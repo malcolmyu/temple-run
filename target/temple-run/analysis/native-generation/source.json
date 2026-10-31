@@ -1,0 +1,80 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "GetRandomPathElementForSide": {
+      "address": "0x12e3e48",
+      "end": "0x12e4bf4",
+      "sha256": "a28aaefa8dbe9bddaaf3c8b4fa5cb7f4f033810181d3df1838cf22180f688f8f"
+    },
+    "AddRandomPath": {
+      "address": "0x12e7584",
+      "end": "0x12e7890",
+      "sha256": "2382115e465b3c6439b581d4321aa5848e5e6c540fe4bfc6aff3a5d0cd9869e5"
+    },
+    "AddCoins": {
+      "address": "0x12e4bf4",
+      "end": "0x12e5f14",
+      "sha256": "c6719a7bc9acd20b3f33751703bf32fd2289b4fa2240a29ba402d56bb664bb71"
+    },
+    "AddBonusItems": {
+      "address": "0x12e5f14",
+      "end": "0x12e6348",
+      "sha256": "74ceca3aa7378403f29abc34dfde68ffd52a349fc35fe1d3c45449f9c03ad366"
+    },
+    ".cctor": {
+      "address": "0x12e8d18",
+      "end": "0x12e8f88",
+      "sha256": "0bb3e390ee6e0592fec456b938bf3c3ad67750b922cdaedf8170dadda732fe0d"
+    }
+  },
+  "staticFieldOffsets": {
+    "sCount": "0x0",
+    "sSafetyNetEnabled": "0x4",
+    "sAllowBonusItems": "0x5",
+    "sAllowVariations": "0x6",
+    "sAllowTurns": "0x7",
+    "sAllowPathHoles": "0x8",
+    "sAllowPathNarrows": "0x9",
+    "sAllowFlameTowers": "0xa",
+    "sAllowTreeStumble": "0xb",
+    "sAllowTreeJump": "0xc",
+    "sAllowTreeSlide": "0xd",
+    "sAllowTurnAfterObstacles": "0xe",
+    "sAllowSidePaths": "0xf",
+    "sAllowCoins": "0x10",
+    "sAllowDoubleCoins": "0x11",
+    "sAllowTripleCoins": "0x12",
+    "sAllowCenterCoins": "0x13",
+    "sAllowSideCoins": "0x14",
+    "sAllowJumpCoins": "0x15",
+    "sAllowSlantCoins": "0x16",
+    "sMinSpacesBetweenBonusItems": "0x18",
+    "sProbabilityCoinBonus": "0x1c",
+    "sProbabilityInvincibility": "0x20",
+    "sProbabilityVacuum": "0x24",
+    "sProbabilityBoost": "0x28",
+    "sMinSpaceBetweenTurns": "0x2c",
+    "sMaxBackToBackObstacles": "0x30",
+    "sMinSpaceBetweenObstacles": "0x34",
+    "sDoubleObstaclePercent": "0x38",
+    "sMinSpacesBetweenCoinRuns": "0x3c",
+    "sMaxCoinsPerRun": "0x40",
+    "sPathLevel": "0x44",
+    "sIsFastTurnSection": "0x48",
+    "sSafteyNetColor": "0x4c"
+  },
+  "verifiedConstructorDefaults": {
+    "sMinSpaceBetweenTurns": 6,
+    "sMaxBackToBackObstacles": 2,
+    "sMinSpaceBetweenObstacles": 6,
+    "sDoubleObstaclePercent": 0,
+    "sMinSpacesBetweenCoinRuns": 6,
+    "sMaxCoinsPerRun": 5,
+    "sMinSpacesBetweenBonusItems": 50
+  },
+  "limitations": [
+    "Static defaults can be overwritten by GameController configuration.",
+    "Method bodies extracted; branching weights, length distribution and runtime probabilities not yet decoded.",
+    "Web gapJitter24, gem14%, equal power weights and theme schedule are not proven native rules."
+  ]
+}

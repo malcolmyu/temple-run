@@ -1,5 +1,7 @@
 # 可玩性优先验收（2026-10-31）
 
+当前主清单与后续验证更新见 [gameplay-completeness.md](gameplay-completeness.md)，下文保留换道修复首轮记录。
+
 暂停逐帧、时间、分数、投影的严格对齐。
 
 ## 本轮修复

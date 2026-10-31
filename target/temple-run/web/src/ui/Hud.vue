@@ -11,11 +11,7 @@ defineProps<{ disabled?: boolean }>();
 const uiAsset = (file: string): string => `${import.meta.env.BASE_URL}assets/ui/${file}`;
 
 const turnLabel = computed(() => (ui.turnDirection < 0 ? '前方左转' : ui.turnDirection > 0 ? '前方右转' : ''));
-const powerLabel = computed(() => {
-  if (!ui.power) return '';
-  const names: Record<string, string> = { magnet: '磁铁', shield: '无敌', boost: '加速', bonus: '金币奖励', coin: '金币', gem: '宝石' };
-  return `${names[ui.power] ?? ui.power} ${Math.ceil(ui.powerRemaining)}s`;
-});
+const powerNames: Record<string,string> = {magnet:'磁铁',shield:'无敌',boost:'加速'};
 const cueLabel = computed(() => {
   const map: Record<string, string> = { jump: '↑ 跳过', slide: '↓ 滑铲', dodge: '↔ 换道', run: '' };
   return ui.nextCue ? map[ui.nextCue] ?? '' : '';
@@ -41,7 +37,7 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
     <div v-if="assist" class="run-distance">{{ ui.distance }} m</div>
 
     <div v-if="assist && ui.multiplier > 1" class="multi-badge">×{{ ui.multiplier }}</div>
-    <div v-if="assist && ui.power" class="power-badge">{{ powerLabel }}</div>
+    <div v-if="ui.powers.length" class="power-badge" role="status"><div v-for="effect in ui.powers" :key="effect.kind">{{ effect.slowing ? '减速' : powerNames[effect.kind] }} {{ Math.ceil(Math.max(0,effect.remaining-1e-6)) }}{{ effect.unit }}</div></div>
     <div v-if="assist && cueLabel && !turnLabel" class="action-cue">{{ cueLabel }}</div>
 
     <div v-if="assist && turnLabel" class="turn-cue" :class="{ ready: ui.turnQueued }">

@@ -1,3 +1,4 @@
+import { createPowerEffects, type PowerEffects } from './powerEffects';
 import { FIRST_TURN_DISTANCE } from './pacing';
 import type { Object3D } from 'three';
 import { defineComponent } from './ecs/world';
@@ -37,6 +38,7 @@ export const Turn = defineComponent<{
   next: number;
   direction: 0 | 1 | -1;
   queued: boolean;
+  autoQueued: boolean;
   cueShown: boolean;
   prebuilt: boolean;
   count: number;
@@ -47,6 +49,7 @@ export const Turn = defineComponent<{
   next: FIRST_TURN_DISTANCE,
   direction: 0,
   queued: false,
+  autoQueued: false,
   cueShown: false,
   prebuilt: false,
   count: 0,
@@ -136,11 +139,7 @@ export const RunStats = defineComponent<{
   score: 0,
 }));
 
-export const Power = defineComponent<{ kind: PickupKind | null; until: number; shield: boolean }>('Power', () => ({
-  kind: null,
-  until: 0,
-  shield: false,
-}));
+export const Power = defineComponent<PowerEffects>('Power', createPowerEffects);
 
 export const Runner = defineComponent<{ rig: unknown }>('Runner', () => ({ rig: null }));
 export const Chaser = defineComponent<{ object: Object3D | null }>('Chaser', () => ({ object: null }));

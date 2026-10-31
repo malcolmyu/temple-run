@@ -1,0 +1,29 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "StartInvcibility": {
+      "address": "0x1298c24",
+      "end": "0x1298c6c",
+      "sha256": "12a14d28bc74b568206db30238b9615e385bdc2eb2419852459b34fdfdbf0ab7"
+    },
+    "StartVacuum": {
+      "address": "0x1298c9c",
+      "end": "0x1298cb0",
+      "sha256": "a60c5337fe5e4c32b9583917f53df5b6c854627ee9f5d74084f72d5e762e845a"
+    },
+    "StartBoost": {
+      "address": "0x1298cc8",
+      "end": "0x1298d44",
+      "sha256": "201d930d222fc1fe930274e5e8a00c3836d02a07b3b834d1c9acde24221f980c"
+    }
+  },
+  "verified": [
+    "Vacuum and invincibility have separate flags and remaining times.",
+    "Their start methods assign their own timer, not add duration.",
+    "StartBoost sets a distinct flag; initial start also calls invincibility with4 seconds."
+  ],
+  "limits": [
+    "Web boost remains timed5 seconds, not yet ported native distance-based boost.",
+    "Web presently preserves the existing shield when starting boost; native4-second replacement behavior requires integration with distance/slowdown rules."
+  ]
+}

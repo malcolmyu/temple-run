@@ -1,0 +1,139 @@
+{
+  "checks": [
+    {
+      "name": "purchased magnet picked up: 20 seconds",
+      "passed": true
+    },
+    {
+      "name": "magnet does not vacuum shield or gem",
+      "passed": true
+    },
+    {
+      "name": "purchased bonus gives 75 and preserves active power",
+      "passed": true
+    },
+    {
+      "name": "magnet collects other-lane coins; purchased value gives five for four",
+      "passed": true
+    },
+    {
+      "name": "purchased shield picked up: 17.5 seconds",
+      "passed": true
+    },
+    {
+      "name": "coin and gem pickups work normally",
+      "passed": true
+    },
+    {
+      "name": "normal failure enters results",
+      "passed": true
+    },
+    {
+      "name": "revive resumes same run and spends two gems across run and bank",
+      "passed": true
+    },
+    {
+      "name": "revived run can fail again",
+      "passed": true
+    },
+    {
+      "name": "second revive unavailable without spending",
+      "passed": true
+    },
+    {
+      "name": "final settlement banks one run and its coins once",
+      "passed": true
+    },
+    {
+      "name": "restarting again cannot double-bank",
+      "passed": true
+    }
+  ],
+  "finalBank": {
+    "bestDistance": 139,
+    "bestScore": 3780,
+    "claimed": [],
+    "coins": 4022,
+    "equipped": "jhony",
+    "gems": 1,
+    "lifetimeCoins": 22,
+    "music": true,
+    "owned": [
+      "jhony"
+    ],
+    "runs": 2,
+    "sound": true,
+    "totalDistance": 277,
+    "upgrades": {
+      "bonus": 1,
+      "coin": 1,
+      "magnet": 1,
+      "shield": 1
+    }
+  },
+  "finalRun": {
+    "airborne": false,
+    "chaseGap": 11.5,
+    "coins": 11,
+    "distance": 241,
+    "distanceExact": 241.30277267456063,
+    "falling": false,
+    "fps": 60,
+    "gems": 0,
+    "groundY": 0,
+    "jumpVelocity": 0,
+    "jumpY": 0,
+    "lane": 1,
+    "nextTurn": 225,
+    "obstacles": [
+      {
+        "ahead": 44,
+        "full": true,
+        "kind": "hurdle",
+        "lane": 1
+      }
+    ],
+    "phase": "ended",
+    "pickups": [],
+    "power": null,
+    "powerRemaining": 0,
+    "progressDistance": 139.13145518239304,
+    "queuedForwardForce": 0,
+    "recoveringFromStumble": false,
+    "rig": "ready",
+    "runElapsed": 10.424983978271484,
+    "score": 3780,
+    "side": 0,
+    "slideDuration": 0,
+    "sliding": 0,
+    "speed": 28.243194580078125,
+    "stumbleRemaining": 0,
+    "swipeStumbleDelay": null,
+    "turnCount": 0,
+    "turnDirection": 1,
+    "turnQueued": false,
+    "worldY": 0
+  },
+  "initialBank": {
+    "bestDistance": 138,
+    "bestScore": 3760,
+    "claimed": [],
+    "coins": 4011,
+    "equipped": "jhony",
+    "gems": 2,
+    "lifetimeCoins": 11,
+    "music": true,
+    "owned": [
+      "jhony"
+    ],
+    "runs": 1,
+    "sound": true,
+    "totalDistance": 138,
+    "upgrades": {
+      "bonus": 1,
+      "coin": 1,
+      "magnet": 1,
+      "shield": 1
+    }
+  }
+}

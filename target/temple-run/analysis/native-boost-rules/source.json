@@ -1,0 +1,59 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "fields": {
+    "GameController.BoostDistance": "0x160",
+    "GameController.NumBoostsPickedUp": "0x178",
+    "GameController.HeadStartBoostDistance": "0x194",
+    "GameController.HeadStartMegaBoostDistance": "0x198",
+    "CharacterPlayer.kPlayerBoostSlowdownDistance": "0x0",
+    "CharacterPlayer.HasBoost": "0x174",
+    "CharacterPlayer.IsMegaBoost": "0x175",
+    "CharacterPlayer.BoostDistanceLeft": "0x178",
+    "CharacterPlayer.VelocityBeforeBoost": "0x17c",
+    "CharacterPlayer.BoostSlowdownDistance": "0x180"
+  },
+  "methods": {
+    "StartBoost": {
+      "start": "0x1298cc8",
+      "end": "0x1298d44",
+      "sha256": "201d930d222fc1fe930274e5e8a00c3836d02a07b3b834d1c9acde24221f980c"
+    },
+    "ComputeDistanceTraveled": {
+      "start": "0x126e458",
+      "end": "0x126e474",
+      "sha256": "59cb06bedf173d3efe8e28ace63a7d2a6421c13166eb3aea668a4ccb4beb4bbd"
+    },
+    "HandleControlsBoostForce": {
+      "start": "0x126fc40",
+      "end": "0x126fc90",
+      "sha256": "e7b87d376fb5f6bd1fbb7daad77d7df25ed4729eb7e38c2d33fa5d61b13b1c11"
+    },
+    "BoostInvincibilityClock": {
+      "start": "0x129733c",
+      "end": "0x1297378",
+      "sha256": "ed23a8a4551fb85e3a5bd773de0efa4a5b0492b5b8fe6c3f1570f8c707841473"
+    },
+    "GetMaxRunVelocity": {
+      "start": "0x129833c",
+      "end": "0x129836c",
+      "sha256": "7d72ff7c30179f35bf117fcb6bc1afb20568a740f5e8f16c5b425d30e6415c18"
+    }
+  },
+  "verified": {
+    "baseBudget": 250,
+    "brakingAllowance": 50,
+    "progressUnit": "ComputeDistanceTraveled metric delta, not scaled physical metres",
+    "firstInvincibilitySeconds": 4,
+    "clockPausedWhileRemainingAtLeast": 50,
+    "normalBoostMaxSpeedMultiplier": 2,
+    "rawAccelerationForce": 150,
+    "rawBrakingForce": -150,
+    "webWorldAcceleration": 30,
+    "refresh": "replace budget, preserve pre-boost speed; do not restart4s while already boosting"
+  },
+  "limits": [
+    "Remote config and boost upgrade overrides not decoded.",
+    "Mega boost multiplier2.5 is outside the normal pickup implementation.",
+    "Automatic selected-exit queueing is a web playability adapter; exact native graph-following transition has not been independently ported."
+  ]
+}

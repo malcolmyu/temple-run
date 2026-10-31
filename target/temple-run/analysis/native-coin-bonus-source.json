@@ -1,5 +1,16 @@
 {
   "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "vacuumFilter": {
+    "predicate": "BonusItem.IsACoin",
+    "address": "0x1296070",
+    "allowedNativeEnums": [
+      1,
+      2,
+      3
+    ],
+    "call": "0x1270ed0",
+    "nonCoinBranch": "0x127109c"
+  },
   "baseCoins": 50,
   "upgradeLevels1Through6": [
     50,

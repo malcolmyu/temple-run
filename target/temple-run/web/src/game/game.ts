@@ -1,3 +1,5 @@
+import { boostAcceleration, consumeBoostProgress } from './nativeBoost';
+import { activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
 import {newEnemyJump, queueEnemyJump, stepEnemyJump} from './enemyJump';
 import { startNativeCameraShake, stepNativeCameraShake, type NativeCameraShake } from './nativeCameraShake';
 import { NATIVE_RESULT_DELAY, stepNativeDeathTimer, nativeGroundContact } from './nativeDeath';
@@ -8,10 +10,10 @@ import { junctionGapCuts, tJunctionApproachCut, tJunctionExitCut, type SurfaceCu
 import { referenceStraightGate, referenceAmbientTree, referenceJunctionTrees, referenceFullWidthAt, overlapsReferenceGate, REFERENCE_EXIT_GATE_OFFSET } from './referenceScenery';
 import { STUMBLE_KILL_WINDOW, NATIVE_STUMBLE_RESET_AGE, nativeStumbleIsFatal, nativeIntroHeld, stepNativeRunClock, nativeStumbleDuration, stepNativeStumbleDelay } from './nativeRunnerRules';
 import { nativeWaterAnchor } from './nativeWater';
-import { nativeCoinBonusValue, NATIVE_POWER_SCORE_VALUE, NATIVE_COIN_SCORE_VALUE, NATIVE_BASE_POWER_DURATION } from './nativeCoinBonus';
+import { NATIVE_POWER_SCORE_VALUE, NATIVE_COIN_SCORE_VALUE } from './nativeCoinBonus';
 import { nativeSlideDuration, stepNativeSlideTimer, stepNativeVertical, nativeForwardAcceleration, stepNativeForwardVelocity, nativeJumpVelocity, NATIVE_STUMBLE_SPEED_FACTOR } from './nativeMotion';
 import { nativeProgressDelta, nativeProgressScore } from './nativeProgress';
-import { referencePickupsForTurn, REFERENCE_SHIELD_DURATION } from './referencePickups';
+import { referencePickupsForTurn } from './referencePickups';
 import { updateNativePower, nativePowerAnimationState } from './nativePower';
 import { updateNativeFlame } from './nativeFlame';
 import { nativeCoinYaw, nativeCoinRootHeight } from './nativeCoinPresentation';
@@ -75,7 +77,7 @@ import { sidePathAt } from './sidePath';
 import { getDifficulty, type DifficultyConfig } from './difficulty';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
-import { coinMultiplier, magnetBonusSeconds } from './upgrades';
+import { coinMultiplier, magnetDuration, shieldDuration, coinBonusReward } from './upgrades';
 import { MAX_COINS_PER_RUN, MIN_BONUS_ITEM_SPACING, MIN_TURN_SPACING } from './pathRules';
 import { DEFS, KIND_TO_DEF, type DefId } from './obstacles/catalog';
 import type { ObstacleAction, ObstacleDef, ObstaclePlan } from './obstacles/types';
@@ -311,8 +313,7 @@ export class Game {
       freeze: () => { cancelAnimationFrame(this.raf); this.renderOnce(); },
       power: (kind: PickupKind) => {
         const power = this.world.require(this.runnerEntity, Power);
-        power.kind = kind;
-        power.until = this.world.elapsed + this.powerDuration(kind);
+        activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed);
       },
       press: (action: Action) => this.input.push(action),
       setSkin: (id: string, force = false) => this.setSkin(id, force),
@@ -388,8 +389,15 @@ export class Game {
     const slide = this.world.require(this.runnerEntity, Slide);
     const stats = this.world.require(this.runnerEntity, RunStats);
     const chase = this.world.require(this.runnerEntity, Chase);
+    const power = this.world.require(this.runnerEntity, Power);
+    const effects = activePowers(power, this.world.elapsed);
+    const primary = effects.find(effect=>effect.kind===power.kind)??effects[0];
     return {
       phase: mutateUi.phase,
+      boost: {...power.boost},
+      powers: effects,
+      power: primary?.kind??null,
+      powerRemaining: primary?.remaining??0,
       distance: Math.floor(this.distance),
       distanceExact: this.distance,
       runElapsed: this.runElapsed,
@@ -416,6 +424,7 @@ export class Game {
       nextTurn: turn.next,
       turnDirection: turn.direction,
       turnQueued: turn.queued,
+      autoTurnQueued: turn.autoQueued,
       turnCount: turn.count,
       chaseGap: chase.gap,
       obstacles: this.obstacles.map((entity) => {
@@ -769,7 +778,7 @@ export class Game {
     if (mutateUi.phase !== 'playing' || this.introHeld()) return false;
     const turn = this.world.require(this.runnerEntity, Turn);
     const tee=this.difficulty.name==='classic' && referenceJunction(turn.count,turn.next)==='tee';
-    if (!acceptsTurn(tee?dir:turn.direction, dir, turn.next - this.distance, turn.queued)) return false;
+    if (!acceptsTurn(tee?dir:turn.direction, dir, turn.next - this.distance, turn.queued && !(turn.autoQueued&&tee))) return false;
     if(tee && dir!==turn.direction) {
       const fork=[...this.graph.forks].reverse().find(f=>f.at===turn.next);
       if(!fork)return false;
@@ -777,6 +786,7 @@ export class Game {
       this.rebuildTilesAhead();this.ensureTiles();
     }
     turn.queued = true;
+    turn.autoQueued = false;
     sfx.play('click', { gain: 0.5 });
     setHint('转弯');
     return true;
@@ -817,10 +827,8 @@ export class Game {
     const native=this.difficulty.name==='classic';
     if(native&&jump.airborne)return;
     if (native || jump.y < 0.12) {
-      const power = this.world.require(this.runnerEntity, Power);
-      const boosted = power.kind === 'boost' && this.world.elapsed < power.until;
       const speed = this.world.require(this.runnerEntity, Speed).value
-        * (this.difficulty.name === 'classic' ? 1 : skinById(progress.equipped).speed) * (boosted ? 1.35 : 1);
+        * (this.difficulty.name === 'classic' ? 1 : skinById(progress.equipped).speed);
       slide.duration = nativeSlideDuration(speed);
       this.stumbleAnimation=null;
       slide.elapsed = 0;
@@ -856,6 +864,11 @@ export class Game {
     mutateUi.turnDirection = turn.direction;
     mutateUi.turnRemaining = remaining;
     mutateUi.turnQueued = turn.queued;
+    const power=this.world.require(this.runnerEntity,Power);
+    // Auto-follow the selected graph exit while boosting; manual input still chooses a T branch.
+    if(hasPower(power,'boost',this.world.elapsed)&&!turn.queued&&turn.direction!==0&&turn.next-distance<=6&&turn.next-distance>=-2){
+      if(this.queueTurn(turn.direction))turn.autoQueued=true;
+    }
     if (turn.queued && distance >= turn.next) this.completeTurn();
     if (!turn.queued && distance > turn.next + 4.0) this.die('错过路口', 'missed');
   }
@@ -884,6 +897,7 @@ export class Game {
     turn.count += 1;
     turn.cueShown = false;
     turn.queued = false;
+    turn.autoQueued = false;
     turn.lastDirection = turn.direction;
     turn.lastTurnDistance = turn.next;
     turn.direction = 0;
@@ -921,7 +935,8 @@ export class Game {
       this.nativeForwardForce=0;return;
     }
     const jump=this.world.require(this.runnerEntity,Jump),slide=this.world.require(this.runnerEntity,Slide);
-    this.nativeForwardForce=nativeForwardAcceleration(this.speed,42,jump.airborne,slide.remaining>0);
+    const power=this.world.require(this.runnerEntity,Power);
+    this.nativeForwardForce=boostAcceleration(power.boost,this.speed,nativeForwardAcceleration(this.speed,42,jump.airborne,slide.remaining>0));
   }
 
   private updateRunner(dt: number): void {
@@ -938,6 +953,8 @@ export class Game {
       return;
     }
     const distance = this.distance;
+    const power = this.world.require(this.runnerEntity, Power);
+    stepPowerEffects(power,this.world.elapsed,dt);
     const nativeMotion = this.difficulty.name === 'classic';
     if(nativeMotion&&this.nativeSwipeStumbleDelay!==null){
       this.nativeSwipeStumbleDelay=stepNativeStumbleDelay(this.nativeSwipeStumbleDelay,dt);
@@ -953,7 +970,7 @@ export class Game {
     const targetSpeed = (RUN_SPEED_MIN + Math.min(this.difficulty.speedMax - RUN_SPEED_MIN, distance * this.difficulty.speedGrowth))
       * openingSpeedFactor(this.runElapsed);
     if (nativeMotion) {
-      speed.value=stepNativeForwardVelocity(speed.value,this.nativeForwardForce,dt);
+      speed.value=stepNativeForwardVelocity(speed.value,this.nativeForwardForce,dt,power.boost.active?84:42);
       this.nativeForwardForce=0;
       this.recoveringFromStumble = false;
     } else if (this.recoveringFromStumble) {
@@ -966,12 +983,11 @@ export class Game {
         speed.value, 42, jump.airborne, slide.remaining > 0,
       ) * dt);
       if (speed.value >= targetSpeed) this.recoveringFromStumble = false;
-    } else speed.value = targetSpeed;
-    const power = this.world.require(this.runnerEntity, Power);
-    const boost = power.kind === 'boost' && this.world.elapsed < power.until;
-    const invisible = power.kind === 'shield' && this.world.elapsed < power.until;
+    } else speed.value = power.boost.active?Math.max(0,Math.min(2*this.difficulty.speedMax,speed.value+boostAcceleration(power.boost,speed.value,0)*dt)):targetSpeed;
+    const boost = hasPower(power,'boost',this.world.elapsed);
+    const invisible = hasPower(power,'shield',this.world.elapsed);
     // Skins carry the same speed flavour as the original store (werewolf lumbers, Scarlett sprints).
-    const currentSpeed = speed.value * (nativeMotion ? 1 : skinById(progress.equipped).speed) * (boost ? 1.35 : 1);
+    const currentSpeed = speed.value * (nativeMotion ? 1 : skinById(progress.equipped).speed);
     const trackPos = this.world.require(this.runnerEntity, TrackPos);
     trackPos.distance += currentSpeed * dt;
     const lane = this.world.require(this.runnerEntity, Lane);
@@ -999,6 +1015,7 @@ export class Game {
       stats.progressRemainder = award.remainder;
       stats.score += award.scoreDelta;
       stats.distance += delta;
+      consumeBoostProgress(power.boost,delta);
     }
 
     const jump = this.world.require(this.runnerEntity, Jump);
@@ -1107,6 +1124,7 @@ export class Game {
     this.updateFootsteps(trackPos.distance, currentSpeed);
     if (!nativeMotion) {
       stats.score += distanceScoreDelta(stats.distance, trackPos.distance);
+      consumeBoostProgress(power.boost,trackPos.distance-distance);
       stats.distance = trackPos.distance;
     }
     if (stats.comboTimer > 0) {
@@ -1585,9 +1603,9 @@ export class Game {
   }
 
   private powerDuration(kind:PickupKind):number {
-    if(this.difficulty.name==='classic'&&kind==='shield')return REFERENCE_SHIELD_DURATION;
-    if(this.difficulty.name==='classic'&&kind==='magnet')return NATIVE_BASE_POWER_DURATION;
-    return kind==='magnet'?8+magnetBonusSeconds():kind==='boost'?5:10;
+    if(kind==='shield')return shieldDuration();
+    if(kind==='magnet')return magnetDuration();
+    return 10; // Boost uses distance, not this timed-duration argument.
   }
 
   /** Energy bar full: hand out one of the four classic boosts. */
@@ -1595,14 +1613,13 @@ export class Game {
     const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
     const kind = kinds[Math.floor(Math.random() * kinds.length)];
     if (kind === 'bonus') {
-      this.world.require(this.runnerEntity, RunStats).coins += nativeCoinBonusValue();
-      setHint(`金币奖励 +${nativeCoinBonusValue()}`);
+      this.world.require(this.runnerEntity, RunStats).coins += coinBonusReward();
+      setHint(`金币奖励 +${coinBonusReward()}`);
       sfx.play('meterFull', { gain: 0.8 });
       return;
     }
     const power = this.world.require(this.runnerEntity, Power);
-    power.kind = kind;
-    power.until = this.world.elapsed + this.powerDuration(kind);
+    activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed);
     setHint(kind === 'magnet' ? '能量满！磁铁启动' : kind === 'shield' ? '能量满！无敌启动' : kind === 'boost' ? '能量满！加速' : '能量满！金币加成');
     sfx.play('meterFull', { gain: 0.8 });
   }
@@ -1690,9 +1707,9 @@ export class Game {
         if (hit) {
           const firstContact = !obstacle.passed;
           obstacle.passed = true;
-          if (power.kind === 'boost' && now < power.until) {
+          if (hasPower(power,'boost',now)) {
             if (firstContact) setHint('冲撞！');
-          } else if (power.kind === 'shield' && now < power.until) {
+          } else if (hasPower(power,'shield',now)) {
             if (firstContact) {
               setHint('无敌 · 穿过障碍');
               sfx.play('shimmer', { gain: 0.9 });
@@ -1791,7 +1808,7 @@ export class Game {
 
       }
       const ahead = pickup.distance - distance;
-      const magnet = power.kind === 'magnet' && this.world.elapsed < power.until;
+      const magnet = pickup.kind === 'coin' && hasPower(power,'magnet',this.world.elapsed);
       const nativeReach=this.difficulty.name==='classic'&&!magnet&&pickup.kind!=='gem';
       const close = nativeReach
         ? nativePickupWithinReach(pickup.kind,pickup.value,LANES[pickup.lane]-laneXNow,pickupY+this.groundY(pickup.distance)-jump.y-this.groundY(),ahead)
@@ -1805,7 +1822,7 @@ export class Game {
           stats.score += NATIVE_POWER_SCORE_VALUE * REFERENCE_SCORE_MULTIPLIER;
         }
         if (pickup.kind === 'coin') {
-          this.coinValueAcc += (this.difficulty.name === 'classic' ? 1 : coinMultiplier()) * pickup.value;
+          this.coinValueAcc += coinMultiplier() * pickup.value;
           const whole = Math.floor(this.coinValueAcc);
           this.coinValueAcc -= whole;
           stats.coins += Math.max(1, whole);
@@ -1828,12 +1845,11 @@ export class Game {
         } else if (pickup.kind === 'bonus') {
           // Native StartCoinBonus calls AddCoins immediately; it does not
           // replace an active timed power or multiply later coin pickups.
-          stats.coins += nativeCoinBonusValue();
-          setHint(`金币奖励 +${nativeCoinBonusValue()}`);
+          stats.coins += coinBonusReward();
+          setHint(`金币奖励 +${coinBonusReward()}`);
           sfx.play('shimmer', { gain: 0.9 });
         } else {
-          power.kind = pickup.kind;
-          power.until = this.world.elapsed + this.powerDuration(pickup.kind);
+          activatePower(power,pickup.kind,this.world.elapsed,this.powerDuration(pickup.kind),this.speed);
           setHint(
             pickup.kind === 'magnet' ? '磁铁激活！' : pickup.kind === 'shield' ? '无敌激活' : pickup.kind === 'boost' ? '加速！' : '金币加成！',
           );
@@ -1892,7 +1908,7 @@ export class Game {
       return def?[{mustSlideUnder:def.action==='slide',mustJumpOver:def.action==='jump'||('alternateAction'in def&&def.alternateAction==='jump')}]:[];
     });
     this.needsToDuckCamera=nextNativeDuckCamera(this.needsToDuckCamera,slide.remaining>0,
-      power.kind==='shield'&&this.world.elapsed<power.until,nearestObstacles);
+      hasPower(power,'shield',this.world.elapsed),nearestObstacles);
     const follow = followCameraPose(this.needsToDuckCamera, jump.airborne, jump.y);
     const back = followCameraBack(this.path.at(distance, lane.x * (this.difficulty.name === 'classic' ? 1 : .22), true), follow.behind);
     const ahead = this.path.at(distance, lane.x * (this.difficulty.name === 'classic' ? 1 : .3), true);
@@ -1951,8 +1967,10 @@ export class Game {
     mutateUi.gems = stats.gems;
     mutateUi.score = stats.score;
     mutateUi.charge = stats.charge;
-    mutateUi.power = power.kind && this.world.elapsed < power.until ? power.kind : null;
-    mutateUi.powerRemaining = Math.max(0, power.until - this.world.elapsed);
+    mutateUi.powers = activePowers(power,this.world.elapsed);
+    const primary=mutateUi.powers.find(effect=>effect.kind===power.kind)??mutateUi.powers[0];
+    mutateUi.power = primary?.kind??null;
+    mutateUi.powerRemaining = primary?.remaining??0;
     mutateUi.multiplier = stats.multiplier;
     mutateUi.turnQueued = this.world.require(this.runnerEntity, Turn).queued;
     mutateUi.sliding = this.world.require(this.runnerEntity, Slide).remaining;
@@ -1978,13 +1996,13 @@ export class Game {
     this.runnerGroup.position.y = this.groundY()+jump.y;
     this.runnerGroup.scale.set(1, 1, 1);
     const shield = this.world.require(this.runnerEntity, Power);
-    const invisible = shield.kind === 'shield' && this.world.elapsed < shield.until;
+    const invisible = hasPower(shield,'shield',this.world.elapsed);
     this.wingsGroup.visible = false;
     if (this.safetyNet) {
       // Native PathElement owns each net: it stays on its tile as the runner moves.
       // Clones share the animated atlas/material; only their world transforms differ.
       this.safetyNet.visible = false;
-      this.safetyNetColor = safetyNetIntensity(this.safetyNetColor, invisible ? shield.until - this.world.elapsed : 0, dt);
+      this.safetyNetColor = safetyNetIntensity(this.safetyNetColor, invisible ? shield.expires.shield - this.world.elapsed : 0, dt);
       setSafetyNetIntensity(this.safetyNet, this.safetyNetColor);
       let count = 0;
       if (invisible) {
@@ -2006,7 +2024,7 @@ export class Game {
       }
       for (let i = count; i < this.safetyNets.length; i++) this.safetyNets[i].visible = false;
     }
-    this.runnerRig?.setInvincibility(invisible, this.bundle.assets.texture.glow, dt, shield.until - this.world.elapsed);
+    this.runnerRig?.setInvincibility(invisible, this.bundle.assets.texture.glow, dt, shield.expires.shield - this.world.elapsed);
     if (this.runnerRig) {
       const slideElapsed = this.difficulty.name==='classic'?slide.elapsed:slide.duration-slide.remaining;
       const animation=this.runnerRig.getTime();
@@ -2153,6 +2171,7 @@ export class Game {
     if (turn.direction !== 0 && this.distance >= turn.next) {
       turn.direction = 0;
       turn.queued = false;
+    turn.autoQueued = false;
       turn.cueShown = false;
       turn.next = 9 + 12 * Math.max(1, Math.round((this.distance + 72 - 9) / 12));
     }
@@ -2188,6 +2207,7 @@ export class Game {
     turn.next = 9 + 12 * Math.max(1, Math.round((distance + 60) / 12));
     turn.direction = 0;
     turn.queued = false;
+    turn.autoQueued = false;
     turn.cueShown = false;
     turn.prebuilt = false;
     this.graph.reset();

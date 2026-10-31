@@ -66,7 +66,9 @@
     "temple:test:stone-junction": "esbuild tools/test-native-stone-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-native-stone-junction-test.mjs >/dev/null && node /tmp/temple-native-stone-junction-test.mjs",
     "temple:test:ground-height-contact": "esbuild tools/test-native-ground-height-contact.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-ground-height-contact-test.mjs >/dev/null && node /tmp/temple-ground-height-contact-test.mjs",
     "temple:test:terrain-heights": "esbuild tools/test-native-terrain-heights.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-terrain-heights-test.mjs >/dev/null && node /tmp/temple-terrain-heights-test.mjs",
-    "temple:test:transition-caps": "esbuild tools/test-native-transition-caps.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-transition-caps-test.mjs >/dev/null && node /tmp/temple-transition-caps-test.mjs"
+    "temple:test:transition-caps": "esbuild tools/test-native-transition-caps.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-transition-caps-test.mjs >/dev/null && node /tmp/temple-transition-caps-test.mjs",
+    "temple:test:upgrades": "esbuild tools/test-gameplay-upgrades.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-upgrades-test.mjs >/dev/null && node /tmp/temple-upgrades-test.mjs",
+    "temple:test:power-effects": "esbuild tools/test-power-effects.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-power-effects-test.mjs >/dev/null && node /tmp/temple-power-effects-test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

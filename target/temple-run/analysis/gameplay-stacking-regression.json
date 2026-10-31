@@ -1,0 +1,257 @@
+{
+  "afterRefresh": {
+    "airborne": false,
+    "autoTurnQueued": false,
+    "boost": {
+      "active": false,
+      "left": 0,
+      "speedBefore": 0
+    },
+    "chaseGap": 11.5,
+    "coins": 8,
+    "distance": 184,
+    "distanceExact": 184.73679702758787,
+    "falling": false,
+    "fps": 60,
+    "gems": 0,
+    "groundY": 0,
+    "jumpVelocity": 0,
+    "jumpY": 0,
+    "lane": 1,
+    "nextTurn": 321,
+    "obstacles": [],
+    "phase": "playing",
+    "pickups": [
+      {
+        "ahead": 10,
+        "kind": "coin",
+        "lane": 0
+      },
+      {
+        "ahead": 14,
+        "kind": "coin",
+        "lane": 0
+      },
+      {
+        "ahead": 19,
+        "kind": "coin",
+        "lane": 0
+      },
+      {
+        "ahead": 23,
+        "kind": "coin",
+        "lane": 0
+      },
+      {
+        "ahead": 28,
+        "kind": "coin",
+        "lane": 0
+      },
+      {
+        "ahead": 32,
+        "kind": "coin",
+        "lane": 0
+      },
+      {
+        "ahead": 37,
+        "kind": "coin",
+        "lane": 0
+      }
+    ],
+    "power": "magnet",
+    "powerRemaining": 14.82500000000001,
+    "powers": [
+      {
+        "kind": "magnet",
+        "remaining": 14.82500000000001,
+        "unit": "s"
+      },
+      {
+        "kind": "shield",
+        "remaining": 8.775000000000354,
+        "unit": "s"
+      }
+    ],
+    "progressDistance": 105.7710457579607,
+    "queuedForwardForce": 0.30000000000000004,
+    "recoveringFromStumble": false,
+    "rig": "ready",
+    "runElapsed": 8.175018310546875,
+    "score": 4400,
+    "side": 0,
+    "slideDuration": 0,
+    "sliding": 0,
+    "speed": 28.497686767578127,
+    "stumbleRemaining": 0,
+    "swipeStumbleDelay": null,
+    "turnCount": 1,
+    "turnDirection": 0,
+    "turnQueued": false,
+    "worldY": 0
+  },
+  "afterShieldExpiry": {
+    "airborne": true,
+    "autoTurnQueued": false,
+    "boost": {
+      "active": false,
+      "left": 0,
+      "speedBefore": 0
+    },
+    "chaseGap": 11.5,
+    "coins": 85,
+    "distance": 445,
+    "distanceExact": 445.4118634033216,
+    "falling": false,
+    "fps": 60,
+    "gems": 0,
+    "groundY": 0,
+    "jumpVelocity": 17.5,
+    "jumpY": 0.90625,
+    "lane": 1,
+    "nextTurn": 489,
+    "obstacles": [
+      {
+        "ahead": 8,
+        "full": true,
+        "kind": "gap",
+        "lane": 1
+      }
+    ],
+    "phase": "playing",
+    "pickups": [],
+    "power": "magnet",
+    "powerRemaining": 6.02500000000051,
+    "powers": [
+      {
+        "kind": "magnet",
+        "remaining": 6.02500000000051,
+        "unit": "s"
+      }
+    ],
+    "progressDistance": 266.7707734016079,
+    "queuedForwardForce": 0,
+    "recoveringFromStumble": false,
+    "rig": "ready",
+    "runElapsed": 16.974884033203125,
+    "score": 10320,
+    "side": 0,
+    "slideDuration": 0,
+    "sliding": 0,
+    "speed": 30.6805419921875,
+    "stumbleRemaining": 0,
+    "swipeStumbleDelay": null,
+    "turnCount": 2,
+    "turnDirection": -1,
+    "turnQueued": false,
+    "worldY": 0.90625
+  },
+  "allEffects": {
+    "airborne": false,
+    "autoTurnQueued": false,
+    "boost": {
+      "active": false,
+      "left": 0,
+      "speedBefore": 0
+    },
+    "chaseGap": 11.5,
+    "coins": 1,
+    "distance": 36,
+    "distanceExact": 36.07,
+    "falling": false,
+    "fps": 60,
+    "gems": 0,
+    "groundY": 0,
+    "jumpVelocity": 0,
+    "jumpY": 0,
+    "lane": 1,
+    "nextTurn": 153,
+    "obstacles": [
+      {
+        "ahead": 72,
+        "full": true,
+        "kind": "trip",
+        "lane": 1
+      },
+      {
+        "ahead": -6,
+        "full": true,
+        "kind": "hurdle",
+        "lane": 1
+      }
+    ],
+    "phase": "playing",
+    "pickups": [],
+    "power": "shield",
+    "powerRemaining": 14.225000000000044,
+    "powers": [
+      {
+        "kind": "magnet",
+        "remaining": 13.975000000000058,
+        "unit": "s"
+      },
+      {
+        "kind": "shield",
+        "remaining": 14.225000000000044,
+        "unit": "s"
+      }
+    ],
+    "progressDistance": 21.132701622989547,
+    "queuedForwardForce": 2,
+    "recoveringFromStumble": false,
+    "rig": "ready",
+    "runElapsed": 2.725001335144043,
+    "score": 1520,
+    "side": 0,
+    "slideDuration": 0,
+    "sliding": 0,
+    "speed": 24.1,
+    "stumbleRemaining": 0,
+    "swipeStumbleDelay": null,
+    "turnCount": 0,
+    "turnDirection": 0,
+    "turnQueued": false,
+    "worldY": 0
+  },
+  "checks": [
+    {
+      "name": "real magnet and shield pickups coexist",
+      "passed": true
+    },
+    {
+      "name": "shield pickup preserves functional cross-lane magnet",
+      "passed": true
+    },
+    {
+      "name": "magnet and shield retain real obstacle protection",
+      "passed": true
+    },
+    {
+      "name": "timed powers continue while running",
+      "passed": true
+    },
+    {
+      "name": "repeat magnet refreshes only magnet",
+      "passed": true
+    },
+    {
+      "name": "shield expires without cancelling refreshed magnet",
+      "passed": true
+    },
+    {
+      "name": "boost can coexist with magnet and its own invincibility",
+      "passed": true
+    },
+    {
+      "name": "new run clears every effect",
+      "passed": true
+    },
+    {
+      "name": "failure reaches results after stacking run",
+      "passed": true
+    },
+    {
+      "name": "results restart returns clean playable run",
+      "passed": true
+    }
+  ]
+}

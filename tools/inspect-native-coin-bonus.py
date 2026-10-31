@@ -46,7 +46,15 @@ assert value_table==[3,5,7,0,0,0,0]
 assert [mov_w8(0x1296534+i*4)for i in [3,5,7]]==[5,10,15]
 assert mov_w8(0x1296534)==25
 assert instruction(0x1296538)==0xb9007e68 # str w8,[x19,0x7c]
+# HandleBonusItemPickup gates the vacuum branch through IsACoin before HasVacuum.
+assert branch_target(0x1270ed0)==0x1296070
+assert instruction(0x1270ed4)==0x36000e40 # non-coin -> ordinary collision branch
+assert instruction(0x1296070)==0xb9407808 # enum at BonusItem+0x78
+assert instruction(0x1296074)==0x51000508 # enum-1
+assert instruction(0x1296078)==0x71000d1f # compare3
+assert instruction(0x129607c)==0x1a9f27e0 # unsigned<3: only yellow/red/blue
 output=dict(binarySHA256=d['record']['binarySHA256'],
+ vacuumFilter=dict(predicate='BonusItem.IsACoin',address='0x1296070',allowedNativeEnums=[1,2,3],call='0x1270ed0',nonCoinBranch='0x127109c'),
  baseCoins=50,upgradeLevels1Through6=upgrades,jumpTableAddress='0x6b7876',
  configFieldOffset='0x154',startCoinBonus='0x1298cb0',addCoins='0x1298aa8',
  behavior='instant AddCoins; existing timed powers are preserved',

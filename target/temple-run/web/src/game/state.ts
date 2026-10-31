@@ -1,3 +1,4 @@
+import type { ActivePower } from './powerEffects';
 import { reactive, readonly } from 'vue';
 import { progress, recordRun as recordProgressRun, saveProgress } from './progress';
 import type { PickupKind } from './components';
@@ -30,6 +31,7 @@ export interface HudState {
   turnRemaining: number;
   turnQueued: boolean;
   chaseGap: number;
+  powers: ActivePower[];
   power: PickupKind | null;
   powerRemaining: number;
   nextCue: ObstacleAction | null;
@@ -67,6 +69,7 @@ const defaults = (): HudState => ({
   turnRemaining: 0,
   turnQueued: false,
   chaseGap: 11.5,
+  powers: [],
   power: null,
   powerRemaining: 0,
   nextCue: null,

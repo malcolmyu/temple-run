@@ -51,9 +51,9 @@ export function stepNativeJump(y:number,v:number,dt:number):{y:number;v:number;a
 /** TouchInput(-3) changes actions, CharacterPlayer(220) consumes the force
  * queued by GameController(280) in the preceding frame. Force is then cleared.
  * Action state may have changed since the force was produced. */
-export function stepNativeForwardVelocity(speed:number,queuedForce:number,dt:number):number {
+export function stepNativeForwardVelocity(speed:number,queuedForce:number,dt:number,maxSpeed=42):number {
  const rawSpeed=Math.fround(speed/NATIVE_WORLD_SCALE);
  const rawForce=Math.fround(queuedForce/NATIVE_WORLD_SCALE);
  const rawNext=Math.fround(rawSpeed+Math.fround(rawForce*Math.fround(Math.max(0,dt))));
- return Math.min(42,rawNext*NATIVE_WORLD_SCALE);
+ return Math.max(0,Math.min(maxSpeed,rawNext*NATIVE_WORLD_SCALE));
 }
