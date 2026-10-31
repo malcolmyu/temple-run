@@ -35,7 +35,7 @@ export function surfaceAt(distance: number): SurfaceSection {
   const section = sections[index < 0 ? sections.length-1 : index];
   return {
     ...section,
-    index: Math.max(0, index),
+    index: (activeCourse()?.surfaceOffset??0)+Math.max(0, index),
     first: section.from > 0 && distance >= section.from && distance - section.from < 12,
     last: distance >= 0 && Number.isFinite(section.to) && section.to - distance <= 12,
   };

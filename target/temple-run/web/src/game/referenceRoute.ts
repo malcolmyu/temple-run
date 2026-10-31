@@ -59,15 +59,16 @@ export const REFERENCE_OPENING_TURNS: ReadonlyArray<{
   { distance: 2341, direction: 1, frames: [259,260,261], gate: null, junction: 'corner' },
 ] as const).map(turn=>({...turn,legacyDistance:turn.distance,distance:referenceJunctionDistance(turn.distance)}));
 
+function routeTurn(index:number){const course=activeCourse();return course?course.turnAt(index):REFERENCE_OPENING_TURNS[index];}
+
 export function referenceTurnDirection(index: number, distance: number): 1 | -1 | null {
-  const turn=(activeCourse()?.turns??REFERENCE_OPENING_TURNS)[index];
+  const turn=routeTurn(index);
   return turn && Math.abs(turn.distance-distance)<.001 ? turn.direction : null;
 }
 
 export function referenceNextTurnDistance(completedCount: number, previousDistance: number): number | null {
-  const turns=activeCourse()?.turns??REFERENCE_OPENING_TURNS;
-  const previous=turns[completedCount-1];
-  const next=turns[completedCount];
+  const previous=routeTurn(completedCount-1);
+  const next=routeTurn(completedCount);
   return previous && next && Math.abs(previous.distance-previousDistance)<.001 ? next.distance : null;
 }
 
@@ -77,5 +78,5 @@ export function referenceGate(index: number, distance: number): 'exit' | 'forwar
 }
 
 export function referenceJunction(index: number, distance: number): 'corner' | 'tee' {
-  return referenceTurnDirection(index,distance)===null ? 'corner' : (activeCourse()?.turns??REFERENCE_OPENING_TURNS)[index].junction;
+  return referenceTurnDirection(index,distance)===null ? 'corner' : routeTurn(index)!.junction;
 }

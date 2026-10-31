@@ -40,5 +40,7 @@ jobs:
         run: npm run temple:test:surface
       - name: Turn input test
         run: npm run temple:test:turn
+      - name: Core gameplay contracts
+        run: npm run temple:test:core
       - name: Build
         run: npm run temple:build

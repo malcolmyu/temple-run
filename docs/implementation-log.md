@@ -531,3 +531,63 @@ seed1实际接近/失败世界距离：branch694.167/742.962（入口726..762）
 刷新后coin=3/coinSpawn=5保留。另从干净50000币夹具真实重购这两类8档，逐次记录显示价/实际存档扣款/等级全部相等，共18350币。此前逐档自然跑动产生的收益不混入该独立扣款核对。所有自然跑动均失败到ended并重开playing，15项原左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。native coin threshold/value边界测试通过。
 
 证据analysis/gameplay-current-coin-value.json、high-coins.json、coin-upgrade-ledger.json、coin-upgrades.png；验收表六类升级均已有当前对应证据，但不宣称所有组合或真机效果全覆盖。本轮未改运行时规则，无bug修复，不重复构建。用户原始JSON先落盘且逐字不变，测试仅5175，临时页/服务关闭。课程历史、真机、回放、其余表现和原规则证据继续保留，整体未完成。
+
+## P1/P3验收迁移：当前自然低树根追逐与被捕（2026-11-01）
+
+旧chase脚本依赖固定108米根和诊断spawn第二根。本轮新增test-temple-current-chase.browser.js，全部从正常种子起点驾驶，不seek/spawn/forced power，动态定位普通低树根与已自然生成的treeTrip repeat组合。首次绊倒仍playing且有stumbleRemaining；普通输入队列jump在绊倒恢复中被拒绝；安全驾驶至stumbleAge>=10.1后仍playing、enemyGap恢复>=4.5，再接触下一根自然低树根仍可存活。
+
+另一次从起点正常跑到自然成对低根，当前驾驶轨迹下第一根11160、第二11208（feature11097..11253，extra11208，48米间距），第一次绊倒存活，550ms后presentation enemyGap减小到<=3；遗漏第二根后11207.988米被caught，stumbleAge<10，结算原因明确追逐者抓住。12项全过，保存接近、第一次接触、逼近与被捕完整状态。seed1的路线仍受实际驾驶影响的进度门槛控制，不从另一驾驶脚本的固定25368米位置硬套目标。
+
+真实点击被捕结果的宝石复活，runId不变，推进500ms后playing、stumbleAge20.5；再自然失败、真实点再跑一次回playing。15项原普通左右/边界/空中/滑铲/触摸/真实障碍/两转角/T两臂/漏转/结果重开全过。普通换道与追逐绊倒仍是不同入口，未为测试改碰撞。
+
+规则沿用已逆向原绊倒/追逐窗口、复活保护与现有网页生成组合；本轮未改运行时玩法，无bug修复。间距断言验证模型状态，不以此宣称所有主题的追逐脚步/接触姿态已视觉验收。证据analysis/gameplay-current-chase.json与caught.png，验收表追逐行为更新为当前自然证据。只改驾驶脚本与文档，不重复构建。
+
+测试仅5175，用户原始JSON先落盘并逐字未变，临时页/服务关闭。课程历史、真机、回放、其他表现与原规则证据仍待完善，整体目标未完成。
+
+## P5-10：课程历史窗口、绝对编号与消费游标回收（2026-11-01）
+
+修复正常无尽课程turns/features/obstacles/narrows/branches/surfaces持续累积。CoursePlan.compactBefore在玩家后240米回收已消费前缀，路口/主题/片段保留前驱；turnOffset/surfaceOffset保留绝对编号，retainedFrom明确运行时快照范围。referenceRoute经turnAt访问绝对路口，CourseCoinDirector的turnIndex同样为绝对编号；Game同步减去referenceObstacleIndex/courseCoinIndex的删除量，避免漏生障碍/分路奖励。生成RNG、导演状态、extent和未发布尾段不重建、不跳过；固定reference未启用正常Course回收。
+
+来源为网页运行时内存生命周期策略，不改变原版/网页既有生成和物理规则。历史已回收的运行时快照不再承诺完整旧路重建，未来回放必须记录seed/输入/环境而非依赖course数组一直增长。
+
+新增temple:test:course-compaction：20种子各60000米，流式推进并切换三主题，逐步对照未回收版本金币完整输出、保留的feature/obstacle/surface/turn内容、extent和拒绝日志；绝对路口direction/junction/next、主题index/height/cap/support也对照，全部一致，feature峰值7。无效/回退cutoff不变。原42路口reference测试、类型和构建通过。
+
+浏览器正常seed1跑60000.877米playing，之后自然失败ended并重开playing。11处5000米采样courseFeatures6..7，原39→396的增长已消除；除courseFeatures数量外GPU/scene/pool/path等采样字段与P5-9前基准精确相同，最终distanceExact/position/progressDistance/coins/gems/turnCount也完全相同。五类自然错误道路操作30项通过；额外正常风险分路死亡、真实宝石复活后9783.727米playing且合流（retainedFrom9543.727，turnOffset69）；15项普通左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。
+
+证据analysis/gameplay-course-compaction-{long-run,failures,regression}.json；设计/验收表同步窗口契约。没有以记录数稳定声称实际设备堆占用/GC/帧率已合格。用户原始JSON先落盘且逐字一致，测试仅5175，临时页/服务关闭。真机、回放、元素表现和原版证据仍待补，目标继续。
+
+本轮类型检查曾指出turnAt可能返回undefined，旧数组索引未暴露这个类型边界；改为在金币迭代内捕获const corner并显式检查后再读距离/类型，随后类型、完整20种子对照和构建均通过。该修正不改变已测转角分支行为。
+
+## P5验收：浏览器原生触摸链路（2026-11-01）
+
+在独立桌面Chrome页375×812 viewport，通过Emulation.setTouchEmulationEnabled与Input.dispatchTouchEvent派发touchStart/Move/End/Cancel，未用dispatchEvent(new PointerEvent)替代浏览器触摸链路。监听canvas指针事件记录22个，均isTrusted=true、pointerType=touch。该trusted属性说明浏览器派发，不说明是真实物理手机，证据环境明确physicalDevice=false/sensorTest=false。
+
+15项全部通过：左右换道、两侧边缘限幅、回中、上滑跳跃、下滑滑铲、touchCancel取消不残留动作、触摸HUD暂停距离冻结、触摸继续、正常跑到T口后左右滑动分别提交对应分支并继续playing、自然失败后触摸点击再跑一次清理本局状态。T口接近由正常驾驶完成，触摸提交不经g.press，结算/暂停按钮也由真实浏览器触摸命中。
+
+原15项键盘/指针输入回归同时通过，没有发现新的运行时bug，也未改游戏规则或映射；本轮更新验收证据，不重复构建。截图为原生上滑后的实际场景，证据analysis/gameplay-native-touch.json与jump.png。
+
+触摸仿真和viewport均已关闭/reset，用户原始JSON先落盘且逐字不变，测试仅5175，临时页/服务关闭。仍未验证物理iOS/Android的传感器、真实权限、触摸延迟、刘海安全区和渲染帧时，不以浏览器touch仿真替代真机门槛。回放、其他元素表现与原版证据继续保留，整体目标未完成。
+
+## P5-11：真实RAF帧时与FPS统计截断修复（2026-11-01）
+
+新增test-temple-live-frames.browser.js按真实requestAnimationFrame循环驾驶15秒，没有advance/freeze替代真实时间，记录原始intervals、分位数、LongTask、UA/DPR/viewport/绘制缓冲与结束状态。最初375×812 viewport、750×1624缓冲正常开局平均59.684FPS、p95=18.4ms，仍playing382米。该测量是桌面Chrome开局，不代表真机或全部主题长时渲染。
+
+发现并复现FPS统计bug：startLoop把时间先clamp到最大.05秒再交trackFps，导致严重卡顿也只能显示最低20FPS。暂停状态单独注入45帧各90ms主线程阻塞，实际11.057FPS，HUD20。修复为frameDt真实间隔供trackFps/自适应分辨率，physics dt仍min(.05,frameDt)。同故障注入后实际10.922、HUD11；活跃新局另注入5帧，lastSimulationStep=.05、仍playing，证明没有解除物理步长保护。故障注入数据与正常性能样本完全分开。
+
+第一次修复后测量因viewport/reload次序导致绘制缓冲375×812，不能与原750×1624做严格性能比较，原始after样本保留。随后固定375×812 viewport、DPR2，750×1624起止缓冲再测15秒：平均59.751FPS，p50=16.7/p95=18/p99=18.6/max50ms，playing。未宣称这是统计修复带来的帧率提升。Pause→Settings截图显示正常FPS，真实继续后正常遗漏危险到结果、真实点重开回playing，原15项左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。类型与构建通过。
+
+来源是网页性能统计修复，不改原物理/难度或生成。证据analysis/gameplay-live-frame-{baseline,after,controlled,regression}.json、settings.png，以及gameplay-fps-stall-{before,after}.json和simulation-clamp.json。故障注入脚本保存在tools/test-temple-fps-stall.browser.js，可在暂停页复验真实调用链；非正常性能基准。
+
+用户原始JSON先落盘且逐字未变；所有操作仅5175，viewport和DeviceMetrics临时override清除，测试页/服务关闭。真机输入/帧时、全主题长时性能、回放和其他表现仍未完成，目标继续。
+
+## P5验收：三分钟真实RAF自然主题切换（2026-11-01）
+
+新增test-temple-live-themes.browser.js，正常seed1从起点按真实requestAnimationFrame驾驶180秒，绝不使用advance/seek/planTheme/forced power。固定375×812 viewport、deviceScaleFactor2，逐主题统计真实帧间隔；异步运行保留heartbeat/status/promise，期间按已确认活动心跳观察进度，没有因一次观察超时重启。页面正常切换石桥/木桥/悬崖，没有用瞬移构造覆盖。
+
+180004ms完成，6894.563世界米、仍playing，总10780个帧间隔，平均59.889FPS、p50=16.7/p95=18.2/p99=18.6ms，3帧>50ms、最大83.4ms。开场distance<0归类0（64帧）单列，不冒充道路主题。石桥7435帧平均59.870、p95=18.2/max83.4；木桥2220帧平均59.951、p95=18.1/max18.7；悬崖1062帧平均59.951、p95=18.2/max18.7。逐主题结果包含该主题多次经过，first/last distance不是连续单段覆盖承诺。
+
+LongTask三条59/61/73ms保留原始时间，不声称完全无卡顿；没有仅凭LongTask推断GPU/GC/资源编译根因。绘制缓冲起止750×1624，自运行约60秒后额外每秒记录缓冲尺寸，余程采样均750×1624；未把后段采样扩大声称第一分钟逐秒缓冲也已记录。控制与状态采样有测试开销，结果限这台桌面Chrome、这个种子和三分钟，不代替物理手机/全设备验收。
+
+测量结束自动暂停，真实点继续后不再控制，正常漏转失败到ended，真实点再跑一次回playing、新runId。没有用诊断推进替代此收尾闭环。原始样本/分主题summary/结算重开分别存analysis/gameplay-live-three-themes.json、summary.json、loop.json，截图png。验收表已链接。脚本语法检查通过；本轮无运行时改动或bug修复，不重复构建/同一15项输入回归。
+
+用户原始JSON先落盘且逐字未变，测试仅5175，DeviceMetrics override已清除，临时页/服务关闭。仍缺真机传感器/延迟/性能、持久输入回放、部分元素表现及原版证据，整体目标继续。

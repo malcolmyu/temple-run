@@ -478,7 +478,7 @@ export class Game {
       angelWings: {...this.angelWings,stock:progress.wings,permanentStock:progress.permaWings,pendingRevive:this.wingRevivePending},
       themePacing:{level:this.themePacing.level,elapsed:this.themePacing.elapsed,changes:[...this.themeChanges]},
       fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
-      course: activeCourse()?{rulesVersion:activeCourse()!.rulesVersion,opening:activeCourse()!.opening,coinStart:activeCourse()!.coinStart,turns:activeCourse()!.turns.map(t=>({...t})),extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks],longGapDecisions:this.longGapDecisions.map(d=>({...d})),layoutRejections:activeCourse()!.rejectedEncounters.map(r=>({...r,reasons:[...r.reasons]}))}:null,
+      course: activeCourse()?{retainedFrom:activeCourse()!.retainedFrom,turnOffset:activeCourse()!.turnOffset,rulesVersion:activeCourse()!.rulesVersion,opening:activeCourse()!.opening,coinStart:activeCourse()!.coinStart,turns:activeCourse()!.turns.map(t=>({...t})),extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks],longGapDecisions:this.longGapDecisions.map(d=>({...d})),layoutRejections:activeCourse()!.rejectedEncounters.map(r=>({...r,reasons:[...r.reasons]}))}:null,
       generation: {enabled:{...this.bonusDirector.config},seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
       boostHandover:{...this.boostHandover,reasons:[...this.boostHandover.reasons]},
@@ -860,15 +860,16 @@ export class Game {
     this.lastFrame = performance.now();
     const frame = (now: number): void => {
       if (this.disposed) return;
-      const dt = Math.min(0.05, Math.max(0.001, (now - this.lastFrame) / 1000));
+      const frameDt = Math.max(0.001, (now - this.lastFrame) / 1000);
+      const dt = Math.min(0.05, frameDt);
       this.lastFrame = now;
-      this.frame(dt);
+      this.frame(dt,frameDt);
       this.raf = requestAnimationFrame(frame);
     };
     this.raf = requestAnimationFrame(frame);
   }
 
-  private frame(dt: number): void {
+  private frame(dt: number,frameDt=dt): void {
     // Menus need input too: Enter starts a run and Escape pauses without a simulation tick.
     this.drainInput();
     if (mutateUi.phase === 'playing') {
@@ -878,7 +879,7 @@ export class Game {
     }
     this.syncObjects(dt);
     this.renderOnce();
-    this.trackFps(dt);
+    this.trackFps(frameDt);
   }
 
   /** One deterministic simulation step (also used by the regression bot). */
@@ -900,6 +901,9 @@ export class Game {
       this.graph.pruneBefore(this.distance-120);
       this.graph.compactBefore(this.distance-240);
       this.basePath?.compactBefore(this.distance-240);
+      const removed=activeCourse()!.compactBefore(this.distance-240);
+      this.referenceObstacleIndex=Math.max(0,this.referenceObstacleIndex-removed.obstacles);
+      this.courseCoinIndex=Math.max(0,this.courseCoinIndex-removed.features);
     }
     this.spawnWaves();
     this.updateObstacles(dt);

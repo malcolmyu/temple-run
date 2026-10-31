@@ -19,21 +19,23 @@ export class CourseCoinDirector {
  constructor(private from=0){this.next=12*Math.ceil((from+6)/12);}
  takeThrough(to:number,course:CoursePlan):GeneratedCourseCoin[]{
   const coins:GeneratedCourseCoin[]=[];
+  this.turnIndex=Math.max(this.turnIndex,course.turnOffset);
   this.sideRandom??=new SeededRandom(course.seed^0x726f7773);
   this.random??=new SeededRandom(course.seed^0x636f696e); // Web seeded stream, not Unity Random reproduction.
   while(true){
-   let turn=course.turns[this.turnIndex];
-   while(turn&&(turn.distance<=this.from||turn.distance<=course.coinStart)){this.turnIndex++;turn=course.turns[this.turnIndex];}
-   const cornerNext=turn&&turn.distance<this.next;
-   const at=cornerNext?turn.distance:this.next;if(at>=to)break;
-   if(cornerNext){
+   let turn=course.turnAt(this.turnIndex);
+   while(turn&&(turn.distance<=this.from||turn.distance<=course.coinStart)){this.turnIndex++;turn=course.turnAt(this.turnIndex);}
+   const corner=turn;
+   const cornerNext=corner!==undefined&&corner.distance<this.next;
+   const at=cornerNext&&corner?corner.distance:this.next;if(at>=to)break;
+   if(cornerNext&&corner){
     this.turnIndex++;
-    const feature=course.features.find(f=>Math.abs(f.to-turn.distance)<.001);
+    const feature=course.features.find(f=>Math.abs(f.to-corner.distance)<.001);
     const minimum=feature?.fastTurn?0:nativePathPacing(feature?.generatedAtProgress??0).minCoinRunSpaces;
     // Native IsTurn requires centre predecessor;AddCoins explicitly excludes all T types7..10.
-    const eligible=nativePathTypeAllowsCoins(turn.junction==='tee'?7:3)&&this.previousEnd===1&&this.state.count>0;
+    const eligible=nativePathTypeAllowsCoins(corner.junction==='tee'?7:3)&&this.previousEnd===1&&this.state.count>0;
     if(this.state.step(eligible,minimum)){
-     for(const offset of NATIVE_STRAIGHT_COIN_OFFSETS)coins.push({distance:turn.distance+offset,lane:1,height:.6,side:0,pattern:7});
+     for(const offset of NATIVE_STRAIGHT_COIN_OFFSETS)coins.push({distance:corner.distance+offset,lane:1,height:.6,side:0,pattern:7});
      this.previousEnd=1;
     }else this.previousEnd=null;
     continue;

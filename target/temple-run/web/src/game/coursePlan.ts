@@ -25,6 +25,9 @@ const STONE_FEATURES=['treeJump','treeTrip','treeSlide','flameTower','stonePedes
  */
 export class CoursePlan {
  readonly rulesVersion=COURSE_RULE_VERSION;
+ turnOffset=0;
+ surfaceOffset=0;
+ retainedFrom=0;
  readonly turns:CourseTurn[]=[];
  readonly obstacles:CourseObstacle[]=[];
  readonly surfaces:CourseSurface[]=[{kind:'stone',from:0,to:Infinity,level:2}];
@@ -39,6 +42,23 @@ export class CoursePlan {
  private cliffBag:string[]=[];
  private blocks=0;
  private pendingThemes:{level:NativePathLevel;progress:number}[]=[];
+ turnAt(index:number):CourseTurn|undefined {return this.turns[index-this.turnOffset];}
+ /** Reclaim consumed history only; RNG/director state and unpublished tail stay intact.
+  * Callers remap their obstacle/feature cursors by the returned prefix lengths. */
+ compactBefore(distance:number):{obstacles:number;features:number}{
+  if(!Number.isFinite(distance)||distance<=this.retainedFrom)return {obstacles:0,features:0};
+  const remove=<T>(items:T[],old:(item:T)=>boolean,previous=0):number=>{
+   let n=0;while(n<items.length&&old(items[n]))n++;
+   n=Math.max(0,n-previous);if(n)items.splice(0,n);return n;
+  };
+  this.turnOffset+=remove(this.turns,t=>t.distance<distance,1);
+  this.surfaceOffset+=remove(this.surfaces,s=>s.to<distance,1);
+  const obstacles=remove(this.obstacles,o=>o.distance<distance-36);
+  const features=remove(this.features,f=>f.to<distance,1);
+  remove(this.narrows,n=>n.to<distance);remove(this.branches,b=>b.to<distance);
+  this.retainedFrom=distance;return {obstacles,features};
+ }
+
  requestTheme(level:NativePathLevel,progress:number):void {
   const previous=this.pendingThemes.at(-1)?.level??this.surfaces.at(-1)!.level??2;
   if(previous!==level)this.pendingThemes.push({level,progress});
