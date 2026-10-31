@@ -1,0 +1,156 @@
+{
+  "parallelRowsRaw": [
+    0,
+    -7,
+    7
+  ],
+  "cliffSideScale": 0.800000011920929,
+  "sideTables": {
+    "0x6b7ca8": [
+      0.0,
+      7.0,
+      -7.0,
+      6.599999904632568,
+      0.0,
+      -6.599999904632568,
+      0.0
+    ],
+    "0x6b7cc4": [
+      0.0,
+      7.0,
+      -7.0,
+      4.199999809265137,
+      -1.399999976158142,
+      -4.199999809265137,
+      1.399999976158142
+    ],
+    "0x6b7ce0": [
+      0.0,
+      7.0,
+      -7.0,
+      2.799999952316284,
+      -2.799999952316284,
+      -2.799999952316284,
+      2.799999952316284
+    ],
+    "0x6b7cfc": [
+      0.0,
+      7.0,
+      -7.0,
+      1.399999976158142,
+      -4.199999809265137,
+      -1.399999976158142,
+      4.199999809265137
+    ],
+    "0x6b7d18": [
+      0.0,
+      7.0,
+      -7.0,
+      0.0,
+      -6.599999904632568,
+      0.0,
+      6.599999904632568
+    ]
+  },
+  "sideMode": "Web enables centre/side and selects parallel subset;slants/full predecessor candidate filtering incomplete",
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "fields": {
+    "HasCoins": "0x3d",
+    "SpacesSinceLastCoinRun": "0x84",
+    "CoinRunCount": "0x88"
+  },
+  "straightOffsetsRaw": [
+    -25,
+    -12.5,
+    0,
+    12.5,
+    25
+  ],
+  "worldOffsets": [
+    -5,
+    -2.5,
+    0,
+    2.5,
+    5
+  ],
+  "flatRootRaw": {
+    "temple": 3,
+    "wood": -12,
+    "cliff": 18
+  },
+  "treeJumpTripRelativeRoots": [
+    3.6,
+    4,
+    4,
+    4,
+    3.6
+  ],
+  "treeJumpTripRawLowHigh": {
+    "temple": [
+      18,
+      20
+    ],
+    "wood": [
+      3,
+      5
+    ],
+    "cliff": [
+      33,
+      35
+    ]
+  },
+  "treeSlideRelativeRoots": [
+    0.6,
+    0.6,
+    0.6,
+    0.6,
+    0.6
+  ],
+  "worldScale": 0.2,
+  "flameRule": "Obstacle6 Range(0,2):0 low;1 high only if sAllowJumpCoins;web enables jump coins,remote enable unknown",
+  "counterRule": "HasCoins increments previous CoinRunCount;below maximum preserves SpacesSinceLastCoinRun;maximum resets spaces0.No coins resets count0 and increments spaces.",
+  "limits": [
+    "Eligibility,cell grid and obstacle exclusion use a web adapter.",
+    "Native tree jump/trip high row and slide low row integrated;corner,other obstacles,side rows and random choices incomplete.",
+    "Remote config may alter static defaults."
+  ],
+  "instructionChecks": {
+    "0x12e567c": "0x7100191f",
+    "0x12e5684": "0x52800041",
+    "0x12e5688": "0x2a1f03e0",
+    "0x12e5690": "0x94473a16",
+    "0x12e5694": "0x34000120",
+    "0x12e56a4": "0x7100191f",
+    "0x12e56d0": "0x39405508",
+    "0x12e56d4": "0x34fffe28",
+    "0x12e5670": "0x54000200",
+    "0x12e5678": "0x540001c0",
+    "0x12e56e0": "0x1e265000",
+    "0x12e56e8": "0x52a84189",
+    "0x12e5700": "0x1e211002",
+    "0x12e570c": "0x1e229000",
+    "0x12e5d88": "0xbd402be0",
+    "0x12e5d98": "0x4ea91d20",
+    "0x12e5da0": "0xbd4023e0",
+    "0x12e5db0": "0x4ea81d00",
+    "0x12e5dbc": "0x4eac1d80",
+    "0x12e6730": "0x3940f668",
+    "0x12e6738": "0xb9408a88",
+    "0x12e6740": "0x11000515",
+    "0x12e6744": "0xb9008a75",
+    "0x12e6764": "0xb9404108",
+    "0x12e676c": "0x5400010a",
+    "0x12e6770": "0xb9408688",
+    "0x12e677c": "0xb9008a7f",
+    "0x12e6780": "0x11000508",
+    "0x12e6784": "0xb9008668",
+    "0x12e678c": "0xb900867f",
+    "0x12e5348": "0x1e373002",
+    "0x12e536c": "0x1e353002",
+    "0x12e5390": "0x1e2703e2",
+    "0x12e53b4": "0x1e253002",
+    "0x12e53d8": "0x1e273002",
+    "0x12e564c": "0x1e265001",
+    "0x12e565c": "0x1e351001"
+  }
+}

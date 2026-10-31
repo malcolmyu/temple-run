@@ -88,6 +88,7 @@ export const Obstacle = defineComponent<{
 
 export const Pickup = defineComponent<{
   kind: PickupKind;
+  side?:number;
   lane: number;
   distance: number;
   baseY: number;

@@ -4,7 +4,7 @@ import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups'
 import { createRunChallenges, stepRunChallenges, summarizeRunChallenges } from './nativeRunChallenges';
 import { createAngelWings, startAngelWings, stepAngelWings, consumeAngelWings } from './nativeAngelWings';
 import { HEAD_START_PROGRESS, MEGA_START_PROGRESS, headStartWindow } from './megaStart';
-import { courseCoinRun } from './courseCoins';
+import { CourseCoinDirector } from './courseCoins';
 import { NativeFastTurnState } from './nativeFastTurn';
 import { COURSE_LOOKAHEAD, nativePathPacing } from './nativePathPacing';
 import { nativeCoinValue } from './nativeCoinValues';
@@ -32,7 +32,7 @@ import { nativeProgressDelta, nativeProgressScore } from './nativeProgress';
 import { referencePickupsForTurn } from './referencePickups';
 import { updateNativePower, nativePowerAnimationState } from './nativePower';
 import { updateNativeFlame } from './nativeFlame';
-import { nativeCoinYaw, nativeCoinRootHeight } from './nativeCoinPresentation';
+import { nativeCoinYaw, nativeCoinRootHeight,NATIVE_COIN_ROOT_Y } from './nativeCoinPresentation';
 import { pickupPresentationHeight, coinHeightWithinReach } from './pickupReach';
 import { referenceCoinsForTurn } from './referenceCoins';
 import { REFERENCE_VISIBLE_OBSTACLES, REFERENCE_RANDOM_OBSTACLES_FROM, overlapsReferenceTree } from './referenceObstacles';
@@ -171,7 +171,7 @@ export class Game {
   private generatedBonuses:Array<{distance:number;kind:string;lane:number;collected:boolean}>=[];
   private get referenceReplay():boolean {return new URLSearchParams(window.location.search).get('route')==='reference';}
   private courseCoinIndex=0;
-  private lastCourseCoinEnd:number|null=null;
+  private courseCoins=new CourseCoinDirector();
   private longGapFallbacks:number[]=[];
   private difficulty: DifficultyConfig = getDifficulty();
   private lastObstacleDistance = 0;
@@ -416,7 +416,7 @@ export class Game {
       pickupDetails: () => this.pickups.map(entity=>{
         const p=this.world.require(entity,Pickup),o=p.object;
         const bounds=o?new THREE.Box3().setFromObject(o,true):null;
-        return {kind:p.kind,value:p.value,lane:p.lane,distance:p.distance,baseY:p.baseY,
+        return {kind:p.kind,value:p.value,lane:p.lane,side:p.side,distance:p.distance,baseY:p.baseY,
           animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
@@ -623,7 +623,7 @@ export class Game {
     this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765));
     this.generatedBonuses=[];
     setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,489):null);
-    this.courseCoinIndex=0;this.lastCourseCoinEnd=null;this.longGapFallbacks=[];
+    this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector();this.longGapFallbacks=[];
     if(activeCourse())this.nextSpawn=Infinity;
     this.deathTimer = 0;this.deathElapsed=0;
     this.hintCooldown = 0;
@@ -1683,6 +1683,7 @@ export class Game {
       this.nextSpawn = base + plan.gap;
     }
     const course=activeCourse();
+    if(course)for(const coin of this.courseCoins.takeThrough(this.distance+90,course))this.spawnCoin(coin.lane,coin.distance,COIN_Y+coin.height-NATIVE_COIN_ROOT_Y,coin.side);
     if(course)while(this.courseCoinIndex<course.features.length){
       const feature=course.features[this.courseCoinIndex];const mid=12*Math.round((feature.from+feature.to)/24);
       if(mid-28>=this.distance+90)break;
@@ -1691,9 +1692,7 @@ export class Game {
       const narrow=course.narrows.find(n=>mid>=n.from&&mid<n.to);
       const pedestal=course.obstacles.find(o=>o.defId==='stonePedestal'&&o.distance===mid);
       const lane=narrow?(narrow.side==='left'?0:2):feature.kind==='branch'?this.obstacleRng.pick([0,2]):pedestal?((pedestal.lane??1)+1)%3:1;
-      const run=courseCoinRun(feature,this.lastCourseCoinEnd);
-      for(const at of run)this.spawnCoin(lane,at,COIN_Y);
-      if(run.length)this.lastCourseCoinEnd=run.at(-1)!;
+
       if(this.obstacleRng.next()>.86)this.spawnGem(lane,feature.from+36);
     }
     if(this.referenceReplay){
@@ -1866,7 +1865,7 @@ export class Game {
     this.spawnDef(def, def.lanes === 'one' ? lane : 1, distance);
   }
 
-  private spawnCoin(lane: number, distance: number, y = COIN_Y): void {
+  private spawnCoin(lane: number, distance: number, y = COIN_Y,side?:number): void {
     if (distance < 4) return;
     const entity = this.world.createEntity();
     const value = this.difficulty.name==='classic'&&!this.referenceReplay
@@ -1875,7 +1874,7 @@ export class Game {
     const group = this.acquirePickup('coin', value);
     group.userData.nativeCoinSpawnTime=this.world.elapsed;
     if(this.difficulty.name==='classic')y=nativeCoinRootHeight(y,COIN_Y);
-    this.world.add(entity, Pickup, { kind: 'coin', lane, distance, baseY: y, value, taken: false, object: group });
+    this.world.add(entity, Pickup, { kind: 'coin', lane,side, distance, baseY: y, value, taken: false, object: group });
     this.pickups.push(entity);
   }
 
@@ -2045,7 +2044,7 @@ export class Game {
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
       const pickupY=pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem');
       if (pickup.object) {
-        const point = this.path.at(pickup.distance, LANES[pickup.lane]);
+        const point = this.path.at(pickup.distance, (pickup.side??LANES[pickup.lane]));
         pickup.object.position.set(point.x, pickupY+this.groundY(pickup.distance), point.z);
         pickup.object.rotation.y = nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
 
@@ -2054,8 +2053,8 @@ export class Game {
       const magnet = pickup.kind === 'coin' && hasPower(power,'magnet',this.world.elapsed);
       const nativeReach=this.difficulty.name==='classic'&&!magnet&&pickup.kind!=='gem';
       const close = nativeReach
-        ? nativePickupWithinReach(pickup.kind,pickup.value,LANES[pickup.lane]-laneXNow,pickupY+this.groundY(pickup.distance)-jump.y-this.groundY(),ahead)
-        : Math.abs(ahead) < (magnet ? 9 : 1.4) && Math.abs(laneXNow - LANES[pickup.lane]) < (magnet ? 9 : 0.55);
+        ? nativePickupWithinReach(pickup.kind,pickup.value,(pickup.side??LANES[pickup.lane])-laneXNow,pickupY+this.groundY(pickup.distance)-jump.y-this.groundY(),ahead)
+        : Math.abs(ahead) < (magnet ? 9 : 1.4) && Math.abs(laneXNow - (pickup.side??LANES[pickup.lane])) < (magnet ? 9 : 0.55);
       const heightClose = nativeReach || pickup.kind !== 'coin' || coinHeightWithinReach(
         pickupY, jump.y, slide.remaining>0, magnet,
       );
@@ -2346,7 +2345,7 @@ export class Game {
     for (const entity of this.pickups) {
       const pickup = this.world.require(entity, Pickup);
       if (!pickup.object) continue;
-      const point = this.path.at(pickup.distance, LANES[pickup.lane]);
+      const point = this.path.at(pickup.distance, (pickup.side??LANES[pickup.lane]));
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
       pickup.object.position.set(point.x,this.groundY(pickup.distance)+pickupPresentationHeight(pickup.baseY,this.world.elapsed,pickup.distance,this.difficulty.name==='classic'&&pickup.kind!=='gem'),point.z);
       pickup.object.rotation.y=nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
@@ -2509,8 +2508,9 @@ export class Game {
     this.obstacles = [];
     this.pickups = [];
     this.nextSpawn = activeCourse()?Infinity:this.difficulty.name==='classic' ? Math.max(distance+90,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+90;
+    this.courseCoins=new CourseCoinDirector(distance); // QA seek cannot reconstruct skipped native counters.
     this.courseCoinIndex=activeCourse()?.features.findIndex(f=>f.to>distance)??0;
-    this.lastCourseCoinEnd=null; // QA seek discards the old spawned coin stream.
+
     this.referenceObstacleIndex = 0;
     this.nextPickup = this.difficulty.name==='classic' ? Math.max(distance+MIN_BONUS_ITEM_SPACING,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+MIN_BONUS_ITEM_SPACING;
     this.bonusDirector.skipTo(distance);

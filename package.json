@@ -78,7 +78,8 @@
     "temple:test:resurrection": "esbuild tools/test-native-resurrection.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-resurrection.mjs >/dev/null && node /tmp/temple-resurrection.mjs",
     "temple:test:native-coin-values": "esbuild tools/test-native-coin-values.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-native-coin-values.mjs >/dev/null && node /tmp/temple-native-coin-values.mjs",
     "temple:test:obstacle-actions": "esbuild tools/test-obstacle-actions.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-obstacle-actions.mjs >/dev/null && node /tmp/temple-obstacle-actions.mjs",
-    "temple:test:pointer-input": "esbuild tools/test-pointer-input.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pointer-input.mjs >/dev/null && node /tmp/temple-pointer-input.mjs"
+    "temple:test:pointer-input": "esbuild tools/test-pointer-input.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pointer-input.mjs >/dev/null && node /tmp/temple-pointer-input.mjs",
+    "temple:test:coin-runs": "esbuild tools/test-native-coin-runs.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-coin-runs.mjs >/dev/null && node /tmp/temple-coin-runs.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

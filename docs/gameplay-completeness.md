@@ -4,7 +4,7 @@
 
 “有”仅表示实现存在；必须另记可达性和实玩验证。“不准”包括已知假设、机制不完整、与当前目标不符。视频未展示或无法确认的项目如实注明，不能把用户要求等同视频证据。
 
-## 当前功能状态（更新至第40轮）
+## 当前功能状态（更新至第44轮）
 
 | 功能组 | 当前状态 | 主要证据/仍缺内容 |
 |---|---|---|
@@ -798,3 +798,47 @@
 - seed1/2/3各9000米自然运行22项通过，三主题、路障动作、T双出口、对象有界、失败→结算→重开均成立。`gameplay-transition-pairs-natural.json`；无seek/spawn/强制无敌。
 - 自然到4860.951米截取悬崖转木桥，专用cliffCap已渲染。无保护实按Left/Right到车道0/1、playing，随后未跳自然落到groundY/worldY=-3、仍playing；后续失败结算、重开正常。`gameplay-cliff-plank-input.json`、截图`gameplay-cliff-plank.png`。购买/道具未干预这段下降。
 - 剩余：完整原版道路候选/长度与障碍权重、金币阵列和生成节点布局、完整经济/19目标、复活动画及真机验证。连接帽配对不再作为功能缺口，但原版全生成器尚未完成。测试结束恢复原始零进度存档。
+
+## 第41轮：主题障碍候选与悬崖专用缺口/滑铲树（2026-10-31）
+
+- 修复悬崖复用石桥候选池：原版GetPrefabNameForType静态跳转表显示cliff普通hole11/14、narrow17..30、tower31/32返回空名；long-hole12/13映射cliffToTempleCapA/B。木桥11..16映射普通plank hole，窄路为空，tower31/32有模型。资源映射不等于候选概率/实际启用证据，不能据此宣称恢复权重。
+- 新只读工具inspect-native-theme-prefabs.py输出analysis/native-generation/theme-prefabs.json及原函数汇编。AddObstacle确认直路1/2可挂树根，slide非Temple分支选择cliffStraightTreeVert/Horz；独立树网格与组合预制件子树变换一致，新增export-native-cliff-slide.py及原版OBJ/UV1接入。
+- 新悬崖池采用treeJump/treeTrip/treeSlide/cliffGap/cliffStraight覆盖袋。此袋、频率及12米节点布局是网页假设，明确未恢复原版权重。cliffGap按原Type12→13装配A近/B远，原支撑多边形结合网页格网得到14米缺口；原始网格world ground3，树障相对碰撞高度1.6。未移除玩家要求的石桥窄路、坑、火塔。
+- 生成测试确认悬崖不混入不支持类型、A/B配对距离12、slide选择专用模型。模型/碰撞测试覆盖三车道14米缺口边界、独立模板、1.6高度和原资产哈希；65模型UV校验通过，类型检查与生产构建通过。旧bar图片路径/音频chunk提示仍在。
+- 三种子各自然9000米22项全部通过；seed2自然包含两组cliffGap，三种子都有悬崖slide；包括T双出口、对象有界、失败结算与重开。证据gameplay-cliff-pool-natural.json。
+- 受控planTheme/seek专项无保护验证：缺口未跳坠落、跳跃通过；树障未滑铲撞死、滑铲通过，随后均可结算及重开，16项通过。初次断言把dying阶段当未失败，延长到结算后复验通过，未改游戏碰撞。证据gameplay-cliff-pool-fixture.json。
+- 悬崖普通跑动可信Right/Left实际到1/0且playing、无保护，gameplay-cliff-pool-input.json。专项seek后的原版镜头采用限速跟随，截屏使用现有snapFollowCamera定位；gameplay-cliff-slide.png为实际渲染网格，非自然跑到截图。测试结束恢复原始存档。
+- 剩余：完整候选概率/长度分布、金币阵列和生成布局、完整原版经济与19个目标、复活动画及真机手感。此轮恢复资源适用范围，尚不能声称完整原生成器完成。
+
+## 第42轮：逐道路格的原版金币连续计数与直路阵列（2026-10-31）
+
+- 修复每个长路段仅5枚金币的密度问题。原版AddCoins每次创建5个对象，直路原坐标Z=-25/-12.5/0/12.5/25，对应网页2.5米间距。UpdatePathDescription的CoinRunCount统计连续HasCoins道路格，不是金币枚数；因此默认最大5格可含25枚，旧5枚/整段解释不正确。
+- 新只读inspect-native-coin-arrays.py校验18条指令和HasCoins3d/Spaces84/Count88字段，保存完整AddCoins、UpdatePathDescription汇编及analysis/native-coin-arrays/source.json。含币格累加count、未达max保留spaces，达到max清spaces；空格清count并spaces+1。门槛仍是strict spaces>minimum、count<maximum。
+- 新NativeCoinRunState与CourseCoinDirector接入默认运行：按前方90米增量处理12米格，每格采用5枚原版直线阵列；默认5格上限，使用现有原版进度/fastTurn最小间距。连续中断后按原规则保留间隔增长，而非把每段末枚当完整原计数。重开重置，QA seek明确重新计数，不冒充重建跳过的历史。
+- 尚属网页适配：格网、6米路口留白、障碍附近排除、过渡/分支整组禁布；原版弯角阵列、障碍上方弧线、左右行和随机选择还未接入。当前不是完整AddCoins移植；初始录像金币不改。
+- 单测验证13空格严格门槛、5含币格/25枚、被中断恢复、2.5米间距、分批流式等价；100混合种子验证唯一位置/路口安全范围，原旧单段测试改成实际新生成器测试。类型检查/生产构建通过，原有bar图片路径与音频chunk提示仍在。
+- 三种子各9000米自然控制22项全部通过，实际金币316/770/799，充能最高等级4/8/8，采样pickup峰值30/20/26。含全部三主题、悬崖T双出口、正常路障、失败结算与重开。证据gameplay-coin-runs-natural.json。
+- 自然seed2跑到1500米拾取98，继续不输入至失败累计100，重开后银行恰好+100；结算等待复活选择时不提前入账，测试按实际commitRun时点验收。gameplay-coin-runs-fixture.json。gameplay-coin-runs.png为正常1500米跑动的实际金币串，仅使用已有snapFollowCamera定位拍摄。
+- 开局正常跑到45米后可信Right/Left换道到1/0、均playing且无保护，gameplay-coin-runs-input.json；未重现普通左右撞墙。测试结束恢复原始存档。
+- 剩余：完整道路权重/布局、金币弯角与障碍阵列/侧行资格、完整原版经济/19目标、复活动画及真机手感。
+
+## 第43轮：树根高位金币与滑铲低位金币（2026-10-31）
+
+- 补齐此前一律排除树障道路格的金币缺口。AddCoins12e5640..5720按Obstacle3/4升高、2/5保持低位；centre-row的Y写入12e5d88..5dc0得到高位5枚相对地面3.6/4/4/4/3.6米。原始神庙low/high18/20、木桥3/5、悬崖33/35，扣0/-15/+15原ground再乘.2后三主题一致；滑铲树5维持相对.6米。火塔6存在随机高低分支，未猜测接入。
+- 扩展inspect-native-coin-arrays.py的指令校验与source.json，保留完整函数汇编。NativeTreeCoinHeights接入CourseCoinDirector，在已满足原版连续计数门槛的树障正中格生成原版5枚高度；邻格仍排除，避免与跨格障碍/缺口重叠。spawnCoin沿用既有原版高度转换与原始拾取边界，没有放宽拾取距离。
+- 本轮明确保留假设：centre-row固定选择、12米格网和网页安全筛选；原版候选随机选择、侧行、转角和火塔分支尚不完整。正常录像开局金币不改。
+- 单测覆盖三种tree生成、native plateau、slide低位、未知flame排除；原拾取边界验证高位地面不可拾取/跳至2.5米可拾取，slide低位可取；100混合课程流式一致和安全边界通过。类型检查/生产构建通过，原有bar资源路径和音频chunk提示保留。
+- 新自然控制脚本默认居中便于验证高位拾取，并在窄路全区间保持安全侧。初次只看前方24米便回中的脚本在窄路末端坠落，修正测试操作后复验，未修改游戏碰撞。最终seed1/2/3各9000米25检查全部通过，包括三种tree无保护居中存在5枚对应高度且跨越后金币增加、三主题、T双出口、对象有界、失败结算重开。证据gameplay-tree-coins-natural.json。金币增量包含邻格，不能据此宣称精确每行5枚全收集。
+- 正常seed1跑到1168米，前方1188为treeJump，高位5枚已实例化；原版跟随镜头snap后保存gameplay-tree-coins.png与view.json，无QA seek/spawn/无敌。可信Left/Right分别车道0/1、playing且无保护，gameplay-tree-coins-input.json；普通左右撞墙未复现。
+- 剩余：转角/侧行/火塔随机金币规则，完整道路候选概率、经济与19目标、复活动画和真机验证。测试后恢复原始零进度存档。
+
+## 第44轮：火塔高/低金币路线（2026-10-31）
+
+- AddCoins12e567c..56d8静态确认Obstacle6先Range(0,2)：0保留低位；1还要sAllowJumpCoins才升高，否则仍低位。原版0x15字段为该开关；cctor默认0，实际运行可被GameController/远端配置改写。网页当前明确启用跳跃金币，不能宣称已还原远端启用值。
+- nativeFlameCoinHeights与CourseCoinDirector接入该二分选择，仅在通过连续金币资格后抽取；独立网页种子流保证分批生成结果一致，不冒充Unity PRNG序列。低位.6×5，高位3.6/4/4/4/3.6；沿用既有火塔跳跃/滑铲双动作、原始拾取边界及碰撞，没有降低难度来配合金币。
+- 扩展inspect-native-coin-arrays.py校验8条fire分支指令、原Range目标和字段读取，source.json保留开关未知说明。单测覆盖Range入参2、两分支、关闭jump时降为低位、100种子两分支可达/流式一致；100混合课程、类型检查和生产构建通过。原bar路径/音频chunk提示保留。
+- 首批seed1/2/3各9000米玩法项都过，但只遇到两组低位火塔，高位覆盖断言失败，保留gameplay-flame-coins-three-seeds.json。补seed4/5，4在2784自然生成高位，8028低位；5在7584低位。补充批因没有seed1左转样本，单独T双向聚合断言不满足，原始extra-seeds.json保留；合并5局后重新计算全部全局覆盖，42项全部通过。没有删除前述覆盖不足记录，也未把单批缺样本当游戏失败。
+- gameplay-flame-coins-natural.json含5×9000米，正常三主题/窄路/分支/T双向、火塔两路线、无保护居中拾取、对象有界及失败结算重开。金币增量含邻格，不宣称整行精确全收。
+- 自然seed4到2764.968米，前方2784高位火塔。无保护不操作实际impact死亡结算；重新正常跑到同点，可信Left/Right换道0/1，再可信Up跳至2804.404且playing、金币+9。seed1正常到3412.811，前方3432低位火塔，可信Down后到3453.582且playing、金币+10；后续失败累计506，重开银行恰好+506。证据gameplay-flame-coins-input.json。
+- gameplay-flame-coins.png是正常到达高位火塔的实际渲染，仅使用现有snapFollowCamera拍摄，没有seek/spawn/强制保护。普通左右撞墙未复现。测试后恢复原始存档。
+- 剩余：转角阵列与侧排选择、完整路径候选/长度分布、原版经济/19目标、复活动画与真机手感；火塔金币远端开关仍未知。
