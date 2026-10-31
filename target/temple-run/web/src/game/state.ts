@@ -1,3 +1,4 @@
+import type { PowerPickupCounts } from './nativePowerPickups';
 import type { RunChallengeSummary } from './nativeRunChallenges';
 import type { ActivePower } from './powerEffects';
 import { reactive, readonly } from 'vue';
@@ -132,8 +133,8 @@ export function clearMilestone(): void {
   state.milestone = null;
 }
 
-export function recordRun(distance: number, coins: number, gems: number, score: number,challenges?:RunChallengeSummary): void {
-  recordProgressRun(distance, coins, gems, score,challenges);
+export function recordRun(distance: number, coins: number, gems: number, score: number,challenges?:RunChallengeSummary,pickups?:PowerPickupCounts): void {
+  recordProgressRun(distance, coins, gems, score,challenges,pickups);
   state.best = progress.bestDistance;
   state.totalCoins = progress.coins;
   state.bankCoins = progress.coins;

@@ -4,6 +4,7 @@ export type SurfaceKind = 'stone' | 'wood';
 
 export interface SurfaceSection {
   kind: SurfaceKind;
+  level?:1|2|3;
   index: number;
   from: number;
   to: number;

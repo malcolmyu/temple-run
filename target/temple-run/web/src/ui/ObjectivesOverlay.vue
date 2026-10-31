@@ -7,8 +7,8 @@ import { syncBanks } from '../game/state';
 const emit = defineEmits<{ close: [] }>();
 const notice = ref('');
 const category=ref('全部');
-const categories=['全部','距离','分数','金币','其他'];
-const categoryOf=(id:string)=>id.startsWith('score')?'分数':id.startsWith('coins')||id==='coin-hoard'?'金币':id.startsWith('distance')||id.startsWith('notrip')||id==='first-500'||id==='marathon'?'距离':'其他';
+const categories=['全部','距离','分数','金币','道具','其他'];
+const categoryOf=(id:string)=>/^(magnets|boosts|coinBonuses|invisibilityBonuses)/.test(id)?'道具':id.startsWith('score')?'分数':id.startsWith('coins')||id==='coin-hoard'?'金币':id.startsWith('distance')||id.startsWith('notrip')||id==='first-500'||id==='marathon'?'距离':'其他';
 const visibleObjectives=computed(()=>OBJECTIVES.filter(item=>category.value==='全部'||categoryOf(item.id)===category.value));
 const scoreMultiplier = computed(nextRunScoreMultiplier);
 
@@ -56,6 +56,6 @@ function onClaim(id: string): void {
 </template>
 
 <style scoped>
-.objective-filter .menu-btn{min-width:0;min-height:44px;flex:1 1 0}
+.objective-filter .menu-btn{min-width:0;min-height:44px;flex:1 1 27%}
 .objective-filter .menu-btn[aria-pressed="true"]{background:#645031;border-color:#e1be78;color:#fff0c2}
 </style>

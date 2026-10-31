@@ -12,7 +12,8 @@ const tileIndex = (distance: number): number => Math.floor((distance + 9) / TILE
  * spawn intervals in this recording.
  */
 export function terrainAt(distance: number, _path?: TrackPath): TerrainKind {
-  return surfaceAt(distance).kind === 'wood' ? 'bridge' : 'temple';
+  const surface=surfaceAt(distance);
+  return surface.kind==='wood'?'bridge':surface.level===3?'cliff':'temple';
 }
 
 function stoneSection(from: number, to: number): boolean {

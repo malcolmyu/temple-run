@@ -55,3 +55,13 @@
 自然seed1跑至5293度量米（6453物理米）时无绊倒，首次拾币2321米，后来已收20金币；故开局无金币仍成立。主动错过下个路口结算5306米，四项自然完成。受控树根负例中实际左右键安全且不标记、真实绊倒才标记；宝石复活后标记和49米拾币前缀保持，最终clean纪录0，重开清临时状态。证据gameplay-clean-run.json / gameplay-clean-run-failures.json。
 
 目前28个可用目标：24个原版ID、4个兼容网页目标；原版55项目录还有31个ID未完整接入。
+
+## 第28轮：实际拾取道具次数
+
+`inspect-native-power-objectives.py`核验12个分支：magnets / boosts / invisibilityBonuses / coinBonuses各5、10、20。字段来自GameController metadata，分别NumMagnetBonusesPickedUp174、NumBoostsPickedUp178、NumInvisibilityBonusesPickedUp17c、NumMegaCoinsPickedUp180。每项加载地址、分母FMOV指令以及HandleBonusItemPickup的load/add1/store均校验，证据`power-pickups.json`。
+
+网页只在实体Pickup从未taken变taken时计数。重复拾取同种道具虽只刷新效果，仍是一件拾取；普通金币、宝石、直接激活、超级起跑、复活加速及非实体充能奖励不计入。复活继续本局，重开清零；结算取每种道具的历史单局最大值，不跨局累加。旧数据缺失为0，不能从升级或效果状态推断拾取。
+
+自然30000物理米中实际收集磁铁7、加速11、护盾11、金币道具10，共39件，与生成记录collected逐项一致。所有5次目标自然完成、三种10次完成，磁铁10及所有20次的自然达成尚未证明。独立受控80实体拾取场景验证四类精确20、每件只计一次、暂停/帧更新不重计、复活不重计/不清零、结算与重开；它不是自然20次可达证据。
+
+目前40个可用目标：36个原版ID、4个兼容网页目标。原版55项目录还有19个ID未完整接入。运行期成就完成保存时机仍采用网页最终结算适配。

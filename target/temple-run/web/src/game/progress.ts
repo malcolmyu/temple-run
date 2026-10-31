@@ -1,3 +1,4 @@
+import { createPowerPickupCounts, sanitizePowerPickupCounts, POWER_PICKUP_KINDS, type PowerPickupCounts } from './nativePowerPickups';
 import type { RunChallengeSummary } from './nativeRunChallenges';
 import { reactive } from 'vue';
 import { ANGEL_WINGS_PRICE } from './nativeAngelWings';
@@ -14,6 +15,7 @@ export interface Progress {
   lifetimeCoins: number;
   bestScore: number;
   bestRunCoins: number;
+  bestPowerPickups:PowerPickupCounts;
   bestCoinFreeStart:number;
   bestCleanRunDistance:number;
   owned: string[];
@@ -65,6 +67,7 @@ function migrateLegacy(defaults: Progress): Progress | null {
     lifetimeCoins: num(stats.totalCoins),
     bestScore: 0,
     bestRunCoins: 0,
+    bestPowerPickups:createPowerPickupCounts(),
     bestCoinFreeStart:0,bestCleanRunDistance:0,
     owned,
     equipped,
@@ -95,6 +98,7 @@ function load(): Progress {
     lifetimeCoins: 0,
     bestScore: 0,
     bestRunCoins: 0,
+    bestPowerPickups:createPowerPickupCounts(),
     bestCoinFreeStart:0,bestCleanRunDistance:0,
     owned: [SKINS[0].id],
     equipped: SKINS[0].id,
@@ -114,6 +118,7 @@ function load(): Progress {
       claimed: Array.isArray(saved.claimed) ? saved.claimed : [],
       upgrades: { magnet: 0, coin: 0, ...(saved.upgrades ?? {}) },
     };
+    merged.bestPowerPickups=sanitizePowerPickupCounts(saved.bestPowerPickups);
     // A removed/unknown character must never stay equipped or unlock a catalogue entry.
     merged.owned = [...new Set([SKINS[0].id, ...merged.owned.filter(
       id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
@@ -133,6 +138,7 @@ function load(): Progress {
       Number(saved.totalDistance) > 0 ||
       (Array.isArray(saved.owned) && saved.owned.length > 1) ||
       (Array.isArray(saved.claimed) && saved.claimed.length > 0) ||
+      Object.values(merged.bestPowerPickups).some(count=>count>0) ||
       Object.values(merged.upgrades).some(level => Number.isFinite(level) && level > 0);
     if (!meaningful) {
       const legacy = migrateLegacy(defaults);
@@ -209,7 +215,7 @@ export function buyUpgrade(id: string, cost: number): boolean {
   return true;
 }
 
-export function recordRun(distance: number, coins: number, gems: number, score: number,challenges?:RunChallengeSummary): void {
+export function recordRun(distance: number, coins: number, gems: number, score: number,challenges?:RunChallengeSummary,pickups?:PowerPickupCounts): void {
   progress.runs += 1;
   progress.coins += coins;
   progress.gems += gems;
@@ -218,6 +224,7 @@ export function recordRun(distance: number, coins: number, gems: number, score: 
   progress.bestDistance = Math.max(progress.bestDistance, Math.floor(distance));
   progress.bestScore = Math.max(progress.bestScore, Math.floor(score));
   progress.bestRunCoins = Math.max(progress.bestRunCoins, Math.floor(coins));
+  if(pickups)for(const kind of POWER_PICKUP_KINDS)progress.bestPowerPickups[kind]=Math.max(progress.bestPowerPickups[kind],pickups[kind]);
   if(challenges){
     progress.bestCoinFreeStart=Math.max(progress.bestCoinFreeStart,Math.floor(challenges.coinFreeStart));
     progress.bestCleanRunDistance=Math.max(progress.bestCleanRunDistance,Math.floor(challenges.cleanDistance));

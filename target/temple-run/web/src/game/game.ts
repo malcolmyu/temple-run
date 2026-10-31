@@ -1,3 +1,5 @@
+import { NativeThemePacing } from './nativeThemePacing';
+import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups';
 import { createRunChallenges, stepRunChallenges, summarizeRunChallenges } from './nativeRunChallenges';
 import { createAngelWings, startAngelWings, stepAngelWings } from './nativeAngelWings';
 import { MEGA_START_PRICE, MEGA_START_PROGRESS } from './megaStart';
@@ -130,6 +132,7 @@ export class Game {
   private wingsGroup = new THREE.Group();
   private angelWings=createAngelWings();
   private runChallenges=createRunChallenges();
+  private runPowerPickups=createPowerPickupCounts();
   private wingRevivePending=false;
   private wingSprites: THREE.Sprite[] = [];
   private chaserGroup = new THREE.Group();
@@ -156,6 +159,9 @@ export class Game {
   private obstacleRng = new SeededRandom(0x51ed270b);
   private runSeed=0;
   private fastTurnState=new NativeFastTurnState();
+  private themePacing=new NativeThemePacing();
+  private themeRng=new SeededRandom(4);
+  private themeChanges:{level:number;progress:number}[]=[];
   private fastTurnRng=new SeededRandom(3);
   private routeRng=new SeededRandom(1);
   private rewardRng=new SeededRandom(2);
@@ -283,6 +289,8 @@ export class Game {
         this.bundle.scene.add(object);this.renderOnce();
         return {resource,position:object.position.toArray(),bounds:new THREE.Box3().setFromObject(object).getSize(new THREE.Vector3()).toArray()};
       },
+      // Diagnostic only: request a future theme without advancing native gameplay clocks.
+      planTheme: (level:1|2|3,extend=1000) => {const course=activeCourse();if(course&&[1,2,3].includes(level)){const progress=this.world.require(this.runnerEntity,RunStats).distance;course.requestTheme(level,progress);course.ensureThrough(course.extent+extend,progress,this.fastTurnState.active);}return course?.extent;},
       planAhead: (distance:number,progressHint?:number) => {activeCourse()?.ensureThrough(distance,progressHint??this.world.require(this.runnerEntity,RunStats).distance,this.fastTurnState.active);return activeCourse()?.extent;},
       jumpTo: (distance: number) => this.jumpTo(distance),
       start: () => this.start(),
@@ -433,8 +441,10 @@ export class Game {
       scoreMultiplier: this.runScoreMultiplier,
       coinSpawnLevel: this.coinSpawnLevel,
       generationPacing: nativePathPacing(stats.distance),
+      powerPickups:{...this.runPowerPickups},
       runChallenges:{...this.runChallenges,summary:summarizeRunChallenges(this.runChallenges,stats.distance)},
       angelWings: {...this.angelWings,stock:progress.wings,pendingRevive:this.wingRevivePending},
+      themePacing:{level:this.themePacing.level,elapsed:this.themePacing.elapsed,changes:[...this.themeChanges]},
       fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
       generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
@@ -537,6 +547,7 @@ export class Game {
 
   private resetWorld(): void {
     this.runChallenges=createRunChallenges();
+    this.runPowerPickups=createPowerPickupCounts();
     this.angelWings=createAngelWings();this.wingRevivePending=false;
     this.coinSpawnLevel=levelOf('coinSpawn');this.coinSpawnIndex=0;
     this.runScoreMultiplier = this.difficulty.name !== 'classic' || this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
@@ -595,6 +606,7 @@ export class Game {
     const seedParam=new URLSearchParams(window.location.search).get('seed');
     this.runSeed=seedParam!==null&&/^\d+$/.test(seedParam)?Number(seedParam)>>>0:(Date.now()^0x9e3779b9)>>>0;
     this.obstacleRng = new SeededRandom(this.runSeed);
+    this.themePacing=new NativeThemePacing();this.themeRng=new SeededRandom(this.runSeed^0x7468656d);this.themeChanges=[];
     this.fastTurnState.reset();
     this.fastTurnRng=new SeededRandom(this.runSeed^0x66617374);
     this.routeRng=new SeededRandom(this.runSeed^0x726f7574);
@@ -1126,7 +1138,11 @@ export class Game {
       stats.progressRemainder = award.remainder;
       stats.score += award.scoreDelta;
       stats.distance += delta;
-      if(activeCourse())this.fastTurnState.advance(delta,()=>this.fastTurnRng.int(4),{inactive:stats.distance>=4500?750:stats.distance>=1000?850:1000,active:100});
+      if(activeCourse()){
+        this.fastTurnState.advance(delta,()=>this.fastTurnRng.int(4),{inactive:stats.distance>=4500?750:stats.distance>=1000?850:1000,active:100});
+        const level=this.themePacing.advance(delta,stats.distance,limit=>this.themeRng.int(limit));
+        if(level!==null){activeCourse()!.requestTheme(level,stats.distance);this.themeChanges.push({level,progress:stats.distance});}
+      }
       consumeBoostProgress(power.boost,delta);
     }
 
@@ -2014,6 +2030,7 @@ export class Game {
       );
       if (!pickup.taken && close && heightClose) {
         pickup.taken = true;
+        countPowerPickup(this.runPowerPickups,pickup.kind);
         const generated=this.generatedBonuses.find(record=>record.distance===pickup.distance&&record.kind===pickup.kind);
         if(generated)generated.collected=true;
         if (pickup.kind !== 'coin' && pickup.kind !== 'gem') {
@@ -2330,7 +2347,7 @@ export class Game {
     if (this.runCommitted) return;
     const stats = this.world.require(this.runnerEntity, RunStats);
     if (stats.distance <= 0) return;
-    recordRun(stats.distance, stats.coins, stats.gems, stats.score,summarizeRunChallenges(this.runChallenges,stats.distance));
+    recordRun(stats.distance, stats.coins, stats.gems, stats.score,summarizeRunChallenges(this.runChallenges,stats.distance),this.runPowerPickups);
     syncBanks();
     this.runCommitted = true;
   }

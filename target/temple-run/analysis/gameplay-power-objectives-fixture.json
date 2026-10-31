@@ -1,0 +1,103 @@
+{
+  "result": {
+    "type": "object",
+    "value": {
+      "afterRevive": {
+        "bonus": 20,
+        "boost": 20,
+        "magnet": 20,
+        "shield": 20
+      },
+      "beforeRevive": {
+        "bonus": 20,
+        "boost": 20,
+        "magnet": 20,
+        "shield": 20
+      },
+      "checks": [
+        {
+          "name": "direct activation does not count as pickup",
+          "passed": true
+        },
+        {
+          "name": "each of80 physical pickups counted exactly once",
+          "passed": true
+        },
+        {
+          "name": "render/update frames do not recount collected objects",
+          "passed": true
+        },
+        {
+          "name": "pause does not add pickup counts",
+          "passed": true
+        },
+        {
+          "name": "collected powers can expire and run fails to results",
+          "passed": true
+        },
+        {
+          "name": "resurrection boost does not count or erase pickups",
+          "passed": true
+        },
+        {
+          "name": "later failure reaches results",
+          "passed": true
+        },
+        {
+          "name": "all20 thresholds settle with same-session counts",
+          "passed": true
+        },
+        {
+          "name": "new run clears all pickup counts",
+          "passed": true
+        },
+        {
+          "name": "repeat restart does not sum/bank pickup record twice",
+          "passed": true
+        }
+      ],
+      "collected": {
+        "bonus": 20,
+        "boost": 20,
+        "magnet": 20,
+        "shield": 20
+      },
+      "final": {
+        "bonus": 20,
+        "boost": 20,
+        "magnet": 20,
+        "shield": 20
+      },
+      "saved": {
+        "bestCleanRunDistance": 865,
+        "bestCoinFreeStart": 11,
+        "bestDistance": 865,
+        "bestPowerPickups": {
+          "bonus": 20,
+          "boost": 20,
+          "magnet": 20,
+          "shield": 20
+        },
+        "bestRunCoins": 1044,
+        "bestScore": 80850,
+        "claimed": [],
+        "coins": 1044,
+        "equipped": "jhony",
+        "gems": 0,
+        "lifetimeCoins": 1044,
+        "music": true,
+        "owned": [
+          "jhony"
+        ],
+        "runs": 1,
+        "sound": true,
+        "totalDistance": 865,
+        "upgrades": {
+          "coin": 0,
+          "magnet": 0
+        },
+        "wings": 0
+      }
+    }
+  }
+}
