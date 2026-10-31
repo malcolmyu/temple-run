@@ -20,3 +20,6 @@ assert.equal(consumeAngelWings(perma),false);assert.equal(startAngelWings(perma)
 const {buyPermaWings}=await import('../target/temple-run/web/src/game/progress');
 progress.coins=9999;assert.equal(buyPermaWings(),false);progress.coins=10000;assert.ok(buyPermaWings());assert.equal(progress.coins,0);assert.equal(progress.permaWings,1);
 console.log('Perma wings: nonexpiring protection, death consumes active flag,15s cooldown, regular-wing reuse and10000 purchase pass');
+
+const early=createAngelWings();startAngelWings(early);stepAngelWings(early,1);assert.ok(consumeAngelWings(early));assert.equal(early.remaining,0);assert.equal(early.cooldown,44);assert.equal(startAngelWings(early),false);
+console.log('Ordinary early revival preserves activation-based45s recharge; permanent15s is separate');

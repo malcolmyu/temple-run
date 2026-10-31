@@ -33,9 +33,9 @@
 
 | 要求 | 有/缺/不准 | 证据与边界 |
 |---|---|---|
-| 死亡→结算→重开 | 有；当前多次实际验证 | 输入15项、六万米、四道具24项均到ended再回playing |
+| 死亡→结算→重开 | 有；当前多次实际验证 | 输入15项、六万米、四道具24项均到ended再回playing；[当前结算死因](../target/temple-run/analysis/gameplay-result-death-reason-missed.json)正常漏转显示“错过路口”，[正常分路踩空](../target/temple-run/analysis/gameplay-result-death-reason-water.json)显示“掉进了水里”，均实际点击重开，不再被统一俏皮话覆盖 |
 | 宝石复活 | 有；网页经济扩展 | 当前分路死亡后实际点复活、同runId后合流；[保护反馈](../target/temple-run/analysis/gameplay-revive-feedback.json)验证倒计时/暂停/清理 |
-| 天使翼/永久翼、起跑 | 有；购买使用当前验证，双翼/起跑专项为历史证据 | [结算收益购买翼并新局自动复活](../target/temple-run/analysis/gameplay-result-store-after.json)；[历史双复活/起跑](../target/temple-run/analysis/gameplay-utility-objectives.json) |
+| 天使翼/永久翼、起跑 | 有；购买使用及双翼/起跑当前验证 | [结算收益购买翼并新局自动复活](../target/temple-run/analysis/gameplay-result-store-after.json)；[当前双翼/起跑41项含输入](../target/temple-run/analysis/gameplay-current-utilities-summary.json)：实际HUD激活、正常生成、两起跑安全退出、永久翼45秒仍有效、普通翼/永久翼真实失败自动复活及下一次失败结算重开；预备库存、25ms推进，不等于真人或真机验收 |
 | 结算入账与商店 | 有；当前真实UI闭环 | 本局713币→结算商店713→买500币翼余额213→新局使用；重复打开无重复入账。结果页明确“结算并去商店”，结算前仍可复活 |
 | 升级 | 有；六类升级当前UI购买与自然效果 | [当前24次实际购买](../target/temple-run/analysis/gameplay-current-upgrade-purchases.json)与[刷新后自然效果](../target/temple-run/analysis/gameplay-current-upgrade-effects.json)，覆盖四类道具0→6。[金币价值同路线收入对照](../target/temple-run/analysis/gameplay-current-coin-value.json)、[高值币各档首次观察](../target/temple-run/analysis/gameplay-current-high-coins.json)及[八档扣款](../target/temple-run/analysis/gameplay-current-coin-upgrade-ledger.json)覆盖另两类。高值币门槛原默认，金币价值为网页扩展；真机与所有组合效果仍未泛化验收 |
 | 角色购买/装备/开跑 | 有；网页9角色，原版完整收藏未确证 | [9角色闭环](../target/temple-run/analysis/gameplay-store-closure.json)。网页价格明示，不声称完整原版14角色价格 |
@@ -45,7 +45,7 @@
 | 启动失败恢复 | 有；当前实际资源阻断验证 | [失败→重试→恢复→开始→失败重开](../target/temple-run/analysis/gameplay-startup-retry.json)，不清存档；不承诺无法支持WebGL设备可以靠重试修复 |
 | 资源与性能 | 部分完成 | 六万米渲染池趋稳、旧fork回收、当前path3..5段；[课程历史回收](../target/temple-run/analysis/gameplay-course-compaction-long-run.json)后正常课程片段6..7，保留前驱和绝对编号；仅证明采样范围内资源稳定。20/40/60Hz是模拟步长测试，不是设备渲染FPS或堆内存上限证明；另有[桌面开局15秒真实RAF](../target/temple-run/analysis/gameplay-live-frame-controlled.json)，DPR2/750×1624约59.8FPS，仅该环境与开局范围；[桌面三分钟自然三主题](../target/temple-run/analysis/gameplay-live-three-themes-summary.json)约59.9FPS，最大83.4ms，仍不是手机或所有设备性能证明 |
 | 手机触摸/倾斜 | 有接入，缺真机验收 | [浏览器原生触摸15项](../target/temple-run/analysis/gameplay-native-touch.json)已通过，派发到canvas的22个事件均isTrusted=true、pointerType=touch，另有权限分支模拟；这是桌面Chrome触摸模拟，不能替代iOS/Android传感器、真实权限和触摸延迟 |
-| 持久输入回放 | 缺 | 现有seed和诊断步进可重跑课程，尚不是可持久保存、完整还原真人操作的回放系统 |
+| 持久输入回放 | 记录层已接入，播放仍缺 | 现有seed加相同配置/进度/调用序列可复现生成；[种子契约](adr/seed-and-retry.md)已验证不同进度会分歧。[记录格式](adr/run-trace-format.md)已可显式保存/刷新读取，尚无播放器或重演结果校验，不能称完整回放 |
 
 ## 后续推进顺序
 

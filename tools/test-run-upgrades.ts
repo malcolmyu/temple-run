@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {captureRunUpgrades} from '../target/temple-run/web/src/game/runUpgrades';
+const levels:Record<string,number>={};const current=captureRunUpgrades(id=>levels[id]??0);
+for(const id of ['coinSpawn','coin','boost','magnet','shield','bonus'])levels[id]=99;
+assert.equal(current.magnetDuration,15);assert.equal(current.shieldDuration,15);assert.equal(current.boostProgress,250);assert.equal(current.coinBonusReward,50);assert.equal(current.coinMultiplier,1);assert.equal(current.availability.boost,0);
+const next=captureRunUpgrades(id=>levels[id]);assert.equal(next.levels.coinSpawn,5);assert.equal(next.levels.coin,3);assert.equal(next.levels.boost,6);assert.equal(next.magnetDuration,25);assert.equal(next.shieldDuration,25);assert.equal(next.boostProgress,750);assert.equal(next.coinBonusReward,150);assert.equal(next.coinMultiplier,1.75);assert.equal(next.magnetMultiplier,3);
+assert.ok(Object.isFrozen(next)&&Object.isFrozen(next.levels)&&Object.isFrozen(next.availability));
+assert.throws(()=>{(next.levels as {coin:number}).coin=0;});
+assert.deepEqual(captureRunUpgrades(()=>NaN),captureRunUpgrades(()=>0));
+console.log('Run upgrades:all six levels captured,source mutation isolated,next-run values,caps/invalid levels and nested immutability pass');

@@ -1,3 +1,4 @@
+import {RunTrace,parseRunTrace,type RunTraceData,type TraceCommand} from './runTrace';
 import {ambientTreeAllowed} from './sceneryVisibility';
 import {bindFocusPause,PORTRAIT_BLOCK_QUERY} from './focusPause';
 import {branchRewards} from './branchRewards';
@@ -17,7 +18,7 @@ import { COURSE_LOOKAHEAD, nativePathPacing } from './nativePathPacing';
 import { nativeCoinValue } from './nativeCoinValues';
 import { levelOf } from './upgrades';
 import { RESURRECTION_BOOST_PROGRESS, RESURRECTION_STUMBLE_AGE, resurrectionSpeed } from './nativeResurrection';
-import { boostProgress } from './upgrades';
+import { captureRunUpgrades } from './runUpgrades';
 import { addNativeCoinMeter } from './nativeCoinMeter';
 import { CoursePlan, activeCourse, setActiveCourse } from './coursePlan';
 import { BonusSpawnDirector,WEB_BONUS_AVAILABILITY } from './nativeBonusSpawn';
@@ -101,7 +102,7 @@ import { sidePathAt } from './sidePath';
 import { getDifficulty, type DifficultyConfig } from './difficulty';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
 import { progress, isOwned, saveProgress } from './progress';
-import { coinMultiplier, magnetDuration, shieldDuration, coinBonusReward,powerAvailability,magnetMultiplier } from './upgrades';
+
 import { MAX_COINS_PER_RUN, MIN_BONUS_ITEM_SPACING, MIN_TURN_SPACING } from './pathRules';
 import { DEFS, KIND_TO_DEF, type DefId } from './obstacles/catalog';
 import type { ObstacleAction, ObstacleDef, ObstaclePlan } from './obstacles/types';
@@ -311,6 +312,11 @@ export class Game {
       planTheme: (level:1|2|3,extend=1000) => {const course=activeCourse();if(course&&[1,2,3].includes(level)){const progress=this.world.require(this.runnerEntity,RunStats).distance;course.requestTheme(level,progress);course.ensureThrough(course.extent+extend,progress,this.fastTurnState.active);}return course?.extent;},
       planAhead: (distance:number,progressHint?:number) => {activeCourse()?.ensureThrough(distance,progressHint??this.world.require(this.runnerEntity,RunStats).distance,this.fastTurnState.active);return activeCourse()?.extent;},
       jumpTo: (distance: number) => this.jumpTo(distance),
+      traceNextRun: () => {this.traceArmed=true;return true;},
+      traceGet: () => this.activeTrace?.snapshot()??(this.lastTrace?parseRunTrace(JSON.stringify(this.lastTrace)):null),
+      traceStop: () => this.stopTrace(),
+      traceSave: () => {const data=this.stopTrace();if(!data)return false;try{localStorage.setItem('temple.v2.trace',JSON.stringify(data));return true;}catch{return false;}},
+      traceLoad: () => {const raw=localStorage.getItem('temple.v2.trace');return raw?parseRunTrace(raw):null;},
       start: () => this.start(),
       restart: () => this.restart(),
       toMenu: () => this.toMenu(),
@@ -471,6 +477,7 @@ export class Game {
       headStart:this.runHeadStart,
       headStartReady:this.canUseHeadStart(),
       headStartStock:{normal:progress.headStarts,mega:progress.megaStarts},
+      runUpgrades:this.runUpgrades,
       coinSpawnLevel: this.coinSpawnLevel,
       generationPacing: nativePathPacing(stats.distance),
       powerPickups:{...this.runPowerPickups},
@@ -578,6 +585,16 @@ export class Game {
   }
 
   private runScoreMultiplier = 10;
+  private runUpgrades=captureRunUpgrades(()=>0);
+  private activeTrace:RunTrace|null=null;
+  private lastTrace:RunTraceData|null=null;
+  private traceArmed=false;
+  private traceDispatch=false;
+  private traceCommand(name:TraceCommand,args?:string):void {this.activeTrace?.append({kind:'command',name,via:this.traceDispatch?'input':'external',...(args?{args}:{})});}
+  private stopTrace(reason='manual'):RunTraceData|null {
+    if(this.activeTrace){this.lastTrace=this.activeTrace.finish(reason,this.debugState());this.activeTrace=null;}
+    return this.lastTrace?parseRunTrace(JSON.stringify(this.lastTrace)):null;
+  }
   private coinSpawnLevel = 0;
   private coinSpawnIndex = 0;
 
@@ -587,7 +604,8 @@ export class Game {
     this.runChallenges=createRunChallenges();
     this.runPowerPickups=createPowerPickupCounts();
     this.angelWings=createAngelWings();this.wingRevivePending=false;
-    this.coinSpawnLevel=levelOf('coinSpawn');this.coinSpawnIndex=0;
+    this.runUpgrades=captureRunUpgrades(levelOf);
+    this.coinSpawnLevel=this.runUpgrades.levels.coinSpawn;this.coinSpawnIndex=0;
     this.runScoreMultiplier = this.difficulty.name !== 'classic' || this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = false;
@@ -650,7 +668,7 @@ export class Game {
     this.fastTurnRng=new SeededRandom(this.runSeed^0x66617374);
     this.routeRng=new SeededRandom(this.runSeed^0x726f7574);
     this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
-    this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765),this.difficulty.name==='classic'&&!this.referenceReplay?powerAvailability():WEB_BONUS_AVAILABILITY);
+    this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765),this.difficulty.name==='classic'&&!this.referenceReplay?this.runUpgrades.availability:WEB_BONUS_AVAILABILITY);
     this.generatedBonuses=[];
     setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,0):null);
     this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector(activeCourse()?.coinStart??489);this.longGapFallbacks=[];this.longGapDecisions=[];
@@ -698,11 +716,13 @@ export class Game {
   private viewportBlocked():boolean{return window.matchMedia(PORTRAIT_BLOCK_QUERY).matches;}
 
   start(): void {
+    this.stopTrace('new-run');
     if (mutateUi.phase === 'ended') this.commitRun();
     this.resetWorld();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = true;
     this.session.start();
+    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
     if(this.viewportBlocked())this.session.pause();
     mutateUi.speed = RUN_SPEED;
     this.publishSession();
@@ -717,6 +737,7 @@ export class Game {
   }
 
   useHeadStart(kind:'normal'|'mega'):boolean {
+    this.traceCommand('headStart',kind);
     if((kind!=='normal'&&kind!=='mega')||!this.canUseHeadStart())return false;
     const key=kind==='mega'?'megaStarts':'headStarts';
     if(progress[key]<1)return false;
@@ -732,6 +753,7 @@ export class Game {
     return mutateUi.phase==='playing'&&!this.paused&&headStartWindow(this.world.require(this.runnerEntity,RunStats).distance)&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
   }
   usePermaWings():boolean {
+    this.traceCommand('permaWings');
     if(!this.canUsePermaWings()||progress.permaWings<1)return false;
     if(!startAngelWings(this.angelWings,true))return false;
     markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
@@ -739,6 +761,7 @@ export class Game {
   }
 
   useAngelWings():boolean {
+    this.traceCommand('angelWings');
     if(mutateUi.phase!=='playing'||this.runElapsed<3||progress.wings<1)return false;
     if(!startAngelWings(this.angelWings))return false;
     markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
@@ -753,6 +776,7 @@ export class Game {
   }
 
   togglePause(): void {
+    this.traceCommand('pause');
     if (this.session.pause()) {
       this.input.resetTransient();
       this.publishSession();
@@ -765,6 +789,7 @@ export class Game {
   }
 
   resume(): void {
+    this.traceCommand('resume');
     if (!this.viewportBlocked()&&this.session.resume()) {
       this.input.resetTransient();
       this.publishSession();
@@ -773,6 +798,7 @@ export class Game {
   }
 
   toMenu(): void {
+    this.traceCommand('menu');this.stopTrace('menu-before-reset');
     if (mutateUi.phase === 'ended') this.commitRun();
     this.session.toMenu();
     this.publishSession();
@@ -870,8 +896,9 @@ export class Game {
   }
 
   private frame(dt: number,frameDt=dt): void {
+    this.activeTrace?.append({kind:'frame',dt,frameDt});
     // Menus need input too: Enter starts a run and Escape pauses without a simulation tick.
-    this.drainInput();
+    this.drainInput('frame');
     if (mutateUi.phase === 'playing') {
       this.tick(dt);
     } else if (mutateUi.phase === 'dying') {
@@ -884,6 +911,7 @@ export class Game {
 
   /** One deterministic simulation step (also used by the regression bot). */
   tick(dt: number): void {
+    this.activeTrace?.append({kind:'tick',dt,axis:this.input.steeringAxis});
     this.simulationSteps++;this.lastSimulationStep=dt;
     activeCourse()?.ensureThrough(this.distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance,this.fastTurnState.active);
     // Advance the ECS clock: gameplay timers (invincibility, powers, jump windows) all read
@@ -891,7 +919,7 @@ export class Game {
     if(this.difficulty.name==='classic')this.nativeRunClock=stepNativeRunClock(this.nativeRunClock,dt);
     stepAngelWings(this.angelWings,dt);
     this.world.update(dt);
-    this.drainInput();
+    this.drainInput('tick');
     this.updateTurnCue();
     this.updateRunner(dt);
     const challengeStats=this.world.require(this.runnerEntity,RunStats);
@@ -920,6 +948,7 @@ export class Game {
 
   /** The death beat: keep the world frozen, then hand control to the result screen. */
   private updateDeath(dt: number): void {
+    this.activeTrace?.append({kind:'death',dt});
     if(this.difficulty.name==='classic'){
       const timer=stepNativeDeathTimer(this.deathElapsed,dt);this.deathElapsed=timer.elapsed;
       if(timer.finished)this.finishDeath();
@@ -943,15 +972,18 @@ export class Game {
     this.renderOnce();
   }
 
-  private drainInput(): void {
-    for (const action of this.input.drain()) {
+  private drainInput(stage:'frame'|'tick'): void {
+    const actions=this.input.drain();
+    this.traceDispatch=true;
+    try {for (const action of actions) {
+      this.activeTrace?.append({kind:'input',stage,actions:[action]});
       if (action === 'left') this.move(-1);
       else if (action === 'right') this.move(1);
       else if (action === 'jump') this.jump();
       else if (action === 'slide') this.slide();
       else if (action === 'pause') this.togglePause();
       else if (action === 'start' && (mutateUi.phase === 'menu' || mutateUi.phase === 'ended')) this.start();
-    }
+    }} finally {this.traceDispatch=false;}
   }
 
   private introHeld(): boolean {
@@ -1903,7 +1935,7 @@ export class Game {
     }
   }
 
-  private activateTimedPower(kind:PickupKind,budget=boostProgress(),mega=false):void {
+  private activateTimedPower(kind:PickupKind,budget=this.runUpgrades.boostProgress,mega=false):void {
     const power=this.world.require(this.runnerEntity,Power);
     markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
     activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed,budget,mega);
@@ -1912,8 +1944,8 @@ export class Game {
   }
 
   private powerDuration(kind:PickupKind):number {
-    if(kind==='shield')return shieldDuration();
-    if(kind==='magnet')return magnetDuration();
+    if(kind==='shield')return this.runUpgrades.shieldDuration;
+    if(kind==='magnet')return this.runUpgrades.magnetDuration;
     return 10; // Boost uses distance, not this timed-duration argument.
   }
 
@@ -1936,8 +1968,8 @@ export class Game {
     const kind = kinds[this.rewardRng.int(kinds.length)];
     if (kind === 'bonus') {
       markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
-      this.world.require(this.runnerEntity, RunStats).coins += coinBonusReward();
-      setHint(`金币奖励 +${coinBonusReward()}`);
+      this.world.require(this.runnerEntity, RunStats).coins += this.runUpgrades.coinBonusReward;
+      setHint(`金币奖励 +${this.runUpgrades.coinBonusReward}`);
       sfx.play('meterFull', { gain: 0.8 });
       return;
     }
@@ -2177,7 +2209,7 @@ export class Game {
           stats.score += NATIVE_POWER_SCORE_VALUE * this.runScoreMultiplier;
         }
         if (pickup.kind === 'coin') {
-          this.coinValueAcc += coinMultiplier()*pickup.value*(this.difficulty.name==='classic'&&magnet?magnetMultiplier():1);
+          this.coinValueAcc += this.runUpgrades.coinMultiplier*pickup.value*(this.difficulty.name==='classic'&&magnet?this.runUpgrades.magnetMultiplier:1);
           const whole = Math.floor(this.coinValueAcc);
           this.coinValueAcc -= whole;
           this.addRunCoins(Math.max(1, whole));
@@ -2200,8 +2232,8 @@ export class Game {
         } else if (pickup.kind === 'bonus') {
           // Native StartCoinBonus calls AddCoins immediately; it does not
           // replace an active timed power or multiply later coin pickups.
-          this.addRunCoins(coinBonusReward());
-          setHint(`金币奖励 +${coinBonusReward()}`);
+          this.addRunCoins(this.runUpgrades.coinBonusReward);
+          setHint(`金币奖励 +${this.runUpgrades.coinBonusReward}`);
           sfx.play('shimmer', { gain: 0.9 });
         } else {
           this.activateTimedPower(pickup.kind);
@@ -2513,6 +2545,7 @@ export class Game {
 
   /** Spend gems to get back up on the same run. */
   revive(): void {
+    this.traceCommand('revive');
     if (!this.session.gemReviveAvailable || !mutateUi.reviveAvailable) return;
     const stats = this.world.require(this.runnerEntity, RunStats);
     const cost = mutateUi.reviveCost;

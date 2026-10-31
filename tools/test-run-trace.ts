@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {RunTrace,parseRunTrace} from '../target/temple-run/web/src/game/runTrace';
+const header={seed:1,levels:{magnet:1}},trace=new RunTrace(header,3);header.levels.magnet=6;
+const actions:('left'|'right')[]=['left'];trace.append({kind:'frame',dt:.05,frameDt:.15});trace.append({kind:'input',stage:'frame',actions});actions.push('right');trace.append({kind:'tick',dt:.05,axis:0});trace.append({kind:'death',dt:.025});
+const result=trace.finish('manual',{phase:'playing'});assert.equal((result.header.levels as {magnet:number}).magnet,1);assert.equal(result.events.length,3);assert.deepEqual((result.events[1] as {actions:string[]}).actions,['left']);assert.equal(result.truncated,true);
+assert.deepEqual(parseRunTrace(JSON.stringify(result)),result);result.events.length=0;assert.equal(trace.snapshot().events.length,3);
+for(const bad of [{kind:'command',name:'exec',via:'external'},{kind:'tick',dt:5,axis:0},{kind:'input',stage:'unknown',actions:['left']}])assert.throws(()=>parseRunTrace(JSON.stringify({...result,events:[bad]})));
+assert.throws(()=>parseRunTrace('{broken'));assert.throws(()=>parseRunTrace(JSON.stringify({...result,schema:2})));
+console.log('Run trace:header/event isolation,ordered stages,cap/truncation,serialization and invalid-event rejection pass');
+const large=new RunTrace({},100000);for(let i=0;i<6000;i++)large.append({kind:'input',stage:'tick',actions:Array(64).fill('left')});const limited=large.finish('size-test',{});assert.ok(limited.truncated&&limited.events.length<6000);assert.ok(JSON.stringify(limited).length<2100000);large.finish('second-stop',{changed:true});assert.equal(large.snapshot().stopReason,'size-test');
+console.log('Trace byte cap and idempotent stop pass');

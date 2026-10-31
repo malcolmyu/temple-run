@@ -15,7 +15,7 @@ while(g.state().phase==='playing'&&g.state().angelWings.cooldown>0&&n++<4000){
    const obstacle=s.obstacles.find(o=>o.ahead>0&&o.ahead<(o.kind==='gapLong'?8:10));
    if(obstacle&&!s.airborne&&!s.sliding&&!obstacle.defId.startsWith('narrow')){
     if(obstacle.kind==='block'){if(obstacle.lane===s.lane)g.press(s.lane===0?'right':'left');}
-    else{g.press(obstacle.kind==='arch'||obstacle.kind==='fire'?'slide':'jump');if(obstacle.defId==='pitLongB')longJumps.push(s.distanceExact);}
+    else{g.press(obstacle.kind==='arch'||obstacle.kind==='fire'&&obstacle.defId!=='fireWall'?'slide':'jump');if(obstacle.defId==='pitLongB')longJumps.push(s.distanceExact);}
    }
    if(!s.airborne&&s.course.surfaces.some(surface=>surface.from>0&&s.distanceExact>surface.from-20&&s.distanceExact<surface.from-10))g.press('jump');
 

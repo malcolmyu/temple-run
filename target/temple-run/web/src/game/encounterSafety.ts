@@ -2,6 +2,8 @@ import {nativeJumpVelocity,stepNativeJump} from './nativeMotion';
 import type {CourseObstacle,CourseNarrow,CourseBranch} from './coursePlan';
 import {lateralSequenceIssues} from './lateralSafety';
 import {actionSequenceIssues} from './actionSafety';
+import {DEFS} from './obstacles/catalog';
+import type {ObstacleDef} from './obstacles/types';
 
 /** Native motion/22m exported hole;3m approach+1m landing are web safety budgets.
  * Count only steps with positive airborne height,never the landing step. */
@@ -44,6 +46,26 @@ export function validateEncounterLayout(group:EncounterLayout):string[]{
  for(const o of group.obstacles.filter(o=>o.branch)){
   const span=group.branches.find(b=>b.riskyArm===o.branch&&o.distance>=b.from+42&&o.distance<=b.to-42);
   if(!span||o.defId!=='fireWall'||o.prefab!=='branch-fire-wall')reasons.add('invalid-branch-hazard');
+ }
+ // Web composition contract: retain each full-width gap as one readable
+ // jump challenge. surfaceCut is a conservative envelope (endcaps can contain
+ // supported polygons), not a claim every point in that envelope is missing.
+ const overlaps=(a:number,b:number,c:number,d:number)=>a<d&&c<b;
+ // Legacy kind also labels half-width narrow tiles as gap; use mechanic IDs.
+ const fullWidthGaps=new Set(['pit','plankPit','pitLongA','pitLongB','cliffGapA','cliffGapB']);
+ const gaps=group.obstacles.filter(o=>fullWidthGaps.has(o.defId));
+ for(const gap of gaps){
+  const def:ObstacleDef=DEFS[gap.defId];
+  const cut=def.surfaceCut??def.hitbox.z;
+  const start=gap.distance+cut[0],end=gap.distance+cut[1];
+  if(group.obstacles.some(o=>o!==gap&&!fullWidthGaps.has(o.defId)&&overlaps(start,end,o.distance+DEFS[o.defId].hitbox.z[0],o.distance+DEFS[o.defId].hitbox.z[1])))reasons.add('gap-obstacle-conflict');
+  if([...group.narrows,...group.branches].some(s=>overlaps(start,end,s.from,s.to)))reasons.add('gap-support-conflict');
+ }
+ // Runtime has one active fork; overlapping fork coordinate frames cannot be
+ // composed safely. Touching endpoints remain legal independent spans.
+ for(let i=0;i<group.branches.length;i++){
+  const a=group.branches[i];
+  if(group.branches.slice(i+1).some(b=>overlaps(a.from,a.to,b.from,b.to)))reasons.add('overlapping-branches');
  }
  for(const branch of group.branches){
   if(group.obstacles.some(o=>!o.branch&&o.distance>=branch.from-6&&o.distance<=branch.to+6)||group.narrows.some(n=>n.from<branch.to&&n.to>branch.from))reasons.add('branch-support-conflict');

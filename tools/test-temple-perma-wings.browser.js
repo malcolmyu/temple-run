@@ -22,7 +22,7 @@
    const obstacle=s.obstacles.find(o=>o.ahead>0&&o.ahead<(o.kind==='gapLong'?8:10));
    if(obstacle&&!s.airborne&&!s.sliding&&!obstacle.defId.startsWith('narrow')){
     if(obstacle.kind==='block'){if(obstacle.lane===s.lane)g.press(s.lane===0?'right':'left');}
-    else{g.press(obstacle.kind==='arch'||obstacle.kind==='fire'?'slide':'jump');if(obstacle.defId==='pitLongB')longJumps.push(s.distanceExact);}
+    else{g.press(obstacle.kind==='arch'||obstacle.kind==='fire'&&obstacle.defId!=='fireWall'?'slide':'jump');if(obstacle.defId==='pitLongB')longJumps.push(s.distanceExact);}
    }
    if(!s.airborne&&s.course.surfaces.some(surface=>surface.from>0&&s.distanceExact>surface.from-20&&s.distanceExact<surface.from-10))g.press('jump');
    g.advance(25);
@@ -32,7 +32,7 @@
  check('activation consumed only permanent stock',after.angelWings.permanentStock===0&&after.angelWings.stock===1);
  let n=0;while(g.state().phase==='playing'&&n++<10000)g.advance(25);
  const dying=g.state();check('real failure consumes active wings and sets15 cooldown',dying.phase==='dying'&&!dying.angelWings.permanent&&dying.angelWings.remaining===0&&dying.angelWings.cooldown===15);
- g.advance(600);const revived=g.state();check('permanent wing failure automatically revives same run',revived.phase==='playing'&&revived.boost.active&&!revived.angelWings.pendingRevive);
+ g.advance(600);const revived=g.state();check('permanent wing failure automatically revives same run',revived.phase==='playing'&&revived.session.runId===before.session.runId&&revived.session.wingRevives===1&&revived.boost.active&&!revived.angelWings.pendingRevive);
  check('regular wing stock remains available after permanent revive',revived.angelWings.stock===1&&revived.angelWings.cooldown>14&&revived.angelWings.cooldown<=15);
  g.advance(60000);const ended=g.state();check('next unprotected failure reaches results',ended.phase==='ended');
  g.restart();g.freeze();const restart=g.state();check('restart clears protection and preserves separate normal stock',restart.phase==='playing'&&!restart.angelWings.permanent&&restart.angelWings.remaining===0&&restart.angelWings.stock===1&&restart.angelWings.permanentStock===0);

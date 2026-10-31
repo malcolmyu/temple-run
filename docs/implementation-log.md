@@ -591,3 +591,74 @@ LongTask三条59/61/73ms保留原始时间，不声称完全无卡顿；没有�
 测量结束自动暂停，真实点继续后不再控制，正常漏转失败到ended，真实点再跑一次回playing、新runId。没有用诊断推进替代此收尾闭环。原始样本/分主题summary/结算重开分别存analysis/gameplay-live-three-themes.json、summary.json、loop.json，截图png。验收表已链接。脚本语法检查通过；本轮无运行时改动或bug修复，不重复构建/同一15项输入回归。
 
 用户原始JSON先落盘且逐字未变，测试仅5175，DeviceMetrics override已清除，临时页/服务关闭。仍缺真机传感器/延迟/性能、持久输入回放、部分元素表现及原版证据，整体目标继续。
+
+## 交付入口：默认npm命令、核心CI与当前README（2026-11-01）
+
+交付审阅发现根package.json的dev/build仍为旧小羊游戏，而temple:dev/build才是当前目标游戏。默认dev/build改为同一Temple Run Vite配置，旧项目原命令保留为summit:dev/summit:build，不删除旧源码。实际`npm run dev -- --host 127.0.0.1 --port 5175 --strictPort`启动，浏览器确认标题/菜单/__templeGame均为神庙逃亡，真实开始后playing，15项普通左右/触摸/跳滑横移/双转角/T两臂/真实障碍/漏转/结果重开全过。npm run build实际产出target/temple-run/dist/index.html与legacy.html。
+
+新增temple:test:core，包含input-router/modal-input/game-session/encounter-safety/action-safety/lateral-safety/boost-handover/upgrade-purchase/course-director/mixed-encounters/course-compaction/path-compaction/fire-wall/branch-rewards/native-coin-values共15组。严格类型检查、完整core命令和默认build均本地通过，CI新增执行同一core命令；没有推送或声称GitHub远端已运行。CI仍用其既有Node20，本地验证Node24，不将二者伪装成同一环境已测。
+
+重写根README为当前设计、玩法与证据索引，纠正仍强调逐帧还原、倾斜路口转弯、火塔只能换道、窄路旧固定位置等过时断言。历史target README顶部明确旧全绿表不代表当前验收，保留历史内容。根文档区分原资源/规则与网页假设、正常课程与reference、历史在线版本与未部署本地改动，所有当前文档本地链接已核对。
+
+本轮修复的是默认启动/构建指错项目与回归未接入CI的交付问题，不改变运行时玩法或原规则。证据analysis/gameplay-default-entry.json/png及本地命令输出。用户原始JSON先落盘且逐字不变，测试仅独立5175，临时页/服务关闭。
+
+已询问用户最终桌面/iPhone/Android验收环境，当前尚无回复，以桌面证据为已验证基准，未将手机验收划去。真机、持久输入回放、部分元素表现和原版证据仍待补，整体目标未完成。
+
+## 架构收口：本局不可变升级配置（2026-11-01）
+
+检查发现coinSpawn等级和powerAvailability已开局固定，但Game拾取时仍动态读取magnetDuration/shieldDuration/boostProgress/coinBonusReward/coinMultiplier/magnetMultiplier全局升级函数。新增纯runUpgrades.captureRunUpgrades读取一次六类等级，复用原native档表与网页金币倍率，嵌套freeze等级和资格；Game.resetWorld捕获后，道具生成、拾取、加速、奖励和金币结算均读本局快照，复活不重新捕获。debug state显式暴露runUpgrades，便于未来操作记录注明配置。
+
+这是本局配置边界完善，不宣称玩家通过当前UI正常可在跑动中升级，也不将其描述成已复现的常规操作bug。档值来源仍是已核对LoadLevelInformation/native配置，统一开局时机是网页架构契约；未知远端热更新时机不在此声称。没有改变任何等级价格/效果表或引入收入。
+
+隔离0升级局中，诊断修改内存全局等级为满级（不直接改本局对象），再通过真实Game激活/拾取调用链验证：当前磁铁/护盾各15秒、boost.left300、即时奖励差50；新开局磁铁/护盾各25秒、boost.left800、奖励快照150、coinSpawn5/coin3。该段用诊断激活及spawnPickup区分边界，明确不当自然可达证据。另重新跑四种子自然道具26项和原15项输入/失败重开全部通过，无spawn/forced power参与自然段。
+
+新增run-upgrades单测验证源等级变化隔离、新局采样、非法值/上限和嵌套不可变，接入temple:test:core（现16组）。完整core、类型和构建通过。证据analysis/gameplay-run-upgrade-snapshot.json与regression.json。所有操作仅5175，用户原始JSON先落盘且逐字不变，临时页/服务关闭。操作持久记录/回放仍未实现，不把新增快照当成完整回放；设备选择仍待用户确认，真机、表现与原证据仍有缺口，目标继续。
+
+## 架构核对：种子不等于完整地图与重试保证（2026-11-01）
+
+本轮起初提出失败后“重试本次路线”，随即发现这一表述超过当前生成契约：正常CoursePlan后缀同时依赖progress、主题请求、fastTurn和ensureThrough的调用时机；不同操作/步长影响速度与进度。没有为了做一个更容易通过的“同路线”按钮而固定或修改生成规则，也没有用同seed回到开局冒充完整路线重试。已明确纠正该提案，未增加误导性按钮。
+
+新增test-seed-contract：seed1、相同逐60米输入进度序列d*.8，两份12000米生成features/turns/obstacles完全相等；相同seed1但进度恒0与恒2000时，独立开局三片段一致，第4片段已分歧（recovery477..645与477..621）。仅此一个反例已足以否定“同seed保证完整同地图”的泛化。另验证seed2开局不同。源规则未改，证据analysis/gameplay-seed-contract.json，测试命令temple:test:seed-contract已通过并纳入core（后续完整命令现17组；本轮只跑新增契约，未声称重跑全部）。
+
+新增docs/adr/seed-and-retry.md，明确当前重开仍新局语义，reference仅历史对照；未来完整回放需记录版本/seed/升级快照/难度角色、逐步时间、输入消费阶段与顺序、连续横移、UI暂停/道具/复活命令，并隔离库存扣款与结算。当前frame在tick前消费输入而诊断advance在tick内消费，只有按键时间也不等价。已回收课程窗口不能冒充全历史。game-design与验收表同步，保持完整回放仍为缺口。
+
+本轮没有运行时bug修复、玩家新功能或浏览器试玩，主要产出可验证的架构决策与生成契约测试；不重复构建/输入回归，也未操作用户存档或启动测试服务。下一步持久操作记录须据此设计，真机设备选择仍待回复，表现和原版证据继续保留，整体目标未完成。
+
+## 架构实现：可持久保存的本局操作记录层（2026-11-01）
+
+新增RunTrace schema1，默认关闭、仅traceNextRun显式开启。Header采集seed/规则版本/模式/难度/角色、本局升级快照、倍率、初始world时钟、库存与币宝石；事件记录frame真实/物理时间、tick时间与axis、输入frame/tick消费阶段、死亡步长、UI命令和via=input嵌套来源。逐动作记录，避免同批start后left因记录刚开始而丢失。traceGet防御性副本、stop幂等、save专用key temple.v2.trace、load只校验不执行。记录事件数/字符双限，截断显式标记，存储失败返回false；不自动写原进度或自动播放。
+
+实际录得221事件，含frame/tick/input/command/death；真实键盘在frame阶段消费，冻结后诊断步进的方向在tick阶段消费，UI暂停/继续与输入pause的来源区别正确。真实UI宝石复活在同一记录中，手动保存true，刷新后读取逐字结构一致，默认记录仍关闭，修改读取副本不影响内部。另一实际RAF边界测试同批start+left，header startVia=input且left/frame事件保留。原15项输入/障碍/结算重开回归全过。
+
+尝试原始CDP键盘长按注入被浏览器工具明确拒绝后未绕过限制或冒称已验证；本轮连续axis仅结构支持/单测覆盖，物理长按/倾斜仍待验。诊断spawn/power/jumpTo外部修改尚不记录，文档明确不承诺这类完整重演。此前221事件段的死亡时间含诊断advance，不伪称全部是真实时钟游玩。
+
+run-trace单测覆盖header/event隔离、两阶段、事件与字节上限、截断、停止幂等、JSON往返和非法事件拒绝，纳入core（现18组）；完整core、类型与构建通过。新增ADR run-trace-format描述字段、命令toggle语义和未实现保证。证据analysis/gameplay-run-trace-{recording,reload,start-edge}.json。来源为网页诊断架构，不改变原玩法或价格。记录层不等于播放器，没有以持久保存划掉完整回放缺口。
+
+测试仅5175，用户原始JSON先落盘且逐字未变，临时页/服务关闭；无用户存档自动录制/上传。完整播放、结果校验/收益隔离、真机和其余表现仍待补，目标继续。
+
+## Round101 — 当前起跑与双翼闭环复核
+
+- 暂缓继续扩展回放，优先将历史起跑/双翼证据迁移到当前beats-v5。实际点HUD普通起跑、超级起跑、永久翼、普通翼；预备隔离库存，不seek/spawn/强制power，以25ms推进正常路线。两种起跑均自动转弯并安全退出，之后失败结算重开；永久翼45秒不失效，死亡后同runId自动复活、普通库存不被消耗；普通翼实际复活后再次死亡结算重开。
+- 原规则来源：megaStart.ts关联原HeadStart950/Mega2350、UseHeadStart普通boost模式；nativeAngelWings.ts关联StartAngelWings1298c6c/UseAngelWings12776a0/Update1297524及Controller126d3c4。普通翼30秒有效、45秒自激活冷却，永久翼复活单独15秒。首次普通翼断言误把两者都写15，原始失败保留；核对源码后修正为45减激活后时间，重新实际激活复测通过。未更改已正确的生产规则。
+- 修正旧自动控制脚本低火墙滑铲错误，低火墙按jump处理；永久翼脚本加强同runId与wingRevives断言。增加普通翼早死仍保留44秒冷却的单测及可复用浏览器专项。
+- 当前41项检查通过（双起跑12、永久翼7、普通翼5、输入15、独立库存/同runId补充2），见gameplay-current-utilities-summary.json。左右换道、边缘、空中/滑铲横移、转角/T口、实际根碰撞/漏转失败及重开均通过；输入专项使用显式reference fixture，起跑与翼专项为正常生成。用户主存档字节不变，隔离源存档恢复。
+- 边界：此轮无新增玩家功能、无生产bug被发现；修的是测试假设/控制逻辑，补的是当前闭环证据。并非真机/真人手感，未宣称所有种子和道具组合。完整回放、原生成权重证据、逐元素表现与真机仍有缺口。
+
+Round101补充验证：angel-wings单测通过（原30/45秒计时、购买边界、永久翼15秒及新增普通翼早死保留冷却）。直接Node打包首次漏设Vite BASE_URL而启动失败，补入 --define:import.meta.env.BASE_URL 后通过；未改变生产配置。
+
+## Round102 — 结算保留真实失败原因
+
+- 发现并修复GameOverOverlay将missed/water两类真实死因替换为同一句“你做的点心很好吃。”的问题。现在统一显示引擎给出的reason，缺失时显示“本次逃亡结束”；未改死亡/碰撞/复活或计分。属于网页可玩反馈设计，无声称原版结算文案。
+- 当前正常seed1路线从起点跳过前方障碍、故意不转弯，自然到ended；实际可访问树和截图显示“错过路口”。实际点击“再跑一次”回playing。第二局正常走到分路，选择中央缺口自然落水，ended可访问树和截图显示“掉进了水里”；再次实际点击重开。没有seek/spawn/直接die。推进使用freeze/advance25ms，不是实时真人节奏或真机验收。
+- 当前15项输入专项仍通过，覆盖左右/边缘/空中/滑铲、指针滑动、转角和T口、实际根碰撞及漏转失败/重开。输入专项为显式reference fixture，结算专项是正常生成；用户主存档字节未变，隔离源存档已还原。证据gameplay-result-death-reason-{missed,water,input}.json及两张同名前缀PNG。
+- 架构文档更正过时缺口描述：现已存在生成前统一约束入口与可解释拒绝原因及recovery回退，但仍是分项保守契约，不是全状态完整路径求解器。没有将已有检查或有限种子证据夸大成公平性总证明。
+- 剩余：真机、真人长程手感、原版生成权重/完整资源证据、完整回放等未完成。
+
+## Round103 — 组合片段的支撑冲突预检
+
+- 为encounterSafety统一发布入口补三类可解释拒绝：overlapping-branches、gap-obstacle-conflict、gap-support-conflict。运行时只能有一个active fork，重叠分路坐标不组合；整宽短坑/木桥坑/成对长坑/断崖坑的surfaceCut包络内不叠加独立动作障碍、窄路或分路。现有CoursePlan拒绝后回滚该组障碍/支撑并降为recovery，不依赖护盾/加速作为解法。
+- 来源：碰撞纵向范围、surfaceCut使用现有原资源适配定义；禁止复合是网页保守可读性/公平性策略，不是逆向出的原版生成禁令，也不声称所有被拒组合数学上绝对不可过。成对桥帽的可支撑边缘仍包含在保守切口包络中。
+- 未观察到当前模板自然产生这些异常，本轮是补发布边界，非宣称修复已复现的随机必死局。新专项验证坑+拱门、坑+窄路、坑+分路、分路重叠均拒绝，正常成对坑、远处拱门、仅端点相接分路仍允许。原200种子12000m课程预检及横移专项保持通过，未削掉正常窄路。首次实现误用legacy kind把窄路当整宽坑，核心回归抓住后改用明确六种机制ID；未通过放松断言掩盖。
+- 18组核心测试通过，类型检查和构建通过。浏览器正常生成30项道路失败/重开及15项输入回归通过：分路、短/长窄路、短/长坑实际从起点遇到并失败重开；普通左右/边缘/空中/滑铲、转角/T两向与真实路障仍通过。前者正常模式，后者显式reference fixture；freeze/advance25ms，不等于真人/真机。首轮CDP返回超时后检查实际状态，游戏已回playing；重采集持久结果到页内后取得完整证据，不把超时算通过。用户主存档字节未变，隔离源已还原。
+- 证据：gameplay-composition-safety-{roads,input}.json、core/build.log；新增单测在test-encounter-safety.ts。此轮无可见UI变化，不用截图伪造视觉差异。
+- 剩余：跨片段全状态可达性、真人长程节奏、真机输入性能、完整原规则证据与回放等仍未完成。

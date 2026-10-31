@@ -24,3 +24,17 @@ for(let seed=1;seed<=200;seed++){
  }
 }
 console.log('Encounter safety:20fps positive-airborne budget,35/37 rejection38 acceptance,pair/clearance/support/fast-turn guards and200 generated courses pass');
+
+// Full-width gap envelopes must remain independent of other action/support
+// challenges. This conservative web policy also includes supported endcaps.
+const wide={from:0,to:360,obstacles:[],narrows:[],branches:[]};
+const pair=[{...near,distance:120},{...far,distance:132}];
+const arch={distance:126,defId:'treeSlide' as const,prefab:'tree-slide'};
+assert.ok(validateEncounterLayout({...wide,obstacles:[...pair,arch]}).includes('gap-obstacle-conflict'));
+assert.ok(validateEncounterLayout({...wide,obstacles:pair,narrows:[{from:108,to:144,side:'left'}]}).includes('gap-support-conflict'));
+assert.ok(validateEncounterLayout({...wide,obstacles:pair,branches:[{from:96,to:180}]}).includes('gap-support-conflict'));
+assert.deepEqual(validateEncounterLayout({...wide,obstacles:pair}),[],'matching endcaps remain legal');
+assert.deepEqual(validateEncounterLayout({...wide,obstacles:[...pair,{...arch,distance:240}]}),[],'separate action remains legal');
+assert.ok(validateEncounterLayout({...wide,branches:[{from:60,to:180},{from:120,to:240}]}).includes('overlapping-branches'));
+assert.deepEqual(validateEncounterLayout({...wide,branches:[{from:60,to:180},{from:180,to:300}]}),[],'touching branch endpoints do not overlap');
+console.log('Composition safety: gap/action and gap/support conflicts, overlapping forks rejected; independent layouts retained');

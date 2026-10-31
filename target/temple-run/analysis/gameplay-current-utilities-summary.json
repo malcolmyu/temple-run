@@ -1,0 +1,218 @@
+{
+  "checks": [
+    {
+      "case": "normal",
+      "name": "paid head-start is active with native normal boost mode",
+      "passed": true
+    },
+    {
+      "case": "normal",
+      "name": "head-start auto-turns and exits alive",
+      "passed": true
+    },
+    {
+      "case": "normal",
+      "name": "both paid starts obey84 speed cap",
+      "passed": true
+    },
+    {
+      "case": "normal",
+      "name": "starting power excluded, naturally collected boost counted",
+      "passed": true
+    },
+    {
+      "case": "normal",
+      "name": "post-start failure reaches results",
+      "passed": true
+    },
+    {
+      "case": "normal",
+      "name": "restart clears paid start without rebuying",
+      "passed": true
+    },
+    {
+      "case": "mega",
+      "name": "paid head-start is active with native normal boost mode",
+      "passed": true
+    },
+    {
+      "case": "mega",
+      "name": "head-start auto-turns and exits alive",
+      "passed": true
+    },
+    {
+      "case": "mega",
+      "name": "both paid starts obey84 speed cap",
+      "passed": true
+    },
+    {
+      "case": "mega",
+      "name": "starting power excluded, naturally collected boost counted",
+      "passed": true
+    },
+    {
+      "case": "mega",
+      "name": "post-start failure reaches results",
+      "passed": true
+    },
+    {
+      "case": "mega",
+      "name": "restart clears paid start without rebuying",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "permanent wings survive more than30seconds",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "activation consumed only permanent stock",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "real failure consumes active wings and sets15 cooldown",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "permanent wing failure automatically revives same run",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "regular wing stock remains available after permanent revive",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "next unprotected failure reaches results",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "restart clears protection and preserves separate normal stock",
+      "passed": true
+    },
+    {
+      "case": "regular-after",
+      "name": "ordinary wing activation consumes one inventory",
+      "passed": true
+    },
+    {
+      "case": "regular-after",
+      "name": "ordinary wing failure clears protection and preserves activation-based recharge",
+      "passed": true
+    },
+    {
+      "case": "regular-after",
+      "name": "automatic revival keeps runId without gem debit",
+      "passed": true
+    },
+    {
+      "case": "regular-after",
+      "name": "subsequent failure reaches results",
+      "passed": true
+    },
+    {
+      "case": "regular-after",
+      "name": "restart gets new runId and no free wing refill",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "ArrowLeft: lane and survival",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "ArrowLeft: edge clamp",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "ArrowLeft: airborne lane change",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "ArrowRight: lane and survival",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "ArrowRight: edge clamp",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "ArrowRight: airborne lane change",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "slide lane change",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "swipe lane 0",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "swipe lane 1",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "natural route: roots, gap, two corners, T left",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "natural route: roots, gap, two corners, T right",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "actual root still collides",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "missed corner still fails",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "failure reaches results",
+      "passed": true
+    },
+    {
+      "case": "input",
+      "name": "restart resets input and powers",
+      "passed": true
+    },
+    {
+      "case": "perma",
+      "name": "revival retains actual runId and records one wing revive",
+      "passed": true
+    },
+    {
+      "case": "inventory",
+      "name": "ordinary and mega each consumed one, wings separate",
+      "passed": true
+    }
+  ],
+  "passed": 41,
+  "source": "nativeAngelWings.ts, megaStart.ts and referenced native addresses; current beats-v5 route",
+  "method": "actual HUD activation; prepared isolated inventory; freeze/advance25ms; no seek/spawn/power. Input fixture remains explicit reference route.",
+  "initialIncorrectAssertion": "regular wing cooldown incorrectly expected15; raw initial failure retained. Corrected to45 minus elapsed from activation per source, repeated actual run passed.",
+  "mainSaveUnchanged": true,
+  "limitations": [
+    "desktop automated advancement, not physical phone or human timing",
+    "no claim of all seeds or all utility combinations"
+  ]
+}

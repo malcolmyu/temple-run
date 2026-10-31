@@ -22,7 +22,7 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
     <article class="result-scroll" :style="{ '--scroll-atlas': `url(${BASE}assets/ui/result-paper-tile.png)` }">
       <div class="scroll-paper" aria-hidden="true"></div>
       <img class="result-illustration" :src="art" alt="" />
-      <p class="result-message">{{ kind === 'missed' || kind === 'water' ? '你做的点心很好吃。' : reason }}</p>
+      <p class="result-message">{{ reason || '本次逃亡结束' }}</p>
       <div class="result-summary">
         <h2><img :src="`${BASE}assets/ui/result-header-left.png`" alt="" />得分<img :src="`${BASE}assets/ui/result-header-right.png`" alt="" /></h2>
         <NativeResultNumber :value="score" />
