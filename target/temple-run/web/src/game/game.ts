@@ -1,7 +1,12 @@
+import { nativeCoinValue } from './nativeCoinValues';
+import { levelOf } from './upgrades';
+import { RESURRECTION_BOOST_PROGRESS, RESURRECTION_STUMBLE_AGE, resurrectionSpeed } from './nativeResurrection';
+import { boostProgress } from './upgrades';
+import { addNativeCoinMeter } from './nativeCoinMeter';
 import { CoursePlan, activeCourse, setActiveCourse, MIN_LONG_GAP_SPEED } from './coursePlan';
 import { BonusSpawnDirector } from './nativeBonusSpawn';
 import { boostAcceleration, consumeBoostProgress } from './nativeBoost';
-import { activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
+import { createPowerEffects, activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
 import {newEnemyJump, queueEnemyJump, stepEnemyJump} from './enemyJump';
 import { startNativeCameraShake, stepNativeCameraShake, type NativeCameraShake } from './nativeCameraShake';
 import { NATIVE_RESULT_DELAY, stepNativeDeathTimer, nativeGroundContact } from './nativeDeath';
@@ -324,7 +329,7 @@ export class Game {
       freeze: () => { cancelAnimationFrame(this.raf); this.renderOnce(); },
       power: (kind: PickupKind) => {
         const power = this.world.require(this.runnerEntity, Power);
-        activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed);
+        this.activateTimedPower(kind);
       },
       press: (action: Action) => this.input.push(action),
       setSkin: (id: string, force = false) => this.setSkin(id, force),
@@ -408,6 +413,7 @@ export class Game {
       phase: mutateUi.phase,
       equipped: progress.equipped,
       scoreMultiplier: this.runScoreMultiplier,
+      coinSpawnLevel: this.coinSpawnLevel,
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
       generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
@@ -421,6 +427,7 @@ export class Game {
       score: stats.score,
       fps: mutateUi.fps,
       coins: stats.coins,
+      coinMeter: {count:stats.charge,level:stats.coinBonusLevel,maxLevel:stats.coinBonusMax},
       gems: stats.gems,
       lane: this.world.require(this.runnerEntity, Lane).index,
       jumpY: jump.y,
@@ -453,7 +460,7 @@ export class Game {
       }),
       pickups: this.pickups.map((entity) => {
         const p = this.world.require(entity, Pickup);
-        return { kind: p.kind, lane: p.lane, ahead: Math.round(p.distance - this.distance) };
+        return { kind: p.kind, value:p.value, lane: p.lane, ahead: Math.round(p.distance - this.distance) };
       }),
       rig: this.runnerRig ? 'ready' : 'pending',
     };
@@ -503,10 +510,12 @@ export class Game {
   }
 
   private runScoreMultiplier = 10;
+  private coinSpawnLevel = 0;
+  private coinSpawnIndex = 0;
 
   private resetWorld(): void {
-    this.runScoreMultiplier = this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
-    mutateUi.scoreMultiplier = this.runScoreMultiplier;
+    this.coinSpawnLevel=levelOf('coinSpawn');this.coinSpawnIndex=0;
+    this.runScoreMultiplier = this.difficulty.name !== 'classic' || this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = false;
     this.runStartedAt = this.world.elapsed;
@@ -607,6 +616,7 @@ export class Game {
     this.ensureTiles();
     this.syncRunnerObject();
     resetHud();
+    mutateUi.scoreMultiplier = this.runScoreMultiplier;
   }
 
   start(): void {
@@ -1691,13 +1701,33 @@ export class Game {
     }
   }
 
+  private activateTimedPower(kind:PickupKind,budget=boostProgress()):void {
+    const power=this.world.require(this.runnerEntity,Power);
+    activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed,budget);
+    // StartBoost1298d28..1298d34 advances catch safety age on every refresh.
+    if(kind==='boost'&&this.difficulty.name==='classic')this.nativeTimeSinceStumble+=10;
+  }
+
   private powerDuration(kind:PickupKind):number {
     if(kind==='shield')return shieldDuration();
     if(kind==='magnet')return magnetDuration();
     return 10; // Boost uses distance, not this timed-duration argument.
   }
 
-  /** Energy bar full: hand out one of the four classic boosts. */
+  private addRunCoins(amount:number):void {
+    const stats=this.world.require(this.runnerEntity,RunStats);
+    stats.coins+=amount;
+    if(this.difficulty.name!=='classic')return;
+    const meter=addNativeCoinMeter(stats.charge,stats.coinBonusLevel,stats.coinBonusMax,amount);
+    stats.charge=meter.count;stats.coinBonusLevel=meter.level;stats.coinBonusMax=meter.maxLevel;
+    if(meter.scoreValue){
+      stats.score+=meter.scoreValue*this.runScoreMultiplier;
+      setHint(`金币充能！得分 +${meter.scoreValue*this.runScoreMultiplier}`);
+      sfx.play('meterFull',{gain:.8});
+    }
+  }
+
+  /** Custom challenge-mode reward; native classic awards score instead. */
   private grantPower(): void {
     const kinds: PickupKind[] = ['magnet', 'shield', 'boost', 'bonus'];
     const kind = kinds[this.rewardRng.int(kinds.length)];
@@ -1708,7 +1738,7 @@ export class Game {
       return;
     }
     const power = this.world.require(this.runnerEntity, Power);
-    activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed);
+    this.activateTimedPower(kind);
     setHint(kind === 'magnet' ? '能量满！磁铁启动' : kind === 'shield' ? '能量满！无敌启动' : kind === 'boost' ? '能量满！加速' : '能量满！金币加成');
     sfx.play('meterFull', { gain: 0.8 });
   }
@@ -1721,7 +1751,9 @@ export class Game {
   private spawnCoin(lane: number, distance: number, y = COIN_Y): void {
     if (distance < 4) return;
     const entity = this.world.createEntity();
-    const value = referenceCoinValue(distance);
+    const value = this.difficulty.name==='classic'&&!this.referenceReplay
+      ? nativeCoinValue(this.world.require(this.runnerEntity,RunStats).distance,this.coinSpawnLevel,this.coinSpawnIndex++)
+      : referenceCoinValue(distance);
     const group = this.acquirePickup('coin', value);
     group.userData.nativeCoinSpawnTime=this.world.elapsed;
     if(this.difficulty.name==='classic')y=nativeCoinRootHeight(y,COIN_Y);
@@ -1857,6 +1889,9 @@ export class Game {
     }
     this.stumbleCooldown = this.difficulty.name==='classic' ? STUMBLE_KILL_WINDOW : 7;
     this.nativeTimeSinceStumble = 0;
+    if(this.difficulty.name==='classic'){
+      const stats=this.world.require(this.runnerEntity,RunStats);stats.charge=0;stats.coinBonusLevel=1;
+    }
     const speed = this.world.require(this.runnerEntity, Speed);
     speed.value *= NATIVE_STUMBLE_SPEED_FACTOR;
     this.world.require(this.runnerEntity, Jump).v *= NATIVE_STUMBLE_SPEED_FACTOR;
@@ -1916,15 +1951,15 @@ export class Game {
           this.coinValueAcc += coinMultiplier() * pickup.value;
           const whole = Math.floor(this.coinValueAcc);
           this.coinValueAcc -= whole;
-          stats.coins += Math.max(1, whole);
+          this.addRunCoins(Math.max(1, whole));
           stats.combo += 1;
           stats.comboTimer = 3;
           stats.multiplier = Math.min(5, 1 + Math.floor(stats.combo / 8));
-          stats.charge = Math.min(100, stats.charge + 4);
+          if(this.difficulty.name!=='classic')stats.charge = Math.min(100, stats.charge + 4);
           stats.score += this.difficulty.name === 'classic'
             ? NATIVE_COIN_SCORE_VALUE * this.runScoreMultiplier * pickup.value
             : 10 * stats.multiplier * pickup.value;
-          if (stats.charge >= 100) {
+          if (this.difficulty.name!=='classic' && stats.charge >= 100) {
             stats.charge = 0;
             this.grantPower();
           }
@@ -1936,11 +1971,11 @@ export class Game {
         } else if (pickup.kind === 'bonus') {
           // Native StartCoinBonus calls AddCoins immediately; it does not
           // replace an active timed power or multiply later coin pickups.
-          stats.coins += coinBonusReward();
+          this.addRunCoins(coinBonusReward());
           setHint(`金币奖励 +${coinBonusReward()}`);
           sfx.play('shimmer', { gain: 0.9 });
         } else {
-          activatePower(power,pickup.kind,this.world.elapsed,this.powerDuration(pickup.kind),this.speed);
+          this.activateTimedPower(pickup.kind);
           setHint(
             pickup.kind === 'magnet' ? '磁铁激活！' : pickup.kind === 'shield' ? '无敌激活' : pickup.kind === 'boost' ? '加速！' : '金币加成！',
           );
@@ -2058,7 +2093,8 @@ export class Game {
     mutateUi.gems = stats.gems;
     mutateUi.score = stats.score;
     mutateUi.scoreMultiplier = this.runScoreMultiplier;
-    mutateUi.charge = stats.charge;
+    mutateUi.charge = Math.min(100,stats.charge);
+    mutateUi.coinBonusLevel = stats.coinBonusLevel;
     mutateUi.powers = activePowers(power,this.world.elapsed);
     const primary=mutateUi.powers.find(effect=>effect.kind===power.kind)??mutateUi.powers[0];
     mutateUi.power = primary?.kind??null;
@@ -2257,6 +2293,7 @@ export class Game {
     const chase = this.world.require(this.runnerEntity, Chase);
     chase.gap = CHASE_GAP_MAX;
     chase.cooldown = 0;
+    chase.lunge = 0;
     this.stumbleCooldown = 0;
     // If the death was a missed corner, the old turn is already behind the runner. Leaving
     // it armed makes updateTurnCue kill the revived run as soon as invincibility ends.
@@ -2285,17 +2322,24 @@ export class Game {
     }
     this.nativeFalling=false;this.nativeGroundHeight=this.groundY();this.nativeEnemyGroundHeight=this.nativeGroundHeight;
     this.nativeForwardForce=0;this.nativeSpawnPending=false; // Same run: never repeat the opening displacement award.
-    this.nativeTimeSinceStumble=NATIVE_STUMBLE_RESET_AGE;
+    this.nativeTimeSinceStumble=this.difficulty.name==='classic'?RESURRECTION_STUMBLE_AGE:NATIVE_STUMBLE_RESET_AGE;
     this.nativeStumbleElapsed=0;this.nativeStumbleSeconds=0;this.nativeStumbleRemaining=0;this.stumbleAnimation=null;
     this.recoveringFromStumble=false;
     this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
     Object.assign(this.world.require(this.runnerEntity,Slide),{remaining:0,elapsed:0,duration:0});
     Object.assign(this.world.require(this.runnerEntity,Jump),{y:0,v:0,airborne:false});
+    if(this.difficulty.name==='classic'){
+      const stats=this.world.require(this.runnerEntity,RunStats);stats.charge=0;stats.coinBonusLevel=1;
+      Object.assign(this.world.require(this.runnerEntity,Power),createPowerEffects());
+      const speed=this.world.require(this.runnerEntity,Speed);speed.value=resurrectionSpeed(speed.value);
+      this.activateTimedPower('boost',RESURRECTION_BOOST_PROGRESS);
+    }
     this.invincibleUntil = this.world.elapsed + 3;
     this.deathTimer = 0;this.deathElapsed=0;
     setPhase('playing');
     if (progress.music) sfx.startMusic('theme');
-    setHint('复活！短暂无敌');
+    setHint(this.difficulty.name==='classic'?'复活！加速逃离危险':'复活！短暂无敌');
+    this.syncHud(0);
   }
 
   toMenuAfterDeath(): void {

@@ -1,16 +1,20 @@
-/** IL2CPP StartBoost adds a50-progress braking allowance to the configured250.
+/** IL2CPP StartBoost adds a50-progress braking allowance to the configured cruise budget.
  * ComputeDistanceTraveled subtracts its metric delta, not physical world metres.
  */
 export const BOOST_PROGRESS = 250;
+/** LoadLevelInformation jump table6b7888, upgrade levels0..6. */
+export function nativeBoostProgress(level=0):number {
+ return [250,250,375,500,625,750,750][Math.trunc(level)]??250;
+}
 export const BOOST_BRAKING_PROGRESS = 50;
 export const BOOST_TAIL_SECONDS = 4;
 export const BOOST_ACCELERATION = 30; // HandleControls raw force +/-150, scale.2
 export interface NativeBoostState { active:boolean; left:number; speedBefore:number; }
 export const createNativeBoost=():NativeBoostState=>({active:false,left:0,speedBefore:0});
-export function startNativeBoost(state:NativeBoostState,speed:number):boolean {
+export function startNativeBoost(state:NativeBoostState,speed:number,progress=BOOST_PROGRESS):boolean {
  const first=!state.active;
  if(first)state.speedBefore=speed;
- state.active=true;state.left=BOOST_PROGRESS+BOOST_BRAKING_PROGRESS;
+ state.active=true;state.left=progress+BOOST_BRAKING_PROGRESS;
  return first;
 }
 export const boostCruising=(state:NativeBoostState):boolean=>state.active&&state.left>BOOST_BRAKING_PROGRESS;

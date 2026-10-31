@@ -18,6 +18,7 @@ export interface HudState {
   distance: number;
   score: number;
   charge: number;
+  coinBonusLevel: number;
   coins: number;
   gems: number;
   multiplier: number;
@@ -57,6 +58,7 @@ const defaults = (): HudState => ({
   distance: 0,
   score: 0,
   charge: 0,
+  coinBonusLevel: 1,
   coins: 0,
   gems: 0,
   multiplier: 1,

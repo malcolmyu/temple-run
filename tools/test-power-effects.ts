@@ -21,3 +21,7 @@ activatePower(p,'boost',41,5,60);assert.equal(p.boost.speedBefore,22,'refresh mu
 p.boost.left=0;stepPowerEffects(p,45,.1);assert.equal(hasPower(p,'boost',45),false);
 assert.deepEqual(activePowers(createPowerEffects(),0),[]);
 console.log('Powers: independent magnet/shield, progress-based boost, frozen tail, braking, refresh and clean reset pass.');
+
+const upgraded=createPowerEffects();activatePower(upgraded,'boost',0,10,20,750);
+assert.equal(upgraded.boost.left,800);consumeBoostProgress(upgraded.boost,100);
+activatePower(upgraded,'boost',1,10,60,750);assert.equal(upgraded.boost.left,800);assert.equal(upgraded.boost.speedBefore,20);

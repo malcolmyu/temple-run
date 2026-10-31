@@ -11,11 +11,11 @@ export interface PowerEffects {
 export function createPowerEffects(): PowerEffects {
   return {boost:createNativeBoost(),kind:null,until:0,expires:{magnet:0,shield:0,boost:0}};
 }
-export function activatePower(power: PowerEffects, kind: string, now: number, duration: number, speed=20): void {
+export function activatePower(power: PowerEffects, kind: string, now: number, duration: number, speed=20, boostProgress=250): void {
   if (!TIMED_POWERS.includes(kind as TimedPower)) return;
   const timed=kind as TimedPower;
   if(timed==='boost'){
-    if(startNativeBoost(power.boost,speed))power.expires.shield=now+BOOST_TAIL_SECONDS;
+    if(startNativeBoost(power.boost,speed,boostProgress))power.expires.shield=now+BOOST_TAIL_SECONDS;
     power.kind=timed;return;
   }
   // Native StartInvincibility/StartVacuum assign their own remaining time.

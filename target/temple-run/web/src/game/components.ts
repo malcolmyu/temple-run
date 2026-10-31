@@ -124,6 +124,8 @@ export const RunStats = defineComponent<{
   gems: number;
   multiplier: number;
   charge: number;
+  coinBonusLevel: number;
+  coinBonusMax: number;
   combo: number;
   comboTimer: number;
   score: number;
@@ -134,6 +136,8 @@ export const RunStats = defineComponent<{
   gems: 0,
   multiplier: 1,
   charge: 0,
+  coinBonusLevel: 1,
+  coinBonusMax: 0,
   combo: 0,
   comboTimer: 0,
   score: 0,

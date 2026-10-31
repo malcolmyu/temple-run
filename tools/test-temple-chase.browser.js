@@ -9,7 +9,7 @@
  g.advance(550);check('pack approaches after stumble',g.state().enemyGap<far&&g.state().enemyGap<=3);
  g.spawnObstacle('trip',5);until(s=>s.phase==='ended');g.advance(600);
  check('second root inside 10s catches player',g.state().phase==='ended'&&g.death().kind==='caught');
- g.revive();check('caught revive re-enters same run',g.state().phase==='playing'&&g.state().stumbleAge===7);
+ g.revive();check('caught revive re-enters same run',g.state().phase==='playing'&&g.state().stumbleAge===20);
  g.spawnObstacle('trip',5);g.advance(400);check('revive protection prevents immediate repeat death',g.state().phase==='playing'&&g.state().stumbleAge>7);
  firstTrip();
  for(let n=0;g.state().phase==='playing'&&g.state().stumbleAge<10.1&&n<1500;n++){

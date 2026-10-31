@@ -21,3 +21,15 @@ assert.equal(u.purchase('shield'),false);assert.equal(u.levelOf('shield'),level)
 assert.equal(u.purchase('invalid'),false);
 progress.upgrades.magnet=3;assert.equal(u.levelOf('magnet'),2);assert.equal(u.magnetDuration(),25,'old saves keep the highest useful effect');
 console.log('Upgrade economy: paid effects, native duration/reward values, persistence, max-level and insufficient-funds guards pass.');
+
+assert.equal(u.boostProgress(),250);progress.coins=10000;
+for(const expected of [375,500,625,750]){assert.ok(u.purchase('boost'));assert.equal(u.boostProgress(),expected);}
+const boostCoins=progress.coins;assert.equal(u.purchase('boost'),false);assert.equal(progress.coins,boostCoins);
+assert.equal(JSON.parse(saved.get('temple.v2.progress')!).upgrades.boost,4);
+console.log('Boost upgrades: native250/375/500/625/750, costs, persistence and max-level guard pass.');
+
+progress.coins=10000;
+for(let level=1;level<=5;level++){assert.ok(u.purchase('coinSpawn'));assert.equal(u.levelOf('coinSpawn'),level);}
+const highCoinBank=progress.coins;assert.equal(u.purchase('coinSpawn'),false);assert.equal(progress.coins,highCoinBank);
+assert.equal(JSON.parse(saved.get('temple.v2.progress')!).upgrades.coinSpawn,5);
+console.log('High-value coin upgrade: all5 tiers, persistence and max-level guards pass.');

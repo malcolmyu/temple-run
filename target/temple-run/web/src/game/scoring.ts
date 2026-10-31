@@ -1,5 +1,6 @@
 // BV1ypuKzPErT's result screen explicitly shows a 20x score multiplier.
-// Coin-meter and objective bonuses still need separate reference calibration.
+// Kept for explicit reference replay and the existing challenge distance rule.
+// Default classic takes its multiplier from nativeScoreMultiplier at run start.
 export const REFERENCE_SCORE_MULTIPLIER = 20;
 
 export function distanceScoreDelta(previous: number, current: number): number {

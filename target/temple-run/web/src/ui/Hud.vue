@@ -34,6 +34,10 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
     <button class="relic-pause" aria-label="暂停" @click="emit('pause')">
       <img :src="uiAsset('bag.png')" alt="" /><img class="pause-glyph" :src="uiAsset('hud-pause.png')" alt="" />
     </button>
+    <div v-if="ui.phase === 'playing'" class="coin-meter" aria-label="金币充能">
+      <small>金币充能 {{ Math.floor(ui.charge) }}/100 · 等级 {{ ui.coinBonusLevel }}</small>
+      <div><i :style="{width: `${ui.charge}%`}" /></div>
+    </div>
     <div v-if="assist" class="run-distance">{{ ui.distance }} m</div>
 
     <div v-if="assist && ui.multiplier > 1" class="multi-badge">×{{ ui.multiplier }}</div>
@@ -56,7 +60,7 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
       <span class="ms-text"><SpriteNumber :value="ui.milestone.value" label="里程" :height="28" /><em>{{ ui.milestone.unit }}</em></span>
     </div>
 
-    <div v-if="ui.hint && (assist || ui.hint.includes('半边路') || ui.hint.includes('分路') || ui.hint.includes('复活'))" class="hint">{{ ui.hint }}</div>
+    <div v-if="ui.hint && (assist || ui.hint.includes('半边路') || ui.hint.includes('分路') || ui.hint.includes('复活') || ui.hint.includes('金币充能'))" class="hint">{{ ui.hint }}</div>
 
     <div v-if="assist" class="touch-pad">
       <div class="pad-group">
@@ -70,3 +74,9 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
     </div>
   </div>
 </template>
+
+<style scoped>
+.coin-meter{position:absolute;left:18px;bottom:24px;width:158px;color:#eed89b;text-shadow:0 1px 3px #000;pointer-events:none}
+.coin-meter small{font-size:11px}.coin-meter>div{height:5px;background:#17251ccc;border:1px solid #ba9a54;border-radius:4px;overflow:hidden;margin-top:4px}
+.coin-meter i{display:block;height:100%;background:#edc65d}
+</style>
