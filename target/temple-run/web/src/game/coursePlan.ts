@@ -118,6 +118,7 @@ export class CoursePlan {
     case 'treeSlide':add('treeSlide',level===3?'cliff-tree-slide':'tree-slide');break;
     case 'flameTower':add('flameTower','flame-tower');break;
     case 'stonePedestal':add('stonePedestal','stone-pedestal',mid,this.rng.int(3));break;
+    case 'fireWall':add('fireWall','fire-wall');break;
     case 'pit':add('pit','pit');break;
     case 'plankPit':add('plankPit','plank-pit');break;
     case 'plankBeam':add('plankBeam','plank-beam');break;

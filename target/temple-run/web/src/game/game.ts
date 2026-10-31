@@ -1,4 +1,5 @@
-import {bindFocusPause} from './focusPause';
+import {ambientTreeAllowed} from './sceneryVisibility';
+import {bindFocusPause,PORTRAIT_BLOCK_QUERY} from './focusPause';
 import {branchRewards} from './branchRewards';
 import {boostHandoverReasons} from './boostHandover';
 import {stepNativeMagnetCoin,MAGNET_PICKUP_RADIUS} from './nativeMagnet';
@@ -248,7 +249,7 @@ export class Game {
     this.unbindFocusPause=bindFocusPause(window,document,()=>{
       this.input.resetTransient();
       if(this.session.pause()){this.publishSession();sfx.pauseMusic();}
-    });
+    },()=>this.viewportBlocked());
     this.resize();
     window.addEventListener('resize', this.resize);
     await this.setSkin(isOwned(progress.equipped) ? progress.equipped : 'jhony');
@@ -435,7 +436,7 @@ export class Game {
           animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
-      scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length,cliffLoaded:!!this.bundle.assets.cliffTile,cliffCornersLoaded:!!this.bundle.assets.cliffCornerLeft&&!!this.bundle.assets.cliffCornerRight,cliffCapsLoaded:!!this.bundle.assets.cliffCapA&&!!this.bundle.assets.cliffCapB,nativeCliffCaps:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliffCap).length,cliffTLoaded:!!this.bundle.assets.cliffTJunction,nativeCliffTs:[...this.junctions.values()].filter(g=>g.userData.nativeCliffT).length,nativeCliffCorners:[...this.junctions.values()].filter(g=>g.userData.nativeCliffCorner).length,nativeCliffTiles:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliff).length }),
+      scene: () => ({ junctionAmbientTrees:[...this.junctions.values()].flatMap(g=>g.children).filter(c=>c.name==='native-standalone-tree'||c.name==='legacy-scenery-tree').length, tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length,cliffLoaded:!!this.bundle.assets.cliffTile,cliffCornersLoaded:!!this.bundle.assets.cliffCornerLeft&&!!this.bundle.assets.cliffCornerRight,cliffCapsLoaded:!!this.bundle.assets.cliffCapA&&!!this.bundle.assets.cliffCapB,nativeCliffCaps:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliffCap).length,cliffTLoaded:!!this.bundle.assets.cliffTJunction,nativeCliffTs:[...this.junctions.values()].filter(g=>g.userData.nativeCliffT).length,nativeCliffCorners:[...this.junctions.values()].filter(g=>g.userData.nativeCliffCorner).length,nativeCliffTiles:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliff).length }),
       terrain: (d: number) => terrainAt(d, this.path),
       narrow: (d: number) => this.narrowAt(d, this.path),
       sidePath: (d: number) => this.sidePathAt(d, this.path),
@@ -514,7 +515,7 @@ export class Game {
       enemyGap: this.nativeEnemyGap,
       obstacles: this.obstacles.map((entity) => {
         const o = this.world.require(entity, Obstacle);
-        return { kind: o.kind, defId:o.defId, lane: o.lane, full: o.full, ahead: Math.round(o.distance - this.distance) };
+        return { kind: o.kind, action:DEFS[o.defId as DefId]?.action, defId:o.defId, lane: o.lane, full: o.full, ahead: Math.round(o.distance - this.distance) };
       }),
       pickups: this.pickups.map((entity) => {
         const p = this.world.require(entity, Pickup);
@@ -685,16 +686,19 @@ export class Game {
     mutateUi.scoreMultiplier = this.runScoreMultiplier;
   }
 
+  private viewportBlocked():boolean{return window.matchMedia(PORTRAIT_BLOCK_QUERY).matches;}
+
   start(): void {
     if (mutateUi.phase === 'ended') this.commitRun();
     this.resetWorld();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = true;
     this.session.start();
+    if(this.viewportBlocked())this.session.pause();
     mutateUi.speed = RUN_SPEED;
     this.publishSession();
     sfx.unlockAudio();
-    if (progress.music) sfx.startMusic('theme');
+    if (progress.music&&this.session.phase==='playing') sfx.startMusic('theme');
     this.updateCamera(0);
     this.startLoop();
   }
@@ -742,7 +746,7 @@ export class Game {
       this.input.resetTransient();
       this.publishSession();
       sfx.pauseMusic();
-    } else if (this.session.resume()) {
+    } else if (!this.viewportBlocked()&&this.session.resume()) {
       this.input.resetTransient();
       this.publishSession();
       if (progress.music) sfx.startMusic('theme');
@@ -750,7 +754,8 @@ export class Game {
   }
 
   resume(): void {
-    if (this.session.resume()) {
+    if (!this.viewportBlocked()&&this.session.resume()) {
+      this.input.resetTransient();
       this.publishSession();
       if (progress.music) sfx.startMusic('theme');
     }
@@ -1392,7 +1397,8 @@ export class Game {
     const recordedStraightGate = this.difficulty.name === 'classic' ? referenceStraightGate(index*TILE) : null;
     const gate = recordedStraightGate !== null || index * TILE >= (this.difficulty.name === 'classic' ? 180 : 80) && index % 7 === 2 && terrain === 'temple' && !clearScenery
       && !(this.difficulty.name==='classic' && (referenceFullWidthAt(index*TILE) || overlapsReferenceGate(index*TILE)));
-    const periodicTreeSide = surface === 'stone' && !this.path.nearTurn(index * TILE, 8) && index >= 4 && index % 3 === 1 && !(this.difficulty.name === 'classic' && overlapsReferenceTree(index * TILE)) ? (index % 6 === 1 ? -1 : 1) : 0;
+    const treeSightline=activeCourse()?ambientTreeAllowed(index*TILE,activeCourse()!.turns):!this.path.nearTurn(index*TILE,8);
+    const periodicTreeSide = surface === 'stone' && treeSightline && index >= 4 && index % 3 === 1 && !(this.difficulty.name === 'classic' && overlapsReferenceTree(index * TILE)) ? (index % 6 === 1 ? -1 : 1) : 0;
     const observedTree=this.difficulty.name==='classic'?referenceAmbientTree(index*TILE):undefined;
     const treeSide=observedTree===undefined?periodicTreeSide:observedTree?.side??0;
     const treeVariant=observedTree?.variant??0;
@@ -1981,7 +1987,7 @@ export class Game {
       const def:ObstacleDef={...baseDef,hitbox:obstacle.hitbox};
       const ahead = obstacle.distance - distance;
       if (obstacle.object) {
-        if(def.id==='flameTower')updateNativeFlame(obstacle.object,this.world.elapsed);
+        if(def.id==='flameTower'||def.id==='fireWall')updateNativeFlame(obstacle.object,this.world.elapsed);
         const x = def.lanes === 'one' ? LANES[obstacle.lane] : 0;
         const point = this.path.at(obstacle.distance, x);
         obstacle.object.position.set(point.x, this.meshY(obstacle.distance), point.z);

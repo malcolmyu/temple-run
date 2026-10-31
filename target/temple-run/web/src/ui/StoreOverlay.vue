@@ -61,8 +61,8 @@ function buy(): void {
       <h2 class="title">角色与道具</h2>
       <p class="bank">● {{ progress.coins }} &nbsp; ◆ {{ progress.gems }}</p>
 
-      <button class="primary store-action" :disabled="progress.coins < HEAD_START_PRICE" @click="purchaseStart('normal')"><span>普通起跑 · ● {{ HEAD_START_PRICE }}</span><em>×{{ progress.headStarts }}</em></button>
-      <button class="primary store-action" :disabled="progress.coins < MEGA_START_PRICE" @click="purchaseStart('mega')"><span>超级起跑 · ● {{ MEGA_START_PRICE }}</span><em>×{{ progress.megaStarts }}</em></button>
+      <button class="primary store-action" :disabled="progress.coins < HEAD_START_PRICE || progress.headStarts >= 99" @click="purchaseStart('normal')"><span>普通起跑 · ● {{ HEAD_START_PRICE }}</span><em>×{{ progress.headStarts }}</em></button>
+      <button class="primary store-action" :disabled="progress.coins < MEGA_START_PRICE || progress.megaStarts >= 99" @click="purchaseStart('mega')"><span>超级起跑 · ● {{ MEGA_START_PRICE }}</span><em>×{{ progress.megaStarts }}</em></button>
       <p class="notice">购买后存入库存。开跑25～100米间点击使用，自动转弯并加速至普通950米／超级2350米附近。</p>
       <button class="primary store-action" :disabled="progress.coins < ANGEL_WINGS_PRICE || progress.wings >= 99" @click="buyWings"><span>天使之翼 · ● {{ ANGEL_WINGS_PRICE }}</span><em>×{{ progress.wings }}</em></button>
       <p class="notice">跑动时点击激活，30 秒内保留一次复活机会；冷却 45 秒。</p>

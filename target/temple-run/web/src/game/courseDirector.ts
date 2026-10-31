@@ -1,10 +1,10 @@
 import {SeededRandom} from './obstacles/rng';
 import type {NativePathLevel} from './nativeThemePacing';
-export const COURSE_RULE_VERSION='beats-v3';
+export const COURSE_RULE_VERSION='beats-v4';
 /** Project pacing policy; weights/cooldowns are not recovered native values. */
 const THEMES:Record<NativePathLevel,readonly string[]>={
  1:['plankPit','plankBeam'],
- 2:['treeJump','treeTrip','treeSlide','flameTower','stonePedestal','pit','narrowSmall','narrowLong','branch','longGap'],
+ 2:['treeJump','treeTrip','treeSlide','flameTower','fireWall','stonePedestal','pit','narrowSmall','narrowLong','branch','longGap'],
  3:['treeJump','treeTrip','treeSlide','cliffGap','cliffStraight'],
 };
 export interface BeatDecision {kind:string;intent:'recovery'|'single'|'practised';allowCombination:boolean;}
@@ -23,6 +23,7 @@ export class CourseDirector {
  choose(level:NativePathLevel,progress:number,at:number):BeatDecision {
   if(this.pressure>=3)return {kind:'recovery',intent:'recovery',allowCombination:false};
   const eligible=THEMES[level].filter(k=>{
+   if(progress<1000&&k==='fireWall')return false;
    if(progress<500&&['treeSlide','flameTower'].includes(k))return false;
    if(progress<1500&&['narrowSmall','narrowLong'].includes(k))return false;
    return k!=='longGap'||at>=1400;

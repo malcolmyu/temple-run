@@ -53,7 +53,7 @@ const DEFAULT_JUNCTION_TREES=[{variant:0,ahead:10}] as const;
  * Relative12m separation is a visual fit, not recovered RNG/cell coordinates.
  */
 export function referenceJunctionTrees(index:number,at:number):readonly {variant:number;ahead:number}[]{
- if(activeCourse())return [{variant:index%4,ahead:12}];
+ if(activeCourse())return []; // normal T exits keep their sightline;replay trees below remain historical.
  const turn=REFERENCE_OPENING_TURNS[index];
  return index===2&&turn&&Math.abs(turn.distance-at)<.01
   ?[{variant:0,ahead:10},{variant:2,ahead:22}]:DEFAULT_JUNCTION_TREES;

@@ -15,3 +15,9 @@ session.resume();canvas.dispatchEvent(Object.assign(new Event('pointerdown'),{bu
 doc.visibilityState='hidden';doc.dispatchEvent(new Event('visibilitychange'));canvas.dispatchEvent(Object.assign(new Event('pointerup'),{button:0,pointerId:1,clientX:200,clientY:50}));assert.deepEqual(input.drain(),[],'cancelled swipe cannot leak after resume');
 cleanup();session.resume();doc.dispatchEvent(new Event('visibilitychange'));assert.equal(session.phase,'playing','disposed focus callback removed');
 console.log('Focus pause:blur/hidden,held steering/queued actions/pointer cleared,idempotence,no implicit resume and cleanup pass');
+
+let blocked=false;
+const remove=bindFocusPause(win,doc,()=>session.pause(),()=>blocked);
+win.dispatchEvent(new Event('resize'));assert.equal(session.phase,'playing');
+blocked=true;win.dispatchEvent(new Event('resize'));assert.equal(session.phase,'paused');
+blocked=false;win.dispatchEvent(new Event('resize'));assert.equal(session.phase,'paused','portrait return cannot implicitly resume');remove();

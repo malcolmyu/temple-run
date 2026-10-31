@@ -1007,6 +1007,19 @@ function contactShadow(group: THREE.Group, radius: number): void {
 export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: string): THREE.Group {
   const group = new THREE.Group();
   const kind = def.kind as ObstacleKind;
+  if(def.id==='fireWall'){
+    // Explicit web variant: no overhead tower/arch and no road surface cut.
+    const base=new THREE.Mesh(new THREE.BoxGeometry(2.8,.2,1.4),assets.material.stone);
+    base.position.y=.1;group.add(base);
+    if(assets.texture.safetyNet){
+      const flame=buildNativeFlame(assets.texture.safetyNet);
+      flame.scale.multiply(new THREE.Vector3(2.8/3.84,1.1/2.01,1));
+      flame.position.set(0,.7,0);group.add(flame);
+    }else for(let i=0;i<5;i++){
+      const flame=flameSprite(assets,.7);flame.position.set(-1.12+i*.56,.7,0);group.add(flame);
+    }
+    return group;
+  }
   // Use the actual APK prefab. The exporter baked the prefab-root frame: origin is the
   // track-tile centre and y=0 is the road surface.
   const cliffSource=def.id==='cliffGapA'?assets.cliffCapA:def.id==='cliffGapB'?assets.cliffCapB:prefabName==='cliff-tree-slide'?assets.cliffSlide:null;
@@ -1014,17 +1027,6 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
   if (prefab) {
     const clone = prefab.clone(true);if(cliffSource)clone.position.y=CLIFF_MESH_Y;
     group.add(clone);
-    if (def.id === 'fireWall') {
-      const base = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.2, 1.4), assets.material.stone);
-      base.position.y = 0.08;
-      group.add(base);
-      for (let i = 0; i < 8; i++) {
-        const flame = flameSprite(assets, 1.0 + (i % 3) * 0.08);
-        flame.position.set(-3.15 + i * 0.9, 1.1, 0);
-        group.add(flame);
-      }
-      return group;
-    }
     if (def.id === 'flameTower' && assets.texture.safetyNet) {
       group.add(buildNativeFlame(assets.texture.safetyNet));
     }

@@ -26,7 +26,7 @@
     const o=s.obstacles.find(o=>o.ahead>0&&o.ahead<(o.kind==='gapLong'?8:10));
     if(o&&!s.airborne&&!s.sliding&&!o.defId.startsWith('narrow')){
      if(o.kind==='block'){if(o.lane===s.lane)g.press(s.lane===0?'right':'left');}
-     else g.press(o.kind==='arch'||o.kind==='fire'?'slide':'jump');
+     else g.press(o.kind==='arch'||o.kind==='fire'&&o.defId!=='fireWall'?'slide':'jump');
     }
     if(!s.airborne&&s.course.surfaces.some(x=>x.from>0&&s.distanceExact>x.from-20&&s.distanceExact<x.from-10))g.press('jump');
     g.advance(stepMs,stepMs);
