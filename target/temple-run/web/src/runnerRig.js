@@ -479,15 +479,36 @@ export function buildRunnerRig(data, options = {}) {
     object: holder,
     mesh,
     material,
-    /** @param {boolean} active @param {THREE.Texture|null} [texture] */
-    setInvincibility(active, texture = null) {
+    /** @param {boolean} active @param {THREE.Texture|null} [texture]
+     * @param {number} [dt] @param {number} [remaining] */
+    setInvincibility(active, texture = null, dt = 0, remaining = Infinity) {
       if (active) {
-        if (!glowMaterial) glowMaterial = new THREE.MeshBasicMaterial({
-          map: texture, color: 0x66eee5, transparent: true, opacity: .55,
-          depthWrite: false, side: THREE.DoubleSide,
-        });
+        if (!glowMaterial) {
+          const map = texture?.clone() || null;
+          if (map) {
+            map.wrapS = map.wrapT = THREE.RepeatWrapping;
+            map.needsUpdate = true;
+          }
+          glowMaterial = new THREE.MeshBasicMaterial({
+            // Native shader111: texture * white RGB, SetAlpha(.5).
+            map, color: 0xffffff, transparent: true, opacity: .5,
+            depthWrite: false, side: THREE.FrontSide, fog: false, toneMapped: false,
+          });
+        }
+        if (mesh.material !== glowMaterial) {
+          glowMaterial.opacity = .5;
+          glowMaterial.map?.offset.set(0, 0);
+        }
+        // CharacterPlayer.Update: independent .5 -> 0 warning cycle.
+        // Native writes texture offsets, but shader111 does not read _MainTex_ST.
+        const delta = Math.fround(Math.fround(dt) * 2);
+        const next = Math.fround(glowMaterial.opacity - delta);
+        glowMaterial.opacity = remaining > 2.5 || next <= 0 ? .5 : next;
         mesh.material = glowMaterial;
-      } else mesh.material = material;
+      } else {
+        glowMaterial?.map?.offset.set(0, 0);
+        mesh.material = material;
+      }
     },
     setClip,
     update,

@@ -1,3 +1,4 @@
+import {newEnemyJump, queueEnemyJump, stepEnemyJump} from './enemyJump';
 import { startNativeCameraShake, stepNativeCameraShake, type NativeCameraShake } from './nativeCameraShake';
 import { NATIVE_RESULT_DELAY, stepNativeDeathTimer, nativeGroundContact } from './nativeDeath';
 import { nativeAnimationSpeed } from './nativeAnimation';
@@ -5,7 +6,7 @@ import { NATIVE_TILT_OFFSET_MAX, stepNativeSteering, nativeTiltAllowed } from '.
 import { nativePickupWithinReach } from './nativePickupCollision';
 import { junctionGapCuts, type SurfaceCut } from './junctionCuts';
 import { referenceStraightGate, referenceFullWidthAt, overlapsReferenceGate, REFERENCE_EXIT_GATE_OFFSET } from './referenceScenery';
-import { STUMBLE_KILL_WINDOW, NATIVE_STUMBLE_RESET_AGE, nativeStumbleIsFatal, nativeIntroHeld, nativeStumbleDuration, NATIVE_REJECTED_TURN_DELAY, NATIVE_REJECTED_TURN_OFFSET, stepNativeStumbleDelay } from './nativeRunnerRules';
+import { STUMBLE_KILL_WINDOW, NATIVE_STUMBLE_RESET_AGE, nativeStumbleIsFatal, nativeIntroHeld, stepNativeRunClock, nativeStumbleDuration, NATIVE_REJECTED_TURN_DELAY, NATIVE_REJECTED_TURN_OFFSET, stepNativeStumbleDelay } from './nativeRunnerRules';
 import { nativeWaterAnchor } from './nativeWater';
 import { nativeCoinBonusValue, NATIVE_POWER_SCORE_VALUE, NATIVE_COIN_SCORE_VALUE, NATIVE_BASE_POWER_DURATION } from './nativeCoinBonus';
 import { nativeSlideDuration, stepNativeSlideTimer, stepNativeVertical, nativeForwardAcceleration, stepNativeForwardVelocity, nativeJumpVelocity, NATIVE_STUMBLE_SPEED_FACTOR } from './nativeMotion';
@@ -116,6 +117,7 @@ export class Game {
   private safetyNet: THREE.Mesh | null = null;
   private safetyNets: THREE.Mesh[] = [];
   private safetyNetColor = 1;
+  private enemyJumps = Array.from({length:8}, newEnemyJump);
   private chaserRigs: Awaited<ReturnType<typeof loadRunnerRig>>[] = [];
   private rigToken = 0;
   private tiles = new Map<number, Entity>();
@@ -154,11 +156,16 @@ export class Game {
   private cameraLook = new THREE.Vector3(0, 0.65, -7.5);
   private disposed = false;
   private runStartedAt = 0;
+  private nativeRunClock = 0;
+  private get runElapsed():number {
+    return this.difficulty.name==='classic'?this.nativeRunClock:this.world.elapsed-this.runStartedAt;
+  }
   private needsToDuckCamera = false;
   private nativeCameraShake:NativeCameraShake|null=null;
   private nativeCameraShakeOffset:[number,number,number]=[0,0,0];
   private nativeTimeSinceStumble = NATIVE_STUMBLE_RESET_AGE;
   private nativeFalling=false;
+  private nativeSpawnPending=true;
   private nativeForwardForce=0;
   private nativeTiltTargetX=0;
   private nativeSwipeStumbleDelay:number|null=null;
@@ -344,7 +351,7 @@ export class Game {
       phase: mutateUi.phase,
       distance: Math.floor(this.distance),
       distanceExact: this.distance,
-      runElapsed: this.world.elapsed-this.runStartedAt,
+      runElapsed: this.runElapsed,
       progressDistance: stats.distance,
       score: stats.score,
       fps: mutateUi.fps,
@@ -411,7 +418,7 @@ export class Game {
 
   private createRunner(): void {
     this.runnerEntity = this.world.createEntity();
-    this.world.add(this.runnerEntity, TrackPos, { distance: 0, side: 0, smooth: true });
+    this.world.add(this.runnerEntity, TrackPos, { distance: this.difficulty.name==='classic'?-2:0, side: 0, smooth: true });
     this.world.add(this.runnerEntity, Lane, { index: 1, x: 0 });
     this.world.add(this.runnerEntity, Jump);
     this.world.add(this.runnerEntity, Slide);
@@ -427,9 +434,10 @@ export class Game {
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = false;
     this.runStartedAt = this.world.elapsed;
+    this.nativeRunClock = 0;
     this.needsToDuckCamera = false;this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];
     this.nativeTimeSinceStumble = NATIVE_STUMBLE_RESET_AGE;
-    this.nativeFalling=false;this.nativeForwardForce=0;
+    this.nativeFalling=false;this.nativeForwardForce=0;this.nativeSpawnPending=true;
     this.nativeTiltTargetX=0;this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
     this.nativeStumbleElapsed=0;this.nativeStumbleSeconds=0;this.nativeStumbleRemaining=0;this.stumbleAnimation=null;
     this.nativeEnemyGap = 0;
@@ -489,6 +497,7 @@ export class Game {
     this.stepAccumulator = 0;
     this.coinValueAcc = 0;
     this.runCommitted = false;
+    this.enemyJumps = Array.from({length:8}, newEnemyJump);
     this.createRunner();
     const chaser = this.world.createEntity();
     this.world.add(chaser, TrackPos, { distance: -6, side: 0, smooth: true });
@@ -647,6 +656,7 @@ export class Game {
   tick(dt: number): void {
     // Advance the ECS clock: gameplay timers (invincibility, powers, jump windows) all read
     // world.elapsed, so without this the whole run freezes at t=0.
+    if(this.difficulty.name==='classic')this.nativeRunClock=stepNativeRunClock(this.nativeRunClock,dt);
     this.world.update(dt);
     this.drainInput();
     this.updateTurnCue();
@@ -699,7 +709,7 @@ export class Game {
   }
 
   private introHeld(): boolean {
-    return this.difficulty.name === 'classic' && nativeIntroHeld(this.world.elapsed - this.runStartedAt);
+    return this.difficulty.name === 'classic' && nativeIntroHeld(this.runElapsed);
   }
 
   private move(dir: 1 | -1): void {
@@ -745,6 +755,14 @@ export class Game {
     if (this.difficulty.name==='classic' ? !jump.airborne : jump.y <= 0.02 && jump.v <= 0) {
       jump.v = this.difficulty.name === 'classic' ? nativeJumpVelocity(this.speed) : JUMP_VELOCITY;
       jump.airborne = true;
+      if(this.difficulty.name==='classic') {
+        const playerPosition=this.runnerGroup.getWorldPosition(new THREE.Vector3());
+        this.chaserRigs.forEach((rig,i)=>{
+          if(!rig.object.parent?.visible)return;
+          const enemyPosition=rig.object.getWorldPosition(new THREE.Vector3());
+          queueEnemyJump(this.enemyJumps[i],Math.hypot(playerPosition.x-enemyPosition.x,playerPosition.z-enemyPosition.z),this.speed);
+        });
+      }
       this.stumbleAnimation=null;
       jump.lastJumpAt = this.world.elapsed;
       const slide = this.world.require(this.runnerEntity, Slide);
@@ -874,6 +892,16 @@ export class Game {
   private updateRunner(dt: number): void {
     // Native Hold skips CharacterPlayer.Update, including motion and scoring.
     if (this.introHeld()) return;
+    if(this.difficulty.name==='classic'&&this.nativeSpawnPending) {
+      // Reset caches origin, then LoadLevelInformation moves to raw Z=-10.
+      // Character220 is still held on the frame Controller280 releases it.
+      const stats=this.world.require(this.runnerEntity,RunStats);
+      const delta=nativeProgressDelta(0,2,dt);
+      const award=nativeProgressScore(stats.progressRemainder,delta,REFERENCE_SCORE_MULTIPLIER);
+      stats.progressRemainder=award.remainder;stats.score+=award.scoreDelta;stats.distance+=delta;
+      this.nativeSpawnPending=false;
+      return;
+    }
     const distance = this.distance;
     const nativeMotion = this.difficulty.name === 'classic';
     if(nativeMotion&&this.nativeSwipeStumbleDelay!==null){
@@ -888,7 +916,7 @@ export class Game {
     const beforePose = this.path.at(distance, laneBefore.x, true);
     const speed = this.world.require(this.runnerEntity, Speed);
     const targetSpeed = (RUN_SPEED_MIN + Math.min(this.difficulty.speedMax - RUN_SPEED_MIN, distance * this.difficulty.speedGrowth))
-      * openingSpeedFactor(this.world.elapsed - this.runStartedAt);
+      * openingSpeedFactor(this.runElapsed);
     if (nativeMotion) {
       speed.value=stepNativeForwardVelocity(speed.value,this.nativeForwardForce,dt);
       this.nativeForwardForce=0;
@@ -912,7 +940,7 @@ export class Game {
     const trackPos = this.world.require(this.runnerEntity, TrackPos);
     trackPos.distance += currentSpeed * dt;
     const lane = this.world.require(this.runnerEntity, Lane);
-    const steering = nativeMotion && !nativeTiltAllowed(this.world.elapsed-this.runStartedAt)
+    const steering = nativeMotion && !nativeTiltAllowed(this.runElapsed)
       ? null : this.input.steeringAxis;
     let targetX = steering === null ? laneX(lane.index)
       : steering * (nativeMotion?NATIVE_TILT_OFFSET_MAX:LANES[2]);
@@ -1807,8 +1835,8 @@ export class Game {
     const back = followCameraBack(this.path.at(distance, lane.x * (this.difficulty.name === 'classic' ? 1 : .22), true), follow.behind);
     const ahead = this.path.at(distance, lane.x * (this.difficulty.name === 'classic' ? 1 : .3), true);
     const nativeIntro = this.difficulty.name === 'classic'
-      ? nativeEntranceCameraPose(this.world.elapsed - this.runStartedAt) : null;
-    const intro = entranceCameraPose(this.world.elapsed - this.runStartedAt);
+      ? nativeEntranceCameraPose(this.runElapsed) : null;
+    const intro = entranceCameraPose(this.runElapsed);
     if (nativeIntro) {
       const pose=this.path.at(nativeIntro.distance,nativeIntro.side);
       const target=this.path.at(distance,lane.x);
@@ -1916,7 +1944,7 @@ export class Game {
       }
       for (let i = count; i < this.safetyNets.length; i++) this.safetyNets[i].visible = false;
     }
-    this.runnerRig?.setInvincibility(invisible, this.bundle.assets.texture.glow);
+    this.runnerRig?.setInvincibility(invisible, this.bundle.assets.texture.glow, dt, shield.until - this.world.elapsed);
     if (this.runnerRig) {
       const slideElapsed = this.difficulty.name==='classic'?slide.elapsed:slide.duration-slide.remaining;
       const animation=this.runnerRig.getTime();
@@ -1936,21 +1964,31 @@ export class Game {
     // The pack closes behind the runner after a stumble, then drops below the
     // camera as the gap opens. Keep its feet at road height, never hovering beside us.
     const nativeTarget=nativeEnemyFollowTarget(this.nativeTimeSinceStumble,
-      this.world.elapsed-this.runStartedAt<3,slide.remaining>0,this.needsToDuckCamera);
+      this.runElapsed<3,slide.remaining>0,this.needsToDuckCamera);
     this.nativeEnemyGap=stepNativeEnemyFollow(this.nativeEnemyGap,nativeTarget,dt,slide.remaining>0,this.needsToDuckCamera);
     const gap = this.difficulty.name==='classic' ? this.nativeEnemyGap
-      : openingChaseGap(this.world.elapsed - this.runStartedAt, chase.gap);
+      : openingChaseGap(this.runElapsed, chase.gap);
     const chaserPos = this.difficulty.name==='classic'
       ? enemyFollowAnchor(this.path.at(this.distance,lane.x,true),lane.x,gap,jump.airborne)
       : this.path.at(this.distance-gap,lane.x*.4,true);
-    this.chaserGroup.position.set(chaserPos.x, 0, chaserPos.z);
-    this.chaserGroup.rotation.y = chaserPos.heading;
+    // SimulateEnemies1271a4c skips placement when CharacterPlayer.IsFalling.
+    // Enemy.Update still advances its own vertical motion/animation.
+    if(this.difficulty.name!=='classic'||!this.nativeFalling) {
+      this.chaserGroup.position.set(chaserPos.x, 0, chaserPos.z);
+      this.chaserGroup.rotation.y = chaserPos.heading;
+    }
     this.chaserGroup.scale.setScalar(this.difficulty.name==='classic'?1:1 + (chase.lunge > 0 ? 0.12 : 0));
     for (let i=0;i<this.chaserRigs.length;i++) {
       const rig=this.chaserRigs[i];
-      const active=i<3||this.world.elapsed-this.runStartedAt<3;
+      const active=i<3||this.runElapsed<3;
       if(rig.object.parent)rig.object.parent.visible=active;
-      if(active)rig.update(dt,this.difficulty.name==='classic'?1:this.speed/RUN_SPEED);
+      if(active) {
+        if(this.difficulty.name==='classic') {
+          stepEnemyJump(this.enemyJumps[i],dt,this.introHeld(),this.speed);
+          if(rig.object.parent)rig.object.parent.position.y=this.enemyJumps[i].y;
+        }
+        rig.update(dt,this.difficulty.name==='classic'?1:this.speed/RUN_SPEED);
+      }
     }
 
 
@@ -2059,7 +2097,7 @@ export class Game {
       lane.index = narrow.side === 'left' ? 0 : 2;
       lane.x = laneX(lane.index);
     }
-    this.nativeFalling=false;this.nativeForwardForce=0;this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
+    this.nativeFalling=false;this.nativeForwardForce=0;this.nativeSpawnPending=true;this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
     Object.assign(this.world.require(this.runnerEntity,Jump),{y:0,v:0,airborne:false});
     this.invincibleUntil = this.world.elapsed + 3;
     this.deathTimer = 0;this.deathElapsed=0;

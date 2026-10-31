@@ -1,0 +1,45 @@
+{
+  "librarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "firstNodeRaw": {
+    "time": 0.25,
+    "position": [
+      0.0,
+      10.0,
+      100.0
+    ],
+    "source": "GameCamera.EndLocation, runtime+0xe0, serializedOffset220; GameStart126b410..126b424"
+  },
+  "lastNodeRaw": {
+    "time": 2.75,
+    "position": [
+      -20.0,
+      45.0,
+      210.0
+    ],
+    "source": "GameStart126b454..126b464, constant698110"
+  },
+  "scale": 0.2,
+  "worldNodes": [
+    [
+      0,
+      2,
+      20
+    ],
+    [
+      -4,
+      9,
+      42
+    ]
+  ],
+  "coordinateConvention": "absolute path origin corresponds to Unity Z=0; player starts at distance-2, so do not add2 to camera nodes",
+  "interpolation": {
+    "source": "MovingObject.Simulate12e053c..12e05c8",
+    "nodeEaseFlags": [
+      true,
+      true
+    ],
+    "formula": "u<.5 ? 4*u^3 : 1-4*(1-u)^3",
+    "status": "native polynomial confirmed; JavaScript arithmetic not bit-identical float32"
+  },
+  "limits": "Exact source-frame phase and full-image geometry/shading still require visual verification"
+}

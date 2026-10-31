@@ -20,7 +20,8 @@ export function entranceCameraPose(seconds: number): {
 }
 
 /** GameStart absolute Unity path, recovered from native GameStart/Simulate.
- * `distance` is along the initial straight from player start(0,0,-10 raw).
+ * `distance` is absolute along the initial straight, origin Unity Z=0.
+ * First node is EndLocation(0,10,100), final node(-20,45,210), scaled .2.
  * X retains the renderer's canonical lateral axis; +UnityZ becomes forward distance.
  * The final path node holds until the controller ends IsIntroScene at3s. */
 export function nativeEntranceCameraPose(seconds:number):{
@@ -29,5 +30,5 @@ export function nativeEntranceCameraPose(seconds:number):{
   if(!Number.isFinite(seconds)||seconds<0||seconds>=3)return null;
   const u=Math.max(0,Math.min(1,(seconds-.25)/2.5));
   const ease=u<.5?4*u*u*u:1-4*(1-u)**3;
-  return {distance:22+22*ease,side:-4*ease,height:2+7*ease,lookHeight:4};
+  return {distance:20+22*ease,side:-4*ease,height:2+7*ease,lookHeight:4};
 }

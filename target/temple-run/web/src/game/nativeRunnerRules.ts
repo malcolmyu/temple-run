@@ -27,3 +27,8 @@ export const NATIVE_REJECTED_TURN_OFFSET=1.9;
 export function stepNativeStumbleDelay(remaining:number,dt:number):number {
  return Math.fround(Math.fround(remaining)-Math.fround(dt));
 }
+
+/** GameController.Update126c998..126c9b0: per-run float32 accumulator. */
+export function stepNativeRunClock(previous:number,dt:number):number {
+ return Math.fround(Math.fround(previous)+Math.fround(Math.max(0,dt)));
+}

@@ -1,0 +1,81 @@
+{
+  "shaderPathID": 111,
+  "shaderName": "Imangi/Unlit/Transparent ConstColor",
+  "shaderSourceSHA256": "711fdf0aeacaa91c0ff670344b30c377744c4e0ed0c2d34fe9867d7a7df95349",
+  "renderState": {
+    "rtBlend0": {
+      "srcBlend": {
+        "val": 5.0,
+        "name": "<noninit>"
+      },
+      "destBlend": {
+        "val": 10.0,
+        "name": "<noninit>"
+      },
+      "srcBlendAlpha": {
+        "val": 5.0,
+        "name": "<noninit>"
+      },
+      "destBlendAlpha": {
+        "val": 10.0,
+        "name": "<noninit>"
+      },
+      "blendOp": {
+        "val": 0.0,
+        "name": "<noninit>"
+      },
+      "blendOpAlpha": {
+        "val": 0.0,
+        "name": "<noninit>"
+      },
+      "colMask": {
+        "val": 15.0,
+        "name": "<noninit>"
+      }
+    },
+    "zWrite": {
+      "val": 0.0,
+      "name": "<noninit>"
+    },
+    "culling": {
+      "val": 2.0,
+      "name": "<noninit>"
+    },
+    "zTest": {
+      "val": 4.0,
+      "name": "<noninit>"
+    }
+  },
+  "alpha": 0.5,
+  "alphaEvidence": "CharacterPlayer.SetInvincibilityTexture 0x1298c10 calls SetAlpha 0x1296ee4",
+  "ordinaryColor": [
+    1,
+    1,
+    1
+  ],
+  "colorEvidence": "SetAlpha 0x1296ff8..129700c, ColorDebugging disabled",
+  "animation": {
+    "warningThresholdSeconds": 2.5,
+    "alphaMaximum": 0.5,
+    "alphaDecayPerSecond": 2,
+    "wrapWhen": "next <= 0",
+    "alphaEvidence": "CharacterPlayer.Update 0x1297384..12973b0",
+    "cpuUvVelocity": [
+      2,
+      2
+    ],
+    "renderedUvVelocity": [
+      0,
+      0
+    ],
+    "shaderIgnoresMainTexST": true,
+    "uvEvidence": "CharacterPlayer.Update 0x12973f4..129743c",
+    "expiryResetOffset": [
+      0,
+      0
+    ],
+    "resetEvidence": "CharacterPlayer restore method 0x1297d48..1297d54",
+    "textureWrapU": 0,
+    "textureWrapV": 0
+  }
+}

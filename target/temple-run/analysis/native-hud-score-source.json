@@ -1,0 +1,22 @@
+{
+  "librarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "GameGUI.Awake": {
+      "address": "0x12bf434",
+      "end": "0x12bf4e8",
+      "sha256": "9378123b4903984e52866d007043e2c7fa78d72a20a8a0773dfb9ffc7d20c387"
+    },
+    "GameGUI.Update": {
+      "address": "0x12bf954",
+      "end": "0x12bf9b4",
+      "sha256": "0fb114f565805a33e99f91391762747cd3a1abbdbc4ad195f820ffcc41b0cec8"
+    },
+    "GameGUI.SetScore": {
+      "address": "0x12bf4e8",
+      "end": "0x12bf528",
+      "sha256": "7a330ea238b200eaab1506262e5eb3f3b93618e4e8915a298d0149fd9558c954"
+    }
+  },
+  "finding": "Update compares CharacterPlayer.Score at +0x138 against cached score +0x80 each frame, updates immediately when changed; no periodic throttle or smoothing in this path",
+  "uncertainty": "UILabel mesh rebuilding and source-frame capture may add a frame; initial 0-to100 visible jump not yet explained"
+}

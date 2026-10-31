@@ -1,0 +1,65 @@
+{
+  "librarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "GameController.GameStart": {
+      "address": "0x126b26c",
+      "end": "0x126b4e4",
+      "sha256": "092dd5059fc72a31b9c50d6b9476f6bdda29630a56dd2bd704217cacf9cf2167"
+    },
+    "GameController.ComputeDistanceTraveled": {
+      "address": "0x126e280",
+      "end": "0x126e768",
+      "sha256": "ba23d3f3cddaa89d6c951902719a0ceb33a5e45e9e0f782342674fb87fa46cf5"
+    },
+    "GameController.LoadLevelInformation": {
+      "address": "0x1269eac",
+      "end": "0x126aab4",
+      "sha256": "0f3050bf7a672598790944e071c6c132bad0b3313485718963dc222039f48441"
+    },
+    "CharacterPlayer.Reset": {
+      "address": "0x129836c",
+      "end": "0x1298500",
+      "sha256": "28e1c76485a60c1e87efedff30494df9b099abdf8360c193a1b70954de2f142f"
+    },
+    "CharacterPlayer.AddScore": {
+      "address": "0x1298a8c",
+      "end": "0x1298aa8",
+      "sha256": "c583f922db6ca1f93b71dc90c535f3896f34861078752d23c9863d8ab76dccb1"
+    },
+    "CommonPlayer.Update": {
+      "address": "0x1297e40",
+      "end": "0x1297e84",
+      "sha256": "4a08723cb99aedb6f881fbd5577dc25766adbfb5d454e889d911d8810381a26a"
+    }
+  },
+  "resetScore": 0,
+  "resetScoreEvidence": "CharacterPlayer.Reset12983e4",
+  "resetPreviousLocation": "CharacterPlayer.Reset12984e8..ec caches current transform XYZ",
+  "perFramePreviousLocation": "CommonPlayer.Update1297e68..6c caches transform before MovingObject.Simulate",
+  "addScoreFormula": "if integerDelta>=1: Score += integerDelta*ScoreMultiplier",
+  "directAddScoreCallers": [
+    {
+      "method": "GameController.HandleBonusItemPickup",
+      "callAddress": "0x12710ec"
+    },
+    {
+      "method": "GameController.ComputeDistanceTraveled",
+      "callAddress": "0x126e454"
+    },
+    {
+      "method": "<AnimateBonus>d__30.MoveNext",
+      "callAddress": "0x12c0ee8"
+    }
+  ],
+  "callerScanScope": "direct BL only, Assembly-CSharp methods3465..4159",
+  "spawnPositionRaw": [
+    0,
+    0,
+    -10
+  ],
+  "spawnEvidence": "LoadLevelInformation126a634..644 sets origin;126a678..680 virtual Reset;126a70c..71c sets Z=-10 after Reset caches PreviousLocation",
+  "runClockEvidence": "GameController.Update126c998..126c9b0 loads f32+0xd0, adds smoothDeltaTime via FADD s0,s8,s0 and stores f32; GameStart126b328 zeroes +0xd0",
+  "releaseOrder": "CharacterPlayer220 remains held; Controller280 releases Hold and computes distance using cached origin before next actor movement",
+  "firstReleaseWorldDisplacement": 2,
+  "conclusion": "Spawn displacement yields100 points at60FPS via ordinary distance formula; initial video-clock phase still approximate."
+}

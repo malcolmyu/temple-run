@@ -52,7 +52,10 @@
     "temple:test:enemy-anchor": "esbuild tools/test-enemy-follow-anchor.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-enemy-anchor-test.mjs >/dev/null && node /tmp/temple-enemy-anchor-test.mjs",
     "temple:test:coin-presentation": "esbuild tools/test-native-coin-presentation.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-coin-presentation-test.mjs >/dev/null && node /tmp/temple-coin-presentation-test.mjs",
     "temple:test:coin-material": "esbuild tools/test-native-coin-material.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-coin-material-test.mjs >/dev/null && node /tmp/temple-coin-material-test.mjs",
-    "temple:test:final-narrow": "esbuild tools/test-final-narrow-continuation.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-final-narrow-test.mjs >/dev/null && node /tmp/temple-final-narrow-test.mjs"
+    "temple:test:final-narrow": "esbuild tools/test-final-narrow-continuation.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-final-narrow-test.mjs >/dev/null && node /tmp/temple-final-narrow-test.mjs",
+    "temple:test:enemy-jump": "esbuild tools/test-native-enemy-jump.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-enemy-jump-test.mjs >/dev/null && node /tmp/temple-enemy-jump-test.mjs",
+    "temple:test:spawn-score": "esbuild tools/test-native-spawn-score.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-spawn-score-test.mjs >/dev/null && node /tmp/temple-spawn-score-test.mjs",
+    "temple:test:run-clock": "esbuild tools/test-native-run-clock.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-run-clock-test.mjs >/dev/null && node /tmp/temple-run-clock-test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

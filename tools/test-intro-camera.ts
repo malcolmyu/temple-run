@@ -24,10 +24,10 @@ console.log('Two-second feet project into the reference lower-frame band:',footF
 // Absolute camera path is invariant to actor progress; using actor-relative
 // offsets here would incorrectly translate the whole opening camera with him.
 const nativeStart=nativeEntranceCameraPose(0)!;
-assert.deepEqual(nativeStart,{distance:22,side:-0,height:2,lookHeight:4});
+assert.deepEqual(nativeStart,{distance:20,side:-0,height:2,lookHeight:4});
 assert.deepEqual(nativeEntranceCameraPose(.25),nativeStart);
-assert.deepEqual(nativeEntranceCameraPose(1.5),{distance:33,side:-2,height:5.5,lookHeight:4});
-assert.deepEqual(nativeEntranceCameraPose(2.75),{distance:44,side:-4,height:9,lookHeight:4});
+assert.deepEqual(nativeEntranceCameraPose(1.5),{distance:31,side:-2,height:5.5,lookHeight:4});
+assert.deepEqual(nativeEntranceCameraPose(2.75),{distance:42,side:-4,height:9,lookHeight:4});
 assert.deepEqual(nativeEntranceCameraPose(2.999),nativeEntranceCameraPose(2.75));
 assert.equal(nativeEntranceCameraPose(3),null);
 assert.equal(nativeEntranceCameraPose(Number.NaN),null);

@@ -326,8 +326,9 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     entrance.add(entranceMesh);
     entrance.name = 'reference-entrance';
     entrance.visible = false;
-    // Native player starts at UnityZ=-10; map it to PLAYER_Z=3.
-    entrance.position.set(0, 0, 1);
+    // Path distance0 is native UnityZ0; classic player starts at distance-2.
+    // Translate the native entrance by the same world origin as the road.
+    entrance.position.set(0, 0, PLAYER_Z);
     entrance.scale.setScalar(1);
     entrance.rotation.set(0, 0, 0);
     scene.add(entrance);
