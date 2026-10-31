@@ -18,7 +18,7 @@ import { nativeCoinYaw, nativeCoinRootHeight } from './nativeCoinPresentation';
 import { pickupPresentationHeight, coinHeightWithinReach } from './pickupReach';
 import { referenceCoinsForTurn } from './referenceCoins';
 import { REFERENCE_VISIBLE_OBSTACLES, REFERENCE_RANDOM_OBSTACLES_FROM, overlapsReferenceTree } from './referenceObstacles';
-import { referenceTurnDirection, referenceNextTurnDistance, referenceGate, referenceJunction } from './referenceRoute';
+import { REFERENCE_OPENING_TURNS, referenceTurnDirection, referenceNextTurnDistance, referenceGate, referenceJunction } from './referenceRoute';
 import { followCameraPose, followCameraBack, stepNativeFollowCamera, nextNativeDuckCamera } from './followCamera';
 import { makeSafetyNet, setSafetyNetFrame, safetyNetIntensity, setSafetyNetIntensity } from './safetyNet';
 import { referenceCoinValue } from './coinValues';
@@ -226,6 +226,10 @@ export class Game {
         const obstacle=REFERENCE_VISIBLE_OBSTACLES[index];if(!obstacle)return null;
         const definition=DEFS[obstacle.defId];if(!(definition.prefabs as readonly string[]).includes(prefab))return null;
         const previous=obstacle.prefab;obstacle.prefab=prefab;return{index,previous,prefab};
+      },
+      moveReferenceTurn:(index:number,distance:number)=>{
+        const turn=REFERENCE_OPENING_TURNS[index];if(!turn||!Number.isFinite(distance))return null;
+        const previous=turn.distance;turn.distance=distance;return{index,previous,distance,note:'diagnostic; restart required; reload restores source'};
       },
       moveReferenceObstacle:(index:number,distance:number)=>{
         const obstacle=REFERENCE_VISIBLE_OBSTACLES[index];

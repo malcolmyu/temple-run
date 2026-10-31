@@ -45,3 +45,7 @@ for(const[a,b,c]of [[1765,1771,1777],[1801,1807,1813],[2359,2363,2367]]){
 }
 
 assert.equal(REFERENCE_OPENING_OBSTACLES[0].distance,108,'first trunk center fits source006/007 projections and visible first stumble');
+
+assert.equal(REFERENCE_OPENING_OBSTACLES[2].prefab,'tree-jump-right','source018/019 main trunk left, curved free root right');
+
+assert.equal(REFERENCE_OPENING_OBSTACLES[2].distance,366,'source018/019 right-root fixed landmarks favor this physical fit');

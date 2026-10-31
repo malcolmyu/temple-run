@@ -8,6 +8,9 @@ function referenceObstacleDistance(legacy:number):number {
  // center better than the old score/20 bracket, which includes travel past it.
  // This is a reviewed physical fit, not a global change of grid phase.
  if(legacy===63)return 108;
+ // Correct right-root variant, source018/019 crest and bent-root projection.
+ // Physical fit: retain3m uncertainty rather than imply original generator phase.
+ if(legacy===177)return 366;
  const cluster=narrowClusters.find(c=>c.includes(legacy));
  return cluster?referenceJunctionDistance(cluster[0])+12*cluster.indexOf(legacy):referenceJunctionDistance(legacy);
 }
@@ -20,7 +23,7 @@ export const REFERENCE_OPENING_OBSTACLES: ReadonlyArray<{
 }> = ([
   { distance: 63, defId: 'treeTrip', prefab: 'tree-trip-left', frames: [6,7,8], distanceBracket: [56,66] },
   { distance: 141, defId: 'treeJump', prefab: 'tree-jump-left', frames: [14,15,16], distanceBracket: [133,143] },
-  { distance: 177, defId: 'treeJump', prefab: 'tree-jump-left', frames: [18,19,20], distanceBracket: [162,182] },
+  { distance: 177, defId: 'treeJump', prefab: 'tree-jump-right', frames: [18,19,20], distanceBracket: [162,182] },
   { distance: 213, defId: 'pit', prefab: 'pit', frames: [23,24,25], distanceBracket: [206,222] },
   { distance: 297, defId: 'pit', prefab: 'pit', frames: [34,35,36], distanceBracket: [295,310] },
   { distance: 393, defId: 'pit', prefab: 'pit', frames: [45,46,47], distanceBracket: [383,399] },
