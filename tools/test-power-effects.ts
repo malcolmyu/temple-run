@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {createPowerEffects,activatePower,hasPower,activePowers,stepPowerEffects} from '../target/temple-run/web/src/game/powerEffects';
-import {boostAcceleration,consumeBoostProgress} from '../target/temple-run/web/src/game/nativeBoost';
+import {nativeBoostSpeedLimit,boostAcceleration,consumeBoostProgress} from '../target/temple-run/web/src/game/nativeBoost';
 const p=createPowerEffects();
 activatePower(p,'magnet',10,15);activatePower(p,'shield',12,15);
 assert.equal(hasPower(p,'magnet',26),false);assert.equal(hasPower(p,'shield',26),true);
@@ -25,3 +25,11 @@ console.log('Powers: independent magnet/shield, progress-based boost, frozen tai
 const upgraded=createPowerEffects();activatePower(upgraded,'boost',0,10,20,750);
 assert.equal(upgraded.boost.left,800);consumeBoostProgress(upgraded.boost,100);
 activatePower(upgraded,'boost',1,10,60,750);assert.equal(upgraded.boost.left,800);assert.equal(upgraded.boost.speedBefore,20);
+
+// Mega boost differs from normal boost in cap and first-start braking target.
+const mega=createPowerEffects();
+activatePower(mega,'boost',0,10,20,1000,true);
+assert.equal(nativeBoostSpeedLimit(mega.boost),105);assert.equal(mega.boost.mega,true);assert.equal(mega.boost.speedBefore,42);assert.equal(mega.boost.left,1050);
+activatePower(mega,'boost',1,10,80,250,false);
+assert.equal(nativeBoostSpeedLimit(mega.boost),84);assert.equal(mega.boost.mega,false);assert.equal(mega.boost.speedBefore,42);
+console.log('Mega flag follows latest boost activation, first mega restores normal maximum, refresh preserves braking target.');

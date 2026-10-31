@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { progress } from '../game/progress';
 import { computed } from 'vue';
 import SpriteNumber from './SpriteNumber.vue';
 import NativeScoreNumber from './NativeScoreNumber.vue';
@@ -55,6 +56,9 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
       <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
     </div>
 
+    <button v-if="ui.phase==='playing' && (progress.wings>0 || ui.wingsRemaining>0 || ui.wingsCooldown>0)" class="wings-action" :disabled="!ui.wingsReady" @click.stop="getGame()?.useAngelWings()">
+      {{ ui.wingsRemaining>0 ? `天使之翼 ${Math.ceil(ui.wingsRemaining)}s` : ui.wingsCooldown>0 ? `冷却 ${Math.ceil(ui.wingsCooldown)}s` : `天使之翼 ×${progress.wings}` }}
+    </button>
     <div v-if="ui.milestone" :key="ui.milestone.id" class="milestone" :class="ui.milestone.art">
       <img class="milestone-board" :src="uiAsset('hud-milestone.png')" alt="" />
       <span class="ms-text"><SpriteNumber :value="ui.milestone.value" label="里程" :height="28" /><em>{{ ui.milestone.unit }}</em></span>
@@ -76,6 +80,7 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 </template>
 
 <style scoped>
+.wings-action{position:absolute;left:18px;bottom:54px;min-height:44px;padding:8px 12px;background:#28382e;border:1px solid #b99c61;color:#f4dfac;border-radius:8px;pointer-events:auto}.wings-action:disabled{opacity:.75}
 .coin-meter{position:absolute;left:18px;bottom:24px;width:158px;color:#eed89b;text-shadow:0 1px 3px #000;pointer-events:none}
 .coin-meter small{font-size:11px}.coin-meter>div{height:5px;background:#17251ccc;border:1px solid #ba9a54;border-radius:4px;overflow:hidden;margin-top:4px}
 .coin-meter i{display:block;height:100%;background:#edc65d}

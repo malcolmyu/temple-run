@@ -1,3 +1,7 @@
+import { createAngelWings, startAngelWings, stepAngelWings } from './nativeAngelWings';
+import { MEGA_START_PRICE, MEGA_START_PROGRESS } from './megaStart';
+import { courseCoinRun } from './courseCoins';
+import { NativeFastTurnState } from './nativeFastTurn';
 import { COURSE_LOOKAHEAD, nativePathPacing } from './nativePathPacing';
 import { nativeCoinValue } from './nativeCoinValues';
 import { levelOf } from './upgrades';
@@ -6,7 +10,7 @@ import { boostProgress } from './upgrades';
 import { addNativeCoinMeter } from './nativeCoinMeter';
 import { CoursePlan, activeCourse, setActiveCourse, MIN_LONG_GAP_SPEED } from './coursePlan';
 import { BonusSpawnDirector } from './nativeBonusSpawn';
-import { boostAcceleration, consumeBoostProgress } from './nativeBoost';
+import { nativeBoostSpeedLimit, boostAcceleration, consumeBoostProgress } from './nativeBoost';
 import { createPowerEffects, activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
 import {newEnemyJump, queueEnemyJump, stepEnemyJump} from './enemyJump';
 import { startNativeCameraShake, stepNativeCameraShake, type NativeCameraShake } from './nativeCameraShake';
@@ -123,6 +127,8 @@ export class Game {
   private runnerRig: Awaited<ReturnType<typeof loadRunnerRig>> | null = null;
   private runnerGroup = new THREE.Group();
   private wingsGroup = new THREE.Group();
+  private angelWings=createAngelWings();
+  private wingRevivePending=false;
   private wingSprites: THREE.Sprite[] = [];
   private chaserGroup = new THREE.Group();
   private safetyNet: THREE.Mesh | null = null;
@@ -147,12 +153,15 @@ export class Game {
   private referenceObstacleIndex = 0;
   private obstacleRng = new SeededRandom(0x51ed270b);
   private runSeed=0;
+  private fastTurnState=new NativeFastTurnState();
+  private fastTurnRng=new SeededRandom(3);
   private routeRng=new SeededRandom(1);
   private rewardRng=new SeededRandom(2);
   private bonusDirector=new BonusSpawnDirector(new SeededRandom(1));
   private generatedBonuses:Array<{distance:number;kind:string;lane:number;collected:boolean}>=[];
   private get referenceReplay():boolean {return new URLSearchParams(window.location.search).get('route')==='reference';}
   private courseCoinIndex=0;
+  private lastCourseCoinEnd:number|null=null;
   private longGapFallbacks:number[]=[];
   private difficulty: DifficultyConfig = getDifficulty();
   private lastObstacleDistance = 0;
@@ -272,7 +281,7 @@ export class Game {
         this.bundle.scene.add(object);this.renderOnce();
         return {resource,position:object.position.toArray(),bounds:new THREE.Box3().setFromObject(object).getSize(new THREE.Vector3()).toArray()};
       },
-      planAhead: (distance:number,progressHint?:number) => {activeCourse()?.ensureThrough(distance,progressHint??this.world.require(this.runnerEntity,RunStats).distance);return activeCourse()?.extent;},
+      planAhead: (distance:number,progressHint?:number) => {activeCourse()?.ensureThrough(distance,progressHint??this.world.require(this.runnerEntity,RunStats).distance,this.fastTurnState.active);return activeCourse()?.extent;},
       jumpTo: (distance: number) => this.jumpTo(distance),
       start: () => this.start(),
       restart: () => this.restart(),
@@ -422,6 +431,8 @@ export class Game {
       scoreMultiplier: this.runScoreMultiplier,
       coinSpawnLevel: this.coinSpawnLevel,
       generationPacing: nativePathPacing(stats.distance),
+      angelWings: {...this.angelWings,stock:progress.wings,pendingRevive:this.wingRevivePending},
+      fastTurn: {active:this.fastTurnState.active,elapsed:this.fastTurnState.elapsed},
       course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
       generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
@@ -522,6 +533,7 @@ export class Game {
   private coinSpawnIndex = 0;
 
   private resetWorld(): void {
+    this.angelWings=createAngelWings();this.wingRevivePending=false;
     this.coinSpawnLevel=levelOf('coinSpawn');this.coinSpawnIndex=0;
     this.runScoreMultiplier = this.difficulty.name !== 'classic' || this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
@@ -579,12 +591,14 @@ export class Game {
     const seedParam=new URLSearchParams(window.location.search).get('seed');
     this.runSeed=seedParam!==null&&/^\d+$/.test(seedParam)?Number(seedParam)>>>0:(Date.now()^0x9e3779b9)>>>0;
     this.obstacleRng = new SeededRandom(this.runSeed);
+    this.fastTurnState.reset();
+    this.fastTurnRng=new SeededRandom(this.runSeed^0x66617374);
     this.routeRng=new SeededRandom(this.runSeed^0x726f7574);
     this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
     this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765));
     this.generatedBonuses=[];
     setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,489):null);
-    this.courseCoinIndex=0;this.longGapFallbacks=[];
+    this.courseCoinIndex=0;this.lastCourseCoinEnd=null;this.longGapFallbacks=[];
     if(activeCourse())this.nextSpawn=Infinity;
     this.deathTimer = 0;this.deathElapsed=0;
     this.hintCooldown = 0;
@@ -640,6 +654,24 @@ export class Game {
     this.paused = false;
     this.updateCamera(0);
     this.startLoop();
+  }
+
+  /** Price and cruise budget are explicit web economy choices, not recovered APK config. */
+  startMegaBoost(): boolean {
+    if(mutateUi.phase!=='menu'||!mutateUi.ready||progress.coins<MEGA_START_PRICE)return false;
+    this.start();
+    progress.coins-=MEGA_START_PRICE;saveProgress();
+    this.activateTimedPower('boost',MEGA_START_PROGRESS,true);
+    setHint('超级起跑！');
+    this.syncHud(0);
+    return true;
+  }
+
+  useAngelWings():boolean {
+    if(mutateUi.phase!=='playing'||this.runElapsed<3||progress.wings<1)return false;
+    if(!startAngelWings(this.angelWings))return false;
+    progress.wings--;saveProgress();syncBanks();
+    setHint('天使之翼已激活');this.syncHud(0);return true;
   }
 
   restart(): void {
@@ -777,10 +809,11 @@ export class Game {
 
   /** One deterministic simulation step (also used by the regression bot). */
   tick(dt: number): void {
-    activeCourse()?.ensureThrough(this.distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance);
+    activeCourse()?.ensureThrough(this.distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance,this.fastTurnState.active);
     // Advance the ECS clock: gameplay timers (invincibility, powers, jump windows) all read
     // world.elapsed, so without this the whole run freezes at t=0.
     if(this.difficulty.name==='classic')this.nativeRunClock=stepNativeRunClock(this.nativeRunClock,dt);
+    stepAngelWings(this.angelWings,dt);
     this.world.update(dt);
     this.drainInput();
     this.updateTurnCue();
@@ -928,7 +961,7 @@ export class Game {
       const recordedCoins=this.difficulty.name==='classic'&&(!activeCourse()||turn.count<3) ? referenceCoinsForTurn(turn.count,turn.next) : null;
       if(recordedCoins) {
         for(const coin of recordedCoins)this.spawnCoin(coin.lane,coin.distance,coin.height);
-      } else {
+      } else if(!activeCourse()||turn.count<3) {
         for (let i = 0; i < MAX_COINS_PER_RUN; i++) this.spawnCoin(1, turn.next - 5 + i * 2.2, COIN_Y + Math.sin(i / Math.max(1, MAX_COINS_PER_RUN - 1) * Math.PI) * 0.4);
       }
     }
@@ -1042,7 +1075,7 @@ export class Game {
     const targetSpeed = (RUN_SPEED_MIN + Math.min(this.difficulty.speedMax - RUN_SPEED_MIN, distance * this.difficulty.speedGrowth))
       * openingSpeedFactor(this.runElapsed);
     if (nativeMotion) {
-      speed.value=stepNativeForwardVelocity(speed.value,this.nativeForwardForce,dt,power.boost.active?84:42);
+      speed.value=stepNativeForwardVelocity(speed.value,this.nativeForwardForce,dt,nativeBoostSpeedLimit(power.boost));
       this.nativeForwardForce=0;
       this.recoveringFromStumble = false;
     } else if (this.recoveringFromStumble) {
@@ -1055,7 +1088,7 @@ export class Game {
         speed.value, 42, jump.airborne, slide.remaining > 0,
       ) * dt);
       if (speed.value >= targetSpeed) this.recoveringFromStumble = false;
-    } else speed.value = power.boost.active?Math.max(0,Math.min(2*this.difficulty.speedMax,speed.value+boostAcceleration(power.boost,speed.value,0)*dt)):targetSpeed;
+    } else speed.value = power.boost.active?Math.max(0,Math.min(nativeBoostSpeedLimit(power.boost,this.difficulty.speedMax),speed.value+boostAcceleration(power.boost,speed.value,0)*dt)):targetSpeed;
     const boost = hasPower(power,'boost',this.world.elapsed);
     const invisible = hasPower(power,'shield',this.world.elapsed);
     // Skins carry the same speed flavour as the original store (werewolf lumbers, Scarlett sprints).
@@ -1087,6 +1120,7 @@ export class Game {
       stats.progressRemainder = award.remainder;
       stats.score += award.scoreDelta;
       stats.distance += delta;
+      if(activeCourse())this.fastTurnState.advance(delta,()=>this.fastTurnRng.int(4),{inactive:stats.distance>=4500?750:stats.distance>=1000?850:1000,active:100});
       consumeBoostProgress(power.boost,delta);
     }
 
@@ -1208,6 +1242,9 @@ export class Game {
       showMilestone(reached, 'm', reached >= Math.max(1000, progress.bestDistance) ? 'highscore' : 'nicejob');
       sfx.play('jingle', { gain: 0.8 });
     }
+    mutateUi.wingsRemaining=this.angelWings.remaining;
+    mutateUi.wingsCooldown=this.angelWings.cooldown;
+    mutateUi.wingsReady=mutateUi.phase==='playing'&&this.runElapsed>=3&&progress.wings>0&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
     mutateUi.distance = Math.floor(stats.distance);
     mutateUi.speed = currentSpeed;
     mutateUi.jump = jump.y;
@@ -1601,7 +1638,9 @@ export class Game {
       const narrow=course.narrows.find(n=>mid>=n.from&&mid<n.to);
       const pedestal=course.obstacles.find(o=>o.defId==='stonePedestal'&&o.distance===mid);
       const lane=narrow?(narrow.side==='left'?0:2):feature.kind==='branch'?this.obstacleRng.pick([0,2]):pedestal?((pedestal.lane??1)+1)%3:1;
-      for(let i=0;i<MAX_COINS_PER_RUN;i++)this.spawnCoin(lane,mid-36+i*2,COIN_Y);
+      const run=courseCoinRun(feature,this.lastCourseCoinEnd);
+      for(const at of run)this.spawnCoin(lane,at,COIN_Y);
+      if(run.length)this.lastCourseCoinEnd=run.at(-1)!;
       if(this.obstacleRng.next()>.86)this.spawnGem(lane,feature.from+36);
     }
     if(this.referenceReplay){
@@ -1727,9 +1766,9 @@ export class Game {
     }
   }
 
-  private activateTimedPower(kind:PickupKind,budget=boostProgress()):void {
+  private activateTimedPower(kind:PickupKind,budget=boostProgress(),mega=false):void {
     const power=this.world.require(this.runnerEntity,Power);
-    activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed,budget);
+    activatePower(power,kind,this.world.elapsed,this.powerDuration(kind),this.speed,budget,mega);
     // StartBoost1298d28..1298d34 advances catch safety age on every refresh.
     if(kind==='boost'&&this.difficulty.name==='classic')this.nativeTimeSinceStumble+=10;
   }
@@ -2010,7 +2049,10 @@ export class Game {
         if (pickup.object) this.releasePickup(pickup.kind, pickup.object);
         this.world.destroyEntity(entity);
         this.pickups.splice(i, 1);
-        mutateUi.distance = Math.floor(stats.distance);
+        mutateUi.wingsRemaining=this.angelWings.remaining;
+    mutateUi.wingsCooldown=this.angelWings.cooldown;
+    mutateUi.wingsReady=mutateUi.phase==='playing'&&this.runElapsed>=3&&progress.wings>0&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
+    mutateUi.distance = Math.floor(stats.distance);
     mutateUi.coins = stats.coins;
         mutateUi.gems = stats.gems;
         continue;
@@ -2114,6 +2156,9 @@ export class Game {
   private syncHud(dt: number): void {
     const stats = this.world.require(this.runnerEntity, RunStats);
     const power = this.world.require(this.runnerEntity, Power);
+    mutateUi.wingsRemaining=this.angelWings.remaining;
+    mutateUi.wingsCooldown=this.angelWings.cooldown;
+    mutateUi.wingsReady=mutateUi.phase==='playing'&&this.runElapsed>=3&&progress.wings>0&&this.angelWings.remaining<=0&&this.angelWings.cooldown<=0;
     mutateUi.distance = Math.floor(stats.distance);
     mutateUi.coins = stats.coins;
     mutateUi.gems = stats.gems;
@@ -2152,7 +2197,7 @@ export class Game {
     const shield = this.world.require(this.runnerEntity, Power);
     const invincibilityRemaining=Math.max(0,shield.expires.shield-this.world.elapsed,this.invincibleUntil-this.world.elapsed);
     const invisible = invincibilityRemaining>0;
-    this.wingsGroup.visible = false;
+    this.wingsGroup.visible = this.angelWings.remaining>0;
     if (this.safetyNet) {
       // Native PathElement owns each net: it stays on its tile as the runner moves.
       // Clones share the animated atlas/material; only their world transforms differ.
@@ -2259,6 +2304,7 @@ export class Game {
   private die(reason: string, kind: 'impact' | 'fall' | 'water' | 'caught' | 'missed'): void {
     if (mutateUi.phase !== 'playing') return;
     if (this.world.elapsed < this.invincibleUntil) return;
+    if(this.angelWings.remaining>0){this.angelWings.remaining=0;this.wingRevivePending=true;}
     if (this.stepLoop) {
       sfx.stopLoop(this.stepLoop, 0.15);
       this.stepLoop = null;
@@ -2283,6 +2329,7 @@ export class Game {
   }
 
   private finishDeath(): void {
+    if(this.wingRevivePending){this.wingRevivePending=false;this.restoreRunnerAfterDeath();setHint('天使之翼复活！');return;}
     const stats = this.world.require(this.runnerEntity, RunStats);
     mutateUi.phase = 'ended';
     mutateUi.best = Math.max(progress.bestDistance, Math.floor(stats.distance));
@@ -2306,6 +2353,10 @@ export class Game {
     syncBanks();
     this.reviveUsed = true;
     mutateUi.reviveAvailable = false;
+    this.restoreRunnerAfterDeath();
+  }
+
+  private restoreRunnerAfterDeath():void {
     // Clear the road immediately around the player so the revive is not an instant re-death.
     for (let i = this.obstacles.length - 1; i >= 0; i--) {
       const entity = this.obstacles[i];
@@ -2373,7 +2424,7 @@ export class Game {
   }
 
   private jumpTo(distance: number): void {
-    activeCourse()?.ensureThrough(distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance);
+    activeCourse()?.ensureThrough(distance+COURSE_LOOKAHEAD,this.world.require(this.runnerEntity,RunStats).distance,this.fastTurnState.active);
     const trackPos = this.world.require(this.runnerEntity, TrackPos);
     const lane = this.world.require(this.runnerEntity, Lane);
     trackPos.distance = distance;
@@ -2400,6 +2451,7 @@ export class Game {
     this.pickups = [];
     this.nextSpawn = activeCourse()?Infinity:this.difficulty.name==='classic' ? Math.max(distance+90,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+90;
     this.courseCoinIndex=activeCourse()?.features.findIndex(f=>f.to>distance)??0;
+    this.lastCourseCoinEnd=null; // QA seek discards the old spawned coin stream.
     this.referenceObstacleIndex = 0;
     this.nextPickup = this.difficulty.name==='classic' ? Math.max(distance+MIN_BONUS_ITEM_SPACING,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+MIN_BONUS_ITEM_SPACING;
     this.bonusDirector.skipTo(distance);

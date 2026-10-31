@@ -1,3 +1,4 @@
+import { NATIVE_DISTANCE_OBJECTIVES } from './nativeDistanceObjectives';
 import { progress, claimObjective } from './progress';
 import { nativeScoreMultiplier } from './scoring';
 
@@ -13,6 +14,7 @@ export interface Objective {
 }
 
 export const OBJECTIVES: Objective[] = [
+  ...NATIVE_DISTANCE_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(progress.bestDistance,row.target),done:()=>progress.bestDistance>=row.target})),
   {
     id: 'first-500',
     title: '初次远征',

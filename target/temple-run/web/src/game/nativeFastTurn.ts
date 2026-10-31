@@ -1,5 +1,5 @@
-/** Static IL2CPP HandlePacing126eee8..126f01c; deliberately separate from
- * CoursePlan until short-corner geometry and candidate filtering are integrated.
+/** Static IL2CPP HandlePacing126eee8..126f01c. Runtime tracks metric progress;
+ * CoursePlan uses this mode for short, obstacle-free corner groups.
  * Thresholds are arguments: pacing/config may overwrite serialized defaults. */
 export class NativeFastTurnState {
  active=false;

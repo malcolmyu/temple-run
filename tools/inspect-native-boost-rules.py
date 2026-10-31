@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1]
 with contextlib.redirect_stdout(io.StringIO()):d=runpy.run_path(str(ROOT/'tools/inspect-native-runtime-methods.py'))
 binary,off=d['binary'],d['off']
 def w(a):return struct.unpack_from('<I',binary,off(a))[0]
-checks={0x126a178:0x52a86f48,0x126a184:0xb9016268, #250 into controller160
+checks={0x1298350:0x1e209001,0x1298354:0x1e210800,0x1298ce8:0x3905d409,0x1298cf4:0xbd40ee60,0x126a178:0x52a86f48,0x126a184:0xb9016268, #250 into controller160
  0x1298d14:0x52a84908,0x1298d20:0x1e212901,0x1298d24:0xbd017a61, #+50 budget
  0x1299334:0xb9018268, #ctor slowdown50
  0x126e468:0xbd417900,0x126e46c:0x1e283800,0x126e470:0xbd017900, #subtract metric s8
@@ -27,6 +27,6 @@ for name,a,b in [('StartBoost',0x1298cc8,0x1298d44),('ComputeDistanceTraveled',0
  asm=subprocess.run(['/usr/bin/objdump','-d','--start-address='+hex(a),'--stop-address='+hex(b),sys.argv[2]],capture_output=True,text=True,check=True).stdout
  (out/(name+'.asm')).write_text(asm);records[name]=dict(start=hex(a),end=hex(b),sha256=hashlib.sha256(binary[off(a):off(b)]).hexdigest())
 result=dict(binarySHA256=d['record']['binarySHA256'],fields=fields,methods=records,
- verified=dict(baseBudget=250,brakingAllowance=50,progressUnit='ComputeDistanceTraveled metric delta, not scaled physical metres',firstInvincibilitySeconds=4,clockPausedWhileRemainingAtLeast=50,normalBoostMaxSpeedMultiplier=2,rawAccelerationForce=150,rawBrakingForce=-150,webWorldAcceleration=30,refresh='replace budget, preserve pre-boost speed; do not restart4s while already boosting'),
- limits=['Remote config and boost upgrade overrides not decoded.','Mega boost multiplier2.5 is outside the normal pickup implementation.','Automatic selected-exit queueing is a web playability adapter; exact native graph-following transition has not been independently ported.'])
+ verified=dict(baseBudget=250,brakingAllowance=50,progressUnit='ComputeDistanceTraveled metric delta, not scaled physical metres',firstInvincibilitySeconds=4,clockPausedWhileRemainingAtLeast=50,normalBoostMaxSpeedMultiplier=2,megaBoostMaxSpeedMultiplier=2.5,megaFirstBrakingTarget="normal MaxRunVelocity rather than current GetRunVelocity",rawAccelerationForce=150,rawBrakingForce=-150,webWorldAcceleration=30,refresh='replace budget, preserve pre-boost speed; do not restart4s while already boosting'),
+ limits=['Remote config and boost upgrade overrides not decoded.','Mega shop entry uses web price1000 and cruise budget1000; original economic/headstart config is not recovered.','Automatic selected-exit queueing is a web playability adapter; exact native graph-following transition has not been independently ported.'])
 (out/'source.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result['verified'],indent=2))

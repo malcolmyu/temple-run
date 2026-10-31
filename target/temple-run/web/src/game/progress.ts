@@ -1,10 +1,12 @@
 import { reactive } from 'vue';
+import { ANGEL_WINGS_PRICE } from './nativeAngelWings';
 import { SKINS } from './skins';
 
 /** Durable meta-progression: currency banks, unlocks, lifetime stats. */
 export interface Progress {
   coins: number;
   gems: number;
+  wings: number;
   runs: number;
   bestDistance: number;
   totalDistance: number;
@@ -80,6 +82,7 @@ function load(): Progress {
   const defaults: Progress = {
     coins: 0,
     gems: 0,
+    wings: 0,
     runs: 0,
     bestDistance: 0,
     totalDistance: 0,
@@ -108,7 +111,7 @@ function load(): Progress {
       id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
     )])];
     if (!merged.owned.includes(merged.equipped)) merged.equipped = SKINS[0].id;
-    for (const key of ['coins', 'gems', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore'] as const) {
+    for (const key of ['coins', 'gems', 'wings', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore'] as const) {
       const value = merged[key];
       merged[key] = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
     }
@@ -118,7 +121,7 @@ function load(): Progress {
       Number(saved.bestDistance) > 0 ||
       Number(saved.coins) > 0 ||
       Number(saved.gems) > 0 ||
-      Number(saved.runs) > 0 ||
+      Number(saved.runs) > 0 || Number(saved.wings)>0 ||
       Number(saved.totalDistance) > 0 ||
       (Array.isArray(saved.owned) && saved.owned.length > 1) ||
       (Array.isArray(saved.claimed) && saved.claimed.length > 0) ||
@@ -207,4 +210,9 @@ export function recordRun(distance: number, coins: number, gems: number, score: 
   progress.bestDistance = Math.max(progress.bestDistance, Math.floor(distance));
   progress.bestScore = Math.max(progress.bestScore, Math.floor(score));
   saveProgress();
+}
+
+export function buyAngelWings():boolean {
+ if(progress.coins<ANGEL_WINGS_PRICE||progress.wings>=99)return false;
+ progress.coins-=ANGEL_WINGS_PRICE;progress.wings++;saveProgress();return true;
 }

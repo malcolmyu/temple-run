@@ -30,14 +30,14 @@ function onClaim(id: string): void {
         <div v-for="objective in OBJECTIVES" :key="objective.id" class="objective" :class="{ done: objective.done() }">
           <div class="objective-head">
             <strong>{{ objective.title }}</strong>
-            <span v-if="objectiveClaimed(objective.id)">已领取</span>
-            <button v-else-if="objective.done()" class="mini" @click="onClaim(objective.id)">领取</button>
+            <span v-if="objectiveClaimed(objective.id)">{{ objective.coins || objective.gems ? '已领取' : '已确认' }}</span>
+            <button v-else-if="objective.done()" class="mini" @click="onClaim(objective.id)">{{ objective.coins || objective.gems ? '领取' : '确认' }}</button>
           </div>
           <small>{{ objective.detail }}</small>
           <div class="bar"><i :style="{ width: `${Math.min(100, (objective.current() / objective.target) * 100)}%` }" /></div>
           <p class="reward">
             {{ objective.current() }} / {{ objective.target }}
-            <em>奖励 {{ objective.coins ? `● ${objective.coins}` : '' }} {{ objective.gems ? `◆ ${objective.gems}` : '' }}</em>
+            <em>奖励 {{ objective.coins ? `● ${objective.coins}` : '' }} {{ objective.gems ? `◆ ${objective.gems}` : '' }}{{ !objective.coins && !objective.gems ? '下局得分倍率 +1' : '' }}</em>
           </p>
         </div>
       </div>

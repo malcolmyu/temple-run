@@ -50,9 +50,13 @@ export interface HudState {
   sfx: boolean;
   reviveAvailable: boolean;
   reviveCost: number;
+  wingsRemaining:number;
+  wingsCooldown:number;
+  wingsReady:boolean;
 }
 
 const defaults = (): HudState => ({
+  wingsRemaining:0,wingsCooldown:0,wingsReady:false,
   phase: 'menu',
   ready: false,
   distance: 0,

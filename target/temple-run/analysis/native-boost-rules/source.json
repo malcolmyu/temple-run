@@ -46,6 +46,8 @@
     "firstInvincibilitySeconds": 4,
     "clockPausedWhileRemainingAtLeast": 50,
     "normalBoostMaxSpeedMultiplier": 2,
+    "megaBoostMaxSpeedMultiplier": 2.5,
+    "megaFirstBrakingTarget": "normal MaxRunVelocity rather than current GetRunVelocity",
     "rawAccelerationForce": 150,
     "rawBrakingForce": -150,
     "webWorldAcceleration": 30,
@@ -53,7 +55,7 @@
   },
   "limits": [
     "Remote config and boost upgrade overrides not decoded.",
-    "Mega boost multiplier2.5 is outside the normal pickup implementation.",
+    "Mega shop entry uses web price1000 and cruise budget1000; original economic/headstart config is not recovered.",
     "Automatic selected-exit queueing is a web playability adapter; exact native graph-following transition has not been independently ported."
   ]
 }

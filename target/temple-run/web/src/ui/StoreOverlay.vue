@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { progress, buySkin, equipSkin, isOwned, canAfford } from '../game/progress';
+import { ANGEL_WINGS_PRICE } from '../game/nativeAngelWings';
+import { MEGA_START_PRICE } from '../game/megaStart';
+import { progress, buyAngelWings, buySkin, equipSkin, isOwned, canAfford } from '../game/progress';
 import { SKINS, skinById } from '../game/skins';
 import { getGame } from '../game/boot';
 import { syncBanks } from '../game/state';
@@ -16,6 +18,15 @@ const equipped = computed(() => progress.equipped === selected.value);
 const owned = computed(() => isOwned(selected.value));
 const afford = computed(() => canAfford(selected.value));
 const priceLabel = computed(() => (skin.value.currency === 'gems' ? `◆ ${skin.value.price}` : `● ${skin.value.price}`));
+
+function buyWings():void {
+ notice.value=buyAngelWings()?'天使之翼已加入库存':'金币不足或库存已满';syncBanks();
+}
+
+function megaStart(): void {
+  if(getGame()?.startMegaBoost()) {syncBanks();emit('close');}
+  else notice.value='金币不足或游戏尚未准备好';
+}
 
 function select(id: string): void {
   selected.value = id;
@@ -46,9 +57,13 @@ function buy(): void {
   <section class="overlay soft" @click.self="emit('close')">
     <div class="card store-card">
       <p class="kicker">STORE</p>
-      <h2 class="title">角色</h2>
+      <h2 class="title">角色与道具</h2>
       <p class="bank">● {{ progress.coins }} &nbsp; ◆ {{ progress.gems }}</p>
 
+      <button class="primary store-action" :disabled="progress.coins < MEGA_START_PRICE" @click="megaStart"><span>超级起跑 · ● {{ MEGA_START_PRICE }}</span><em>↗</em></button>
+      <p class="notice">本次开跑自动转弯并加速。重新开始需再次购买。</p>
+      <button class="primary store-action" :disabled="progress.coins < ANGEL_WINGS_PRICE || progress.wings >= 99" @click="buyWings"><span>天使之翼 · ● {{ ANGEL_WINGS_PRICE }}</span><em>×{{ progress.wings }}</em></button>
+      <p class="notice">跑动时点击激活，30 秒内保留一次复活机会；冷却 45 秒。</p>
       <StorePreview :skin-id="selected" />
 
       <div class="preview-meta">

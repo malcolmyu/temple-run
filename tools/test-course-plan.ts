@@ -62,3 +62,23 @@ for(const [at,turns] of [[0,12],[249.99,12],[250,10],[500,8],[1000,6],[1500,5],[
 assert.equal(nativePathPacing(4499).known,true);assert.equal(nativePathPacing(4500).known,true);
 
 assert.equal(nativePathPacing(4500).minObstacleSpaces,2);assert.equal(nativePathPacing(4500).doubleObstaclePercent,.2);
+
+// Short fast-turn groups are appended without putting long-hole/narrow caps
+// against a corner. Existing normal groups and theme continuity stay intact.
+for(let seed=1;seed<=100;seed++){
+ const plan=new CoursePlan(seed,489);plan.ensureThrough(850,1500);
+ const prefix=JSON.stringify(plan.features),count=plan.features.length;
+ plan.ensureThrough(2000,1500,true);
+ assert.equal(JSON.stringify(plan.features.slice(0,count)),prefix);
+ const fast=plan.features.filter(f=>f.fastTurn);
+ assert.ok(fast.length>0);
+ for(const f of fast){
+  assert.equal(f.kind,'fastTurn');assert.equal(f.minTurnSpaces,3);
+  assert.ok(f.to-f.from>=48&&f.to-f.from<=72);
+  assert.equal(plan.obstacles.some(o=>o.distance>f.from&&o.distance<f.to),false);
+  assert.equal(plan.surfaces.some(s=>s.from>f.from&&s.from<f.to),false);
+ }
+ plan.ensureThrough(2500,1500,false);
+ assert.ok(plan.features.at(-1)!.to-plan.features.at(-1)!.from>=120);
+}
+console.log('Fast course:100 seeds, stable prefixes,48–72m isolated short-corner groups, continuous surfaces and normal-group recovery pass.');

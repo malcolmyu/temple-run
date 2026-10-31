@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {createAngelWings,startAngelWings,stepAngelWings} from '../target/temple-run/web/src/game/nativeAngelWings';
+const s=createAngelWings();assert.ok(startAngelWings(s));assert.deepEqual(s,{remaining:30,cooldown:45});assert.equal(startAngelWings(s),false);
+stepAngelWings(s,30);assert.deepEqual(s,{remaining:0,cooldown:15});assert.equal(startAngelWings(s),false);
+stepAngelWings(s,15);assert.deepEqual(s,{remaining:0,cooldown:0});assert.ok(startAngelWings(s));
+s.remaining=0;stepAngelWings(s,1);assert.equal(s.cooldown,44);assert.equal(startAngelWings(s),false);
+assert.deepEqual(createAngelWings(),{remaining:0,cooldown:0});
+Object.assign(globalThis,{localStorage:{getItem:()=>JSON.stringify({coins:1000,wings:0}),setItem:()=>{}}});
+const {progress,buyAngelWings}=await import('../target/temple-run/web/src/game/progress');
+assert.ok(buyAngelWings());assert.equal(progress.wings,1);assert.equal(progress.coins,500);
+assert.ok(buyAngelWings());assert.equal(progress.wings,2);assert.equal(progress.coins,0);
+assert.equal(buyAngelWings(),false);assert.equal(progress.wings,2);
+progress.coins=1000;progress.wings=99;assert.equal(buyAngelWings(),false);assert.equal(progress.coins,1000);
+console.log('Angel wings:30/45 simultaneous timers, expiry boundary, reuse, consumption guard, purchase exact/insufficient/stock cap and clean run reset pass.');

@@ -9,11 +9,12 @@ export function nativeBoostProgress(level=0):number {
 export const BOOST_BRAKING_PROGRESS = 50;
 export const BOOST_TAIL_SECONDS = 4;
 export const BOOST_ACCELERATION = 30; // HandleControls raw force +/-150, scale.2
-export interface NativeBoostState { active:boolean; left:number; speedBefore:number; }
+export interface NativeBoostState { active:boolean; left:number; speedBefore:number; mega?:boolean; }
 export const createNativeBoost=():NativeBoostState=>({active:false,left:0,speedBefore:0});
-export function startNativeBoost(state:NativeBoostState,speed:number,progress=BOOST_PROGRESS):boolean {
+export function startNativeBoost(state:NativeBoostState,speed:number,progress=BOOST_PROGRESS,mega=false,normalMaxSpeed=42):boolean {
  const first=!state.active;
- if(first)state.speedBefore=speed;
+ if(first)state.speedBefore=mega?normalMaxSpeed:speed;
+ state.mega=mega;
  state.active=true;state.left=progress+BOOST_BRAKING_PROGRESS;
  return first;
 }
@@ -26,3 +27,6 @@ export function boostAcceleration(state:NativeBoostState,speed:number,normalForc
 export function consumeBoostProgress(state:NativeBoostState,delta:number):void {
  if(state.active)state.left-=Math.max(0,delta);
 }
+
+/** CharacterPlayer.GetMaxRunVelocity1298344..1298364. */
+export const nativeBoostSpeedLimit=(state:NativeBoostState,normalMax=42):number=>normalMax*(state.active?(state.mega?2.5:2):1);

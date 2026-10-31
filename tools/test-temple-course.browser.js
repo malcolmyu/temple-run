@@ -22,16 +22,16 @@
    }
    const protectedNow=s.powers.some(p=>p.kind==='shield'||p.kind==='boost');
    const obstacle=s.obstacles.find(o=>o.ahead>0&&o.ahead<(o.kind==='gapLong'?8:10));
-   if(obstacle&&!protectedNow&&!s.airborne&&!s.sliding&&!obstacle.defId.startsWith('narrow')){
+   if(obstacle&&!s.airborne&&!s.sliding&&!obstacle.defId.startsWith('narrow')){
     if(obstacle.kind==='block'){if(obstacle.lane===s.lane)g.press(s.lane===0?'right':'left');}
     else{g.press(obstacle.kind==='arch'||obstacle.kind==='fire'?'slide':'jump');if(obstacle.defId==='pitLongB')longJumps.push(s.distanceExact);}
    }
-   if(!protectedNow&&!s.airborne&&s.course.surfaces.some(surface=>surface.from>0&&s.distanceExact>surface.from-20&&s.distanceExact<surface.from-10))g.press('jump');
+   if(!s.airborne&&s.course.surfaces.some(surface=>surface.from>0&&s.distanceExact>surface.from-20&&s.distanceExact<surface.from-10))g.press('jump');
    g.advance(25);
   }
   const end=g.state();runs.push({seed,end,seen:[...seen],branches:[...branches],merges,longJumps,death:g.death()});
   check(`seed${seed}: bounded incremental horizon`,end.course.extent>=end.distanceExact+350&&end.course.extent<end.distanceExact+560);
-  check(`seed${seed}: generation uses supplied metric progress and unlock gates`,end.course.features.every(f=>Number.isFinite(f.generatedAtProgress)&&f.to-f.from>=Math.max(120,f.minTurnSpaces*12)&&(f.kind!=='flameTower'&&f.kind!=='treeSlide'||f.generatedAtProgress>=500)&&(f.kind!=='narrowSmall'&&f.kind!=='narrowLong'||f.generatedAtProgress>=1500)));
+  check(`seed${seed}: generation uses supplied metric progress and unlock gates`,end.course.features.every(f=>Number.isFinite(f.generatedAtProgress)&&f.to-f.from>=Math.max(f.fastTurn?48:120,f.minTurnSpaces*12)&&(f.kind!=='flameTower'&&f.kind!=='treeSlide'||f.generatedAtProgress>=500)&&(f.kind!=='narrowSmall'&&f.kind!=='narrowLong'||f.generatedAtProgress>=1500)));
   check(`seed${seed}: verified4500+ normal stage`,end.generationPacing.from===4500&&end.generationPacing.minTurnSpaces===2&&end.generationPacing.minObstacleSpaces===2&&end.generationPacing.known&&end.course.features.filter(f=>f.generatedAtProgress>=4500).every(f=>f.minTurnSpaces===2&&f.nativeStageKnown));
   check(`seed${seed}: generated course reaches7500m`,end.phase==='playing'&&end.distanceExact>=7500);
   check(`seed${seed}: branch choice and merge work`,branches.has(seed===1?'left':'right')&&merges>0);
