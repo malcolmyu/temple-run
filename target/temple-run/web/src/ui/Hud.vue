@@ -53,10 +53,10 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
     </div>
     <div v-if="assist && cueLabel && !turnLabel" class="action-cue">{{ cueLabel }}</div>
 
-    <div v-if="assist && turnLabel" class="turn-cue" :class="{ ready: ui.turnQueued }">
-      <span class="turn-arrow" :class="ui.turnDirection < 0 ? 'left' : 'right'">{{ ui.turnDirection < 0 ? '←' : '→' }}</span>
-      <strong>{{ ui.turnQueued ? '转弯已确认' : turnLabel }}</strong>
-      <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
+    <div v-if="assist && turnLabel || ui.turnBufferedDirection" class="turn-cue" :class="{ ready: ui.turnQueued || !!ui.turnBufferedDirection, 'below-milestone': !!ui.milestone }" role="status">
+      <span class="turn-arrow" :class="(ui.turnBufferedDirection || ui.turnDirection) < 0 ? 'left' : 'right'">{{ (ui.turnBufferedDirection || ui.turnDirection) < 0 ? '←' : '→' }}</span>
+      <strong>{{ ui.turnBufferedDirection ? (ui.turnBufferedDirection < 0 ? '左转已预备' : '右转已预备') : ui.turnQueued ? '转弯已确认' : turnLabel }}</strong>
+      <small v-if="!ui.turnQueued && !ui.turnBufferedDirection">{{ ui.turnRemaining }} m</small>
     </div>
 
     <div v-if="assist && turnLabel && ui.turnRemaining <= 18" class="turn-edge" :class="ui.turnDirection < 0 ? 'left' : 'right'">

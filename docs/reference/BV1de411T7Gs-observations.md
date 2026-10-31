@@ -102,3 +102,15 @@ Round116：ImageData中kDeathTypeTree/character1指向deathIllustrationGirlTree@
 ![磁铁拾取前](BV1de411T7Gs/detail124-356.110.jpg)
 
 Round117“名称未知”在该光球上已被更新为磁铁；半透明外观的原因仍未知，不能据相邻时刻给磁铁增加无敌能力。当前APK StartVacuum只设置独立时间/flag，StartInvcibility使用另一组时间/flag，二者可并存；不据此证明录像当时一定并存，也不从这段恢复等级/时长/远端配置。网页保持原有独立机制，玩法说明新增原图与作用区别。
+
+## 磁铁与人物透明度的原代码交叉核对（Round130）
+
+[静态审计](../../target/temple-run/analysis/native-power-appearance/source.json)从当前APK元数据解析CharacterPlayer的HasInvincibility(0x154)、InvincibilityTimeLeft(0x158)、HasVacuum(0x16c)、VacuumTimeLeft(0x170)，并重新从原库导出/校验四个完整方法哈希、18处关键指令。
+
+- StartVacuum仅五条指令：写磁铁时间、磁铁标志、清拾取年龄，返回；没有设置材质或透明度。
+- Update在0x129733c读取HasInvincibility，false分支在0x1297514选alpha1；true路径通常选alpha0.5并在剩余2.5秒时循环淡出。0x1297520调用SetAlpha之后，才到0x12975b0独立处理HasVacuum计时。
+- 无敌失效清标志并调用ApplyPlayerTexture，后者尾部SetAlpha(1)。不能把磁铁计时分支解释为改变透明度。
+
+结论只覆盖该二进制这些路径：网页保持磁铁与无敌/透明状态独立是有依据的，不因视频相邻帧给磁铁补透明材质或免疫。视频357秒外观的实际状态仍未知；可能另有并存效果，但没有状态数据就不能认定具体原因。版本、远端配置和修改客户端亦未排除。这比“磁铁不一定无敌”的观感判断更强，但不是对录像状态的完整还原。
+
+[负向控制](../../target/temple-run/analysis/native-power-appearance/negative-control.json)在临时库副本改无敌条件分支为NOP，审计拒绝且原库SHA不变。当前网页无敌材质/恢复与原道具测试通过，本轮未改生产机制或重新试玩。

@@ -8,7 +8,8 @@
 
 | 要求 | 有/缺/不准 | 证据与边界 |
 |---|---|---|
-| 普通左右换道，不虚构撞墙 | 有；当前回归通过 | [最新15项输入](../target/temple-run/analysis/gameplay-modal-input-after.json)：左右、边缘限幅、空中/滑铲横移、指针滑动；实际树根仍碰撞、漏转仍失败 |
+| 普通左右换道，不虚构撞墙 | 有；当前回归通过 | [缓冲接入后15项输入](../target/temple-run/analysis/gameplay-turn-intent127-summary.json)：左右、边缘限幅、空中/滑铲横移、指针滑动；实际树根仍碰撞、漏转仍失败 |
+| 近路口提前预备方向 | 有；turn-intent-v1 | 原版默认径向查询/1秒意图年龄接入，既有6m确认与中心提交为网页适配；[36项自然路线专项](../target/temple-run/analysis/gameplay-turn-intent127-cases.json)含左右/T两臂、跳滑、暂停冻结、错误方向、远处、取消与重开。原生左/右13m单次输入均成功；诊断障碍死亡/实际宝石复活清理意图。没有恢复普通滑动撞墙/绊倒 |
 | 路口转弯、左右转角、T口两方向 | 有；当前回归通过 | 同上两转角/T两臂；[六万米正常路线](../target/temple-run/analysis/gameplay-path-compaction-long-run.json)验证当前路径压缩后通行。不是仅依赖诊断seek |
 | 石桥、木桥、悬崖主题及高差连接 | 有；当前长跑覆盖，接缝专项为历史证据 | 六万米course.surfaces、features及正常通行；[历史连接段](../target/temple-run/analysis/gameplay-transition-pairs-natural.json)。主题长度/切换保留原代码约束与网页分组假设，非视频时间表 |
 | 断桥、短坑 | 有 | [当前自然道路失败30项](../target/temple-run/analysis/gameplay-current-road-failures.json)含未跳短坑；当前15项输入有跳坑/真实失败 |
@@ -67,3 +68,15 @@
 ## 角色结算呈现
 
 [四组原生角色映射](../target/temple-run/analysis/native-death-profile-source.json)来自ImageData、场景prefab次序和ActiveCharacterId选图指令；[九角色14次实际死亡/重开](../target/temple-run/analysis/gameplay-character-death-summary.json)核对专用图与默认回退，另24选项/21PNG来源哈希校验通过。角色由诊断接口装备，不替代已有商店购买专项；选择代表图为网页策略，未恢复原版完整随机选图/文案。
+
+## 触摸操作与转向反馈（Round128）
+
+[37项触摸与反馈检查](../target/temple-run/analysis/gameplay-native-touch-buffer128.json)覆盖左右换道、跳滑换道、取消、左右角/T两臂、暂停继续、死亡结算与触摸重开。目标输入为Chrome可信触摸模拟，自然接近由诊断控制器完成；尚非实体手机验收。[修后截图](../target/temple-run/analysis/gameplay-native-touch-buffer128-after.png)确认自然500m里程牌与右转预备提示不重叠。类型检查/构建通过；网页提示布局调整未改原生规则来源边界。
+
+## 从零赚币到升级生效（Round129）
+
+[零资金成长闭环9项](../target/temple-run/analysis/gameplay-earned-unlock129.json)：空新档正常生成赚302币→正常失败→实际菜单提交302→实际购买250磁铁首级，余额52→实际下一局自然磁铁15秒→自然失效仍playing→正常失败→实际重开入账第二局144，余额196→刷新保留196与首级。未注入资金、障碍或道具，正常跑动为25ms控制器，菜单/教学/购买/重开为实际UI；不能推广为真人新手难度/耗时证明。[自然拾取截图](../target/temple-run/analysis/gameplay-earned-unlock129.png)。四类道具分别解锁的原测试资金边界仍保留，不把该磁铁单项扩为四类从零赚币验收。
+
+## 滑动即时响应（Round131）
+
+[25项可信触摸与自然转角回归](../target/temple-run/analysis/gameplay-gesture-move131.json)先复现移动160px仍未换道、松手才执行，再修为pointermove越18px立即执行。左右/上下4方向均在松手前响应，左右角/T两臂在按住中预备并完成，release不重复；取消前未识别会丢弃，已执行动作不撤回。原15输入与43模态、23组核心/类型/构建通过。18 CSS px、单次手势与tap跳为网页策略；原TouchMoved触发阶段有静态来源。Round128取消回归属于旧release阶段，当前语义以本轮为准。[未松手的预备提示截图](../target/temple-run/analysis/gameplay-gesture-move131.png)。仍不是实体手机手感证明。

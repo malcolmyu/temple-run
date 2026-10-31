@@ -18,7 +18,7 @@ export class Input {
   }
   private handlers: Handler[] = [];
   private cancelPointer=()=>{this.touchStart=null;};
-  private touchStart: { x: number; y: number; id: number } | null = null;
+  private touchStart: { x: number; y: number; id: number; consumed: boolean } | null = null;
 
   resetTransient():void {
     this.queue=[];this.leanLeft=false;this.leanRight=false;this.tilt.reset();this.cancelPointer();
@@ -135,24 +135,33 @@ export class Input {
 
     canvas.addEventListener('pointerdown', (event) => {
       if(this.blocked||event.button!==0||this.touchStart)return;
-      this.touchStart = { x: event.clientX, y: event.clientY, id:event.pointerId };
+      this.touchStart = { x: event.clientX, y: event.clientY, id:event.pointerId, consumed:false };
       // Keep mouse/pen swipes bound when they leave the canvas. Synthetic test
       // pointers have no active browser pointer and may reject capture.
       try { canvas.setPointerCapture?.(event.pointerId); } catch { /* no active pointer */ }
     });
-    canvas.addEventListener('pointerup', (event) => {
-      if (event.button!==0||!this.touchStart||this.touchStart.id!==event.pointerId) return;
-      const dx = event.clientX - this.touchStart.x;
-      const dy = event.clientY - this.touchStart.y;
-      clearPointer();
+    const recognizeGesture=(event:PointerEvent,allowTap:boolean):void=>{
+      const start=this.touchStart;
+      if(this.blocked||!start||start.id!==event.pointerId||start.consumed)return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
       if (Math.max(absX, absY) < 18) {
-        this.push('jump');
+        if(allowTap){start.consumed=true;this.push('jump');}
         return;
       }
+      // Native TouchMoved recognizes before release. Keep capture until the end,
+      // but consume only one action per gesture so later movement/up cannot repeat it.
+      start.consumed=true;
       if (absX > absY) this.push(dx > 0 ? 'right' : 'left');
       else this.push(dy > 0 ? 'slide' : 'jump');
+    };
+    canvas.addEventListener('pointermove',event=>recognizeGesture(event,false));
+    canvas.addEventListener('pointerup', (event) => {
+      if (event.button!==0||!this.touchStart||this.touchStart.id!==event.pointerId) return;
+      recognizeGesture(event,true);
+      clearPointer();
     });
     canvas.addEventListener('pointercancel', event => {
       if(this.touchStart?.id===event.pointerId)clearPointer();

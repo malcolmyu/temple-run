@@ -1,0 +1,62 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "fields": {
+    "HasInvincibility": "0x154",
+    "InvincibilityTimeLeft": "0x158",
+    "HasVacuum": "0x16c",
+    "VacuumTimeLeft": "0x170"
+  },
+  "methods": {
+    "SetAlpha": {
+      "start": "0x1296ee4",
+      "end": "0x1297098",
+      "sha256": "f34312466e99a9b4eb0f1e5c2b51c8ca5e890f8ada6aeb3a2324c17c53c57140"
+    },
+    "Update": {
+      "start": "0x12971f0",
+      "end": "0x12979d8",
+      "sha256": "fc51d2575ed2597e5a5c209b58c45f50c3922f98f1afaec96c5078f7a4a6583f"
+    },
+    "StartVacuum": {
+      "start": "0x1298c9c",
+      "end": "0x1298cb0",
+      "sha256": "a60c5337fe5e4c32b9583917f53df5b6c854627ee9f5d74084f72d5e762e845a"
+    },
+    "ApplyPlayerTexture": {
+      "start": "0x1297c78",
+      "end": "0x1297e40",
+      "sha256": "643a8e1a1d659792ba0f682b5dba22a99d8d60ce7f50f3583e379db80133c1df"
+    }
+  },
+  "instructionChecks": {
+    "0x129733c": "0x39455268",
+    "0x1297340": "0x34000ea8",
+    "0x1297388": "0x1e209001",
+    "0x129738c": "0x1e2c1008",
+    "0x12974fc": "0x3905527f",
+    "0x1297500": "0x940001de",
+    "0x1297514": "0x1e2e1008",
+    "0x1297520": "0x97fffe71",
+    "0x12975b0": "0x3945b268",
+    "0x12975cc": "0xbd017260",
+    "0x12975d4": "0x3905b27f",
+    "0x1298c9c": "0x52800028",
+    "0x1298ca0": "0xbd017000",
+    "0x1298ca4": "0x3905b008",
+    "0x1298ca8": "0xb901841f",
+    "0x1298cac": "0xd65f03c0",
+    "0x1297e2c": "0x1e2e1000",
+    "0x1297e34": "0x17fffc2c"
+  },
+  "findings": [
+    "StartVacuum is five instructions: own timer, flag, pickup age reset, return. No material or alpha call.",
+    "CharacterPlayer.Update selects normal alpha1 if HasInvincibility is false; protected path uses .5 and a final2.5-second fade cycle. It calls SetAlpha before the independent HasVacuum timer branch.",
+    "Invincibility expiry restores ApplyPlayerTexture; its tail calls SetAlpha(1).",
+    "Magnet-only actor transparency is not supported by these audited native paths. Web keeps magnet independent from invincibility."
+  ],
+  "limits": [
+    "This binary has not been proved identical to either video build.",
+    "Does not identify video active flags, remote configuration, modified clients, or every other caller that can set invincibility.",
+    "Does not infer invincibility from star particles or magnet adjacency."
+  ]
+}

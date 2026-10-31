@@ -1,4 +1,5 @@
 import type {DeathCause,DeathKind} from './deathPresentation';
+import {TurnIntentBuffer,TURN_INTENT_RULE_VERSION} from './turnInput';
 import {obstacleImpactReason,obstacleImpactCause} from './obstacles/feedback';
 import {RunTrace,parseRunTrace,type RunTraceData,type TraceCommand} from './runTrace';
 import {ambientTreeAllowed} from './sceneryVisibility';
@@ -526,6 +527,7 @@ export class Game {
       turnDirection: turn.direction,
       nextJunction:this.difficulty.name==='classic'?referenceJunction(turn.count,turn.next):'corner',
       turnQueued: turn.queued,
+      turnIntent:this.turnIntent.snapshot(),
       autoTurnQueued: turn.autoQueued,
       turnCount: turn.count,
       chaseGap: chase.gap,
@@ -588,6 +590,7 @@ export class Game {
   }
 
   private runScoreMultiplier = 10;
+  private turnIntent=new TurnIntentBuffer();
   private runUpgrades=captureRunUpgrades(()=>0);
   private activeTrace:RunTrace|null=null;
   private lastTrace:RunTraceData|null=null;
@@ -602,6 +605,7 @@ export class Game {
   private coinSpawnIndex = 0;
 
   private resetWorld(): void {
+    this.turnIntent.clear();
     this.input.resetTransient();
     this.simulationSteps=0;this.lastSimulationStep=0;
     this.runChallenges=createRunChallenges();
@@ -725,7 +729,7 @@ export class Game {
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = true;
     this.session.start();
-    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
+    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({inputRulesVersion:TURN_INTENT_RULE_VERSION,startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
     if(this.viewportBlocked())this.session.pause();
     mutateUi.speed = RUN_SPEED;
     this.publishSession();
@@ -925,6 +929,7 @@ export class Game {
     if(this.difficulty.name==='classic')this.nativeRunClock=stepNativeRunClock(this.nativeRunClock,dt);
     stepAngelWings(this.angelWings,dt);
     this.world.update(dt);
+    this.turnIntent.step(dt,this.world.require(this.runnerEntity,Turn).next);
     this.drainInput('tick');
     this.updateTurnCue();
     this.updateRunner(dt);
@@ -1000,6 +1005,11 @@ export class Game {
     const decision=this.directionalDecision(dir);
     if(decision.kind==='ignore')return;
     if(decision.kind==='turn'){this.applyTurnDecision(decision);return;}
+    if(decision.kind==='buffer'){
+      this.turnIntent.offer(this.world.require(this.runnerEntity,Turn).next,decision.direction);
+      return;
+    }
+    this.turnIntent.clear();
     const lane = this.world.require(this.runnerEntity, Lane);
     lane.index = decision.index;
     sfx.play('swish', { gain: 0.55, rate: 0.95 + Math.random() * 0.1 });
@@ -1018,11 +1028,13 @@ export class Game {
     return routeDirection({playing:mutateUi.phase==='playing',held:this.introHeld(),
       falling:this.difficulty.name==='classic'&&this.nativeFalling,
       lane:this.world.require(this.runnerEntity,Lane).index,junction:tee?'tee':'corner',
+      side:this.world.require(this.runnerEntity,Lane).x,
       turnDirection:turn.direction,remaining:turn.next-this.distance,queued:turn.queued,
       autoQueued:turn.autoQueued,alternateBranchAvailable:this.graph.forks.some(f=>f.at===turn.next)},dir);
   }
 
   private applyTurnDecision(decision:Extract<DirectionalDecision,{kind:'turn'}>):void {
+    this.turnIntent.clear();
     const turn=this.world.require(this.runnerEntity,Turn),dir=decision.direction;
     if(decision.selectAlternateBranch) {
       const fork=[...this.graph.forks].reverse().find(f=>f.at===turn.next)!;
@@ -1091,6 +1103,12 @@ export class Game {
     if (turn.direction === 0 && distance > turn.next - TURN_PREBUILD_DISTANCE) {
       this.prebuildTurn();
     }
+    const pending=this.turnIntent.snapshot();
+    if(pending&&pending.target===turn.next){
+      const decision=this.directionalDecision(pending.direction);
+      if(decision.kind==='turn')this.applyTurnDecision(decision);
+    }
+    mutateUi.turnBufferedDirection=this.turnIntent.snapshot()?.direction??0;
     if (turn.direction !== 0 && distance > turn.next - TURN_CUE_DISTANCE && !turn.cueShown) {
       turn.cueShown = true;
       sfx.play('whoosh', { gain: 0.8 });
@@ -1136,6 +1154,7 @@ export class Game {
   }
 
   private completeTurn(): void {
+    this.turnIntent.clear();
     const turn = this.world.require(this.runnerEntity, Turn);
     turn.count += 1;
     turn.cueShown = false;
@@ -2515,6 +2534,7 @@ export class Game {
     if (mutateUi.phase !== 'playing') return;
     if (this.world.elapsed < this.invincibleUntil) return;
     if(!this.session.die())return;
+    this.turnIntent.clear();mutateUi.turnBufferedDirection=0;
     if(consumeAngelWings(this.angelWings))this.wingRevivePending=true;
     if (this.stepLoop) {
       sfx.stopLoop(this.stepLoop, 0.15);
@@ -2569,6 +2589,7 @@ export class Game {
   }
 
   private restoreRunnerAfterDeath():void {
+    this.turnIntent.clear();mutateUi.turnBufferedDirection=0;
     markChallengePowerUsed(this.runChallenges,this.world.require(this.runnerEntity,RunStats).score);
     // Clear the road immediately around the player so the revive is not an instant re-death.
     for (let i = this.obstacles.length - 1; i >= 0; i--) {

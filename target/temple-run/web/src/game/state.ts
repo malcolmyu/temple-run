@@ -40,6 +40,7 @@ export interface HudState {
   turnDirection: 0 | 1 | -1;
   turnRemaining: number;
   turnQueued: boolean;
+  turnBufferedDirection: -1|0|1;
   chaseGap: number;
   powers: ActivePower[];
   power: PickupKind | null;
@@ -89,6 +90,7 @@ const defaults = (): HudState => ({
   turnDirection: 0,
   turnRemaining: 0,
   turnQueued: false,
+  turnBufferedDirection: 0,
   chaseGap: 11.5,
   powers: [],
   power: null,

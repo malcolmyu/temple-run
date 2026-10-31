@@ -3,6 +3,32 @@
   "metadataSHA256": "5bd950811d6b26080d8e3b722ecfa91d8a0d726e7786f91f351b13c91ce5467b",
   "methods": [
     {
+      "type": "GameInput",
+      "method": "Update",
+      "address": "0x12abccc",
+      "end": "0x12abd80",
+      "sha256": "7e5979d5edd0f3e475e352cc733705a48505ddec4fb4cad67eede5b0edc011b0",
+      "parameterNames": []
+    },
+    {
+      "type": "GameInput",
+      "method": "Reset",
+      "address": "0x12abe18",
+      "end": "0x12abe38",
+      "sha256": "2e6f609701e5a78817e8c0cecd78f4e896c7308ef6c915fc688eec65bf23c655",
+      "parameterNames": []
+    },
+    {
+      "type": "TouchInput",
+      "method": "TouchEnded",
+      "address": "0x12acbd4",
+      "end": "0x12acbd8",
+      "sha256": "110f46b5b35c069160560c6ad6786f647dd44e8760a52a46fc22dbbcd7630b91",
+      "parameterNames": [
+        "touchPoint"
+      ]
+    },
+    {
       "type": "TouchInput",
       "method": "TouchMoved",
       "address": "0x12acc7c",
@@ -80,6 +106,17 @@
     }
   ],
   "instructionChecks": {
+    "0x12abcdc": "0x39408a68",
+    "0x12abce4": "0x39408668",
+    "0x12abcec": "0xbd402668",
+    "0x12abcf8": "0x1e202900",
+    "0x12abcfc": "0x1e2e1001",
+    "0x12abd00": "0x1e212000",
+    "0x12abd04": "0xbd002660",
+    "0x12abd08": "0x5400006d",
+    "0x12abd0c": "0x7802127f",
+    "0x12abd10": "0xb900267f",
+    "0x12acbd4": "0xd65f03c0",
     "0x12ad578": "0x52a7e008",
     "0x12ad57c": "0xb9006008",
     "0x12acd44": "0x1e2e1000",
@@ -165,12 +202,13 @@
     "Gesture recognition compares screen movement to44*factor; nearby turn lookup uses88*factor native world units. These are different units.",
     "GetPathElementIfPointOverTurn maps Vector3 to XZ and recurses through neighbouring graph nodes with bailOut. A candidate must be IsTurn and within a Euclidean radius, not a scalar6m-before-centre interval.",
     "IsPointOverTurnArea is a separate axis-aligned square test: lower bounds inclusive and upper bounds exclusive. Do not equate the turn search radius to this area or final rotation time.",
-    "TouchMoved stores requested directions at GameInput offsets0x21/0x22. HandleDelayedTurning consumes those flags and conditionally invokes TurnLeft/TurnRight after further graph/position checks."
+    "TouchMoved stores requested directions at GameInput offsets0x21/0x22. HandleDelayedTurning consumes those flags and conditionally invokes TurnLeft/TurnRight after further graph/position checks.",
+    "GameInput.Update increments the separate float32 turn-intent age at0x24 while either direction flag is set. Age<=1 survives; age>1 clears both direction flags and resets age. TouchEnded is a bare return and does not cancel the buffered intent."
   ],
   "limits": [
     "Scene serialization, saved sensitivity and remote/version overrides may change the constructor default;19.8world units is a default calculation, not an observed video parameter.",
     "The delayed execution method has not been fully translated. This audit does not prove all input acceptance cases, exact commit timing, late bounds, or PCInput parity.",
-    "Current web6m-before/2m-after input contract remains a web adapter, not a recovered native constant. No production input or map behaviour is changed by this audit.",
+    "The web adapter buffers a nearby direction for1second using the default radial query. Its6m confirmation/2m late bound and centre commit remain web geometry policy, not a full translation of HandleDelayedTurning.",
     "Native rejected-swipe stumble is intentionally not restored: the user requires ordinary Left/Right to change lane safely."
   ]
 }

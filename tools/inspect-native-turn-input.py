@@ -8,6 +8,9 @@ n={'__file__':str(reader)}
 exec(compile(reader.read_text().split('for typeName,methodName in ')[0],str(reader),'exec'),n)
 b,off=n['binary'],n['off']
 expected={
+ 0x12abccc:(0x12abd80,'7e5979d5edd0f3e475e352cc733705a48505ddec4fb4cad67eede5b0edc011b0'),
+ 0x12abe18:(0x12abe38,'2e6f609701e5a78817e8c0cecd78f4e896c7308ef6c915fc688eec65bf23c655'),
+ 0x12acbd4:(0x12acbd8,'110f46b5b35c069160560c6ad6786f647dd44e8760a52a46fc22dbbcd7630b91'),
  0x12acc7c:(0x12ad500,'af5d3ec324d4b08a6545cb2158e485ce8f29d81fb058212df93763f7ab05c8e8'),
  0x12ad570:(0x12ad61c,'4c9f39a8d422c638f253431586de1efd92db74d6adcb8d7a353fbd58ef2d563e'),
  0x12e7e08:(0x12e7e18,'017af6d276d5caa882e4459dfde41f5613b4287fe901136209f39e96d4f4215b'),
@@ -17,6 +20,10 @@ expected={
  0x126ffb0:(0x127089c,'9b94d356a2dc3ea9e634daa57529d136b6613a12e535def92500b370b676b535'),
 }
 words={
+ 0x12abcdc:0x39408a68,0x12abce4:0x39408668,0x12abcec:0xbd402668,
+ 0x12abcf8:0x1e202900,0x12abcfc:0x1e2e1001,0x12abd00:0x1e212000,
+ 0x12abd04:0xbd002660,0x12abd08:0x5400006d,0x12abd0c:0x7802127f,
+ 0x12abd10:0xb900267f,0x12acbd4:0xd65f03c0,
  0x12ad578:0x52a7e008,0x12ad57c:0xb9006008,
  0x12acd44:0x1e2e1000,0x12acd4c:0x1e2a3800,
  0x12acd58:0x1e2f9001,0x12acd5c:0x1e210800,0x12acd60:0x1e2a1001,
@@ -47,7 +54,7 @@ calls={0x12acf04:0x12e7e08,0x12e7e14:0x12e7e18,0x12e7e74:0x12e28b0,
        0x12706b4:0x129899c,0x12706f0:0x1298a14}
 for a,value in calls.items():assert target(a)==value,f'call mismatch at {a:#x}'
 records=[]
-for type_name in ['TouchInput','PathElement','GameController']:
+for type_name in ['GameInput','TouchInput','PathElement','GameController']:
  t=next(t for t in n['ts'] if n['st'](t[0])==type_name)
  for i in range(t[9],t[9]+t[16]):
   d=struct.unpack_from('<7i4H',n['m'],n['h'][12]+i*36)
@@ -76,10 +83,11 @@ result=dict(binarySHA256=hashlib.sha256(b).hexdigest(),metadataSHA256=hashlib.sh
   'GetPathElementIfPointOverTurn maps Vector3 to XZ and recurses through neighbouring graph nodes with bailOut. A candidate must be IsTurn and within a Euclidean radius, not a scalar6m-before-centre interval.',
   'IsPointOverTurnArea is a separate axis-aligned square test: lower bounds inclusive and upper bounds exclusive. Do not equate the turn search radius to this area or final rotation time.',
   'TouchMoved stores requested directions at GameInput offsets0x21/0x22. HandleDelayedTurning consumes those flags and conditionally invokes TurnLeft/TurnRight after further graph/position checks.',
+  'GameInput.Update increments the separate float32 turn-intent age at0x24 while either direction flag is set. Age<=1 survives; age>1 clears both direction flags and resets age. TouchEnded is a bare return and does not cancel the buffered intent.',
  ],limits=[
   'Scene serialization, saved sensitivity and remote/version overrides may change the constructor default;19.8world units is a default calculation, not an observed video parameter.',
   'The delayed execution method has not been fully translated. This audit does not prove all input acceptance cases, exact commit timing, late bounds, or PCInput parity.',
-  'Current web6m-before/2m-after input contract remains a web adapter, not a recovered native constant. No production input or map behaviour is changed by this audit.',
+  'The web adapter buffers a nearby direction for1second using the default radial query. Its6m confirmation/2m late bound and centre commit remain web geometry policy, not a full translation of HandleDelayedTurning.',
   'Native rejected-swipe stumble is intentionally not restored: the user requires ordinary Left/Right to change lane safely.',
  ])
 # Validate completely before publishing evidence.
