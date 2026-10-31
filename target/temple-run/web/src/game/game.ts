@@ -136,6 +136,7 @@ export class Game {
   private runChallenges=createRunChallenges();
   private runPowerPickups=createPowerPickupCounts();
   private wingRevivePending=false;
+  private runWingRevives=0;
   private wingSprites: THREE.Sprite[] = [];
   private chaserGroup = new THREE.Group();
   private safetyNet: THREE.Mesh | null = null;
@@ -557,7 +558,7 @@ export class Game {
   private resetWorld(): void {
     this.runChallenges=createRunChallenges();
     this.runPowerPickups=createPowerPickupCounts();
-    this.angelWings=createAngelWings();this.wingRevivePending=false;
+    this.angelWings=createAngelWings();this.wingRevivePending=false;this.runWingRevives=0;
     this.coinSpawnLevel=levelOf('coinSpawn');this.coinSpawnIndex=0;
     this.runScoreMultiplier = this.difficulty.name !== 'classic' || this.referenceReplay ? REFERENCE_SCORE_MULTIPLIER : nextRunScoreMultiplier();
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
@@ -2388,13 +2389,13 @@ export class Game {
     if (this.runCommitted) return;
     const stats = this.world.require(this.runnerEntity, RunStats);
     if (stats.distance <= 0) return;
-    recordRun(stats.distance, stats.coins, stats.gems, stats.score,summarizeRunChallenges(this.runChallenges,stats.distance),this.runPowerPickups);
+    recordRun(stats.distance, stats.coins, stats.gems, stats.score,summarizeRunChallenges(this.runChallenges,stats.distance),this.runPowerPickups,{coinMeterFills:Math.max(0,stats.coinBonusMax-1),wingResurrections:this.runWingRevives,headStartUsed:this.runHeadStart?1:0});
     syncBanks();
     this.runCommitted = true;
   }
 
   private finishDeath(): void {
-    if(this.wingRevivePending){this.wingRevivePending=false;this.restoreRunnerAfterDeath();setHint('天使之翼复活！');return;}
+    if(this.wingRevivePending){this.wingRevivePending=false;this.runWingRevives++;this.restoreRunnerAfterDeath();setHint('天使之翼复活！');return;}
     const stats = this.world.require(this.runnerEntity, RunStats);
     mutateUi.phase = 'ended';
     mutateUi.best = Math.max(progress.bestDistance, Math.floor(stats.distance));

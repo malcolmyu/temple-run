@@ -64,7 +64,7 @@ function buy(): void {
       <button class="primary store-action" :disabled="progress.coins < HEAD_START_PRICE" @click="purchaseStart('normal')"><span>普通起跑 · ● {{ HEAD_START_PRICE }}</span><em>×{{ progress.headStarts }}</em></button>
       <button class="primary store-action" :disabled="progress.coins < MEGA_START_PRICE" @click="purchaseStart('mega')"><span>超级起跑 · ● {{ MEGA_START_PRICE }}</span><em>×{{ progress.megaStarts }}</em></button>
       <p class="notice">购买后存入库存。开跑25～100米间点击使用，自动转弯并加速至普通950米／超级2350米附近。</p>
-      <button class="primary store-action" :disabled="progress.coins < ANGEL_WINGS_PRICE || progress.wings >= 99" @click="buyWings"><span>天使之翼 · ● {{ ANGEL_WINGS_PRICE, PERMA_WINGS_PRICE }}</span><em>×{{ progress.wings }}</em></button>
+      <button class="primary store-action" :disabled="progress.coins < ANGEL_WINGS_PRICE || progress.wings >= 99" @click="buyWings"><span>天使之翼 · ● {{ ANGEL_WINGS_PRICE }}</span><em>×{{ progress.wings }}</em></button>
       <p class="notice">跑动时点击激活，30 秒内保留一次复活机会；冷却 45 秒。</p>
       <button class="primary store-action" :disabled="progress.coins < PERMA_WINGS_PRICE || progress.permaWings >= 99" @click="buyPermanent"><span>本局永久翼 · ● {{ PERMA_WINGS_PRICE }}</span><em>×{{ progress.permaWings }}</em></button>
       <p class="notice">开跑25～100米间激活；本局首次死亡前持续有效，复活后结束。每次激活消耗一件。</p>

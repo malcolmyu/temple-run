@@ -1,0 +1,957 @@
+{
+  "checks": [
+    {
+      "name": "legacy coin does not replace fifth native upgrade",
+      "pass": true
+    },
+    {
+      "name": "native first-tier purchase completes target",
+      "pass": true
+    },
+    {
+      "name": "claim cannot add second multiplier",
+      "pass": true
+    },
+    {
+      "name": "four fifth-tier upgrades remain partial",
+      "pass": true
+    },
+    {
+      "name": "fifth-tier purchase completes second objective",
+      "pass": true
+    },
+    {
+      "name": "high objective confirmed without extra increment",
+      "pass": true
+    },
+    {
+      "name": "ordinary trusted arrows unprotected",
+      "pass": true
+    },
+    {
+      "name": "failure settlement restart",
+      "pass": true
+    }
+  ],
+  "low": {
+    "before": "- generic \"3D 神庙逃亡\"\n- strong:\n  - img \"分数 0\"\n- img \"金币 0\"\n- button \"暂停\"\n- paragraph: AN ENDLESS TEMPLE ADVENTURE\n- heading \"TEMPLE RUN\" [level=1]:\n  - text: TEMPLE\n  - text: RUN\n- paragraph: 神庙逃亡\n- paragraph:\n  - text: 穿过古老遗迹，收集金币。\n  - text: 越过断桥，躲开烈焰，跑得更远。\n- button \"开始奔跑 ↗\":\n  - generic: 开始奔跑\n  - emphasis: ↗\n- button \"STORE\"\n- button \"目标\" [active]\n- button \"升级\"\n- button \"STATS\"\n- button \"OPTIONS\"\n- generic: ← → 换道 / 路口转弯 · A/D 横移\n- generic: ↑ 跳跃\n- generic: ↓ 滑铲\n- paragraph: 最远 1597 m · 金币 1000 · 宝石 2\n- paragraph: OBJECTIVES\n- heading \"目标\" [level=2]\n- paragraph: 下局得分倍率 17× · 每完成一项目标 +1\n- group \"目标分类\":\n  - button \"全部\" [pressed]\n  - button \"距离\"\n  - button \"分数\"\n  - button \"金币\"\n  - button \"道具\"\n  - button \"其他\"\n- strong: 基础能力\n- generic: 所有强化道具达到1级\n- paragraph:\n  - text: 4 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超能力\n- generic: 所有强化道具达到5级\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁铁矿工\n- generic: 在一局游戏中收集5个磁铁\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁力超人\n- generic: 在一局游戏中收集10个磁铁\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万磁王\n- generic: 在一局游戏中收集20个磁铁\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 金币侠\n- generic: 在一局游戏中收集5个金币强化道具\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金爆炸\n- generic: 在一局游戏中收集10个金币强化道具\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金之神\n- generic: 在一局游戏中收集20个金币强化道具\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 隐身\n- generic: 在一局游戏中收集5个隐身\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万夫莫敌\n- generic: 在一局游戏中收集10个隐身\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 无敌\n- generic: 在一局游戏中收集20个隐身\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超速侠\n- generic: 在一局游戏中收集5个加速\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 速度狂魔\n- generic: 在一局游戏中收集10个加速\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 火箭\n- generic: 在一局游戏中收集20个加速\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 吝啬之跑\n- generic: 开局500米不收集金币\n- paragraph:\n  - text: 89 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金过敏\n- generic: 开局1000米不收集金币\n- paragraph:\n  - text: 89 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 健步如飞\n- generic: 单局2500米不绊倒\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 你绊我不到\n- generic: 单局5000米不绊倒\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 冒险者\n- button \"确认\"\n- generic: 单局获得25000分\n- paragraph:\n  - text: 25000 / 25000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 宝藏猎人\n- generic: 单局获得50000分\n- paragraph:\n  - text: 36820 / 50000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 成功人士\n- generic: 单局获得100000分\n- paragraph:\n  - text: 36820 / 100000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二十五万俱乐部\n- generic: 单局获得250000分\n- paragraph:\n  - text: 36820 / 250000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五十万俱乐部\n- generic: 单局获得500000分\n- paragraph:\n  - text: 36820 / 500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 百万俱乐部\n- generic: 单局获得1000000分\n- paragraph:\n  - text: 36820 / 1000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二百五十万俱乐部\n- generic: 单局获得2500000分\n- paragraph:\n  - text: 36820 / 2500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五百万俱乐部\n- generic: 单局获得5000000分\n- paragraph:\n  - text: 36820 / 5000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一千万俱乐部\n- generic: 单局获得10000000分\n- paragraph:\n  - text: 36820 / 10000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 零钱\n- button \"确认\"\n- generic: 单局收集100金币\n- paragraph:\n  - text: 100 / 100\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 小猪银行\n- button \"确认\"\n- generic: 单局收集250金币\n- paragraph:\n  - text: 250 / 250\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一次结清\n- generic: 单局收集500金币\n- paragraph:\n  - text: 253 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 发薪日\n- generic: 单局收集750金币\n- paragraph:\n  - text: 253 / 750\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱袋\n- generic: 单局收集1000金币\n- paragraph:\n  - text: 253 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱仓\n- generic: 单局收集2500金币\n- paragraph:\n  - text: 253 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 诺克斯堡\n- generic: 单局收集5000金币\n- paragraph:\n  - text: 253 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 短跑运动员\n- button \"确认\"\n- generic: 单局奔跑1000米\n- paragraph:\n  - text: 1000 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 运动员\n- generic: 单局奔跑2500米\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 5000米奔跑者\n- generic: 单局跑到5000米\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万米长跑者\n- generic: 单局跑到10000米\n- paragraph:\n  - text: 1597 / 10000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 初次远征\n- button \"领取\"\n- generic: 单局跑出 500 m\n- paragraph:\n  - text: 500 / 500\n  - emphasis: 奖励 ● 100\n- strong: 金币猎人\n- button \"领取\"\n- generic: 累计收集 200 枚金币\n- paragraph:\n  - text: 200 / 200\n  - emphasis: 奖励 ● 150\n- strong: 收藏家\n- generic: 解锁 3 个角色\n- paragraph:\n  - text: 1 / 3\n  - emphasis: 奖励 ◆ 2\n- strong: 长跑者\n- button \"领取\"\n- generic: 单局跑出 1500 m\n- paragraph:\n  - text: 1500 / 1500\n  - emphasis: 奖励 ● 300 ◆ 1\n- button \"返回 ↗\":\n  - generic: 返回\n  - emphasis: ↗",
+    "after": "- generic \"3D 神庙逃亡\"\n- strong:\n  - img \"分数 0\"\n- img \"金币 0\"\n- button \"暂停\"\n- paragraph: AN ENDLESS TEMPLE ADVENTURE\n- heading \"TEMPLE RUN\" [level=1]:\n  - text: TEMPLE\n  - text: RUN\n- paragraph: 神庙逃亡\n- paragraph:\n  - text: 穿过古老遗迹，收集金币。\n  - text: 越过断桥，躲开烈焰，跑得更远。\n- button \"开始奔跑 ↗\":\n  - generic: 开始奔跑\n  - emphasis: ↗\n- button \"STORE\"\n- button \"目标\" [active]\n- button \"升级\"\n- button \"STATS\"\n- button \"OPTIONS\"\n- generic: ← → 换道 / 路口转弯 · A/D 横移\n- generic: ↑ 跳跃\n- generic: ↓ 滑铲\n- paragraph: 最远 1597 m · 金币 750 · 宝石 2\n- paragraph: OBJECTIVES\n- heading \"目标\" [level=2]\n- paragraph: 下局得分倍率 18× · 每完成一项目标 +1\n- group \"目标分类\":\n  - button \"全部\" [pressed]\n  - button \"距离\"\n  - button \"分数\"\n  - button \"金币\"\n  - button \"道具\"\n  - button \"其他\"\n- strong: 基础能力\n- button \"确认\"\n- generic: 所有强化道具达到1级\n- paragraph:\n  - text: 5 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超能力\n- generic: 所有强化道具达到5级\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁铁矿工\n- generic: 在一局游戏中收集5个磁铁\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁力超人\n- generic: 在一局游戏中收集10个磁铁\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万磁王\n- generic: 在一局游戏中收集20个磁铁\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 金币侠\n- generic: 在一局游戏中收集5个金币强化道具\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金爆炸\n- generic: 在一局游戏中收集10个金币强化道具\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金之神\n- generic: 在一局游戏中收集20个金币强化道具\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 隐身\n- generic: 在一局游戏中收集5个隐身\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万夫莫敌\n- generic: 在一局游戏中收集10个隐身\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 无敌\n- generic: 在一局游戏中收集20个隐身\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超速侠\n- generic: 在一局游戏中收集5个加速\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 速度狂魔\n- generic: 在一局游戏中收集10个加速\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 火箭\n- generic: 在一局游戏中收集20个加速\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 吝啬之跑\n- generic: 开局500米不收集金币\n- paragraph:\n  - text: 89 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金过敏\n- generic: 开局1000米不收集金币\n- paragraph:\n  - text: 89 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 健步如飞\n- generic: 单局2500米不绊倒\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 你绊我不到\n- generic: 单局5000米不绊倒\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 冒险者\n- button \"确认\"\n- generic: 单局获得25000分\n- paragraph:\n  - text: 25000 / 25000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 宝藏猎人\n- generic: 单局获得50000分\n- paragraph:\n  - text: 36820 / 50000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 成功人士\n- generic: 单局获得100000分\n- paragraph:\n  - text: 36820 / 100000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二十五万俱乐部\n- generic: 单局获得250000分\n- paragraph:\n  - text: 36820 / 250000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五十万俱乐部\n- generic: 单局获得500000分\n- paragraph:\n  - text: 36820 / 500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 百万俱乐部\n- generic: 单局获得1000000分\n- paragraph:\n  - text: 36820 / 1000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二百五十万俱乐部\n- generic: 单局获得2500000分\n- paragraph:\n  - text: 36820 / 2500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五百万俱乐部\n- generic: 单局获得5000000分\n- paragraph:\n  - text: 36820 / 5000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一千万俱乐部\n- generic: 单局获得10000000分\n- paragraph:\n  - text: 36820 / 10000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 零钱\n- button \"确认\"\n- generic: 单局收集100金币\n- paragraph:\n  - text: 100 / 100\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 小猪银行\n- button \"确认\"\n- generic: 单局收集250金币\n- paragraph:\n  - text: 250 / 250\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一次结清\n- generic: 单局收集500金币\n- paragraph:\n  - text: 253 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 发薪日\n- generic: 单局收集750金币\n- paragraph:\n  - text: 253 / 750\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱袋\n- generic: 单局收集1000金币\n- paragraph:\n  - text: 253 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱仓\n- generic: 单局收集2500金币\n- paragraph:\n  - text: 253 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 诺克斯堡\n- generic: 单局收集5000金币\n- paragraph:\n  - text: 253 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 短跑运动员\n- button \"确认\"\n- generic: 单局奔跑1000米\n- paragraph:\n  - text: 1000 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 运动员\n- generic: 单局奔跑2500米\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 5000米奔跑者\n- generic: 单局跑到5000米\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万米长跑者\n- generic: 单局跑到10000米\n- paragraph:\n  - text: 1597 / 10000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 初次远征\n- button \"领取\"\n- generic: 单局跑出 500 m\n- paragraph:\n  - text: 500 / 500\n  - emphasis: 奖励 ● 100\n- strong: 金币猎人\n- button \"领取\"\n- generic: 累计收集 200 枚金币\n- paragraph:\n  - text: 200 / 200\n  - emphasis: 奖励 ● 150\n- strong: 收藏家\n- generic: 解锁 3 个角色\n- paragraph:\n  - text: 1 / 3\n  - emphasis: 奖励 ◆ 2\n- strong: 长跑者\n- button \"领取\"\n- generic: 单局跑出 1500 m\n- paragraph:\n  - text: 1500 / 1500\n  - emphasis: 奖励 ● 300 ◆ 1\n- button \"返回 ↗\":\n  - generic: 返回\n  - emphasis: ↗",
+    "claimed": "- generic \"3D 神庙逃亡\"\n- strong:\n  - img \"分数 0\"\n- img \"金币 0\"\n- button \"暂停\"\n- paragraph: AN ENDLESS TEMPLE ADVENTURE\n- heading \"TEMPLE RUN\" [level=1]:\n  - text: TEMPLE\n  - text: RUN\n- paragraph: 神庙逃亡\n- paragraph:\n  - text: 穿过古老遗迹，收集金币。\n  - text: 越过断桥，躲开烈焰，跑得更远。\n- button \"开始奔跑 ↗\":\n  - generic: 开始奔跑\n  - emphasis: ↗\n- button \"STORE\"\n- button \"目标\"\n- button \"升级\"\n- button \"STATS\"\n- button \"OPTIONS\"\n- generic: ← → 换道 / 路口转弯 · A/D 横移\n- generic: ↑ 跳跃\n- generic: ↓ 滑铲\n- paragraph: 最远 1597 m · 金币 750 · 宝石 2\n- paragraph: OBJECTIVES\n- heading \"目标\" [level=2]\n- paragraph: 下局得分倍率 18× · 每完成一项目标 +1\n- group \"目标分类\":\n  - button \"全部\" [pressed]\n  - button \"距离\"\n  - button \"分数\"\n  - button \"金币\"\n  - button \"道具\"\n  - button \"其他\"\n- strong: 基础能力\n- generic: 已确认\n- generic: 所有强化道具达到1级\n- paragraph:\n  - text: 5 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超能力\n- generic: 所有强化道具达到5级\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁铁矿工\n- generic: 在一局游戏中收集5个磁铁\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁力超人\n- generic: 在一局游戏中收集10个磁铁\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万磁王\n- generic: 在一局游戏中收集20个磁铁\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 金币侠\n- generic: 在一局游戏中收集5个金币强化道具\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金爆炸\n- generic: 在一局游戏中收集10个金币强化道具\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金之神\n- generic: 在一局游戏中收集20个金币强化道具\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 隐身\n- generic: 在一局游戏中收集5个隐身\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万夫莫敌\n- generic: 在一局游戏中收集10个隐身\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 无敌\n- generic: 在一局游戏中收集20个隐身\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超速侠\n- generic: 在一局游戏中收集5个加速\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 速度狂魔\n- generic: 在一局游戏中收集10个加速\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 火箭\n- generic: 在一局游戏中收集20个加速\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 吝啬之跑\n- generic: 开局500米不收集金币\n- paragraph:\n  - text: 89 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金过敏\n- generic: 开局1000米不收集金币\n- paragraph:\n  - text: 89 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 健步如飞\n- generic: 单局2500米不绊倒\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 你绊我不到\n- generic: 单局5000米不绊倒\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 冒险者\n- button \"确认\"\n- generic: 单局获得25000分\n- paragraph:\n  - text: 25000 / 25000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 宝藏猎人\n- generic: 单局获得50000分\n- paragraph:\n  - text: 36820 / 50000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 成功人士\n- generic: 单局获得100000分\n- paragraph:\n  - text: 36820 / 100000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二十五万俱乐部\n- generic: 单局获得250000分\n- paragraph:\n  - text: 36820 / 250000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五十万俱乐部\n- generic: 单局获得500000分\n- paragraph:\n  - text: 36820 / 500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 百万俱乐部\n- generic: 单局获得1000000分\n- paragraph:\n  - text: 36820 / 1000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二百五十万俱乐部\n- generic: 单局获得2500000分\n- paragraph:\n  - text: 36820 / 2500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五百万俱乐部\n- generic: 单局获得5000000分\n- paragraph:\n  - text: 36820 / 5000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一千万俱乐部\n- generic: 单局获得10000000分\n- paragraph:\n  - text: 36820 / 10000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 零钱\n- button \"确认\"\n- generic: 单局收集100金币\n- paragraph:\n  - text: 100 / 100\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 小猪银行\n- button \"确认\"\n- generic: 单局收集250金币\n- paragraph:\n  - text: 250 / 250\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一次结清\n- generic: 单局收集500金币\n- paragraph:\n  - text: 253 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 发薪日\n- generic: 单局收集750金币\n- paragraph:\n  - text: 253 / 750\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱袋\n- generic: 单局收集1000金币\n- paragraph:\n  - text: 253 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱仓\n- generic: 单局收集2500金币\n- paragraph:\n  - text: 253 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 诺克斯堡\n- generic: 单局收集5000金币\n- paragraph:\n  - text: 253 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 短跑运动员\n- button \"确认\"\n- generic: 单局奔跑1000米\n- paragraph:\n  - text: 1000 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 运动员\n- generic: 单局奔跑2500米\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 5000米奔跑者\n- generic: 单局跑到5000米\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万米长跑者\n- generic: 单局跑到10000米\n- paragraph:\n  - text: 1597 / 10000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 初次远征\n- button \"领取\"\n- generic: 单局跑出 500 m\n- paragraph:\n  - text: 500 / 500\n  - emphasis: 奖励 ● 100\n- strong: 金币猎人\n- button \"领取\"\n- generic: 累计收集 200 枚金币\n- paragraph:\n  - text: 200 / 200\n  - emphasis: 奖励 ● 150\n- strong: 收藏家\n- generic: 解锁 3 个角色\n- paragraph:\n  - text: 1 / 3\n  - emphasis: 奖励 ◆ 2\n- strong: 长跑者\n- button \"领取\"\n- generic: 单局跑出 1500 m\n- paragraph:\n  - text: 1500 / 1500\n  - emphasis: 奖励 ● 300 ◆ 1\n- paragraph: 目标已确认\n- button \"返回 ↗\":\n  - generic: 返回\n  - emphasis: ↗",
+    "run": {
+      "activeBranch": null,
+      "airborne": false,
+      "angelWings": {
+        "cooldown": 0,
+        "pendingRevive": false,
+        "permanentStock": 0,
+        "remaining": 0,
+        "stock": 0
+      },
+      "autoTurnQueued": false,
+      "boost": {
+        "active": false,
+        "left": 0,
+        "speedBefore": 0
+      },
+      "chaseGap": 11.5,
+      "coinMeter": {
+        "count": 0,
+        "level": 1,
+        "maxLevel": 0
+      },
+      "coinSpawnLevel": 1,
+      "coins": 0,
+      "course": {
+        "branches": [],
+        "extent": 489,
+        "features": [],
+        "longGapFallbacks": [],
+        "narrows": [],
+        "surfaces": [
+          {
+            "from": 0,
+            "kind": "stone",
+            "level": 2,
+            "to": null
+          }
+        ]
+      },
+      "distance": -2,
+      "distanceExact": -2,
+      "enemyGap": 1.02,
+      "equipped": "jhony",
+      "falling": false,
+      "fastTurn": {
+        "active": false,
+        "elapsed": 0
+      },
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [],
+        "enabled": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "lastBonus": 0,
+        "nextBonusCheck": 612,
+        "seed": 211447241
+      },
+      "generationPacing": {
+        "doubleObstaclePercent": 0,
+        "from": 0,
+        "known": true,
+        "minCoinRunSpaces": 12,
+        "minObstacleSpaces": 6,
+        "minTurnSpaces": 12
+      },
+      "groundY": 0,
+      "headStart": null,
+      "headStartReady": false,
+      "headStartStock": {
+        "mega": 0,
+        "normal": 0
+      },
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 1,
+      "nextJunction": "corner",
+      "nextTurn": 153,
+      "obstacles": [],
+      "phase": "playing",
+      "pickups": [],
+      "position": [
+        0,
+        0,
+        5
+      ],
+      "power": null,
+      "powerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "powerRemaining": 0,
+      "powers": [],
+      "progressDistance": 0,
+      "queuedForwardForce": 0,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runChallenges": {
+        "firstCoinDistance": null,
+        "stumbled": false,
+        "summary": {
+          "cleanDistance": 0,
+          "coinFreeStart": 0
+        }
+      },
+      "runElapsed": 0.05099999904632568,
+      "score": 0,
+      "scoreMultiplier": 18,
+      "side": 0,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 20,
+      "stumbleAge": 7,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "themePacing": {
+        "changes": [],
+        "elapsed": 0,
+        "level": 2
+      },
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false,
+      "worldY": 0
+    }
+  },
+  "high": {
+    "before": "- generic \"3D 神庙逃亡\"\n- strong:\n  - img \"分数 0\"\n- img \"金币 0\"\n- button \"暂停\"\n- paragraph: AN ENDLESS TEMPLE ADVENTURE\n- heading \"TEMPLE RUN\" [level=1]:\n  - text: TEMPLE\n  - text: RUN\n- paragraph: 神庙逃亡\n- paragraph:\n  - text: 穿过古老遗迹，收集金币。\n  - text: 越过断桥，躲开烈焰，跑得更远。\n- button \"开始奔跑 ↗\":\n  - generic: 开始奔跑\n  - emphasis: ↗\n- button \"STORE\"\n- button \"目标\" [active]\n- button \"升级\"\n- button \"STATS\"\n- button \"OPTIONS\"\n- generic: ← → 换道 / 路口转弯 · A/D 横移\n- generic: ↑ 跳跃\n- generic: ↓ 滑铲\n- paragraph: 最远 1597 m · 金币 10000 · 宝石 2\n- paragraph: OBJECTIVES\n- heading \"目标\" [level=2]\n- paragraph: 下局得分倍率 18× · 每完成一项目标 +1\n- group \"目标分类\":\n  - button \"全部\" [pressed]\n  - button \"距离\"\n  - button \"分数\"\n  - button \"金币\"\n  - button \"道具\"\n  - button \"其他\"\n- strong: 基础能力\n- generic: 已确认\n- generic: 所有强化道具达到1级\n- paragraph:\n  - text: 5 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超能力\n- generic: 所有强化道具达到5级\n- paragraph:\n  - text: 4 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁铁矿工\n- generic: 在一局游戏中收集5个磁铁\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁力超人\n- generic: 在一局游戏中收集10个磁铁\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万磁王\n- generic: 在一局游戏中收集20个磁铁\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 金币侠\n- generic: 在一局游戏中收集5个金币强化道具\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金爆炸\n- generic: 在一局游戏中收集10个金币强化道具\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金之神\n- generic: 在一局游戏中收集20个金币强化道具\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 隐身\n- generic: 在一局游戏中收集5个隐身\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万夫莫敌\n- generic: 在一局游戏中收集10个隐身\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 无敌\n- generic: 在一局游戏中收集20个隐身\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超速侠\n- generic: 在一局游戏中收集5个加速\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 速度狂魔\n- generic: 在一局游戏中收集10个加速\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 火箭\n- generic: 在一局游戏中收集20个加速\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 吝啬之跑\n- generic: 开局500米不收集金币\n- paragraph:\n  - text: 89 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金过敏\n- generic: 开局1000米不收集金币\n- paragraph:\n  - text: 89 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 健步如飞\n- generic: 单局2500米不绊倒\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 你绊我不到\n- generic: 单局5000米不绊倒\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 冒险者\n- button \"确认\"\n- generic: 单局获得25000分\n- paragraph:\n  - text: 25000 / 25000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 宝藏猎人\n- generic: 单局获得50000分\n- paragraph:\n  - text: 36820 / 50000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 成功人士\n- generic: 单局获得100000分\n- paragraph:\n  - text: 36820 / 100000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二十五万俱乐部\n- generic: 单局获得250000分\n- paragraph:\n  - text: 36820 / 250000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五十万俱乐部\n- generic: 单局获得500000分\n- paragraph:\n  - text: 36820 / 500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 百万俱乐部\n- generic: 单局获得1000000分\n- paragraph:\n  - text: 36820 / 1000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二百五十万俱乐部\n- generic: 单局获得2500000分\n- paragraph:\n  - text: 36820 / 2500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五百万俱乐部\n- generic: 单局获得5000000分\n- paragraph:\n  - text: 36820 / 5000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一千万俱乐部\n- generic: 单局获得10000000分\n- paragraph:\n  - text: 36820 / 10000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 零钱\n- button \"确认\"\n- generic: 单局收集100金币\n- paragraph:\n  - text: 100 / 100\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 小猪银行\n- button \"确认\"\n- generic: 单局收集250金币\n- paragraph:\n  - text: 250 / 250\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一次结清\n- generic: 单局收集500金币\n- paragraph:\n  - text: 253 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 发薪日\n- generic: 单局收集750金币\n- paragraph:\n  - text: 253 / 750\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱袋\n- generic: 单局收集1000金币\n- paragraph:\n  - text: 253 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱仓\n- generic: 单局收集2500金币\n- paragraph:\n  - text: 253 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 诺克斯堡\n- generic: 单局收集5000金币\n- paragraph:\n  - text: 253 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 短跑运动员\n- button \"确认\"\n- generic: 单局奔跑1000米\n- paragraph:\n  - text: 1000 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 运动员\n- generic: 单局奔跑2500米\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 5000米奔跑者\n- generic: 单局跑到5000米\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万米长跑者\n- generic: 单局跑到10000米\n- paragraph:\n  - text: 1597 / 10000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 初次远征\n- button \"领取\"\n- generic: 单局跑出 500 m\n- paragraph:\n  - text: 500 / 500\n  - emphasis: 奖励 ● 100\n- strong: 金币猎人\n- button \"领取\"\n- generic: 累计收集 200 枚金币\n- paragraph:\n  - text: 200 / 200\n  - emphasis: 奖励 ● 150\n- strong: 收藏家\n- generic: 解锁 3 个角色\n- paragraph:\n  - text: 1 / 3\n  - emphasis: 奖励 ◆ 2\n- strong: 长跑者\n- button \"领取\"\n- generic: 单局跑出 1500 m\n- paragraph:\n  - text: 1500 / 1500\n  - emphasis: 奖励 ● 300 ◆ 1\n- button \"返回 ↗\":\n  - generic: 返回\n  - emphasis: ↗",
+    "after": "- generic \"3D 神庙逃亡\"\n- strong:\n  - img \"分数 0\"\n- img \"金币 0\"\n- button \"暂停\"\n- paragraph: AN ENDLESS TEMPLE ADVENTURE\n- heading \"TEMPLE RUN\" [level=1]:\n  - text: TEMPLE\n  - text: RUN\n- paragraph: 神庙逃亡\n- paragraph:\n  - text: 穿过古老遗迹，收集金币。\n  - text: 越过断桥，躲开烈焰，跑得更远。\n- button \"开始奔跑 ↗\":\n  - generic: 开始奔跑\n  - emphasis: ↗\n- button \"STORE\"\n- button \"目标\" [active]\n- button \"升级\"\n- button \"STATS\"\n- button \"OPTIONS\"\n- generic: ← → 换道 / 路口转弯 · A/D 横移\n- generic: ↑ 跳跃\n- generic: ↓ 滑铲\n- paragraph: 最远 1597 m · 金币 2500 · 宝石 2\n- paragraph: OBJECTIVES\n- heading \"目标\" [level=2]\n- paragraph: 下局得分倍率 19× · 每完成一项目标 +1\n- group \"目标分类\":\n  - button \"全部\" [pressed]\n  - button \"距离\"\n  - button \"分数\"\n  - button \"金币\"\n  - button \"道具\"\n  - button \"其他\"\n- strong: 基础能力\n- generic: 已确认\n- generic: 所有强化道具达到1级\n- paragraph:\n  - text: 5 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超能力\n- button \"确认\"\n- generic: 所有强化道具达到5级\n- paragraph:\n  - text: 5 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁铁矿工\n- generic: 在一局游戏中收集5个磁铁\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 磁力超人\n- generic: 在一局游戏中收集10个磁铁\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万磁王\n- generic: 在一局游戏中收集20个磁铁\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 金币侠\n- generic: 在一局游戏中收集5个金币强化道具\n- paragraph:\n  - text: 1 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金爆炸\n- generic: 在一局游戏中收集10个金币强化道具\n- paragraph:\n  - text: 1 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金之神\n- generic: 在一局游戏中收集20个金币强化道具\n- paragraph:\n  - text: 1 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 隐身\n- generic: 在一局游戏中收集5个隐身\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万夫莫敌\n- generic: 在一局游戏中收集10个隐身\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 无敌\n- generic: 在一局游戏中收集20个隐身\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超速侠\n- generic: 在一局游戏中收集5个加速\n- paragraph:\n  - text: 0 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 速度狂魔\n- generic: 在一局游戏中收集10个加速\n- paragraph:\n  - text: 0 / 10\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 火箭\n- generic: 在一局游戏中收集20个加速\n- paragraph:\n  - text: 0 / 20\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 吝啬之跑\n- generic: 开局500米不收集金币\n- paragraph:\n  - text: 89 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 黄金过敏\n- generic: 开局1000米不收集金币\n- paragraph:\n  - text: 89 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 健步如飞\n- generic: 单局2500米不绊倒\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 你绊我不到\n- generic: 单局5000米不绊倒\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 冒险者\n- button \"确认\"\n- generic: 单局获得25000分\n- paragraph:\n  - text: 25000 / 25000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 宝藏猎人\n- generic: 单局获得50000分\n- paragraph:\n  - text: 36820 / 50000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 成功人士\n- generic: 单局获得100000分\n- paragraph:\n  - text: 36820 / 100000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二十五万俱乐部\n- generic: 单局获得250000分\n- paragraph:\n  - text: 36820 / 250000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五十万俱乐部\n- generic: 单局获得500000分\n- paragraph:\n  - text: 36820 / 500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 百万俱乐部\n- generic: 单局获得1000000分\n- paragraph:\n  - text: 36820 / 1000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 二百五十万俱乐部\n- generic: 单局获得2500000分\n- paragraph:\n  - text: 36820 / 2500000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 五百万俱乐部\n- generic: 单局获得5000000分\n- paragraph:\n  - text: 36820 / 5000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一千万俱乐部\n- generic: 单局获得10000000分\n- paragraph:\n  - text: 36820 / 10000000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 零钱\n- button \"确认\"\n- generic: 单局收集100金币\n- paragraph:\n  - text: 100 / 100\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 小猪银行\n- button \"确认\"\n- generic: 单局收集250金币\n- paragraph:\n  - text: 250 / 250\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 一次结清\n- generic: 单局收集500金币\n- paragraph:\n  - text: 253 / 500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 发薪日\n- generic: 单局收集750金币\n- paragraph:\n  - text: 253 / 750\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱袋\n- generic: 单局收集1000金币\n- paragraph:\n  - text: 253 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 钱仓\n- generic: 单局收集2500金币\n- paragraph:\n  - text: 253 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 诺克斯堡\n- generic: 单局收集5000金币\n- paragraph:\n  - text: 253 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 短跑运动员\n- button \"确认\"\n- generic: 单局奔跑1000米\n- paragraph:\n  - text: 1000 / 1000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 运动员\n- generic: 单局奔跑2500米\n- paragraph:\n  - text: 1597 / 2500\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 5000米奔跑者\n- generic: 单局跑到5000米\n- paragraph:\n  - text: 1597 / 5000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 万米长跑者\n- generic: 单局跑到10000米\n- paragraph:\n  - text: 1597 / 10000\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 初次远征\n- button \"领取\"\n- generic: 单局跑出 500 m\n- paragraph:\n  - text: 500 / 500\n  - emphasis: 奖励 ● 100\n- strong: 金币猎人\n- button \"领取\"\n- generic: 累计收集 200 枚金币\n- paragraph:\n  - text: 200 / 200\n  - emphasis: 奖励 ● 150\n- strong: 收藏家\n- generic: 解锁 3 个角色\n- paragraph:\n  - text: 1 / 3\n  - emphasis: 奖励 ◆ 2\n- strong: 长跑者\n- button \"领取\"\n- generic: 单局跑出 1500 m\n- paragraph:\n  - text: 1500 / 1500\n  - emphasis: 奖励 ● 300 ◆ 1\n- button \"返回 ↗\":\n  - generic: 返回\n  - emphasis: ↗",
+    "claimed": "- generic \"3D 神庙逃亡\"\n- strong:\n  - img \"分数 0\"\n- img \"金币 0\"\n- button \"暂停\"\n- paragraph: AN ENDLESS TEMPLE ADVENTURE\n- heading \"TEMPLE RUN\" [level=1]:\n  - text: TEMPLE\n  - text: RUN\n- paragraph: 神庙逃亡\n- paragraph:\n  - text: 穿过古老遗迹，收集金币。\n  - text: 越过断桥，躲开烈焰，跑得更远。\n- button \"开始奔跑 ↗\":\n  - generic: 开始奔跑\n  - emphasis: ↗\n- button \"STORE\"\n- button \"目标\"\n- button \"升级\"\n- button \"STATS\"\n- button \"OPTIONS\"\n- generic: ← → 换道 / 路口转弯 · A/D 横移\n- generic: ↑ 跳跃\n- generic: ↓ 滑铲\n- paragraph: 最远 1597 m · 金币 2500 · 宝石 2\n- paragraph: OBJECTIVES\n- heading \"目标\" [level=2]\n- paragraph: 下局得分倍率 19× · 每完成一项目标 +1\n- group \"目标分类\":\n  - button \"全部\"\n  - button \"距离\"\n  - button \"分数\"\n  - button \"金币\"\n  - button \"道具\"\n  - button \"其他\" [pressed]\n- strong: 基础能力\n- generic: 已确认\n- generic: 所有强化道具达到1级\n- paragraph:\n  - text: 5 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 超能力\n- generic: 已确认\n- generic: 所有强化道具达到5级\n- paragraph:\n  - text: 5 / 5\n  - emphasis: 奖励 下局得分倍率 +1\n- strong: 收藏家\n- generic: 解锁 3 个角色\n- paragraph:\n  - text: 1 / 3\n  - emphasis: 奖励 ◆ 2\n- paragraph: 目标已确认\n- button \"返回 ↗\":\n  - generic: 返回\n  - emphasis: ↗",
+    "run": {
+      "activeBranch": null,
+      "airborne": false,
+      "angelWings": {
+        "cooldown": 0,
+        "pendingRevive": false,
+        "permanentStock": 0,
+        "remaining": 0,
+        "stock": 0
+      },
+      "autoTurnQueued": false,
+      "boost": {
+        "active": false,
+        "left": 0,
+        "speedBefore": 0
+      },
+      "chaseGap": 11.5,
+      "coinMeter": {
+        "count": 0,
+        "level": 1,
+        "maxLevel": 0
+      },
+      "coinSpawnLevel": 5,
+      "coins": 0,
+      "course": {
+        "branches": [],
+        "extent": 489,
+        "features": [],
+        "longGapFallbacks": [],
+        "narrows": [],
+        "surfaces": [
+          {
+            "from": 0,
+            "kind": "stone",
+            "level": 2,
+            "to": null
+          }
+        ]
+      },
+      "distance": 47,
+      "distanceExact": 47.12875,
+      "enemyGap": 3.841000000000028,
+      "equipped": "jhony",
+      "falling": false,
+      "fastTurn": {
+        "active": false,
+        "elapsed": 23.67152214050293
+      },
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [],
+        "enabled": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "lastBonus": 0,
+        "nextBonusCheck": 612,
+        "seed": 211430353
+      },
+      "generationPacing": {
+        "doubleObstaclePercent": 0,
+        "from": 0,
+        "known": true,
+        "minCoinRunSpaces": 12,
+        "minObstacleSpaces": 6,
+        "minTurnSpaces": 12
+      },
+      "groundY": 0,
+      "headStart": null,
+      "headStartReady": true,
+      "headStartStock": {
+        "mega": 0,
+        "normal": 0
+      },
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 0,
+      "nextJunction": "corner",
+      "nextTurn": 153,
+      "obstacles": [
+        {
+          "ahead": 61,
+          "defId": "treeTrip",
+          "full": true,
+          "kind": "trip",
+          "lane": 1
+        }
+      ],
+      "phase": "playing",
+      "pickups": [],
+      "position": [
+        -1.2999999802010265,
+        0,
+        -44.12875
+      ],
+      "power": null,
+      "powerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "powerRemaining": 0,
+      "powers": [],
+      "progressDistance": 27.004862153682737,
+      "queuedForwardForce": 2,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runChallenges": {
+        "firstCoinDistance": null,
+        "stumbled": false,
+        "summary": {
+          "cleanDistance": 27.004862153682737,
+          "coinFreeStart": 27.004862153682737
+        }
+      },
+      "runElapsed": 3.1668031215667725,
+      "score": 513,
+      "scoreMultiplier": 19,
+      "side": -1.2999999802010265,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 25,
+      "stumbleAge": 9.175000000000033,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "themePacing": {
+        "changes": [],
+        "elapsed": 23.67152214050293,
+        "level": 2
+      },
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false,
+      "worldY": 0
+    }
+  },
+  "input": {
+    "right": {
+      "activeBranch": null,
+      "airborne": false,
+      "angelWings": {
+        "cooldown": 0,
+        "pendingRevive": false,
+        "permanentStock": 0,
+        "remaining": 0,
+        "stock": 0
+      },
+      "autoTurnQueued": false,
+      "boost": {
+        "active": false,
+        "left": 0,
+        "speedBefore": 0
+      },
+      "chaseGap": 11.5,
+      "coinMeter": {
+        "count": 0,
+        "level": 1,
+        "maxLevel": 0
+      },
+      "coinSpawnLevel": 5,
+      "coins": 0,
+      "course": {
+        "branches": [],
+        "extent": 489,
+        "features": [],
+        "longGapFallbacks": [],
+        "narrows": [],
+        "surfaces": [
+          {
+            "from": 0,
+            "kind": "stone",
+            "level": 2,
+            "to": null
+          }
+        ]
+      },
+      "distance": 49,
+      "distanceExact": 49.64125000000001,
+      "enemyGap": 3.93300000000003,
+      "equipped": "jhony",
+      "falling": false,
+      "fastTurn": {
+        "active": false,
+        "elapsed": 25.177322387695312
+      },
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [],
+        "enabled": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "lastBonus": 0,
+        "nextBonusCheck": 612,
+        "seed": 211430353
+      },
+      "generationPacing": {
+        "doubleObstaclePercent": 0,
+        "from": 0,
+        "known": true,
+        "minCoinRunSpaces": 12,
+        "minObstacleSpaces": 6,
+        "minTurnSpaces": 12
+      },
+      "groundY": 0,
+      "headStart": null,
+      "headStartReady": true,
+      "headStartStock": {
+        "mega": 0,
+        "normal": 0
+      },
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 1,
+      "nextJunction": "corner",
+      "nextTurn": 153,
+      "obstacles": [
+        {
+          "ahead": 58,
+          "defId": "treeTrip",
+          "full": true,
+          "kind": "trip",
+          "lane": 1
+        }
+      ],
+      "phase": "playing",
+      "pickups": [],
+      "position": [
+        -0.3915524695225264,
+        0,
+        -46.64125000000001
+      ],
+      "power": null,
+      "powerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "powerRemaining": 0,
+      "powers": [],
+      "progressDistance": 28.510663492979724,
+      "queuedForwardForce": 2,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runChallenges": {
+        "firstCoinDistance": null,
+        "stumbled": false,
+        "summary": {
+          "cleanDistance": 28.510663492979724,
+          "coinFreeStart": 28.510663492979724
+        }
+      },
+      "runElapsed": 3.266803503036499,
+      "score": 532,
+      "scoreMultiplier": 19,
+      "side": -0.3915524695225264,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 25.200000000000003,
+      "stumbleAge": 9.275000000000032,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "themePacing": {
+        "changes": [],
+        "elapsed": 25.177322387695312,
+        "level": 2
+      },
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false,
+      "worldY": 0
+    },
+    "left": {
+      "activeBranch": null,
+      "airborne": false,
+      "angelWings": {
+        "cooldown": 0,
+        "pendingRevive": false,
+        "permanentStock": 0,
+        "remaining": 0,
+        "stock": 0
+      },
+      "autoTurnQueued": false,
+      "boost": {
+        "active": false,
+        "left": 0,
+        "speedBefore": 0
+      },
+      "chaseGap": 11.5,
+      "coinMeter": {
+        "count": 0,
+        "level": 1,
+        "maxLevel": 0
+      },
+      "coinSpawnLevel": 5,
+      "coins": 0,
+      "course": {
+        "branches": [],
+        "extent": 489,
+        "features": [],
+        "longGapFallbacks": [],
+        "narrows": [],
+        "surfaces": [
+          {
+            "from": 0,
+            "kind": "stone",
+            "level": 2,
+            "to": null
+          }
+        ]
+      },
+      "distance": 52,
+      "distanceExact": 52.173750000000005,
+      "enemyGap": 4.025000000000031,
+      "equipped": "jhony",
+      "falling": false,
+      "fastTurn": {
+        "active": false,
+        "elapsed": 26.60658836364746
+      },
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [],
+        "enabled": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "lastBonus": 0,
+        "nextBonusCheck": 612,
+        "seed": 211430353
+      },
+      "generationPacing": {
+        "doubleObstaclePercent": 0,
+        "from": 0,
+        "known": true,
+        "minCoinRunSpaces": 12,
+        "minObstacleSpaces": 6,
+        "minTurnSpaces": 12
+      },
+      "groundY": 0,
+      "headStart": null,
+      "headStartReady": true,
+      "headStartStock": {
+        "mega": 0,
+        "normal": 0
+      },
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 0,
+      "nextJunction": "corner",
+      "nextTurn": 153,
+      "obstacles": [
+        {
+          "ahead": 56,
+          "defId": "treeTrip",
+          "full": true,
+          "kind": "trip",
+          "lane": 1
+        }
+      ],
+      "phase": "playing",
+      "pickups": [],
+      "position": [
+        -1.0263808619942512,
+        0,
+        -49.173750000000005
+      ],
+      "power": null,
+      "powerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "powerRemaining": 0,
+      "powers": [],
+      "progressDistance": 29.93993158093845,
+      "queuedForwardForce": 2,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runChallenges": {
+        "firstCoinDistance": null,
+        "stumbled": false,
+        "summary": {
+          "cleanDistance": 29.93993158093845,
+          "coinFreeStart": 29.93993158093845
+        }
+      },
+      "runElapsed": 3.3668038845062256,
+      "score": 551,
+      "scoreMultiplier": 19,
+      "side": -1.0263808619942512,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 25.4,
+      "stumbleAge": 9.375000000000034,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "themePacing": {
+        "changes": [],
+        "elapsed": 26.60658836364746,
+        "level": 2
+      },
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false,
+      "worldY": 0
+    }
+  },
+  "closed": {
+    "failed": {
+      "activeBranch": null,
+      "airborne": false,
+      "angelWings": {
+        "cooldown": 0,
+        "pendingRevive": false,
+        "permanentStock": 0,
+        "remaining": 0,
+        "stock": 0
+      },
+      "autoTurnQueued": false,
+      "boost": {
+        "active": false,
+        "left": 0,
+        "speedBefore": 0
+      },
+      "chaseGap": 11.5,
+      "coinMeter": {
+        "count": 0,
+        "level": 1,
+        "maxLevel": 0
+      },
+      "coinSpawnLevel": 5,
+      "coins": 0,
+      "course": {
+        "branches": [],
+        "extent": 681,
+        "features": [
+          {
+            "fastTurn": false,
+            "from": 489,
+            "generatedAtProgress": 73.53976398404328,
+            "kind": "pit",
+            "minTurnSpaces": 12,
+            "nativeStageKnown": true,
+            "pathLevel": 2,
+            "surface": "stone",
+            "to": 681
+          }
+        ],
+        "longGapFallbacks": [],
+        "narrows": [],
+        "surfaces": [
+          {
+            "from": 0,
+            "kind": "stone",
+            "level": 2,
+            "to": null
+          }
+        ]
+      },
+      "distance": 157,
+      "distanceExact": 157.7958285522461,
+      "enemyGap": 15,
+      "equipped": "jhony",
+      "falling": false,
+      "fastTurn": {
+        "active": false,
+        "elapsed": 90.62818145751952
+      },
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [],
+        "enabled": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "lastBonus": 0,
+        "nextBonusCheck": 612,
+        "seed": 211430353
+      },
+      "generationPacing": {
+        "doubleObstaclePercent": 0,
+        "from": 0,
+        "known": true,
+        "minCoinRunSpaces": 12,
+        "minObstacleSpaces": 6,
+        "minTurnSpaces": 12
+      },
+      "groundY": 0,
+      "headStart": null,
+      "headStartReady": false,
+      "headStartStock": {
+        "mega": 0,
+        "normal": 0
+      },
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 0,
+      "nextJunction": "corner",
+      "nextTurn": 153,
+      "obstacles": [],
+      "phase": "ended",
+      "pickups": [
+        {
+          "ahead": 5,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 10,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 14,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 19,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 23,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 27,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 32,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 37,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 41,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 46,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 50,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 55,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 59,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        },
+        {
+          "ahead": 64,
+          "kind": "coin",
+          "lane": 0,
+          "value": 1
+        }
+      ],
+      "position": [
+        4.795828552246093,
+        0,
+        -151.3
+      ],
+      "power": null,
+      "powerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "powerRemaining": 0,
+      "powers": [],
+      "progressDistance": 93.96153125524586,
+      "queuedForwardForce": 0,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runChallenges": {
+        "firstCoinDistance": null,
+        "stumbled": false,
+        "summary": {
+          "cleanDistance": 93.96153125524586,
+          "coinFreeStart": 93.96153125524586
+        }
+      },
+      "runElapsed": 7.216818332672119,
+      "score": 1767,
+      "scoreMultiplier": 19,
+      "side": -1.2999999999999996,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 28.212640380859376,
+      "stumbleAge": 13.225000000000088,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "themePacing": {
+        "changes": [],
+        "elapsed": 90.62818145751952,
+        "level": 2
+      },
+      "turnCount": 0,
+      "turnDirection": 1,
+      "turnQueued": false,
+      "worldY": 0
+    },
+    "restarted": {
+      "activeBranch": null,
+      "airborne": false,
+      "angelWings": {
+        "cooldown": 0,
+        "pendingRevive": false,
+        "permanentStock": 0,
+        "remaining": 0,
+        "stock": 0
+      },
+      "autoTurnQueued": false,
+      "boost": {
+        "active": false,
+        "left": 0,
+        "speedBefore": 0
+      },
+      "chaseGap": 11.5,
+      "coinMeter": {
+        "count": 0,
+        "level": 1,
+        "maxLevel": 0
+      },
+      "coinSpawnLevel": 5,
+      "coins": 0,
+      "course": {
+        "branches": [],
+        "extent": 489,
+        "features": [],
+        "longGapFallbacks": [],
+        "narrows": [],
+        "surfaces": [
+          {
+            "from": 0,
+            "kind": "stone",
+            "level": 2,
+            "to": null
+          }
+        ]
+      },
+      "distance": -2,
+      "distanceExact": -2,
+      "enemyGap": 0,
+      "equipped": "jhony",
+      "falling": false,
+      "fastTurn": {
+        "active": false,
+        "elapsed": 0
+      },
+      "fps": 60,
+      "gems": 0,
+      "generation": {
+        "bonuses": [],
+        "enabled": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "lastBonus": 0,
+        "nextBonusCheck": 612,
+        "seed": 211430015
+      },
+      "generationPacing": {
+        "doubleObstaclePercent": 0,
+        "from": 0,
+        "known": true,
+        "minCoinRunSpaces": 12,
+        "minObstacleSpaces": 6,
+        "minTurnSpaces": 12
+      },
+      "groundY": 0,
+      "headStart": null,
+      "headStartReady": false,
+      "headStartStock": {
+        "mega": 0,
+        "normal": 0
+      },
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 1,
+      "nextJunction": "corner",
+      "nextTurn": 153,
+      "obstacles": [],
+      "phase": "playing",
+      "pickups": [],
+      "position": [
+        0,
+        0,
+        5
+      ],
+      "power": null,
+      "powerPickups": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "powerRemaining": 0,
+      "powers": [],
+      "progressDistance": 0,
+      "queuedForwardForce": 0,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runChallenges": {
+        "firstCoinDistance": null,
+        "stumbled": false,
+        "summary": {
+          "cleanDistance": 0,
+          "coinFreeStart": 0
+        }
+      },
+      "runElapsed": 0,
+      "score": 0,
+      "scoreMultiplier": 19,
+      "side": 0,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 20,
+      "stumbleAge": 7,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "themePacing": {
+        "changes": [],
+        "elapsed": 0,
+        "level": 2
+      },
+      "turnCount": 0,
+      "turnDirection": 0,
+      "turnQueued": false,
+      "worldY": 0
+    }
+  }
+}

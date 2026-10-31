@@ -2,6 +2,7 @@
  * Distance1000 runtime percent uses current DistanceTraveled /1000 *100.
  * Currency rewards are not inferred from the original catalogue. */
 export const NATIVE_DISTANCE_OBJECTIVES = [
+  {id:'distance500',title:'初级跑者',detail:'奔跑500米',target:500},
   {
     "id": "distance1000",
     "title": "短跑运动员",
