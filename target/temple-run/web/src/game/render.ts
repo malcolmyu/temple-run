@@ -39,6 +39,11 @@ export interface Assets {
   material: Record<string, THREE.Material>;
   roadTile: THREE.Group | null;
   cliffTile?:THREE.Group|null;
+  cliffTJunction?:THREE.Group|null;
+  cliffCapA?:THREE.Group|null;
+  cliffCapB?:THREE.Group|null;
+  cliffCornerLeft?:THREE.Group|null;
+  cliffCornerRight?:THREE.Group|null;
   wall: THREE.Group | null;
   corner?: THREE.Group | null;
   transitionA?: THREE.Group | null;
@@ -91,7 +96,7 @@ const loadObj = async (url: string): Promise<THREE.Group | null> => {
     if(!response.ok)return null;
     const obj=new OBJLoader().parse(await response.text());
     const name=url.split('/').pop()?.replace(/\.obj$/, '') ?? '';
-    if(name==='cliff-road-tile' || name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
+    if(name.startsWith('cliff-cap-') || name.startsWith('cliff-t-') || name.startsWith('cliff-turn-') || name==='cliff-road-tile' || name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
       const uv=await fetch(url.replace(/\.obj$/, '.uv1.json'));
       if(!uv.ok)throw new Error('Missing native lightmap UV: '+name);
       attachNativeLightmapUV(obj, await uv.json());
@@ -232,7 +237,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
 
   const sceneryPaths=Object.entries(NATIVE_SCENERY_RESOURCES).filter(([group])=>group!=='tree').flatMap(([,paths])=>paths);
   const sceneryLoad=Promise.all(sceneryPaths.map(path=>loadObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`)));
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4, cliffTile] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4, cliffTile, cliffCornerLeft, cliffCornerRight, cliffTJunction, cliffCapA, cliffCapB] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
     loadObj(`${BASE}assets/track/decor-tree-native-1.obj`),
@@ -254,6 +259,11 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadObj(`${BASE}assets/track/stone-plank-cap-b.obj`),
     ...[2,3,4].map(i=>loadObj(`${BASE}assets/track/decor-tree-native-${i}.obj`)),
     loadObj(`${BASE}assets/track/cliff-road-tile.obj`),
+    loadObj(`${BASE}assets/track/cliff-turn-a.obj`),
+    loadObj(`${BASE}assets/track/cliff-turn-b.obj`),
+    loadObj(`${BASE}assets/track/cliff-t-down.obj`),
+    loadObj(`${BASE}assets/track/cliff-cap-a.obj`),
+    loadObj(`${BASE}assets/track/cliff-cap-b.obj`),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;
@@ -367,6 +377,11 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       material,
       roadTile: paint(roadTile, nativeRoadMaterial, false),
       cliffTile: paint(cliffTile,nativeTreeMaterial,false),
+      cliffTJunction:paint(cliffTJunction,nativeTreeMaterial,false),
+      cliffCapA:paint(cliffCapA,nativeTreeMaterial,false),
+      cliffCapB:paint(cliffCapB,nativeTreeMaterial,false),
+      cliffCornerLeft:paint(cliffCornerLeft,nativeTreeMaterial,false),
+      cliffCornerRight:paint(cliffCornerRight,nativeTreeMaterial,false),
       wall: paint(wallTemplate, nativeRoadMaterial, true),
       corner: paint(cornerMesh, nativeRoadMaterial, true),
       transitionA: paint(transitionA, nativeRoadMaterial, true),
@@ -858,7 +873,7 @@ export function buildTile(
 }
 
 /** Turn platform: square paving, rim stones and three glowing arrows. */
-export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath, at: number, surface: SurfaceKind = 'stone'): THREE.Group {
+export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath, at: number, surface: SurfaceKind = 'stone', terrain:TerrainKind='temple'): THREE.Group {
   const group = new THREE.Group();
   const point = path.at(at);
   // Rotate to the incoming heading: the corner paving belongs to the approach side.
@@ -866,16 +881,19 @@ export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath
   const heading = path.at(Math.max(0, at - 0.05)).heading;
   group.position.set(point.x, 0, point.z);
   group.rotation.y = heading;
-  const stoneCorner=direction<0?assets.stoneCornerLeft:assets.stoneCornerRight;
-  if(surface==='stone'&&stoneCorner&&assets.roadTile) {
+  const cliffCorner=terrain==='cliff'?(direction<0?assets.cliffCornerLeft:assets.cliffCornerRight):null;
+  const stoneCorner=cliffCorner??(direction<0?assets.stoneCornerLeft:assets.stoneCornerRight);
+  const road=cliffCorner?assets.cliffTile:assets.roadTile;
+  if(surface==='stone'&&stoneCorner&&road) {
+    group.userData.nativeCliffCorner=!!cliffCorner;
     const corner=stoneCorner.clone(true);
-    corner.name='native-stone-corner';
+    corner.name=cliffCorner?'native-cliff-corner':'native-stone-corner';corner.position.y=cliffCorner?CLIFF_MESH_Y:0;
     corner.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});
     group.add(corner);
     // Native corner arms end at6m. Preserve native straight triangles/UVs to
     // connect to the current global road grid (whose turn phase is fitted).
     for(const outgoing of [false,true]) {
-      const arm=assets.roadTile.clone(true);
+      const arm=road.clone(true);
       arm.name='native-stone-connector';
       arm.traverse(part=>{
         const mesh=part as THREE.Mesh;if(!mesh.isMesh)return;
@@ -883,7 +901,7 @@ export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath
         const first=cutSurfaceGeometry(mesh.geometry,-100,-3);
         const kept=cutSurfaceGeometry(first,3,100);first.dispose();mesh.geometry=kept;
       });
-      arm.position.set(outgoing?direction*9:0,0,outgoing?0:9);
+      arm.position.set(outgoing?direction*9:0,cliffCorner?CLIFF_MESH_Y:0,outgoing?0:9);
       if(outgoing)arm.rotation.y=direction*Math.PI/2;
       group.add(arm);
     }
@@ -1194,12 +1212,14 @@ export function buildChaser(assets: Assets): THREE.Object3D {
 export const sideOfLane = (lane: number): number => LANES[Math.max(0, Math.min(2, lane))];
 
 /** Native TUp at the node origin; the incoming grid tile joins at z=3. */
-export function buildTJunction(assets: Assets, surface: SurfaceKind = 'stone'): THREE.Group {
+export function buildTJunction(assets: Assets, surface: SurfaceKind = 'stone', terrain:TerrainKind='temple'): THREE.Group {
   const group=new THREE.Group();group.name=surface==='wood'?'original-plank-t-junction':'original-t-junction';
-  const source=surface==='wood'?assets.plankTJunction:assets.tJunction;
-  const road=surface==='wood'?assets.plankTile:assets.roadTile;
+  const cliff=terrain==='cliff'&&surface==='stone'&&!!assets.cliffTJunction;
+  const source=cliff?assets.cliffTJunction:surface==='wood'?assets.plankTJunction:assets.tJunction;
+  const road=cliff?assets.cliffTile:surface==='wood'?assets.plankTile:assets.roadTile;
+  group.userData.nativeCliffT=cliff;if(cliff)group.name='native-cliff-t-junction';
   if(!source)return group;
-  const centre=source.clone(true);
+  const centre=source.clone(true);if(cliff)centre.position.y=CLIFF_MESH_Y;
   centre.traverse(o=>{const mesh=o as THREE.Mesh;if(mesh.isMesh){mesh.userData.walkableSurface=true;}});
   group.add(centre);
   if(road)for(const side of [-1,1]){
@@ -1208,7 +1228,7 @@ export function buildTJunction(assets: Assets, surface: SurfaceKind = 'stone'): 
       const first=cutSurfaceGeometry(mesh.geometry,-100,-1.52);
       mesh.geometry=cutSurfaceGeometry(first,1.52,100);first.dispose();mesh.userData.walkableSurface=true;
     });
-    arm.position.set(side*7.5,surface==='wood'?0:ROAD_TILE_Y,0);arm.rotation.y=side*Math.PI/2;arm.scale.x=1;group.add(arm);
+    arm.position.set(side*7.5,cliff?CLIFF_MESH_Y:surface==='wood'?0:ROAD_TILE_Y,0);arm.rotation.y=side*Math.PI/2;arm.scale.x=1;group.add(arm);
   }
   return group;
 }

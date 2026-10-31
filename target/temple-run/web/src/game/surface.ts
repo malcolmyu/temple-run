@@ -48,12 +48,39 @@ export function nativeTransitionAt(distance:number):'a'|'b'|null {
  }
  return null;
 }
+/** Canonical Vert cliff caps:A ends cliff,B starts cliff. Direct wood links
+ * retain the existing wood adapter until mixed native transitions are ported. */
+export function nativeCliffTransitionAt(distance:number):'a'|'b'|null {
+ const sections=activeCourse()?.surfaces;if(!sections)return null;
+ for(let i=0;i<sections.length;i++){
+  const s=sections[i];if(s.level!==3)continue;
+  if(i>0&&sections[i-1].level===2&&Math.abs(distance-s.from)<.01)return 'b';
+  if(sections[i+1]?.level===2&&Math.abs(distance-(s.to-12))<.01)return 'a';
+ }
+ return null;
+}
 export function nativeTransitionSupported(distance:number):boolean {
- return !(activeCourse()?.surfaces??REFERENCE_SURFACES).some(section=>section.kind==='wood'&&
-  (distance>section.from-12&&distance<section.from-6||distance>section.to-6&&distance<section.to));
+ const sections=activeCourse()?.surfaces??REFERENCE_SURFACES;
+ if(sections.some(s=>s.kind==='wood'&&(distance>s.from-12&&distance<s.from-6||distance>s.to-6&&distance<s.to)))return false;
+ if(activeCourse())for(let i=0;i<sections.length;i++){
+  const s=sections[i] as SurfaceSection;if(s.level!==3)continue;
+  if(i>0&&(sections[i-1] as SurfaceSection).level===2&&distance>s.from-6&&distance<s.from+1)return false;
+  if((sections[i+1] as SurfaceSection|undefined)?.level===2&&distance>s.to-13&&distance<s.to-6)return false;
+ }
+ return true;
 }
 /** First plank region starts six metres before its centre; the exit cap's
  * stone support starts at its centre. Missing regions retain the previous level. */
-export const nativeGroundHeightAt=(distance:number):number=>(activeCourse()?.surfaces??REFERENCE_SURFACES).some(s=>s.kind==='wood'&&distance>=s.from-6&&distance<s.to)?-3:0;
+export function nativeGroundHeightAt(distance:number):number {
+ const sections=activeCourse()?.surfaces??REFERENCE_SURFACES;
+ if(sections.some(s=>s.kind==='wood'&&distance>=s.from-6&&distance<s.to))return -3;
+ if(activeCourse())for(let i=0;i<sections.length;i++){
+  const s=sections[i] as SurfaceSection;if(s.level!==3)continue;
+  const start=(sections[i-1] as SurfaceSection|undefined)?.level===2?s.from+1:s.from-6;
+  const end=(sections[i+1] as SurfaceSection|undefined)?.level===2?s.to-6:s.to;
+  if(distance>=start&&distance<end)return 3;
+ }
+ return 0;
+}
 /** Existing plank exports add raw15.25; undo graphical normalization only. */
-export const nativeMeshHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3.05:0;
+export const nativeMeshHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3.05:surfaceAt(distance).level===3?3:0;

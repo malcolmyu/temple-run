@@ -25,7 +25,7 @@ for(let seed=1;seed<=100;seed++){
  assert.equal(seen.size,3,`seed${seed} visits all native levels`);
  assert.equal(new Set(plan.surfaces.map(s=>s.level)).size,3);
  for(let i=1;i<plan.surfaces.length;i++){
-  const a=plan.surfaces[i-1],b=plan.surfaces[i];assert.notEqual(a.level,b.level);assert.equal(a.to,b.from);
+  const a=plan.surfaces[i-1],b=plan.surfaces[i];assert.notEqual(a.level,b.level);assert.ok(a.level!==1||b.level===2,'plank only changes to temple before an upward cliff transition');assert.equal(a.to,b.from);
   assert.equal(b.kind,b.level===1?'wood':'stone');
   const f=plan.features.find(f=>f.kind==='transition'&&f.from<=b.from&&f.to>=b.from)!;
   assert.ok(f&&f.to-f.from>=120);assert.ok(f.themeRequestedAtProgress!==undefined);

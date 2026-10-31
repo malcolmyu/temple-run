@@ -5,13 +5,14 @@
     ".uv1.json": "59db92d195069277ee0c46707b218573358760e4985ea98155b1f0340c83375c"
   },
   "sourceGroundHeight": 3,
-  "runtimeGroundHeight": 0,
+  "runtimeGroundHeight": 3,
+  "parentGroupY": 3,
   "meshLocalTranslationY": -3,
   "material": "Temple Run Trees Material / nativeTreeMaterial",
   "straightHalfWidth": 1.3,
   "limits": [
-    "Only straight mesh integrated. Native dedicated corners,T junctions and caps remain absent.",
-    "Current stone/cliff relative height is normalized; original3m relative elevation and corresponding connections are not restored.",
+    "Straight,cornerA/B,TDown,and direct temple/cliff caps are integrated.",
+    "Mesh templates are normalized to their support plane;parent groups add3m,restoring original cliff world height.",
     "Branch,half-road and obstacles still use existing stone-compatible web adapters."
   ]
 }

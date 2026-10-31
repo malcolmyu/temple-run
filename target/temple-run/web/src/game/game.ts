@@ -1,4 +1,4 @@
-import {nativeCliffSupported} from './nativeCliff';
+import {CLIFF_MESH_Y,nativeCliffSupported} from './nativeCliff';
 import { NativeThemePacing } from './nativeThemePacing';
 import { createPowerPickupCounts, countPowerPickup } from './nativePowerPickups';
 import { createRunChallenges, stepRunChallenges, summarizeRunChallenges } from './nativeRunChallenges';
@@ -89,7 +89,7 @@ import {
 import { createWorld, buildTile, buildStoneGate, buildSceneryTree, buildNativeScenery, alignNativeSceneryRoots, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
-import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, nativeTransitionAt, nativeTransitionSupported, type SurfaceKind } from './surface';
+import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, nativeTransitionAt, nativeCliffTransitionAt, nativeTransitionSupported, type SurfaceKind } from './surface';
 import { sidePathAt } from './sidePath';
 import { getDifficulty, type DifficultyConfig } from './difficulty';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
@@ -420,7 +420,7 @@ export class Game {
           animation:o?nativePowerAnimationState(o):null,position:o?.position.toArray(),yaw:o?.rotation.y,age:o?this.world.elapsed-o.userData.nativeCoinSpawnTime:null,
           bounds:bounds?{min:bounds.min.toArray(),max:bounds.max.toArray()}:null};
       }),
-      scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length,cliffLoaded:!!this.bundle.assets.cliffTile,nativeCliffTiles:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliff).length }),
+      scene: () => ({ tiles: this.tiles.size, obstacles: this.obstacles.length, pickups: this.pickups.length,cliffLoaded:!!this.bundle.assets.cliffTile,cliffCornersLoaded:!!this.bundle.assets.cliffCornerLeft&&!!this.bundle.assets.cliffCornerRight,cliffCapsLoaded:!!this.bundle.assets.cliffCapA&&!!this.bundle.assets.cliffCapB,nativeCliffCaps:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliffCap).length,cliffTLoaded:!!this.bundle.assets.cliffTJunction,nativeCliffTs:[...this.junctions.values()].filter(g=>g.userData.nativeCliffT).length,nativeCliffCorners:[...this.junctions.values()].filter(g=>g.userData.nativeCliffCorner).length,nativeCliffTiles:[...this.tiles.values()].filter(e=>this.world.require(e,Tile).object?.userData.nativeCliff).length }),
       terrain: (d: number) => terrainAt(d, this.path),
       narrow: (d: number) => this.narrowAt(d, this.path),
       sidePath: (d: number) => this.sidePathAt(d, this.path),
@@ -487,6 +487,7 @@ export class Game {
       activeBranch:this.sideBranch,
       nextTurn: turn.next,
       turnDirection: turn.direction,
+      nextJunction:this.difficulty.name==='classic'?referenceJunction(turn.count,turn.next):'corner',
       turnQueued: turn.queued,
       autoTurnQueued: turn.autoQueued,
       turnCount: turn.count,
@@ -1473,18 +1474,20 @@ export class Game {
 
   /** Clone the cached road-width corner and parapets. */
   private acquireJunction(direction: 1 | -1, at: number): THREE.Group {
-    const surface = surfaceAt(at).kind;
+    const section=surfaceAt(at);
+    const surface = section.kind;
+    const terrain=section.level===3?'cliff':'temple';
     const turnState=this.world.require(this.runnerEntity,Turn);
     const kind=this.difficulty.name==='classic'?referenceJunction(turnState.count,at):'corner';
-    const key = `${surface}:${kind}:${direction}`;
+    const key = `${surface}:${section.level??2}:${kind}:${direction}`;
     let prototype = this.junctionPrototypes.get(key);
     if (!prototype) {
-      prototype = kind==='tee' && (surface==='wood'?this.bundle.assets.plankTJunction:this.bundle.assets.tJunction) ? buildTJunction(this.bundle.assets,surface) : buildJunction(this.bundle.assets, direction, new TrackPath(), 0, surface);
+      prototype = kind==='tee' && (surface==='wood'?this.bundle.assets.plankTJunction:this.bundle.assets.tJunction) ? buildTJunction(this.bundle.assets,surface,terrain) : buildJunction(this.bundle.assets, direction, new TrackPath(), 0, surface,terrain);
       mergeStaticMeshes(prototype);
       this.junctionPrototypes.set(key, prototype);
     }
     const group = prototype.clone(true);
-    if(kind==='tee' && this.bundle.assets.tree) {
+    if(kind==='tee' && terrain!=='cliff' && this.bundle.assets.tree) {
       const trees=this.difficulty.name==='classic'?referenceJunctionTrees(turnState.count,at):[{variant:0,ahead:10}];
       for(const record of trees){
         const tree=buildSceneryTree(this.bundle.assets,0,record.variant);
@@ -1585,8 +1588,11 @@ export class Game {
       const clearScenery = this.path.nearTurn(distance, 26);
       const transition=this.difficulty.name==='classic'?nativeTransitionAt(distance):null;
       const template=transition==='a'?this.bundle.assets.transitionA:transition==='b'?this.bundle.assets.transitionB:null;
-      const group = template?template.clone(true):this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateralAt(distance) : 0);
-      if(template){group.name='native-transition-'+transition;group.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});}
+      const cliffTransition=this.difficulty.name==='classic'?nativeCliffTransitionAt(distance):null;
+      const cliffTemplate=cliffTransition==='a'?this.bundle.assets.cliffCapA:cliffTransition==='b'?this.bundle.assets.cliffCapB:null;
+      const group = cliffTemplate?new THREE.Group():template?template.clone(true):this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateralAt(distance) : 0);
+      if(cliffTemplate){const cap=cliffTemplate.clone(true);cap.position.y=CLIFF_MESH_Y;group.add(cap);group.userData.nativeCliffCap=true;group.name='native-cliff-cap-'+cliffTransition;group.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});}
+      if(template&&!cliffTemplate){group.name='native-transition-'+transition;group.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});}
       const point = this.path.at(distance);
       group.position.set(point.x, this.meshY(distance), point.z);
       group.rotation.y = point.heading;
