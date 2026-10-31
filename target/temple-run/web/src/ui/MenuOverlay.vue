@@ -21,7 +21,7 @@ const emit = defineEmits<{ start: []; store: []; settings: []; stats: []; object
         <button class="menu-btn" @click="emit('stats')">STATS</button>
         <button class="menu-btn" @click="emit('settings')">OPTIONS</button>
       </div>
-      <div class="guide"><span>← → 转弯 · A/D 横移</span><span>↑ 跳跃</span><span>↓ 滑铲</span></div>
+      <div class="guide"><span>← → 换道 / 路口转弯 · A/D 横移</span><span>↑ 跳跃</span><span>↓ 滑铲</span></div>
       <p class="menu-stats">最远 {{ progress.bestDistance }} m · 金币 {{ progress.coins }} · 宝石 {{ progress.gems }}</p>
     </div>
   </section>

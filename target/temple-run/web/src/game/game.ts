@@ -6,7 +6,7 @@ import { NATIVE_TILT_OFFSET_MAX, stepNativeSteering, nativeTiltAllowed } from '.
 import { nativePickupWithinReach } from './nativePickupCollision';
 import { junctionGapCuts, tJunctionApproachCut, tJunctionExitCut, type SurfaceCut } from './junctionCuts';
 import { referenceStraightGate, referenceAmbientTree, referenceJunctionTrees, referenceFullWidthAt, overlapsReferenceGate, REFERENCE_EXIT_GATE_OFFSET } from './referenceScenery';
-import { STUMBLE_KILL_WINDOW, NATIVE_STUMBLE_RESET_AGE, nativeStumbleIsFatal, nativeIntroHeld, stepNativeRunClock, nativeStumbleDuration, NATIVE_REJECTED_TURN_DELAY, NATIVE_REJECTED_TURN_OFFSET, stepNativeStumbleDelay } from './nativeRunnerRules';
+import { STUMBLE_KILL_WINDOW, NATIVE_STUMBLE_RESET_AGE, nativeStumbleIsFatal, nativeIntroHeld, stepNativeRunClock, nativeStumbleDuration, stepNativeStumbleDelay } from './nativeRunnerRules';
 import { nativeWaterAnchor } from './nativeWater';
 import { nativeCoinBonusValue, NATIVE_POWER_SCORE_VALUE, NATIVE_COIN_SCORE_VALUE, NATIVE_BASE_POWER_DURATION } from './nativeCoinBonus';
 import { nativeSlideDuration, stepNativeSlideTimer, stepNativeVertical, nativeForwardAcceleration, stepNativeForwardVelocity, nativeJumpVelocity, NATIVE_STUMBLE_SPEED_FACTOR } from './nativeMotion';
@@ -759,16 +759,7 @@ export class Game {
     if (mutateUi.phase !== 'playing' || this.introHeld()) return;
     // A swipe used to turn must not also displace the runner across the new road.
     if (this.queueTurn(dir)) return;
-    if(this.difficulty.name==='classic'){
-      const jump=this.world.require(this.runnerEntity,Jump);
-      const slide=this.world.require(this.runnerEntity,Slide);
-      const power=this.world.require(this.runnerEntity,Power);
-      if(jump.airborne||slide.remaining>0||this.nativeFalling||(power.kind==='boost'&&this.world.elapsed<power.until))return;
-      this.nativeSwipeStumbleDelay=NATIVE_REJECTED_TURN_DELAY;
-      this.nativeSwipeOffset=dir*NATIVE_REJECTED_TURN_OFFSET;
-      this.nativeTiltTargetX=this.nativeSwipeOffset;
-      return;
-    }
+    if (this.difficulty.name === 'classic' && this.nativeFalling) return;
     const lane = this.world.require(this.runnerEntity, Lane);
     lane.index = Math.max(0, Math.min(2, lane.index + dir));
     sfx.play('swish', { gain: 0.55, rate: 0.95 + Math.random() * 0.1 });

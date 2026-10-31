@@ -42,10 +42,10 @@ export class Input {
   setClassicControls(enabled:boolean):void {
     this.classicControls=enabled;this.leanLeft=false;this.leanRight=false;
   }
-  // Desktop equivalent of holding a phone tilted; arrows/swipes remain turns.
+  // Desktop equivalent of holding a phone tilted; arrows/swipes change lanes, or turn at a junction.
   get steeringAxis(): number | null {
     if(this.classicControls&&(this.leanLeft||this.leanRight))return Number(this.leanRight)-Number(this.leanLeft);
-    return this.tiltEnabled?this.tilt.axis:this.classicControls?0:null;
+    return this.tiltEnabled?this.tilt.axis:null;
   }
   get isTiltEnabled(): boolean { return this.tiltEnabled; }
 

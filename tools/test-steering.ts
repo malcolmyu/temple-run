@@ -34,6 +34,9 @@ Object.assign(globalThis, { DeviceOrientationEvent: class {}, window: {
 }});
 const { Input } = await import('../target/temple-run/web/src/game/input');
 const input = new Input();
+input.setClassicControls(true);
+assert.equal(input.steeringAxis, null, 'idle classic input must preserve the selected lane instead of steering to centre');
+input.setClassicControls(false);
 assert.equal(await input.enableTilt(), true);
 listeners.get('deviceorientation')!({gamma: 10});
 for (let i = 0; i < 20; i++) listeners.get('deviceorientation')!({gamma: 22});
