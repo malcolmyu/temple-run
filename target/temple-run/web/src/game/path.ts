@@ -24,6 +24,14 @@ export class TrackPath {
   readonly segments: PathSegment[] = [{ start: 0, end: Infinity, x: 0, z: PLAYER_Z, heading: 0 }];
   /** Lateral offset of a branch path from the main centerline. */
   lateral = 0;
+  branchSpan: {from:number;to:number}|null=null;
+  lateralAt(distance:number):number {
+    if(!this.branchSpan)return this.lateral;
+    const {from,to}=this.branchSpan;
+    const edge=Math.min(12,(to-from)/2);
+    const t=Math.max(0,Math.min(1,(distance-from)/edge,(to-distance)/edge));
+    return this.lateral*t*t*(3-2*t);
+  }
 
   /** World position and heading at a distance. `smooth` rounds the corner for actors. */
   at(distance: number, side = 0, smooth = false): PathPoint {
@@ -47,15 +55,15 @@ export class TrackPath {
         const k = e * e * (3 - 2 * e);
         const heading = prev.heading + normAngle(segment.heading - prev.heading) * k;
         return {
-          x: px + (bx - px) * k + Math.cos(heading) * (this.lateral + side),
-          z: pz + (bz - pz) * k - Math.sin(heading) * (this.lateral + side),
+          x: px + (bx - px) * k + Math.cos(heading) * (this.lateralAt(distance) + side),
+          z: pz + (bz - pz) * k - Math.sin(heading) * (this.lateralAt(distance) + side),
           heading,
         };
       }
     }
     return {
-      x: bx + Math.cos(segment.heading) * (this.lateral + side),
-      z: bz - Math.sin(segment.heading) * (this.lateral + side),
+      x: bx + Math.cos(segment.heading) * (this.lateralAt(distance) + side),
+      z: bz - Math.sin(segment.heading) * (this.lateralAt(distance) + side),
       heading: segment.heading,
     };
   }
@@ -80,6 +88,7 @@ export class TrackPath {
   clone(): TrackPath {
     const copy = new TrackPath();
     copy.lateral = this.lateral;
+    copy.branchSpan=this.branchSpan?{...this.branchSpan}:null;
     copy.segments.length = 0;
     for (const segment of this.segments) copy.segments.push({ ...segment });
     return copy;

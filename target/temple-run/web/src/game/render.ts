@@ -648,14 +648,13 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
 
 /** Broken centre of a left/right fork: both outer lanes survive, middle falls. */
 export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean, last = false, activeLateral = 0, surface: SurfaceKind = 'stone'): void {
-  const gap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, TILE + 0.02), assets.material.water);
   // Render the non-active branch too. The opposite branch is a real TrackPath clone
   // with its own lateral offset; without this its surface disappears from the scene.
   const offsets = branchSurfaceOffsets(activeLateral);
   for (const offset of offsets) {
     if (Math.abs(offset) < 0.01) continue;
     const branchSurface = new THREE.Mesh(
-      new THREE.PlaneGeometry(3.3, TILE + 0.02),
+      new THREE.PlaneGeometry(2.7, TILE + 0.02),
       surface === 'wood' ? plankMaterial(assets) : assets.material.stone,
     );
     branchSurface.rotation.x = -Math.PI / 2;
@@ -667,21 +666,15 @@ export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: 
       group.add(post);
     }
   }
-  if (first) {
-    // A visible crossbar makes the lane split read as a T junction, not a random hole.
-    const crossbar = new THREE.Mesh(new THREE.PlaneGeometry(7.2, 1.2), assets.material.stone);
-    crossbar.rotation.x = -Math.PI / 2;
-    crossbar.position.set(0, 0.058, -TILE / 2 + 0.6);
-    group.add(crossbar);
-    const gold = new THREE.Mesh(new THREE.BoxGeometry(7.24, 0.04, 0.12), assets.material.gold);
-    gold.position.set(0, 0.08, -TILE / 2 + 1.1);
-    group.add(gold);
-  }
+  // Once a graph branch is chosen, this tile is the complete active road.
+  // Its centre must stay supported; the opposite branch was added above.
+  if(Math.abs(activeLateral)>.001)return;
+  const gap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, TILE + 0.02), assets.material.water);
   gap.rotation.x = -Math.PI / 2;
   gap.position.set(0, 0.065, 0);
   group.add(gap);
   const face = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.4, TILE + 0.02), assets.material.stone);
-  face.position.set(0, -1.15, 0);
+  face.position.set(0, -1.4, 0);
   group.add(face);
   for (const side of [-1, 1] as const) {
     for (let i = 0; i < 4; i++) {
@@ -690,13 +683,6 @@ export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: 
       slab.rotation.set(0, side * 0.18, side * (i % 2 ? 0.2 : -0.14));
       group.add(slab);
     }
-  }
-  if (last) {
-    // The two roads merge back into the normal corridor at the end of the fork.
-    const merge = new THREE.Mesh(new THREE.PlaneGeometry(1.08, 2.2), assets.material.stone);
-    merge.rotation.x = -Math.PI / 2;
-    merge.position.set(0, 0.07, TILE / 2 - 1.0);
-    group.add(merge);
   }
   if (!first) return;
   for (const side of [-1, 1] as const) {

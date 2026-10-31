@@ -69,7 +69,9 @@
     "temple:test:transition-caps": "esbuild tools/test-native-transition-caps.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-transition-caps-test.mjs >/dev/null && node /tmp/temple-transition-caps-test.mjs",
     "temple:test:upgrades": "esbuild tools/test-gameplay-upgrades.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-upgrades-test.mjs >/dev/null && node /tmp/temple-upgrades-test.mjs",
     "temple:test:power-effects": "esbuild tools/test-power-effects.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-power-effects-test.mjs >/dev/null && node /tmp/temple-power-effects-test.mjs",
-    "temple:test:bonus-spawn": "esbuild tools/test-native-bonus-spawn.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-bonus-spawn-test.mjs >/dev/null && node /tmp/temple-bonus-spawn-test.mjs"
+    "temple:test:bonus-spawn": "esbuild tools/test-native-bonus-spawn.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-bonus-spawn-test.mjs >/dev/null && node /tmp/temple-bonus-spawn-test.mjs",
+    "temple:test:course": "esbuild tools/test-course-plan.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-course-test.mjs >/dev/null && node /tmp/temple-course-test.mjs",
+    "temple:test:branch-surface": "esbuild tools/test-branch-surface.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-branch-surface-test.mjs >/dev/null && node /tmp/temple-branch-surface-test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

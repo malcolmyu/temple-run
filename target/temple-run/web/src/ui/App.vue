@@ -112,7 +112,7 @@ function dismissTutorial(): void {
             <div><span>↑</span><small>跳跃</small></div>
             <div><span>↓</span><small>滑铲</small></div>
           </div>
-          <p class="lead">手机可用滑动操作：左右滑动换道，上滑跳跃，下滑滑铲。</p>
+          <p class="lead">手机可用滑动操作：左右滑动换道或在路口转弯，上滑跳跃，下滑滑铲。</p>
           <button class="primary" @click="dismissTutorial"><span>开始奔跑</span><em>↗</em></button>
         </div>
       </section>

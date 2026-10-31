@@ -1,3 +1,4 @@
+import { activeCourse } from './coursePlan';
 import { referenceJunctionDistance } from './referenceCoordinates';
 import type { DefId } from './obstacles/catalog';
 // Authored long narrow pieces are adjacent12m cells. Round the cluster anchor
@@ -106,5 +107,7 @@ export const REFERENCE_RANDOM_OBSTACLES_FROM = referenceJunctionDistance(2433);
 
 /** These native obstacles already contain a full trunk; avoid an extra periodic tree. */
 export function overlapsReferenceTree(distance: number): boolean {
+  const course=activeCourse();
+  if(course)return course.obstacles.some(o=>o.defId.startsWith('tree')&&Math.abs(o.distance-distance)<24);
   return REFERENCE_OPENING_OBSTACLES.some(obstacle=>obstacle.defId.startsWith('tree') && Math.abs(obstacle.distance-distance)<24);
 }

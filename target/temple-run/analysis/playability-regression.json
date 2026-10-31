@@ -62,6 +62,7 @@
     }
   ],
   "final": {
+    "activeBranch": null,
     "airborne": false,
     "autoTurnQueued": false,
     "boost": {
@@ -71,6 +72,7 @@
     },
     "chaseGap": 11.5,
     "coins": 0,
+    "course": null,
     "distance": 157,
     "distanceExact": 157.7958285522461,
     "falling": false,
@@ -161,6 +163,11 @@
         "lane": 0
       }
     ],
+    "position": [
+      4.795828552246093,
+      0,
+      -151.3
+    ],
     "power": null,
     "powerRemaining": 0,
     "powers": [],
@@ -182,6 +189,7 @@
     "worldY": 0
   },
   "longRun": {
+    "activeBranch": null,
     "airborne": false,
     "autoTurnQueued": false,
     "boost": {
@@ -191,52 +199,16 @@
     },
     "chaseGap": 11.5,
     "coins": 853,
+    "course": null,
     "distance": 5500,
     "distanceExact": 5500.661325531001,
     "falling": false,
     "fps": 60,
     "gems": 0,
     "generation": {
-      "bonuses": [
-        {
-          "collected": false,
-          "distance": 696,
-          "kind": "shield",
-          "lane": 1
-        },
-        {
-          "collected": false,
-          "distance": 1380,
-          "kind": "bonus",
-          "lane": 1
-        },
-        {
-          "collected": false,
-          "distance": 2076,
-          "kind": "magnet",
-          "lane": 1
-        },
-        {
-          "collected": false,
-          "distance": 2784,
-          "kind": "bonus",
-          "lane": 2
-        },
-        {
-          "collected": false,
-          "distance": 4260,
-          "kind": "shield",
-          "lane": 1
-        },
-        {
-          "collected": false,
-          "distance": 4872,
-          "kind": "shield",
-          "lane": 1
-        }
-      ],
-      "lastBonus": 4872,
-      "nextBonusCheck": 5568,
+      "bonuses": [],
+      "lastBonus": 0,
+      "nextBonusCheck": 612,
       "seed": 1
     },
     "groundY": 0,
@@ -247,14 +219,19 @@
     "obstacles": [
       {
         "ahead": 64,
-        "defId": "treeSlide",
+        "defId": "pit",
         "full": true,
-        "kind": "arch",
+        "kind": "gap",
         "lane": 1
       }
     ],
     "phase": "playing",
     "pickups": [
+      {
+        "ahead": 16,
+        "kind": "boost",
+        "lane": 0
+      },
       {
         "ahead": 11,
         "kind": "coin",
@@ -305,6 +282,11 @@
         "kind": "coin",
         "lane": 1
       }
+    ],
+    "position": [
+      766.7000000000019,
+      0,
+      94.3386744689972
     ],
     "power": "shield",
     "powerRemaining": 10.97500000000366,

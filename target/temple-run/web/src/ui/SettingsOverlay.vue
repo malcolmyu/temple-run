@@ -61,7 +61,7 @@ function toggleSound(): void {
         <em :class="{ on: difficulty === 'challenge' }">{{ difficulty === 'challenge' ? '挑战' : '经典' }}</em>
       </button>
       <button class="switch-row" @click="toggleTilt">
-        <span>倾斜移动<small>开启时保持手机自然握姿；倾斜移动，左右滑动转弯</small></span>
+        <span>倾斜移动<small>开启时保持手机自然握姿；倾斜横移；左右滑动换道或路口转弯</small></span>
         <em :class="{ on: tilt }">{{ tilt ? '开' : '关' }}</em>
       </button>
       <p class="menu-stats">帧率 {{ ui.fps }} fps · 已解锁 {{ progress.owned.length }} 个角色</p>

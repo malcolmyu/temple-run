@@ -60,6 +60,7 @@ export class TrackGraph {
     const right = this.active.clone();
     left.lateral = -separation;
     right.lateral = separation;
+    left.branchSpan={from:at,to:mergeAt};right.branchSpan={from:at,to:mergeAt};
     const node: GraphNode = { id: this.nextNodeId++, at, edges: [] };
     const edges: GraphEdge[] = [
       { side: 'left', path: left, mergeAt },

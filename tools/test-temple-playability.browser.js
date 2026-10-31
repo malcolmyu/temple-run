@@ -1,6 +1,7 @@
 // Run in the local game's DevTools via Runtime.evaluate; uses real input listeners.
 // Preserve temple.v2.progress before running and restore it afterwards.
 (() => {
+  const originalUrl=location.href;const referenceUrl=new URL(location.href);referenceUrl.searchParams.set('route','reference');history.replaceState(null,'',referenceUrl);
   const g = window.__templeGame;
   const checks = [];
   const check = (name, condition) => { checks.push({name, passed: !!condition}); if (!condition) throw new Error(name); };
@@ -50,5 +51,5 @@
   prep();key('ArrowLeft');until(149);g.advance(700);
   check('missed corner still fails',g.state().phase==='dying' && g.death().kind==='missed');
   g.advance(6000);check('failure reaches results',g.state().phase==='ended');
-  return {checks, longRun, final:g.state()};
+  const result={checks, longRun, final:g.state()};history.replaceState(null,'',originalUrl);return result;
 })()

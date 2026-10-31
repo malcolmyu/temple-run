@@ -1,3 +1,4 @@
+import { CoursePlan, activeCourse, setActiveCourse } from './coursePlan';
 import { BonusSpawnDirector } from './nativeBonusSpawn';
 import { boostAcceleration, consumeBoostProgress } from './nativeBoost';
 import { activatePower, hasPower, activePowers, stepPowerEffects } from './powerEffects';
@@ -143,7 +144,9 @@ export class Game {
   private rewardRng=new SeededRandom(2);
   private bonusDirector=new BonusSpawnDirector(new SeededRandom(1));
   private generatedBonuses:Array<{distance:number;kind:string;lane:number;collected:boolean}>=[];
-  private readonly referenceReplay=new URLSearchParams(window.location.search).get('route')==='reference';
+  private get referenceReplay():boolean {return new URLSearchParams(window.location.search).get('route')==='reference';}
+  private courseCoinIndex=0;
+  private longGapFallbacks:number[]=[];
   private difficulty: DifficultyConfig = getDifficulty();
   private lastObstacleDistance = 0;
   private lastObstacleSide = 0;
@@ -402,6 +405,7 @@ export class Game {
     const primary = effects.find(effect=>effect.kind===power.kind)??effects[0];
     return {
       phase: mutateUi.phase,
+      course: activeCourse()?{extent:activeCourse()!.extent,surfaces:activeCourse()!.surfaces.map(s=>({...s})),features:activeCourse()!.features.map(f=>({...f})),branches:activeCourse()!.branches.map(b=>({...b})),narrows:activeCourse()!.narrows.map(n=>({...n})),longGapFallbacks:[...this.longGapFallbacks]}:null,
       generation: {seed:this.runSeed,nextBonusCheck:this.bonusDirector.next,lastBonus:this.bonusDirector.last,bonuses:[...this.generatedBonuses]},
       boost: {...power.boost},
       powers: effects,
@@ -430,6 +434,8 @@ export class Game {
       queuedForwardForce:this.nativeForwardForce,
       swipeStumbleDelay:this.nativeSwipeStumbleDelay,
       side:this.world.require(this.runnerEntity,Lane).x,
+      position:this.runnerGroup.position.toArray(),
+      activeBranch:this.sideBranch,
       nextTurn: turn.next,
       turnDirection: turn.direction,
       turnQueued: turn.queued,
@@ -551,6 +557,9 @@ export class Game {
     this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
     this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765));
     this.generatedBonuses=[];
+    setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed):null);
+    this.courseCoinIndex=0;this.longGapFallbacks=[];
+    if(activeCourse())this.nextSpawn=Infinity;
     this.deathTimer = 0;this.deathElapsed=0;
     this.hintCooldown = 0;
     this.narrowWarned = false;
@@ -721,6 +730,7 @@ export class Game {
 
   /** One deterministic simulation step (also used by the regression bot). */
   tick(dt: number): void {
+    activeCourse()?.ensureThrough(this.distance+2000);
     // Advance the ECS clock: gameplay timers (invincibility, powers, jump windows) all read
     // world.elapsed, so without this the whole run freezes at t=0.
     if(this.difficulty.name==='classic')this.nativeRunClock=stepNativeRunClock(this.nativeRunClock,dt);
@@ -868,7 +878,7 @@ export class Game {
       sfx.play('whoosh', { gain: 0.8 });
       if(this.referenceReplay&&this.difficulty.name==='classic')for(const pickup of referencePickupsForTurn(turn.count,turn.next))
         this.spawnPickup(pickup.kind,pickup.lane,pickup.distance,pickup.height);
-      const recordedCoins=this.difficulty.name==='classic' ? referenceCoinsForTurn(turn.count,turn.next) : null;
+      const recordedCoins=this.difficulty.name==='classic'&&(!activeCourse()||turn.count<3) ? referenceCoinsForTurn(turn.count,turn.next) : null;
       if(recordedCoins) {
         for(const coin of recordedCoins)this.spawnCoin(coin.lane,coin.distance,coin.height);
       } else {
@@ -931,7 +941,7 @@ export class Game {
   private nativeGroundSupported(distance:number,side:number,laneIndex:number):boolean {
     if(!nativeTransitionSupported(distance))return false;
     const branch=this.sidePathAt(distance,this.path);
-    if(branch&&laneIndex===1)return false;
+    if(branch&&!this.sideFork&&Math.abs(side)<.55)return false;
     const narrow=branch?null:this.narrowAt(distance,this.path);
     if(narrow&&offNarrowSurface(narrow.side,side))return false;
     for(const entity of this.obstacles){
@@ -1097,29 +1107,23 @@ export class Game {
       this.narrowWarned = false;
     }
     const side = this.sidePathAt(trackPos.distance, this.path);
-    if (side && !this.sideFork && lane.index !== 1) {
+    if (side && !this.sideFork && Math.abs(lane.x)>.65) {
       // Enter a real lateral branch: both branches are parallel paths with their own
       // active distance; the player's lane chooses which one drives camera/obstacles.
       this.basePath = this.path.clone();
-      this.sideFork = this.graph.forkLateral(side.from, 1.9);
-      this.sideBranch = lane.index === 0 ? 'left' : 'right';
+      this.sideFork = this.graph.forkLateral(side.from, 1.9,side.to);
+      this.sideBranch = lane.x<0 ? 'left' : 'right';
       this.graph.choose(this.sideFork, this.sideBranch);
+      lane.index=1; // Once on the chosen road, its centre is a normal safe lane.
       sfx.play('branchChime');
       this.rebuildTilesAhead();
-    } else if (side && this.sideFork && lane.index !== 1) {
-      const wanted = lane.index === 0 ? 'left' : 'right';
-      if (wanted !== this.sideBranch) {
-        this.sideBranch = wanted;
-        this.graph.choose(this.sideFork, wanted);
-        this.rebuildTilesAhead();
-      }
     }
     if (side) {
       if (!this.sideWarned) {
         this.sideWarned = true;
-        setHint('左右分路 · 选一边！');
+        setHint(this.sideBranch?`已选择${this.sideBranch==='left'?'左':'右'}侧分路`:'左右分路 · 选一边！');
       }
-      if (!nativeMotion && !invisible && lane.index === 1) {
+      if (!nativeMotion && !invisible && !this.sideFork && Math.abs(lane.x)<.55) {
         this.die('踩空坠下分路缺口', this.difficulty.name==='classic'?'water':'fall');
         return;
       }
@@ -1129,6 +1133,7 @@ export class Game {
         this.sideFork = null;
         this.sideBranch = null;
         if (this.basePath) this.graph.merge(this.basePath);
+        setHint('分路已合流');
         this.basePath = null;
         this.rebuildTilesAhead();
       }
@@ -1165,10 +1170,14 @@ export class Game {
   }
 
   private narrowAt(distance: number, path = this.path): ReturnType<typeof narrowAt> {
+    const course=activeCourse();
+    if(course){const section=course.narrows.find(n=>distance>=n.from&&distance<n.to);return section?{...section,safe:section.side==='left'?[0]:[2],startIdx:Math.round((section.from+6)/TILE)}:null;}
     return this.difficulty.name==='classic' && referenceFullWidthAt(distance) ? null : narrowAt(distance,path);
   }
 
   private sidePathAt(distance: number, path = this.path): ReturnType<typeof sidePathAt> {
+    const course=activeCourse();
+    if(course){const section=course.branches.find(b=>distance>=b.from&&distance<b.to);return section?{...section,safe:[0,2],startIdx:Math.round((section.from+6)/TILE),first:distance<section.from+12,last:distance>=section.to-12}:null;}
     return this.difficulty.name==='classic' && referenceFullWidthAt(distance) ? null : sidePathAt(distance,path);
   }
 
@@ -1249,6 +1258,8 @@ export class Game {
         const cut=tJunctionApproachCut(distance,at)??tJunctionExitCut(distance,at);if(cut)cuts.push(cut);
       }
     }
+    const side=this.sidePathAt(distance);
+    if(side&&!this.sideFork){const span=[distance-side.to,distance-side.from] as const;cuts.push(['x',-.55,.55,span]);}
     const narrow = group.userData.narrowSection as ReturnType<typeof narrowAt>;
     if (narrow) {
       const span = [distance - narrow.to, distance - narrow.from] as const;
@@ -1429,11 +1440,11 @@ export class Game {
       const surface = surfaceAt(distance);
       const terrain = terrainAt(distance, this.path);
       const side = this.sidePathAt(distance, this.path) ?? this.sidePathAt(distance + TILE * 0.5, this.path);
-      const narrow = side ? null : this.narrowAt(distance, this.path) ?? this.narrowAt(distance + TILE * 0.5, this.path);
+      const narrow = activeCourse()||side ? null : this.narrowAt(distance, this.path) ?? this.narrowAt(distance + TILE * 0.5, this.path);
       const clearScenery = this.path.nearTurn(distance, 26);
       const transition=this.difficulty.name==='classic'?nativeTransitionAt(distance):null;
       const template=transition==='a'?this.bundle.assets.transitionA:transition==='b'?this.bundle.assets.transitionB:null;
-      const group = template?template.clone(true):this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateral : 0);
+      const group = template?template.clone(true):this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateralAt(distance) : 0);
       if(template){group.name='native-transition-'+transition;group.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});}
       const point = this.path.at(distance);
       group.position.set(point.x, this.meshY(distance), point.z);
@@ -1465,13 +1476,21 @@ export class Game {
 
   private spawnWaves(): void {
     if(this.difficulty.name === 'classic') {
-      while(this.referenceObstacleIndex<REFERENCE_VISIBLE_OBSTACLES.length) {
-        const recorded=REFERENCE_VISIBLE_OBSTACLES[this.referenceObstacleIndex];
+      const records=activeCourse()?.obstacles??REFERENCE_VISIBLE_OBSTACLES;
+      while(this.referenceObstacleIndex<records.length) {
+        const recorded=records[this.referenceObstacleIndex];
         if(recorded.distance>=this.distance+95)break;
         this.referenceObstacleIndex++;
         // Debug jumps must not reinsert a recorded obstacle far behind the actor.
         if(recorded.distance<this.distance-10)continue;
-        this.spawnDef(DEFS[recorded.defId],1,recorded.distance,recorded.prefab);
+        const lane='lane' in recorded?recorded.lane??1:1;
+        if(activeCourse()&&recorded.defId==='pitLongB'){
+          const boost=this.world.require(this.runnerEntity,Power).boost;
+          if(Math.min(this.speed,boost.active?boost.speedBefore:this.speed)<33){
+            this.spawnDef(DEFS.pit,1,recorded.distance,'pit');this.referenceObstacleIndex++;this.longGapFallbacks.push(recorded.distance);continue;
+          }
+        }
+        this.spawnDef(DEFS[recorded.defId],lane,recorded.distance,recorded.prefab);
       }
     }
     while (this.nextSpawn < this.distance + 95) {
@@ -1515,6 +1534,18 @@ export class Game {
       }
       if (this.obstacleRng.next() > 0.86) this.spawnGem(this.obstacleRng.int(3), base + 24);
       this.nextSpawn = base + plan.gap;
+    }
+    const course=activeCourse();
+    if(course)while(this.courseCoinIndex<course.features.length){
+      const feature=course.features[this.courseCoinIndex];const mid=12*Math.round((feature.from+feature.to)/24);
+      if(mid-28>=this.distance+90)break;
+      this.courseCoinIndex++;
+      if(mid<this.distance-10)continue;
+      const narrow=course.narrows.find(n=>mid>=n.from&&mid<n.to);
+      const pedestal=course.obstacles.find(o=>o.defId==='stonePedestal'&&o.distance===mid);
+      const lane=narrow?(narrow.side==='left'?0:2):feature.kind==='branch'?this.obstacleRng.pick([0,2]):pedestal?((pedestal.lane??1)+1)%3:1;
+      for(let i=0;i<MAX_COINS_PER_RUN;i++)this.spawnCoin(lane,mid-36+i*2,COIN_Y);
+      if(this.obstacleRng.next()>.86)this.spawnGem(lane,feature.from+36);
     }
     if(this.referenceReplay){
     while (this.nextPickup < this.distance + 90) {
@@ -2259,7 +2290,8 @@ export class Game {
     }
     this.obstacles = [];
     this.pickups = [];
-    this.nextSpawn = this.difficulty.name==='classic' ? Math.max(distance+90,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+90;
+    this.nextSpawn = activeCourse()?Infinity:this.difficulty.name==='classic' ? Math.max(distance+90,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+90;
+    this.courseCoinIndex=activeCourse()?.features.findIndex(f=>f.to>distance)??0;
     this.referenceObstacleIndex = 0;
     this.nextPickup = this.difficulty.name==='classic' ? Math.max(distance+MIN_BONUS_ITEM_SPACING,REFERENCE_RANDOM_OBSTACLES_FROM) : distance+MIN_BONUS_ITEM_SPACING;
     this.bonusDirector.skipTo(distance);
