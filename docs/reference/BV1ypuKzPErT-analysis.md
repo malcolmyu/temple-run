@@ -1656,3 +1656,12 @@ Tested near tree1 plus farther tree3 at additional12/24m, same world orientation
 Production code path (without preview replacement) captured source24/25 under explicitly temporary T501/pit468 diagnostic geometry, saved third-turn-native-cluster-comparison.png and inspected. These show coherent shape/parallax with native tree1/3; tree placement/camera lateral offsets, fog/other missing background trees and route absolute coordinates still differ. No claim of full-frame alignment. Thirdturn production center remains489 and firstpit453 pending their separate fit; do not conflate conditional capture with current full source trajectory.
 
 Scenery-tree test verifies cluster metadata and custom/unreviewed isolation; typecheck/build pass with existing warnings. Temporary preview method supports variants/resources/yaw/secondary solely for QA, all reset by reload. Exact original storage restored, menu verified/retained. Full input/route/final score/scenery/lighting/pose/alternate opening remain incomplete.
+
+
+## Round134：金币奖励经过但未拾取，不能以消失判成功
+
+正常播放器33–42秒观察，[审计](BV1ypuKzPErT/continuous134/audit.json)只有10次解码回调、5张实际媒体时间帧（33.001/34.869/37.405/39.808/42.377）；目标每0.25秒采样但实际帧呈现间隔很大，不写成密集逐帧过程，也不补伪帧。视频296×640，画内计时比mediaTime约少2秒，不能混用。
+
+37.405秒可见黄色圆形金币奖励图标，39.808秒已经经过而金币栏仍0；原逐秒036–038图也支持此关系。短片是纯跑示范，不能把物体不再在前方当拾取，不能将该经过声称为即时入账的实际演示。当前高位道具必须与实际角色高度/球体接触才取得的规则符合这个现象；不是必须调整路线使该物品一定收集。
+
+原StartCoinBonus→AddCoins的即时奖励、独立BonusItem.Value→AddScore已有代码来源，视频缺少拾取不能推翻或补造持续倍率。当前native-pickup碰撞、高位道具站立/跳跃与native-power专项通过；本轮未新增网页实际试玩。不能把参考片段每种道具都完整取得作为用户没有提出的新交付门槛。

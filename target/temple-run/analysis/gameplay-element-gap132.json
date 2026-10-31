@@ -1,0 +1,15 @@
+{
+  "element": "shield safety net on missing half of narrow road",
+  "referenceFrames": [
+    "455.643",
+    "465.310",
+    "474.110",
+    "475.076"
+  ],
+  "observed": "blue translucent surface over missing road, then normal actor appearance",
+  "currentSource": "game.ts safety net render loop checks isGapKind = gap or gapLong; narrow spans use independent course.narrows and tile geometry",
+  "status": "RETRACTED by Round133 runtime evidence: narrow obstacles already kind gap and show nets",
+  "sourceBoundary": "video appearance and existing native SafetyNet atlas; exactvideo state/duration and net placement rules not proved",
+  "nextValidation": [],
+  "correctionEvidence": "gameplay-narrow-net133.json"
+}

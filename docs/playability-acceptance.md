@@ -80,3 +80,7 @@
 ## 滑动即时响应（Round131）
 
 [25项可信触摸与自然转角回归](../target/temple-run/analysis/gameplay-gesture-move131.json)先复现移动160px仍未换道、松手才执行，再修为pointermove越18px立即执行。左右/上下4方向均在松手前响应，左右角/T两臂在按住中预备并完成，release不重复；取消前未识别会丢弃，已执行动作不撤回。原15输入与43模态、23组核心/类型/构建通过。18 CSS px、单次手势与tap跳为网页策略；原TouchMoved触发阶段有静态来源。Round128取消回归属于旧release阶段，当前语义以本轮为准。[未松手的预备提示截图](../target/temple-run/analysis/gameplay-gesture-move131.png)。仍不是实体手机手感证明。
+
+## 窄路保护网已有覆盖（Round133）
+
+[11项运行检查](../target/temple-run/analysis/gameplay-narrow-net133.json)推翻Round132静态缺口推断：窄路本体/帽实际发布为gap障碍，原网面循环已覆盖。自然seed1左12m/右36m、诊断shield激活后缺失侧通过，效果自然到期仍playing并隐藏网；仅magnet无网且错侧死亡，实际重开隐藏网并清道具。[现有网面截图](../target/temple-run/analysis/gameplay-narrow-net133-before.png)。不是新修复，不是自然道具拾取/真机证明，也不扩为本轮48/60m覆盖。safety-net专项通过。
