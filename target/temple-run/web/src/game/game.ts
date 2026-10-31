@@ -70,7 +70,7 @@ import {
 import { createWorld, buildTile, buildStoneGate, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
-import { surfaceAt, type SurfaceKind } from './surface';
+import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, type SurfaceKind } from './surface';
 import { sidePathAt } from './sidePath';
 import { getDifficulty, type DifficultyConfig } from './difficulty';
 import { recordRun, resetHud, setHint, showMilestone, setPhase, setSkin, syncBanks, mutableUi as mutateUi } from './state';
@@ -165,6 +165,10 @@ export class Game {
   private nativeCameraShakeOffset:[number,number,number]=[0,0,0];
   private nativeTimeSinceStumble = NATIVE_STUMBLE_RESET_AGE;
   private nativeFalling=false;
+  private nativeGroundHeight=0;
+  private nativeEnemyGroundHeight=0;
+  private groundY(distance=this.distance):number { return this.difficulty.name==='classic'?nativeGroundHeightAt(distance):0; }
+  private meshY(distance:number):number { return this.difficulty.name==='classic'?nativeMeshHeightAt(distance):0; }
   private nativeSpawnPending=true;
   private nativeForwardForce=0;
   private nativeTiltTargetX=0;
@@ -281,7 +285,7 @@ export class Game {
         const lane=this.world.require(this.runnerEntity,Lane),jump=this.world.require(this.runnerEntity,Jump);
         const point=this.path.at(this.distance,lane.x,true),pose=followCameraPose(this.needsToDuckCamera,jump.airborne,jump.y);
         const back=followCameraBack(point,pose.behind);
-        this.cameraPos.set(back.x,pose.height,back.z);this.updateCamera(0);this.renderOnce();
+        this.cameraPos.set(back.x,pose.height+this.groundY(),back.z);this.updateCamera(0);this.renderOnce();
       },
       cameraDetails: () => ({ position:this.cameraPos.toArray(), look: this.cameraLook.toArray(), forward: this.bundle.camera.getWorldDirection(new THREE.Vector3()).toArray(), runnerNdc: this.runnerGroup.position.clone().project(this.bundle.camera).toArray(), waterPosition: this.bundle.scene.getObjectByName('reference-water')?.position.toArray(), needsToDuckCamera:this.needsToDuckCamera,clip:{near:this.bundle.camera.near,far:this.bundle.camera.far},shake:this.nativeCameraShake,shakeOffset:this.nativeCameraShakeOffset,rightY:this.bundle.camera.matrixWorld.elements[1] }),
       entranceSample: (pixelY = 480) => {
@@ -359,6 +363,8 @@ export class Game {
       gems: stats.gems,
       lane: this.world.require(this.runnerEntity, Lane).index,
       jumpY: jump.y,
+      groundY:this.groundY(),
+      worldY:jump.y+this.groundY(),
       jumpVelocity:jump.v,
       airborne:jump.airborne,
       sliding: slide.remaining,
@@ -437,7 +443,7 @@ export class Game {
     this.nativeRunClock = 0;
     this.needsToDuckCamera = false;this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];
     this.nativeTimeSinceStumble = NATIVE_STUMBLE_RESET_AGE;
-    this.nativeFalling=false;this.nativeForwardForce=0;this.nativeSpawnPending=true;
+    this.nativeFalling=false;this.nativeGroundHeight=0;this.nativeEnemyGroundHeight=0;this.nativeForwardForce=0;this.nativeSpawnPending=true;
     this.nativeTiltTargetX=0;this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
     this.nativeStumbleElapsed=0;this.nativeStumbleSeconds=0;this.nativeStumbleRemaining=0;this.stumbleAnimation=null;
     this.nativeEnemyGap = 0;
@@ -968,12 +974,20 @@ export class Game {
 
     const jump = this.world.require(this.runnerEntity, Jump);
     if(nativeMotion){
+      const ground=this.groundY();
+      if(ground!==this.nativeGroundHeight) {
+        jump.y+=this.nativeGroundHeight-ground;
+        if(ground>this.nativeGroundHeight&&!this.nativeFalling&&jump.y<=0) {
+          jump.y=0;jump.v=0;jump.airborne=false;
+        }
+        this.nativeGroundHeight=ground;
+      }
       const supported=invisible||boost||this.world.elapsed<this.invincibleUntil
         ||this.nativeGroundSupported(trackPos.distance,lane.x,lane.index);
-      if(jump.airborne||this.nativeFalling||!supported){
+      if(jump.airborne||jump.y!==0||this.nativeFalling||!supported){
         const wasFalling=this.nativeFalling;
         Object.assign(jump,stepNativeVertical(jump.y,jump.v,dt));
-        const contact=nativeGroundContact(jump.y,supported,wasFalling);
+        const contact=nativeGroundContact(jump.y,supported,wasFalling,this.nativeGroundHeight);
         if(contact.dead){this.die(contact.deathType===1?'掉进了水里':'撞到了断崖',contact.deathType===1?'water':'fall');if(contact.deathType===4)this.nativeCameraShake=startNativeCameraShake(1,1);return;}
         if(contact.landed){
           jump.y=0;jump.v=0;jump.airborne=false;this.nativeFalling=false;
@@ -1262,7 +1276,7 @@ export class Game {
     }
     const point = this.path.at(at);
     const heading = this.path.at(Math.max(0, at - 0.05)).heading;
-    group.position.set(point.x, 0, point.z);
+    group.position.set(point.x, this.meshY(at), point.z);
     group.rotation.y = heading;
     return group;
   }
@@ -1317,6 +1331,9 @@ export class Game {
     const to = Math.floor((this.distance + 130) / TILE);
     for (let index = from; index <= to; index++) {
       const distance = index * TILE;
+      // The native Temple root occupies origin; regular straight meshes begin
+      // with the next 12m cell. A duplicate cell0 clips its sloping dark mouth.
+      if(this.difficulty.name==='classic'&&index<=0)continue;
       // A 12 m tile that straddles a corner cannot be rotated to both headings: its walls
       // cut across the other leg. Drop it and let the road-width corner fill the gap.
       const crossesTurn = this.path.segments.some((segment, segmentIndex) => segmentIndex > 0 && Math.abs(segment.start - distance) < TILE / 2 - 0.01);
@@ -1342,7 +1359,7 @@ export class Game {
       const clearScenery = this.path.nearTurn(distance, 26);
       const group = this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateral : 0);
       const point = this.path.at(distance);
-      group.position.set(point.x, 0, point.z);
+      group.position.set(point.x, this.meshY(distance), point.z);
       group.rotation.y = point.heading;
       this.cutTileSurface(group, distance);
       this.bundle.scene.add(group);
@@ -1506,7 +1523,7 @@ export class Game {
     this.monkeyTimer -= dt;
     const side = LANES[1] + Math.sin(this.world.elapsed * 2.4) * 1.4;
     const point = this.path.at(this.distance + 2.5, side, true);
-    this.monkeyGroup.position.set(point.x, 0, point.z);
+    this.monkeyGroup.position.set(point.x, this.groundY(this.distance+2.5), point.z);
     this.monkeyGroup.rotation.y = point.heading;
     this.monkeyGroup.scale.setScalar(1 + Math.sin(this.world.elapsed * 9) * 0.03);
     if (this.monkeyTimer <= 0) {
@@ -1596,7 +1613,7 @@ export class Game {
         if(def.id==='flameTower')updateNativeFlame(obstacle.object,this.world.elapsed);
         const x = def.lanes === 'one' ? LANES[obstacle.lane] : 0;
         const point = this.path.at(obstacle.distance, x);
-        obstacle.object.position.set(point.x, 0, point.z);
+        obstacle.object.position.set(point.x, this.meshY(obstacle.distance), point.z);
         obstacle.object.rotation.y = point.heading;
         if ((def.kind === 'gap' || def.kind === 'gapLong') && !obstacle.warned && ahead > 3.5 && ahead < 12) {
           obstacle.warned = true;
@@ -1615,7 +1632,7 @@ export class Game {
             laneIndex: lane.index,
             side: lane.x,
             prevSide: this.lastObstacleSide,
-            jumpY: jump.y,
+            jumpY: jump.y+this.groundY()-this.groundY(obstacle.distance),
             jumpV: jump.v,
             slideRemaining: slide.remaining,
             lastJumpAt: jump.lastJumpAt,
@@ -1724,7 +1741,7 @@ export class Game {
       const pickupY=nativeCoin?pickup.baseY:pickupHeightAt(pickup.baseY,this.world.elapsed,pickup.distance);
       if (pickup.object) {
         const point = this.path.at(pickup.distance, LANES[pickup.lane]);
-        pickup.object.position.set(point.x, pickupY, point.z);
+        pickup.object.position.set(point.x, pickupY+this.groundY(pickup.distance), point.z);
         pickup.object.rotation.y = nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
         if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed);
       }
@@ -1732,7 +1749,7 @@ export class Game {
       const magnet = power.kind === 'magnet' && this.world.elapsed < power.until;
       const nativeReach=this.difficulty.name==='classic'&&!magnet&&pickup.kind!=='gem';
       const close = nativeReach
-        ? nativePickupWithinReach(pickup.kind,pickup.value,LANES[pickup.lane]-laneXNow,pickupY-jump.y,ahead)
+        ? nativePickupWithinReach(pickup.kind,pickup.value,LANES[pickup.lane]-laneXNow,pickupY+this.groundY(pickup.distance)-jump.y-this.groundY(),ahead)
         : Math.abs(ahead) < (magnet ? 9 : 1.4) && Math.abs(laneXNow - LANES[pickup.lane]) < (magnet ? 9 : 0.55);
       const heightClose = nativeReach || pickup.kind !== 'coin' || coinHeightWithinReach(
         pickupY, jump.y, slide.remaining>0, magnet,
@@ -1848,12 +1865,12 @@ export class Game {
       this.cameraPos.set(pose.x, intro.height, pose.z);
       this.cameraLook.set(target.x, intro.lookHeight, target.z);
     } else if (this.difficulty.name === 'classic') {
-      const next=stepNativeFollowCamera(this.cameraPos.toArray(),[back.x,follow.height,back.z],
+      const next=stepNativeFollowCamera(this.cameraPos.toArray(),[back.x,follow.height+this.groundY(),back.z],
         mutateUi.phase==='dying'||mutateUi.phase==='ended'?0:Math.hypot(this.speed,jump.v),dt);
       this.cameraPos.set(...next);
       // Native focus transform copies the player's full position each frame,
       // then replaces Y with GroundHeight+FocusHeight; no independent look lag.
-      this.cameraLook.set(ahead.x,follow.focusHeight,ahead.z);
+      this.cameraLook.set(ahead.x,follow.focusHeight+this.groundY(),ahead.z);
     } else {
       this.cameraPos.lerp(new THREE.Vector3(back.x, follow.height, back.z), 1 - Math.exp(-8 * dt));
       this.cameraLook.lerp(new THREE.Vector3(ahead.x, follow.focusHeight, ahead.z), 1 - Math.exp(-10 * dt));
@@ -1903,7 +1920,7 @@ export class Game {
     const lane = this.world.require(this.runnerEntity, Lane);
     trackPos.side = lane.x;
     const point = this.path.at(trackPos.distance, lane.x, true);
-    this.runnerGroup.position.set(point.x, 0, point.z);
+    this.runnerGroup.position.set(point.x, this.groundY()+this.world.require(this.runnerEntity,Jump).y, point.z);
     this.runnerGroup.rotation.y = point.heading;
   }
 
@@ -1913,7 +1930,7 @@ export class Game {
     const jump = this.world.require(this.runnerEntity, Jump);
     const slide = this.world.require(this.runnerEntity, Slide);
     this.syncRunnerObject();
-    this.runnerGroup.position.y = jump.y;
+    this.runnerGroup.position.y = this.groundY()+jump.y;
     this.runnerGroup.scale.set(1, 1, 1);
     const shield = this.world.require(this.runnerEntity, Power);
     const invisible = shield.kind === 'shield' && this.world.elapsed < shield.until;
@@ -1937,7 +1954,7 @@ export class Game {
             this.bundle.scene.add(net);
           }
           const ground = this.path.at(obstacle.distance, 0, true);
-          net.position.set(ground.x, -.2, ground.z);
+          net.position.set(ground.x, this.groundY(obstacle.distance)-.2, ground.z);
           net.rotation.set(-Math.PI / 2, 0, ground.heading);
           net.visible = true;
         }
@@ -1974,7 +1991,11 @@ export class Game {
     // SimulateEnemies1271a4c skips placement when CharacterPlayer.IsFalling.
     // Enemy.Update still advances its own vertical motion/animation.
     if(this.difficulty.name!=='classic'||!this.nativeFalling) {
-      this.chaserGroup.position.set(chaserPos.x, 0, chaserPos.z);
+      const ground=this.groundY();
+      const delta=this.nativeEnemyGroundHeight-ground;
+      if(delta!==0)for(const state of this.enemyJumps){state.y+=delta;if(delta<0&&!state.jumping&&state.y<0){state.y=0;state.v=0;}}
+      this.nativeEnemyGroundHeight=ground;
+      this.chaserGroup.position.set(chaserPos.x, ground, chaserPos.z);
       this.chaserGroup.rotation.y = chaserPos.heading;
     }
     this.chaserGroup.scale.setScalar(this.difficulty.name==='classic'?1:1 + (chase.lunge > 0 ? 0.12 : 0));
@@ -1996,7 +2017,7 @@ export class Game {
       const obstacle = this.world.require(entity, Obstacle);
       if (obstacle.object) {
         const point = this.path.at(obstacle.distance, obstacle.full ? 0 : LANES[obstacle.lane]);
-        obstacle.object.position.set(point.x, 0, point.z);
+        obstacle.object.position.set(point.x, this.meshY(obstacle.distance), point.z);
         obstacle.object.rotation.y = point.heading;
       }
     }
@@ -2005,7 +2026,7 @@ export class Game {
       if (!pickup.object) continue;
       const point = this.path.at(pickup.distance, LANES[pickup.lane]);
       const nativeCoin=this.difficulty.name==='classic'&&pickup.kind==='coin';
-      pickup.object.position.set(point.x,nativeCoin?pickup.baseY:pickupHeightAt(pickup.baseY,this.world.elapsed,pickup.distance),point.z);
+      pickup.object.position.set(point.x,this.groundY(pickup.distance)+(nativeCoin?pickup.baseY:pickupHeightAt(pickup.baseY,this.world.elapsed,pickup.distance)),point.z);
       pickup.object.rotation.y=nativeCoin?nativeCoinYaw(point.heading,this.world.elapsed-pickup.object.userData.nativeCoinSpawnTime):point.heading+this.world.elapsed*2.4;
         if(pickup.kind!=='coin' && pickup.kind!=='gem')updateNativePower(pickup.object,this.world.elapsed);
     }
@@ -2097,7 +2118,7 @@ export class Game {
       lane.index = narrow.side === 'left' ? 0 : 2;
       lane.x = laneX(lane.index);
     }
-    this.nativeFalling=false;this.nativeForwardForce=0;this.nativeSpawnPending=true;this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
+    this.nativeFalling=false;this.nativeGroundHeight=0;this.nativeEnemyGroundHeight=0;this.nativeForwardForce=0;this.nativeSpawnPending=true;this.nativeCameraShake=null;this.nativeCameraShakeOffset=[0,0,0];this.nativeSwipeStumbleDelay=null;this.nativeSwipeOffset=null;
     Object.assign(this.world.require(this.runnerEntity,Jump),{y:0,v:0,airborne:false});
     this.invincibleUntil = this.world.elapsed + 3;
     this.deathTimer = 0;this.deathElapsed=0;
@@ -2114,6 +2135,9 @@ export class Game {
     const trackPos = this.world.require(this.runnerEntity, TrackPos);
     const lane = this.world.require(this.runnerEntity, Lane);
     trackPos.distance = distance;
+    this.nativeGroundHeight=this.groundY(distance);
+    this.nativeEnemyGroundHeight=this.nativeGroundHeight;
+    for(const state of this.enemyJumps)Object.assign(state,{y:0,v:0,delay:null,jumping:false});
     trackPos.side = lane.x;
     const turn = this.world.require(this.runnerEntity, Turn);
     turn.next = 9 + 12 * Math.max(1, Math.round((distance + 60) / 12));

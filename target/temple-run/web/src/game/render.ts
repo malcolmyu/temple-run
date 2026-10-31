@@ -38,6 +38,8 @@ export interface Assets {
   roadTile: THREE.Group | null;
   wall: THREE.Group | null;
   corner?: THREE.Group | null;
+  stoneCornerLeft?: THREE.Group | null;
+  stoneCornerRight?: THREE.Group | null;
   tJunction?: THREE.Group | null;
   plankTJunction?: THREE.Group | null;
   coin?: THREE.Group | null;
@@ -75,7 +77,7 @@ const loadTexture = (url: string): Promise<THREE.Texture> =>
     );
   });
 
-const lightmappedMeshes = new Set(['temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
+const lightmappedMeshes = new Set(['stone-turn-a', 'stone-turn-b', 'temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
 const loadObj = async (url: string): Promise<THREE.Group | null> => {
   try {
     const response=await fetch(url);
@@ -221,7 +223,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     water: new THREE.MeshBasicMaterial({ color: 0x0b2b27, transparent: true, opacity: 0.72 }),
   };
 
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
     loadObj(`${BASE}assets/track/decor-tree-a.obj`),
@@ -237,6 +239,8 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadObj(`${BASE}assets/track/coin-blue.obj`),
     loadObj(`${BASE}assets/track/temple-t-junction.obj`),
     loadObj(`${BASE}assets/track/plank-t-junction.obj`),
+    loadObj(`${BASE}assets/track/stone-turn-a.obj`),
+    loadObj(`${BASE}assets/track/stone-turn-b.obj`),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;
@@ -347,6 +351,8 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       roadTile: paint(roadTile, nativeRoadMaterial, false),
       wall: paint(wallTemplate, nativeRoadMaterial, true),
       corner: paint(cornerMesh, nativeRoadMaterial, true),
+      stoneCornerLeft: paint(stoneCornerLeft, nativeRoadMaterial, true),
+      stoneCornerRight: paint(stoneCornerRight, nativeRoadMaterial, true),
       tJunction: paint(tJunction, nativeRoadMaterial, true),
       plankTJunction: paint(plankTJunction, nativeRoadMaterial, true),
       plankCorner: paint(plankCorner, nativeRoadMaterial, true),
@@ -363,7 +369,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   };
 }
 
-const ROAD_TILE_LIFT = 1.36;
+const ROAD_TILE_Y = 0; // Full native prefab TRS already places the road floor.
 const WALL_SCALE = 0.2;
 const WALL_X = 4.0;
 const LOW_WALL_SINK = -6.0;
@@ -735,8 +741,9 @@ export function buildTile(
   if (surface === 'stone' && assets.roadTile) {
     const road = assets.roadTile.clone(true);
     road.traverse(part => { if ((part as THREE.Mesh).isMesh) part.userData.walkableSurface = true; });
-    road.position.y = ROAD_TILE_LIFT;
-    road.scale.x = 0.84;
+    road.position.y = ROAD_TILE_Y;
+    // Native straight prefab TRS has unit scale; keep its 4m floor width.
+    road.scale.x = 1;
     group.add(road);
   } else if (surface === 'stone') {
     const slab = new THREE.Mesh(new THREE.BoxGeometry(7.0, 0.65, TILE + 0.1), lightsMaterial());
@@ -819,6 +826,29 @@ export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath
   const heading = path.at(Math.max(0, at - 0.05)).heading;
   group.position.set(point.x, 0, point.z);
   group.rotation.y = heading;
+  const stoneCorner=direction<0?assets.stoneCornerLeft:assets.stoneCornerRight;
+  if(surface==='stone'&&stoneCorner&&assets.roadTile) {
+    const corner=stoneCorner.clone(true);
+    corner.name='native-stone-corner';
+    corner.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});
+    group.add(corner);
+    // Native corner arms end at6m. Preserve native straight triangles/UVs to
+    // connect to the current global road grid (whose turn phase is fitted).
+    for(const outgoing of [false,true]) {
+      const arm=assets.roadTile.clone(true);
+      arm.name='native-stone-connector';
+      arm.traverse(part=>{
+        const mesh=part as THREE.Mesh;if(!mesh.isMesh)return;
+        mesh.userData.walkableSurface=true;
+        const first=cutSurfaceGeometry(mesh.geometry,-100,-3);
+        const kept=cutSurfaceGeometry(first,3,100);first.dispose();mesh.geometry=kept;
+      });
+      arm.position.set(outgoing?direction*9:0,0,outgoing?0:9);
+      if(outgoing)arm.rotation.y=direction*Math.PI/2;
+      group.add(arm);
+    }
+    return group;
+  }
   if (surface === 'wood' && assets.plankCorner && assets.plankTile) {
     const corner = assets.plankCorner.clone(true);
     corner.rotation.y = Math.PI;
@@ -1138,7 +1168,7 @@ export function buildTJunction(assets: Assets, surface: SurfaceKind = 'stone'): 
       const first=cutSurfaceGeometry(mesh.geometry,-100,-1.52);
       mesh.geometry=cutSurfaceGeometry(first,1.52,100);first.dispose();mesh.userData.walkableSurface=true;
     });
-    arm.position.set(side*7.5,surface==='wood'?0:ROAD_TILE_LIFT,0);arm.rotation.y=side*Math.PI/2;arm.scale.x=surface==='wood'?1:.84;group.add(arm);
+    arm.position.set(side*7.5,surface==='wood'?0:ROAD_TILE_Y,0);arm.rotation.y=side*Math.PI/2;arm.scale.x=1;group.add(arm);
   }
   return group;
 }

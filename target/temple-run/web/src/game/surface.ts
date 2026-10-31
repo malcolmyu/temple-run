@@ -35,3 +35,8 @@ export function surfaceAt(distance: number): SurfaceSection {
     last: distance >= 0 && Number.isFinite(section.to) && section.to - distance <= 12,
   };
 }
+
+/** Region2D ground is raw0 for stone, raw-15 for plank. */
+export const nativeGroundHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3:0;
+/** Existing plank exports add raw15.25; undo that graphical normalization. */
+export const nativeMeshHeightAt=(distance:number):number=>surfaceAt(distance).kind==='wood'?-3.05:0;

@@ -9,7 +9,8 @@ assert.deepEqual(source.flags,{MustJumpOver:true,MustSlideUnder:true,DoesKill:tr
 const region=source.regions.find((r:any)=>r.pathID===15);
 assert.equal(region.height,-8);
 assert.deepEqual(DEFS.plankBeam.hitbox.z,[Math.min(...region.points.map((p:number[])=>p[1]))*.2,Math.max(...region.points.map((p:number[])=>p[1]))*.2]);
-assert.ok(Math.abs(DEFS.plankBeam.hitbox.y[1]-(region.height+15.25)*.2)<1e-8);
+const ground=JSON.parse(readFileSync('target/temple-run/analysis/transition-region-source.json','utf8')).plankStraight.regions[0].heightOriginalUnits;
+assert.ok(Math.abs(DEFS.plankBeam.hitbox.y[1]-(region.height-ground)*.2)<1e-8,'collision height is relative to native ground, not graphical deck normalization');
 const obstacle={def:DEFS.plankBeam,lane:1,distance:681};
 const runner={prevDistance:680.9,distance:681,laneIndex:1,side:0,jumpY:0,jumpV:0,slideRemaining:0,lastJumpAt:-10,lastSlideAt:-10,now:10,jumpWindow:1,slideWindow:.75};
 assert.equal(collisionWouldHit(obstacle,runner),true);

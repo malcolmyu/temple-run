@@ -55,7 +55,12 @@
     "temple:test:final-narrow": "esbuild tools/test-final-narrow-continuation.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-final-narrow-test.mjs >/dev/null && node /tmp/temple-final-narrow-test.mjs",
     "temple:test:enemy-jump": "esbuild tools/test-native-enemy-jump.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-enemy-jump-test.mjs >/dev/null && node /tmp/temple-enemy-jump-test.mjs",
     "temple:test:spawn-score": "esbuild tools/test-native-spawn-score.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-spawn-score-test.mjs >/dev/null && node /tmp/temple-spawn-score-test.mjs",
-    "temple:test:run-clock": "esbuild tools/test-native-run-clock.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-run-clock-test.mjs >/dev/null && node /tmp/temple-run-clock-test.mjs"
+    "temple:test:run-clock": "esbuild tools/test-native-run-clock.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-run-clock-test.mjs >/dev/null && node /tmp/temple-run-clock-test.mjs",
+    "temple:test:straight": "esbuild tools/test-native-straight.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-straight-test.mjs >/dev/null && node /tmp/temple-straight-test.mjs",
+    "temple:test:corner-assets": "esbuild tools/test-native-corner-assets.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-corner-assets-test.mjs >/dev/null && node /tmp/temple-corner-assets-test.mjs",
+    "temple:test:stone-junction": "esbuild tools/test-native-stone-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-native-stone-junction-test.mjs >/dev/null && node /tmp/temple-native-stone-junction-test.mjs",
+    "temple:test:ground-height-contact": "esbuild tools/test-native-ground-height-contact.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-ground-height-contact-test.mjs >/dev/null && node /tmp/temple-ground-height-contact-test.mjs",
+    "temple:test:terrain-heights": "esbuild tools/test-native-terrain-heights.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-terrain-heights-test.mjs >/dev/null && node /tmp/temple-terrain-heights-test.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

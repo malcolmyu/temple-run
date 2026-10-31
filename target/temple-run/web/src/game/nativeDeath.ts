@@ -10,14 +10,16 @@ export function stepNativeDeathTimer(elapsed:number,dt:number):{elapsed:number;f
  return {elapsed:next,finished:next>NATIVE_RESULT_DELAY};
 }
 
-/** Flat road: missing support alone is NOT the controller ledge condition.
+/** Ground-relative y; groundHeight supplies the world origin for water death.
+ * Missing support alone is NOT the controller ledge condition.
  * Returning below the supported ledge's recovery range kills as Ledge4.
  * Continued unsupported descent reaches the absolute water kill plane (Fall1).
  * The player Update checks absolute depth before the controller ledge branch. */
-export function nativeGroundContact(y:number,supported:boolean,wasFalling:boolean):{
+export function nativeGroundContact(y:number,supported:boolean,wasFalling:boolean,groundHeight=0):{
  landed:boolean;dead:boolean;stumble:boolean;deathType:1|4|null;
 } {
- const deathType=y < -NATIVE_WATER_FALL_DEPTH ? 1
+ // y remains relative to the current floor; water kill uses absolute world Y.
+ const deathType=y+groundHeight < -NATIVE_WATER_FALL_DEPTH ? 1
   : supported&&y < -NATIVE_LEDGE_RECOVERY_DEPTH ? 4 : null;
  const dead=deathType!==null;
  return {dead,deathType,landed:!dead&&supported&&y<=0,stumble:!dead&&supported&&wasFalling&&y<-.4};

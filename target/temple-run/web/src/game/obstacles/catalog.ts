@@ -92,7 +92,7 @@ export const DEFS = {
   },
   plankBeam: {
     id: 'plankBeam', kind: 'arch', action: 'slide', alternateAction: 'jump', strictActionTiming:true, lanes: 'all',
-    hitbox: box([-2,2], [1.45,1.45], [-.5,.5]), surfaceCut: [-6,6],
+    hitbox: box([-2,2], [1.4,1.4], [-.5,.5]), surfaceCut: [-6,6],
     kill: true, prefabs: ['plank-beam'], placement: 'straight', weight: 0,
     note: 'Native plank tower flags allow jump/slide and kill a collision; Region2D15 spans +/-2.5 source Z at height -8.',
   },

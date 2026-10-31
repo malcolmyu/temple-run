@@ -1,0 +1,41 @@
+{
+  "source": {
+    "path": "target/temple-run/analysis/reference-opening-exact/013.jpg",
+    "PTS": 2.703,
+    "area": 51925,
+    "bounds": [
+      47,
+      438,
+      329,
+      677
+    ],
+    "centroid": [
+      186.89126624939817,
+      560.7671256620125
+    ],
+    "SHA256": "503712091a872ad3937634d251c7207a989a3c3aa4e1030094468dfc0ed419ea"
+  },
+  "current": {
+    "path": "docs/screenshots/current-native-entry-floor.png",
+    "runElapsed": 1.0333330631256104,
+    "area": 49862,
+    "bounds": [
+      43,
+      428,
+      329,
+      658
+    ],
+    "centroid": [
+      186.82784485179096,
+      550.308972764831
+    ],
+    "SHA256": "8148c51ad53e44b6465207299cef09fe84c65f10906baab7613d5b33bf0cbb56"
+  },
+  "maskRule": "largest4-connected RGB max<35 in y390..709, same414x896 canvas",
+  "intersectionOverUnion": 0.865665896843726,
+  "limitations": [
+    "phase pairing uses first100, current is one60Hz frame after release",
+    "recording overlays retained; only dark aperture compared",
+    "threshold mask is a silhouette proxy, not full-image equality"
+  ]
+}

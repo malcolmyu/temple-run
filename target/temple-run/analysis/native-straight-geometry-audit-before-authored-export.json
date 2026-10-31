@@ -1,0 +1,18 @@
+{
+  "nativeSHA256": "2d71187d7291c01962a86601b52798e2f4ae4db85a1a2f285d7460c770af4575",
+  "currentSHA256": "83ef23c7660030ea71bcb39a5f5174c0547e8d422594847cfad6d04afdf524fb",
+  "vertices": 691,
+  "triangles": 402,
+  "comparison": "native - rotateY180(current + Y1.36)",
+  "coordinateRMS": 0.0033835781222611547,
+  "meanResidual": [
+    -0.001099053400868243,
+    -0.00496964625180906,
+    0.002905250998552817
+  ],
+  "maxUV0Difference": 3.0000000039720476e-08,
+  "reversedTriangleCount": 402,
+  "productionUV1": "expanded in current face order by export-native-lightmap.py; cannot keep it unchanged when replacing with full authored OBJ",
+  "runtimeAudit": "Instantiate12e1958 calls SetupTerrain12e1c18; no direct Transform rotation setter in these methods, nested prefab attachment/generator placement remains to verify",
+  "nextStep": "Use one export pipeline for authored vertices/normals/faces and expanded UV1, then verify surface orientation/lighting before production replacement"
+}

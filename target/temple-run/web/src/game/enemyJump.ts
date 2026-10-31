@@ -20,7 +20,7 @@ export function stepEnemyJump(state:EnemyJumpState,dt:number,held=false,speed=16
     state.delay=Math.fround(state.delay-Math.fround(dt));
     if(state.delay<=0&&!state.jumping){state.delay=null;state.jumping=true;state.v=nativeJumpVelocity(speed);}
   }
-  if(!state.jumping)return;
+  if(!state.jumping&&state.y===0)return;
   Object.assign(state,stepNativeVertical(state.y,state.v,dt));
   if(state.y<0){state.y=0;state.v=0;state.jumping=false;}
 }
