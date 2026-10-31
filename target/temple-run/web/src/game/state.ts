@@ -1,3 +1,4 @@
+import type {DeathCause,DeathKind} from './deathPresentation';
 import type { PowerPickupCounts } from './nativePowerPickups';
 import type {RunUtilitySummary} from './nativeUtilityObjectives';
 import type { RunChallengeSummary } from './nativeRunChallenges';
@@ -46,7 +47,8 @@ export interface HudState {
   hint: string;
   milestone: MilestoneState | null;
   deathReason: string;
-  deathKind: 'impact' | 'fall' | 'water' | 'caught' | 'missed' | '';
+  deathKind: DeathKind | '';
+  deathCause:DeathCause|'';
   fps: number;
   skin: string;
   bankCoins: number;
@@ -93,7 +95,7 @@ const defaults = (): HudState => ({
   hint: '',
   milestone: null,
   deathReason: '',
-  deathKind: '',
+  deathKind: '',deathCause:'',
   fps: 60,
   skin: progress.equipped,
   bankCoins: progress.coins,

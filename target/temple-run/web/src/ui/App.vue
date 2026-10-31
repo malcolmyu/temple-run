@@ -105,6 +105,7 @@ function dismissTutorial(): void {
         :multiplier="ui.scoreMultiplier"
         :reason="ui.deathReason"
         :kind="ui.deathKind"
+        :cause="ui.deathCause"
         :revive-available="ui.reviveAvailable"
         :revive-cost="ui.reviveCost"
         @restart="getGame()?.restart()"

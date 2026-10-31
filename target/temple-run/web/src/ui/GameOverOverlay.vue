@@ -1,19 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import {resultIllustration,type DeathCause,type DeathKind} from '../game/deathPresentation';
 import NativeResultNumber from './NativeResultNumber.vue';
 
-const props = defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; multiplier: number; reason: string; kind: string; reviveAvailable: boolean; reviveCost: number }>();
+const props = defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; multiplier: number; reason: string; kind:DeathKind|'';cause?:DeathCause|''; reviveAvailable: boolean; reviveCost: number }>();
 const BASE = import.meta.env.BASE_URL;
-const art = computed(() => {
-  const map: Record<string, string> = {
-    fall: 'deathIllustrationFallA@2x.png',
-    water: 'deathIllustrationWater@2x.png',
-    caught: 'deathIllustrationEaten@2x.png',
-    impact: 'deathIllustrationTree@2x.png',
-    missed: 'deathIllustrationWater@2x.png',
-  };
-  return `${BASE}assets/ui/${map[props.kind] ?? 'deathIllustrationSlide@2x.png'}`;
-});
+const art = computed(() => `${BASE}assets/ui/${resultIllustration(props.kind,props.cause??'')}`);
 const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
 </script>
 

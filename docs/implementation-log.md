@@ -717,3 +717,44 @@ Round101补充验证：angel-wings单测通过（原30/45秒计时、购买边�
 - 浏览器正常seed1/7路线分别自然到达四种长度中确有金币的窄路，实际币位置都在安全侧，贴地沿安全侧收集收入不少于该串金币值、无护盾/加速辅助；随后失败结算并重开，共20项通过。另实际Right进60m安全侧、截图可见连续金币，结束后实际点再跑一次回playing且本局币0。15项输入/真实碰撞回归通过，未丢普通左右不撞墙。
 - 自动推进25ms，不等于真人实时/物理设备验收；用户主存档字节不变、隔离源还原。证据gameplay-narrow-coins-{coins,view,input,summary}.json、checks.log、png。新test-narrow-coins.ts纳入核心，test-temple-narrow-coins.browser.js可复跑。
 - 剩余：原完整布币/生成后处理和分布、真人/真机、完整回放及逐元素表现。历史v5/v6长跑证据未伪装成v7全程实测。
+
+## Round111 — beats-v7实时三主题复核
+
+- 本轮无生产修改，补最近长度/金币变更后的运行证据。新test-temple-live-v7.browser.js沿用真实RAF控制器并记录窄路进入/退出与181个资源采样，无seek/advance/强制主题/道具。桌面Chrome固定375×812 CSS、DPR2、750×1624 buffer，180010.6ms自然推进至世界6895.875m，结束前playing。三主题均进入；不能把世界坐标冒充计分里程（另存progressDistance）。
+- 约59.918FPS，p95 18.2ms/p99 18.6ms/max66.8ms，1个>50ms帧间隔；PerformanceObserver另录82ms LongTask一项，两者不是同一指标，也未归因。缓冲尺寸首尾不变；对象/资源数据为有限采样，缓存预热由14几何增至70，未声称堆内存上限或永不增长。
+- 自然12/36/60m窄路均entered/passed且grounded，观测内部金币增量5/14/14；48m未在本跑遇到，仍用Round110专项，不挪用为本轮覆盖。
+- 实际点击继续，停止自动操作后真实RAF漏转失败→结算→实际点再跑一次。最初重开后立即左右键处于intro锁定，lane未变，不算成功验证；另一次实时观测时已ended，同样不算。最后独立可控fixture开场1600ms后实际原生Left/Right配合25ms推进，lane0→1且playing。实时性能与定步输入证据明确分开，未掩盖初始无效观测。
+- 环境视口/DPR已复原，测试源存档还原，用户主存档最终字节相同；测试tab关闭。证据gameplay-live-v7-{full,summary,loop,initial-key-observation,fixed-keys}.json、png。
+- 本轮不是新机制交付或真人/物理设备验收；原完整生成来源、真机/真人、完整回放、逐元素表现等继续缺。
+
+## Round112 — 原版候选后处理与架构事务
+
+- 新增inspect-native-path-postprocess.py及native-generation/path-postprocess.json/反汇编，确认父单格坑+新单格坑的双块配对改写、四方向帽类型、level3强制配对分支、OriginalPick/FinalPick字段、发布调用序列；同时恢复ACertainTypeCheck为四组长窄路家族关系。
+- 来源：原APK metadata/il2cpp静态控制流；候选整方法与家族helper哈希、字段名/偏移、ObstacleType枚举、关键指令和调用目标通过。修改临时副本OriginalPick/FinalPick存储指令时拒绝，原文件未变，无原生执行。
+- 设计补明确生成事务：选择原类型→旧块补丁+新块组装→整组支撑/碰撞/金币预检→一次发布，避免只改新块留下半坑。当前网页整组生成/回退保持，不以此冒称原始长度概率或视频路线。
+- 本轮无生产玩法变更，未宣称新增试玩。最新运行证据仍是Round111 v7三分钟与Round110金币/输入专项。剩余完整后处理/空池回退/配置与长度分布、网页方向别名适配、真机/真人、回放、逐元素表现。
+
+## Round113 — 障碍/支撑草稿预检后发布
+
+- CoursePlan不再先把候选障碍、窄路、分路写进公共数组再slice/截断回滚。现先组装局部draft，组合障碍也只改草稿，统一预检通过后一次复制到正式数组；拒绝只清草稿并保留原recovery元数据。属于架构职责落实，不声称修复已复现的半坑帧，也不是原版逐格改写适配器。主题队列/路面/路口仍由原同步生成流程管理，不宣称任意异常全事务。
+- 改前先编译capture，改后compare：100种子、generated/fixture两模式、10阶段至30000m、混合主题请求/急转调用，序列化公开字段与金币行全200个case哈希相同。check-course-publication.ts是迁移对照工具，不加入永久固定地图验收；baseline为改前输出，不能事后用新代码伪造。因行为一致，规则版本保留beats-v7。
+- 20组核心、类型检查、构建通过。浏览器当前道路30项、窄路金币20项、输入15项全部通过，含自然道路失败/重开和左右/转角/T口/真实碰撞。受控25ms推进，不冒充真人或本轮实时性能。用户主存档字节相同，隔离源还原，测试tab关闭。
+- 证据course-publication-draft-baseline.json、gameplay-course-draft-{summary,roads,coins,input}.json/checks.log。本轮无可见UI差异，不用截图充当架构验证。
+- 余项：原版全生成适配、原始长度/权重证据、真人/真机、完整回放、逐元素表现等。
+
+## Round114 — 用户范围核对与连续视频观察
+
+- 按用户原范围新增delivery-audit.md，区分功能未完成、证据不足、原参数假设和自选工程计划；明确回放并非用户列出的核心玩法，不让额外诊断任务挤占实际可玩与元素表现。设计升级v2，替换过时进度摘要，不再把已验证成长闭环写成一概未做。
+- 用户指定长视频实际360×480解码，连续播放60..65.50、364.87..370.39、1264..1269.49三段，requestVideoFrameCallback共489回调、每0.5媒体秒36张递增观察帧、6联系图；验证readyState和presentedFrames递增。初始错误遮罩随后恢复，不使用遮罩/缓冲旧帧作观察。未下载媒体文件，也未声称全21分钟看完。
+- 观察到木桥与石桥/窄路中的腾空、后续跑动、镜头转向、高低/侧金币和半透明星拖尾；结尾连续失败→结算，显示52×与火焰死亡插画。不能从半秒样本推手势/精确窗口，也不把影片未点击的重开按钮当已验证重开。
+- 清理旧补充BV1GW411N794笔记错误判据：撤回5×上限、常驻翼必为mod、旧当前实现表。保留历史截图来源，并明确旧冻结观察未复核。当前原永久翼代码与ScoreMultiplier规则不支持这些断言，不反向断定旧视频一定未修改。
+- 新明确缺口是火类死亡仍共用撞树插画；当前六张导出图未找到同款，不代表APK绝不存在。长视频完整道具循环、真人/真机、完整原参数等仍未证明。
+- 本轮仅观察与设计文档，无生产代码变更，未重跑玩法回归/构建；最近生产回归仍为Round113。参考tab已关闭，未操作本地游戏存档。
+
+## Round115 — 原版烧灼图与DeathCause呈现契约
+
+- 扫描APK451个独立哈希文件，找到49项死亡插画名称记录；此前sharedassets0只含Water及已导出六图，不能代表完整APK。导出哈希文件7823f2684714d08469ff6fb24fb183db中Texture2D deathIllustrationBurnt@2x（512×256，PNG SHA256记录），无生成/重绘；可复跑export-native-burn-result.py，资产manifest加入新图。
+- 新deathPresentation.ts定义DeathKind与DeathCause，真实碰撞保存稳定cause，UI按cause选图；火塔/低火墙→Burnt，树洞/木桥横梁→Slide，树根→Tree，其他原死亡kind映射保留。中文reason只用于文本，不参与类型识别。音效、碰撞、计分/复活种类未改，规则版本仍v7。
+- 正常路线五类致命障碍分别实际到达/碰撞，DOM原图decode均512×256、deathKind仍impact、cause各对应；每次实际点再跑一次回playing且cause清空。火墙死亡后实际宝石复活同runId，再漏转ended的cause=missed、图Water，未沿用Burnt。15项输入回归通过，20组核心、类型检查与构建通过。
+- 浏览器路线用25ms推进、UI实际点击，非真人/真机；用户主存档字节相同，隔离源还原。证据native-burn-result.json、gameplay-native-death-art-{art,revive,input,summary}.json、gameplay-native-burn-result.png。截图已检查正确烧灼插画，不再是撞树人物图。
+- 来源区分：原资源来自当前APK，cause到图选择是网页呈现策略；Burnt不一定与视频版本红色火焰图相同，未宣称全部角色图或所有版本逐像素一致。剩余代表性道具循环、逐主题/角色表现、真机/真人及原生成来源等。

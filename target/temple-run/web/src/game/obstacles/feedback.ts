@@ -1,3 +1,4 @@
+import type {DeathCause} from '../deathPresentation';
 /** Web player-facing names; collision action flags and death kinds stay in the
  * simulation. A fatal contact names the actual obstacle, not a guessed input. */
 export function obstacleImpactReason(id:string):string {
@@ -8,5 +9,12 @@ export function obstacleImpactReason(id:string):string {
   case 'fireWall':return '撞上了火墙';
   case 'plankBeam':return '撞上了木桥横梁';
   default:return '撞上了路障';
+ }
+}
+
+export function obstacleImpactCause(id:string):DeathCause {
+ switch(id){
+  case 'treeJump':case 'treeSlide':case 'flameTower':case 'fireWall':case 'plankBeam':return id;
+  default:return 'impact';
  }
 }

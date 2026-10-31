@@ -33,7 +33,7 @@
 
 | 要求 | 有/缺/不准 | 证据与边界 |
 |---|---|---|
-| 死亡→结算→重开 | 有；当前多次实际验证 | 输入15项、六万米、四道具24项均到ended再回playing；[当前结算死因](../target/temple-run/analysis/gameplay-result-death-reason-missed.json)正常漏转显示“错过路口”，[正常分路踩空](../target/temple-run/analysis/gameplay-result-death-reason-water.json)显示“掉进了水里”，均实际点击重开，不再被统一俏皮话覆盖；[五类障碍具体死因](../target/temple-run/analysis/gameplay-obstacle-feedback-summary.json)正常遇到→致命碰撞→DOM文案→实际点击重开通过，石墩单独确认仍为非致命绊倒 |
+| 死亡→结算→重开 | 有；当前多次实际验证 | 输入15项、六万米、四道具24项均到ended再回playing；[当前结算死因](../target/temple-run/analysis/gameplay-result-death-reason-missed.json)正常漏转显示“错过路口”，[正常分路踩空](../target/temple-run/analysis/gameplay-result-death-reason-water.json)显示“掉进了水里”，均实际点击重开，不再被统一俏皮话覆盖；[五类障碍具体死因](../target/temple-run/analysis/gameplay-obstacle-feedback-summary.json)正常遇到→致命碰撞→DOM文案→实际点击重开通过，石墩单独确认仍为非致命绊倒；[当前死因选图](../target/temple-run/analysis/gameplay-native-death-art-summary.json)验证五类原图加载/实际重开清空cause、火墙宝石复活后漏转改用落水图，避免烧灼图串局 |
 | 宝石复活 | 有；网页经济扩展 | 当前分路死亡后实际点复活、同runId后合流；[保护反馈](../target/temple-run/analysis/gameplay-revive-feedback.json)验证倒计时/暂停/清理 |
 | 天使翼/永久翼、起跑 | 有；购买使用及双翼/起跑当前验证 | [结算收益购买翼并新局自动复活](../target/temple-run/analysis/gameplay-result-store-after.json)；[当前双翼/起跑41项含输入](../target/temple-run/analysis/gameplay-current-utilities-summary.json)：实际HUD激活、正常生成、两起跑安全退出、永久翼45秒仍有效、普通翼/永久翼真实失败自动复活及下一次失败结算重开；预备库存、25ms推进，不等于真人或真机验收 |
 | 结算入账与商店 | 有；当前真实UI闭环 | 本局713币→结算商店713→买500币翼余额213→新局使用；重复打开无重复入账。结果页明确“结算并去商店”，结算前仍可复活 |
@@ -43,7 +43,7 @@
 | 暂停/后台/横屏 | 有；桌面浏览器验证，真机待验 | [焦点暂停](../target/temple-run/analysis/gameplay-focus-pause.json)、[小屏/横屏](../target/temple-run/analysis/gameplay-mobile-hud.json)；归位不自动恢复 |
 | UI弹层不偷偷开跑/恢复 | 有；当前真实键盘验证 | 最新modal-input记录覆盖5菜单面板、暂停设置、首次说明；关弹层后输入恢复 |
 | 启动失败恢复 | 有；当前实际资源阻断验证 | [失败→重试→恢复→开始→失败重开](../target/temple-run/analysis/gameplay-startup-retry.json)，不清存档；不承诺无法支持WebGL设备可以靠重试修复 |
-| 资源与性能 | 部分完成 | 六万米渲染池趋稳、旧fork回收、当前path3..5段；[课程历史回收](../target/temple-run/analysis/gameplay-course-compaction-long-run.json)后正常课程片段6..7，保留前驱和绝对编号；仅证明采样范围内资源稳定。20/40/60Hz是模拟步长测试，不是设备渲染FPS或堆内存上限证明；另有[桌面开局15秒真实RAF](../target/temple-run/analysis/gameplay-live-frame-controlled.json)，DPR2/750×1624约59.8FPS，仅该环境与开局范围；[桌面三分钟自然三主题](../target/temple-run/analysis/gameplay-live-three-themes-summary.json)约59.9FPS，最大83.4ms，仍不是手机或所有设备性能证明 |
+| 资源与性能 | 部分完成 | 六万米渲染池趋稳、旧fork回收、当前path3..5段；[课程历史回收](../target/temple-run/analysis/gameplay-course-compaction-long-run.json)后正常课程片段6..7，保留前驱和绝对编号；仅证明采样范围内资源稳定。20/40/60Hz是模拟步长测试，不是设备渲染FPS或堆内存上限证明；另有[桌面开局15秒真实RAF](../target/temple-run/analysis/gameplay-live-frame-controlled.json)，DPR2/750×1624约59.8FPS，仅该环境与开局范围；[桌面三分钟自然三主题](../target/temple-run/analysis/gameplay-live-three-themes-summary.json)约59.9FPS，最大83.4ms，仍不是手机或所有设备性能证明；[v7三分钟实时长跑](../target/temple-run/analysis/gameplay-live-v7-summary.json)自然三主题、约59.9FPS/p95 18.2ms/max66.8ms，12/36/60m窄路贴地通过并收币，181个资源采样；48m未遇到，保留专项。实际继续后漏转结算并点击重开，非手机/无限稳定证明 |
 | 手机触摸/倾斜 | 有接入，缺真机验收 | [浏览器原生触摸15项](../target/temple-run/analysis/gameplay-native-touch.json)已通过，派发到canvas的22个事件均isTrusted=true、pointerType=touch，另有权限分支模拟；这是桌面Chrome触摸模拟，不能替代iOS/Android传感器、真实权限和触摸延迟 |
 | 持久输入回放 | 记录层已接入，播放仍缺 | 现有seed加相同配置/进度/调用序列可复现生成；[种子契约](adr/seed-and-retry.md)已验证不同进度会分歧。[记录格式](adr/run-trace-format.md)已可显式保存/刷新读取，尚无播放器或重演结果校验，不能称完整回放 |
 
@@ -59,3 +59,7 @@
 ## 原版生成规则来源补充
 
 [候选池审计](native-path-generation.md)新增类型遍历、方向/侧路资格、通用池排除、额外随机门槛和最终候选槽位抽取的静态证据。已验证当前二进制与旧方法哈希一致，并用修改指令的临时副本确认校验失败。没有改网页生成概率，也没有新一轮真人/真机玩法验收；完整原版路段长度和所有候选过滤仍未解码。
+
+## 课程职责拆分证据
+
+[草稿发布对照](../target/temple-run/analysis/gameplay-course-draft-summary.json)：障碍/支撑草稿预检后发布，100种子×正常/参考两模式×10阶段的30km序列与改前JSON输出哈希一致，含主题/急转/金币；当前道路30项、窄路金币20项、输入15项浏览器回归通过。不提升为所有种子/真机总证明，规则版本仍为行为相同的beats-v7。

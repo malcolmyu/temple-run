@@ -1,4 +1,5 @@
-import {obstacleImpactReason} from './obstacles/feedback';
+import type {DeathCause,DeathKind} from './deathPresentation';
+import {obstacleImpactReason,obstacleImpactCause} from './obstacles/feedback';
 import {RunTrace,parseRunTrace,type RunTraceData,type TraceCommand} from './runTrace';
 import {ambientTreeAllowed} from './sceneryVisibility';
 import {bindFocusPause,PORTRAIT_BLOCK_QUERY} from './focusPause';
@@ -457,7 +458,7 @@ export class Game {
       sidePath: (d: number) => this.sidePathAt(d, this.path),
       groundSupport: (ahead=0) => [0,1,2].map(lane=>this.nativeGroundSupported(this.distance+ahead,LANES[lane],lane)),
       graph: () => ({ forks: this.graph.forks.map((f) => ({ at: f.at, chosen: f.chosen })), activeSegments: this.graph.active.segments.length }),
-      death: () => ({ reason: mutateUi.deathReason, kind: mutateUi.deathKind, elapsed:this.deathElapsed, delay:this.deathTimer }),
+      death: () => ({ reason: mutateUi.deathReason, kind: mutateUi.deathKind, cause:mutateUi.deathCause, elapsed:this.deathElapsed, delay:this.deathTimer }),
     };
   }
 
@@ -2091,7 +2092,7 @@ export class Game {
           } else if (def.kill) {
             const hole=isGapKind(obstacle.kind);
             if(!(hole&&this.difficulty.name==='classic')){
-              this.die(hole?'掉进了断桥':obstacleImpactReason(def.id),hole?'fall':'impact');
+              this.die(hole?'掉进了断桥':obstacleImpactReason(def.id),hole?'fall':'impact',hole?'fall':obstacleImpactCause(def.id));
               if(this.difficulty.name==='classic')this.nativeCameraShake=startNativeCameraShake(1,1);
             }
           } else {
@@ -2506,7 +2507,7 @@ export class Game {
   private invincibleUntil = 0;
   private publishSession():void {setPhase(this.session.phase);}
 
-  private die(reason: string, kind: 'impact' | 'fall' | 'water' | 'caught' | 'missed'): void {
+  private die(reason: string, kind:DeathKind,cause:DeathCause=kind): void {
     if (mutateUi.phase !== 'playing') return;
     if (this.world.elapsed < this.invincibleUntil) return;
     if(!this.session.die())return;
@@ -2516,7 +2517,7 @@ export class Game {
       this.stepLoop = null;
     }
     mutateUi.deathReason = reason;
-    mutateUi.deathKind = kind;
+    mutateUi.deathKind = kind;mutateUi.deathCause=cause;
     this.publishSession();
     this.deathElapsed=0;
     this.deathTimer = this.difficulty.name==='classic'?NATIVE_RESULT_DELAY:1.25;

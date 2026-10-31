@@ -136,8 +136,10 @@ export class CoursePlan {
    if(kind==='branch'&&this.opening==='generated'&&(progress??2000)>=1000){
     mid=Math.max(mid,from+96);to=Math.max(to,mid+120);
    }
-   const obstacleStart=this.obstacles.length,narrowStart=this.narrows.length,branchStart=this.branches.length;
-   const add=(defId:DefId,prefab:string,at=mid,lane?:number)=>this.obstacles.push({defId,prefab,distance:at,lane});
+   // Build privately: no published obstacle/support array sees a draft that
+   // has not passed structural, action and lateral preflight.
+   const draft:{obstacles:CourseObstacle[];narrows:CourseNarrow[];branches:CourseBranch[]}={obstacles:[],narrows:[],branches:[]};
+   const add=(defId:DefId,prefab:string,at=mid,lane?:number)=>draft.obstacles.push({defId,prefab,distance:at,lane});
    const right=this.rng.int(2)===0;
    switch(kind){
     case 'transition':break;
@@ -154,21 +156,21 @@ export class CoursePlan {
     case 'longGap':add('pitLongB','pit-long-b',mid-12);add('pitLongA','pit-long-a',mid);break;
     case 'narrowSmall':{
      add(right?'narrowBeamRight':'narrowBeamLeft',right?'narrow-beam-right':'narrow-beam-left');
-     this.narrows.push({from:mid-6,to:mid+6,side:right?'left':'right'});break;
+     draft.narrows.push({from:mid-6,to:mid+6,side:right?'left':'right'});break;
     }
     case 'narrowLong':{
      add(right?'narrowWallRightB':'narrowWallLeftB',right?'narrow-wall-right-b':'narrow-wall-left-b',mid-12);
      for(let i=0;i<narrowBodyTiles;i++)add(right?'narrowWallRight':'narrowWallLeft',right?'narrow-wall-right':'narrow-wall-left',mid+i*12);
      add(right?'narrowWallRightA':'narrowWallLeftA',right?'narrow-wall-right-a':'narrow-wall-left-a',mid+narrowBodyTiles*12);
-     this.narrows.push({from:mid-18,to:mid+narrowBodyTiles*12+6,side:right?'left':'right'});break;
+     draft.narrows.push({from:mid-18,to:mid+narrowBodyTiles*12+6,side:right?'left':'right'});break;
     }
     case 'branch':{
      if(this.opening==='generated'&&(progress??2000)>=1000){
       const span={from:mid-54,to:mid+78};
       const riskyArm=branchRewardChoice(this.seed,span.from).special;
-      this.branches.push({...span,riskyArm});
-      this.obstacles.push({defId:'fireWall',prefab:'branch-fire-wall',distance:mid,branch:riskyArm});
-     }else this.branches.push({from:mid-18,to:mid+18});
+      draft.branches.push({...span,riskyArm});
+      draft.obstacles.push({defId:'fireWall',prefab:'branch-fire-wall',distance:mid,branch:riskyArm});
+     }else draft.branches.push({from:mid-18,to:mid+18});
      break;
     }
    }
@@ -177,7 +179,7 @@ export class CoursePlan {
    let extraObstacleAt:number|undefined;
    let combo:CourseFeature['combo'];
    const repeatable=['treeJump','treeTrip','treeSlide','flameTower','plankBeam',...(this.opening==='generated'?['stonePedestal']:[])];
-   const first=this.obstacles.at(-1),candidate=mid+(first?repeatActionSpacing(first.defId):36);
+   const first=draft.obstacles.at(-1),candidate=mid+(first?repeatActionSpacing(first.defId):36);
    if(pacing&&!fast&&(beat?.allowCombination??true)&&repeatable.includes(kind)&&first?.distance===mid&&this.pairRng.int(4)===0
      &&nativeObstacleEligible(Math.floor((candidate-from)/12),1,3,pacing.minObstacleSpaces,pacing.doubleObstaclePercent,()=>this.pairRng.int(1000))){
     // Reserve the unpublished exit tail instead of deleting all combinations
@@ -198,14 +200,16 @@ export class CoursePlan {
       second={...second,defId:'treeJump',prefab:right?'tree-jump-right':'tree-jump-left'};combo='slide-jump';
      }
     }
-    this.obstacles.push(second);extraObstacleAt=candidate;
+    draft.obstacles.push(second);extraObstacleAt=candidate;
    }
-   const reasons=validateEncounterLayout({from,to,fastTurn:fast,obstacles:this.obstacles.slice(obstacleStart),narrows:this.narrows.slice(narrowStart),branches:this.branches.slice(branchStart)});
+   const reasons=validateEncounterLayout({from,to,fastTurn:fast,obstacles:draft.obstacles,narrows:draft.narrows,branches:draft.branches});
    if(reasons.length){
     this.rejectedEncounters.push({from,to,kind,reasons});if(this.rejectedEncounters.length>128)this.rejectedEncounters.shift();
-    this.obstacles.length=obstacleStart;this.narrows.length=narrowStart;this.branches.length=branchStart;
+    draft.obstacles.length=0;draft.narrows.length=0;draft.branches.length=0;
     kind='recovery';extraObstacleAt=undefined;combo=undefined;
    }
+   // Publish only the accepted draft (or the empty recovery fallback).
+   this.obstacles.push(...draft.obstacles);this.narrows.push(...draft.narrows);this.branches.push(...draft.branches);
    if(this.opening==='generated')this.director.record(kind);
    this.features.push({kind,from,to,surface,pathLevel:level,...(beat?{beatIntent:beat.intent}:{}),...(requested?{themeRequestedAtProgress:requested.progress}:{}),...(extraObstacleAt!==undefined?{extraObstacleAt,combo}:{}),...(pacing?{generatedAtProgress:progress,minTurnSpaces:pacing.minTurnSpaces,nativeStageKnown:pacing.known,fastTurn:fast}:{})});
    this.turns.push({distance:to,direction:right?1:-1,junction:this.rng.int(4)===0?'tee':'corner'});
