@@ -50,6 +50,7 @@ export interface Assets {
   plankTile?: THREE.Group | null;
   plankCorner?: THREE.Group | null;
   tree: THREE.Group | null;
+  standaloneTrees?: ReadonlyArray<THREE.Group | null>;
   gate: THREE.Group | null;
   towerGate?: THREE.Group | null;
   enemy: THREE.Group | null;
@@ -79,7 +80,7 @@ const loadTexture = (url: string): Promise<THREE.Texture> =>
     );
   });
 
-const lightmappedMeshes = new Set(['stone-plank-cap-a','stone-plank-cap-b','stone-turn-a', 'stone-turn-b', 'temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
+const lightmappedMeshes = new Set(['decor-tree-native-1','decor-tree-native-2','decor-tree-native-3','decor-tree-native-4','stone-plank-cap-a','stone-plank-cap-b','stone-turn-a', 'stone-turn-b', 'temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
 const loadObj = async (url: string): Promise<THREE.Group | null> => {
   try {
     const response=await fetch(url);
@@ -225,10 +226,10 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     water: new THREE.MeshBasicMaterial({ color: 0x0b2b27, transparent: true, opacity: 0.72 }),
   };
 
-  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB] = await Promise.all([
+  const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
-    loadObj(`${BASE}assets/track/decor-tree-a.obj`),
+    loadObj(`${BASE}assets/track/decor-tree-native-1.obj`),
     loadObj(`${BASE}assets/track/track-gate-a.obj`),
     loadObj(asset('mesh-96-enemy.obj')),
     loadTexture(asset('texture-53-enemyTexture.webp')).catch(() => null),
@@ -245,6 +246,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     loadObj(`${BASE}assets/track/stone-turn-b.obj`),
     loadObj(`${BASE}assets/track/stone-plank-cap-a.obj`),
     loadObj(`${BASE}assets/track/stone-plank-cap-b.obj`),
+    ...[2,3,4].map(i=>loadObj(`${BASE}assets/track/decor-tree-native-${i}.obj`)),
   ]);
   if (enemyMesh && enemyTexture) {
     enemyTexture.flipY = false;
@@ -342,6 +344,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     scene.add(entrance);
   }
 
+  const standaloneTrees=[treeTemplate,tree2,tree3,tree4].map(obj=>paint(obj,nativeTreeMaterial,false));
   return {
     renderer,
     scene,
@@ -366,7 +369,8 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       coinRed: paint(redCoin, coinMaterial, false),
       coinBlue: paint(blueCoin, coinMaterial, false),
       coin: paint(coinMesh, coinMaterial, false),
-      tree: paint(treeTemplate, nativeTreeMaterial, false),
+      tree: standaloneTrees[0],
+      standaloneTrees,
       gate: extractNativeGate(paint(gateTemplate, nativeRoadMaterial, false)),
       towerGate: extractNativeGate(obstacles['tower-arch'], 'tower'),
       enemy: enemyMesh,
@@ -699,9 +703,20 @@ export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: 
   }
 }
 
-// The legacy gate OBJ contains a complete longitudinal prefab; scaling that
-// bounding box as an arch produced suspended triangular masonry across the view.
-// Build the visible cross-road arch from the original masonry and idol atlas regions.
+/** Native standalone tree geometry already includes full prefab TRS and world scale.
+ * Side spacing/yaw and chosen variant remain authoring estimates. */
+export function buildSceneryTree(assets: Assets, side: number, variant = 0): THREE.Group | null {
+  const native=assets.standaloneTrees?.[variant];
+  const source=native??assets.tree;if(!source)return null;
+  const tree=source.clone(true);tree.name=native?'native-standalone-tree':'legacy-scenery-tree';
+  tree.scale.setScalar(native?1:.12);
+  tree.position.set(side*6.2,native?0:-2,-2.5);
+  tree.rotation.y=side>0?Math.PI:0;
+  tree.userData.nativeTreeVariant=native?variant+1:null;
+  return tree;
+}
+
+/** Use authored portal geometry; procedural masonry is an asset fallback. */
 export function buildStoneGate(assets: Assets, tower = false): THREE.Group {
   if(tower && assets.towerGate)return assets.towerGate.clone(true);
   if(assets.gate)return assets.gate.clone(true);
@@ -788,11 +803,8 @@ export function buildTile(
   // The reference giant trunks stand close to the parapets, alternating sides.
   if (surface === 'stone' && !clearScenery && assets.tree && index >= 0 && index % 3 === 1) {
     const side = index % 6 === 1 ? -1 : 1;
-    const tree = assets.tree.clone(true);
-    tree.scale.setScalar(0.12);
-    tree.position.set(side * 6.2, -2.0, -2.5);
-    tree.rotation.y = side > 0 ? Math.PI : 0;
-    group.add(tree);
+    const tree=buildSceneryTree(assets,side);
+    if(tree)group.add(tree);
   }
 
   if (narrow) {

@@ -5,7 +5,7 @@ import { nativeAnimationSpeed } from './nativeAnimation';
 import { NATIVE_TILT_OFFSET_MAX, stepNativeSteering, nativeTiltAllowed } from './steering';
 import { nativePickupWithinReach } from './nativePickupCollision';
 import { junctionGapCuts, type SurfaceCut } from './junctionCuts';
-import { referenceStraightGate, referenceFullWidthAt, overlapsReferenceGate, REFERENCE_EXIT_GATE_OFFSET } from './referenceScenery';
+import { referenceStraightGate, referenceAmbientTree, referenceFullWidthAt, overlapsReferenceGate, REFERENCE_EXIT_GATE_OFFSET } from './referenceScenery';
 import { STUMBLE_KILL_WINDOW, NATIVE_STUMBLE_RESET_AGE, nativeStumbleIsFatal, nativeIntroHeld, stepNativeRunClock, nativeStumbleDuration, NATIVE_REJECTED_TURN_DELAY, NATIVE_REJECTED_TURN_OFFSET, stepNativeStumbleDelay } from './nativeRunnerRules';
 import { nativeWaterAnchor } from './nativeWater';
 import { nativeCoinBonusValue, NATIVE_POWER_SCORE_VALUE, NATIVE_COIN_SCORE_VALUE, NATIVE_BASE_POWER_DURATION } from './nativeCoinBonus';
@@ -67,7 +67,7 @@ import {
   TURN_PREBUILD_DISTANCE,
   laneX,
 } from './config';
-import { createWorld, buildTile, buildStoneGate, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
+import { createWorld, buildTile, buildStoneGate, buildSceneryTree, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, nativeTransitionAt, nativeTransitionSupported, type SurfaceKind } from './surface';
@@ -1138,9 +1138,12 @@ export class Game {
     const recordedStraightGate = this.difficulty.name === 'classic' ? referenceStraightGate(index*TILE) : null;
     const gate = recordedStraightGate !== null || index * TILE >= (this.difficulty.name === 'classic' ? 180 : 80) && index % 7 === 2 && terrain === 'temple' && !clearScenery
       && !(this.difficulty.name==='classic' && (referenceFullWidthAt(index*TILE) || overlapsReferenceGate(index*TILE)));
-    const treeSide = surface === 'stone' && !this.path.nearTurn(index * TILE, 8) && index >= 4 && index % 3 === 1 && !(this.difficulty.name === 'classic' && overlapsReferenceTree(index * TILE)) ? (index % 6 === 1 ? -1 : 1) : 0;
+    const periodicTreeSide = surface === 'stone' && !this.path.nearTurn(index * TILE, 8) && index >= 4 && index % 3 === 1 && !(this.difficulty.name === 'classic' && overlapsReferenceTree(index * TILE)) ? (index % 6 === 1 ? -1 : 1) : 0;
+    const observedTree=this.difficulty.name==='classic'?referenceAmbientTree(index*TILE):undefined;
+    const treeSide=observedTree===undefined?periodicTreeSide:observedTree?.side??0;
+    const treeVariant=observedTree?.variant??0;
     const narrowKey = narrow ? `${narrow.side}:${firstTile ? 1 : 0}` : 'none';
-    const key = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${sidePathLast ? 1 : 0}:${branchOffset.toFixed(2)}:${clearScenery ? 1 : 0}:${gate ? recordedStraightGate ?? 'side' : 'none'}:${treeSide}:${narrowKey}`;
+    const key = `${terrain}:${surface}:${surfaceFirst ? 1 : 0}:${surfaceLast ? 1 : 0}:${sidePath ? 1 : 0}:${sidePathLast ? 1 : 0}:${branchOffset.toFixed(2)}:${clearScenery ? 1 : 0}:${gate ? recordedStraightGate ?? 'side' : 'none'}:${treeSide}:${treeVariant}:${narrowKey}`;
     const pooled = this.tilePools.get(key)?.pop();
     if (pooled) {
       pooled.visible = true;
@@ -1166,11 +1169,8 @@ export class Game {
       group.add(arch);
     }
     if (treeSide && this.bundle.assets.tree) {
-      const tree = this.bundle.assets.tree.clone(true);
-      tree.scale.setScalar(0.12);
-      tree.position.set(treeSide * 6.2, -2, -2.5);
-      tree.rotation.y = treeSide > 0 ? Math.PI : 0;
-      group.add(tree);
+      const tree=buildSceneryTree(this.bundle.assets,treeSide,treeVariant);
+      if(tree)group.add(tree);
     }
     if (narrow) {
       const overlayKey = `${narrow.side}:${firstTile ? 1 : 0}`;
@@ -1272,7 +1272,8 @@ export class Game {
     }
     const group = prototype.clone(true);
     if(kind==='tee' && this.bundle.assets.tree) {
-      const tree=this.bundle.assets.tree.clone(true);tree.scale.setScalar(.12);tree.position.set(0,-2,-10);group.add(tree);
+      const tree=buildSceneryTree(this.bundle.assets,0);
+      if(tree){tree.position.z=-10;if(this.bundle.assets.standaloneTrees)tree.position.y=-this.meshY(at);group.add(tree);}
     }
     const turn=this.world.require(this.runnerEntity,Turn);
     const recordedGate=this.difficulty.name==='classic'?referenceGate(turn.count,at):null;

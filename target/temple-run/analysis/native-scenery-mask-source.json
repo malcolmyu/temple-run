@@ -1,0 +1,78 @@
+{
+  "sourceMethods": [
+    "SceneryManager.SetMaskForPoint",
+    "SceneryManager.MaskOccupied",
+    "SceneryManager.FillMask"
+  ],
+  "nativeRawFormula": "ix=trunc(rawX/60)-trunc(minGridX/60); iz=trunc(rawZ/60)-trunc(minGridY/60)",
+  "worldFormula": "ix=trunc(worldX/12)-minCellX; iz=trunc(worldZ/12)-minCellZ",
+  "bounds": "0 <= ix,iz <= 18; out of range writes ignored and reads false",
+  "storage": "GridMask[ix,iz], byte boolean; SetMaskForPoint marks a single cell, no radius dilation",
+  "graphTraversal": [
+    {
+      "field": "PathNorth",
+      "offset": "0x50",
+      "skipIncoming": 1,
+      "childIncoming": 3
+    },
+    {
+      "field": "PathEast",
+      "offset": "0x58",
+      "skipIncoming": 2,
+      "childIncoming": 4
+    },
+    {
+      "field": "PathSouth",
+      "offset": "0x68",
+      "skipIncoming": 3,
+      "childIncoming": 1
+    },
+    {
+      "field": "PathWest",
+      "offset": "0x60",
+      "skipIncoming": 4,
+      "childIncoming": 2
+    }
+  ],
+  "rootTraversal": "Simulate calls FillMask(currentPath, incoming=0, root=true), allowing all root links; descendants skip immediate reversal",
+  "checkedIntegerOrigins": 200001,
+  "negativeBoundaryExamples": [
+    {
+      "worldX": -24.01,
+      "worldCell": -2
+    },
+    {
+      "worldX": -24,
+      "worldCell": -2
+    },
+    {
+      "worldX": -12.01,
+      "worldCell": -1
+    },
+    {
+      "worldX": -12,
+      "worldCell": -1
+    },
+    {
+      "worldX": -11.99,
+      "worldCell": 0
+    },
+    {
+      "worldX": -0.01,
+      "worldCell": 0
+    },
+    {
+      "worldX": 0,
+      "worldCell": 0
+    },
+    {
+      "worldX": 11.99,
+      "worldCell": 0
+    },
+    {
+      "worldX": 12,
+      "worldCell": 1
+    }
+  ],
+  "limitations": "Graph expected to be acyclic except bidirectional parent links. Complete pool/RNG lifecycle and source scenery positions remain unresolved. This audit does not change production generation."
+}

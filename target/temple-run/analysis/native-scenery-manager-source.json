@@ -1,0 +1,117 @@
+{
+  "librarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "SceneryElement.get_Visible": {
+      "address": "0x12f6574",
+      "end": "0x12f6594",
+      "sha256": "39e35eb3535ac4a070e2cffa4568313f220c7a6d86edfa9e770d78989c1f9437"
+    },
+    "SceneryElement.set_Visible": {
+      "address": "0x12f6594",
+      "end": "0x12f65a0",
+      "sha256": "23695f3eb0fd39d89d0efdbeb2b5bb795244242e3eb0efafa205dc9e0c9adfc0"
+    },
+    "SceneryElement.Awake": {
+      "address": "0x12f65e8",
+      "end": "0x12f65ec",
+      "sha256": "f0908617d967b20c0eb63dd3b21e5fb328fce054886b496fe62cf2a00f590182"
+    },
+    "SceneryElement.Activate": {
+      "address": "0x12f65a0",
+      "end": "0x12f65c4",
+      "sha256": "e7c5475db4ebd72dea128677c9a3ec0bbd38a1e4adcc5ce440cea6a0146ec08b"
+    },
+    "SceneryElement.Deactivate": {
+      "address": "0x12f65c4",
+      "end": "0x12f65e8",
+      "sha256": "59f90e8104e04848d87347ba152c156907c7e9d08d63be8d47ce2322ffe512f7"
+    },
+    "SceneryElement.Instantiate": {
+      "address": "0x12f65ec",
+      "end": "0x12f6840",
+      "sha256": "246cffebb3e9a5dcaa42f5cd61e8a4d9d5514724024baa5ad6902147487bf031"
+    },
+    "SceneryElement..ctor": {
+      "address": "0x12f6840",
+      "end": "0x12f6858",
+      "sha256": "d1a475d4d5142282ddd27f5018f622c044d0aa219944c71fba86d4d902ac4b79"
+    },
+    "SceneryManager.Start": {
+      "address": "0x12f6858",
+      "end": "0x12f6d44",
+      "sha256": "8745cbf151a232d08f35f0cc901acdbc2c172651c6b0037a420e8a713041c203"
+    },
+    "SceneryManager.ClearMask": {
+      "address": "0x12f6dac",
+      "end": "0x12f6e10",
+      "sha256": "67f07e794f3eb5f05a07ba007d33fabe663a3635c9dda2245649e3014226b3e0"
+    },
+    "SceneryManager.SetMaskForPoint": {
+      "address": "0x12f6e10",
+      "end": "0x12f6ee8",
+      "sha256": "01ebd42acadc81795b5bb04180d20251f175ef681300016fc39e42e852a9d537"
+    },
+    "SceneryManager.MaskOccupied": {
+      "address": "0x12f6ee8",
+      "end": "0x12f6fcc",
+      "sha256": "e770eb714fb90bd4e42d6dd5535d93322559ef471f0a3cf81fc0249a7d5a2408"
+    },
+    "SceneryManager.MaskOccupiedTest": {
+      "address": "0x12f6fcc",
+      "end": "0x12f7264",
+      "sha256": "fd85cd7bf74dd9f3f1c71a83fd3902af87a3c994f8d806bb1d927c2af7794e48"
+    },
+    "SceneryManager.FillMask": {
+      "address": "0x12f72cc",
+      "end": "0x12f7490",
+      "sha256": "3a24c11b6db69dfffa51d3c36f47bffd89cc02c28efc59147161875deb44c7c2"
+    },
+    "SceneryManager.DumpMask": {
+      "address": "0x12f7490",
+      "end": "0x12f75cc",
+      "sha256": "bfbfe015e5a8ea9c2903b7e1cfa060221a84d8215037ffedba5136af48518102"
+    },
+    "SceneryManager.Reset": {
+      "address": "0x12f7624",
+      "end": "0x12f7694",
+      "sha256": "7945b61c22822e224a5b93120b932bc480d4ee8838d34b083e569fabdfe2de47"
+    },
+    "SceneryManager.Simulate": {
+      "address": "0x12f6160",
+      "end": "0x12f6574",
+      "sha256": "fc41e6742e62c45069764717cbb095b7af61810c84b5536c734a17b3ea54a10b"
+    },
+    "SceneryManager.GetSceneryElementIntersectingSphere": {
+      "address": "0x12f7694",
+      "end": "0x12f7998",
+      "sha256": "c6e6a1c936272943680c3877f308bb6bda312226dc7aca29a23e9d7bf0a6fdfc"
+    },
+    "SceneryManager..ctor": {
+      "address": "0x12f7998",
+      "end": "0x12f7a0c",
+      "sha256": "2d9d54135950dd8f8d81b4b3eecbeacb165381503ad7dd68d641022f4e1857b1"
+    }
+  },
+  "gridCount": [
+    19,
+    19
+  ],
+  "poolSize": 361,
+  "rawCellSize": 60,
+  "worldCellSize": 12,
+  "rawRadius": 540,
+  "worldRadius": 108,
+  "quantization": "truncate(camera raw X/Z /60)*60, not floor",
+  "defaultDensity": 0.25,
+  "jitterRawRange": [
+    -10,
+    10
+  ],
+  "jitterWorldRange": [
+    -2,
+    2
+  ],
+  "RNG": "UnityEngine.Random.Range(int,int), helper24b3ee8; shared runtime state; original seed/state not recovered",
+  "sentinel": "-99999 initializes previous grid coordinates, NOT a random seed",
+  "scope": "source evidence only; native grid/occupancy/pool distribution and scenery collision integration remain pending; current opening tree placements are fitted"
+}

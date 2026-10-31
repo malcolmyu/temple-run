@@ -28,3 +28,18 @@ export function overlapsReferenceGate(tileDistance: number): boolean {
  return REFERENCE_STRAIGHT_GATES.some(g=>Math.abs(g.tileDistance-tileDistance)<=36)
    || REFERENCE_OPENING_TURNS.some(t=>t.gate==='exit'&&Math.abs(t.distance+REFERENCE_EXIT_GATE_OFFSET-(tileDistance+6))<=36);
 }
+
+/** Observed opening background trunks; positions are fitted to source005/006
+ * and021/022, not recovered generator output. Variant1 is the native standalone
+ * family default; exact source variant remains unverified. */
+export const REFERENCE_OPENING_AMBIENT_TREES = [
+ {tileDistance:84,side:1 as const,variant:0,frames:[5,6]},
+ {tileDistance:444,side:1 as const,variant:0,frames:[21,22]},
+];
+export const REFERENCE_TREE_REVIEW_END=REFERENCE_OPENING_TURNS[2].distance;
+/** null suppresses invented periodic trees inside the reviewed opening.
+ * undefined leaves the unreviewed suffix's existing approximate policy. */
+export function referenceAmbientTree(distance:number):typeof REFERENCE_OPENING_AMBIENT_TREES[number]|null|undefined {
+ if(distance<0||distance>REFERENCE_TREE_REVIEW_END)return undefined;
+ return REFERENCE_OPENING_AMBIENT_TREES.find(t=>Math.abs(t.tileDistance-distance)<.01)??null;
+}

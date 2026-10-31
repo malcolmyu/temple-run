@@ -12,6 +12,8 @@
     "temple:test:lightmap": "esbuild tools/test-native-lightmap.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-lightmap-test.mjs >/dev/null && node /tmp/temple-lightmap-test.mjs",
     "temple:test:t-junction": "esbuild tools/test-native-t-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-t-junction-test.mjs >/dev/null && node /tmp/temple-t-junction-test.mjs",
     "temple:test:pickup-reach": "esbuild tools/test-pickup-reach.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pickup-reach-test.mjs >/dev/null && node /tmp/temple-pickup-reach-test.mjs",
+    "temple:test:scenery-grid": "esbuild tools/test-native-scenery-grid.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-scenery-grid-test.mjs >/dev/null && node /tmp/temple-scenery-grid-test.mjs",
+    "temple:test:scenery-trees": "esbuild tools/test-native-scenery-trees.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-scenery-trees-test.mjs >/dev/null && node /tmp/temple-scenery-trees-test.mjs",
     "temple:test:gate": "esbuild tools/test-native-gate.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-native-gate-test.mjs >/dev/null && node /tmp/temple-native-gate-test.mjs",
     "temple:test:reference-coins": "esbuild tools/test-reference-coins.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-reference-coins-test.mjs >/dev/null && node /tmp/temple-reference-coins-test.mjs",
     "temple:test:reference-obstacles": "esbuild tools/test-reference-obstacles.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-reference-obstacles-test.mjs >/dev/null && node /tmp/temple-reference-obstacles-test.mjs",

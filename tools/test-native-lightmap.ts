@@ -6,7 +6,7 @@ import { attachNativeLightmapUV, nativeLightmapMaterial } from '../target/temple
 import { cutSurfaceGeometry } from '../target/temple-run/web/src/game/cutSurface';
 const root='target/temple-run/web/public/assets/';
 const environment=JSON.parse(readFileSync('target/temple-run/analysis/environment-lightmap-source.json','utf8'));
-const models=['stone-plank-cap-a','stone-plank-cap-b','stone-turn-a','stone-turn-b','stone-turn-c','stone-turn-d','temple-road-tile','plank-road-tile','plank-corner','track-wall-corner-a'].map(name=>'track/'+name).concat(Object.keys(environment.meshes),['track/plank-t-junction','obstacles/plank-pit','obstacles/plank-beam']);
+const models=['decor-tree-native-1','decor-tree-native-2','decor-tree-native-3','decor-tree-native-4','stone-plank-cap-a','stone-plank-cap-b','stone-turn-a','stone-turn-b','stone-turn-c','stone-turn-d','temple-road-tile','plank-road-tile','plank-corner','track-wall-corner-a'].map(name=>'track/'+name).concat(Object.keys(environment.meshes),['track/plank-t-junction','obstacles/plank-pit','obstacles/plank-beam']);
 for(const name of models){
  const obj=new OBJLoader().parse(readFileSync(root+name+'.obj','utf8'));
  const uv=JSON.parse(readFileSync(root+name+'.uv1.json','utf8'));
