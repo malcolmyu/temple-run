@@ -1217,7 +1217,7 @@ export class Game {
     const branch=this.sidePathAt(distance,this.path);
     if(branch&&branchHasCenterGapAt(branch,distance)&&Math.abs(side+this.path.lateralAt(distance))<.55)return false;
     const narrow=branch?null:this.narrowAt(distance,this.path);
-    if(narrow&&offNarrowSurface(narrow.side,side))return false;
+    if(narrow&&!activeCourse()&&offNarrowSurface(narrow.side,side))return false;
     for(const entity of this.obstacles){
       const obstacle=this.world.require(entity,Obstacle);
       if(!isGapKind(obstacle.kind))continue;
@@ -1359,6 +1359,11 @@ export class Game {
           if(contact.stumble)this.stumble();
           if(wasJumping)sfx.play('land',{gain:.7});
         }else this.nativeFalling=jump.y<0;
+        if(!wasFalling&&this.nativeFalling&&!supported){
+          const branch=this.sidePathAt(trackPos.distance,this.path),narrow=this.narrowAt(trackPos.distance,this.path);
+          this.journal.event(this.runElapsed,'support-lost',{distance:trackPos.distance,side:lane.x,branch:branch?{from:branch.from,to:branch.to}:null,narrow:narrow?{from:narrow.from,to:narrow.to,side:narrow.side}:null,
+            gaps:this.obstacles.map(e=>this.world.require(e,Obstacle)).filter(o=>isGapKind(o.kind)&&Math.abs(o.distance-trackPos.distance)<18).map(o=>({id:o.defId,distance:o.distance}))});
+        }
       }
     }else if(jump.y>0||jump.v>0){
       jump.v-=GRAVITY*dt;jump.y+=jump.v*dt;
@@ -1428,7 +1433,7 @@ export class Game {
         this.sideBranch = null;
         if (this.basePath) this.graph.merge(this.basePath);
         setHint('分路已合流');
-        this.journal.event(this.runElapsed,'branch-merged',{distance:trackPos.distance});
+        this.journal.event(this.runElapsed,'branch-merged',{distance:trackPos.distance,nextTurn:this.world.require(this.runnerEntity,Turn).next,pathTurnStarts:this.path.segments.slice(1).map(s=>s.start)});
         this.basePath = null;
         this.rebuildTilesAhead();
       }

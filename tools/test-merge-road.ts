@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {TrackGraph} from '../target/temple-run/web/src/game/trackGraph';
+import {branchHasCenterGapAt} from '../target/temple-run/web/src/game/sidePath';
 import {CoursePlan} from '../target/temple-run/web/src/game/coursePlan';
 // Captured run d1f3a5ae: select at882, prebuild at897, merge918, turn969.
 // Local topology regression, not an exact frame/input replay of schema1.
@@ -25,3 +26,8 @@ for(const seed of [144966157,145073850,...Array.from({length:200},(_,i)=>i+1)]){
  }
 }
 console.log('Reported merge topology: both arms/directions preserve corner;202 seeds retain96m merge-to-turn clearance.');
+
+// Captured water run3f244efc:954..990 fork; falling begins after960 in centre.
+const loggedBranch={from:954,to:990};
+for(const [distance,missing]of [[955.25899,false],[963.04335,true],[970.83714,true],[984.01,false]]as const)
+ assert.equal(branchHasCenterGapAt(loggedBranch,distance),missing,'captured water run support interval');

@@ -50,7 +50,7 @@
   cases.push({seed,wrongBranch:wrong.target,death:g.death(),state:g.state()});
   prep();const n=approach(s=>s.course.narrows.find(n=>n.to-n.from===12&&n.from-s.distanceExact>28&&n.from-s.distanceExact<32));
   check(seed+':natural short half-road approach',!!n);const mid=(n.target.from+n.target.to)/2;
-  const narrow=[-1.3,0,1.3].map(x=>g.roadProbe(mid,x));
+  const narrow=[n.target.from+.5,n.target.from+3,mid,n.target.to-3,n.target.to-.5].flatMap(d=>[-1.3,0,1.3].map(x=>g.roadProbe(d,x)));
   for(const p of narrow)check(seed+':narrow visible floor matches support '+p.side,p.supported===(p.visibleFloor.length>0));
   cases.push({seed,narrow:n.target,probes:narrow});
  }
