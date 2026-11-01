@@ -21,7 +21,7 @@ if git -C "$tmp" fetch --depth=1 origin gh-pages; then
 else
   git -C "$tmp" checkout -q --orphan gh-pages
 fi
-./node_modules/.bin/esbuild tools/stage-pages-release.ts --bundle --platform=node --format=esm --outfile="$tmp-stage.mjs" >/dev/null
+./node_modules/.bin/esbuild tools/stage-pages-cli.ts --bundle --platform=node --format=esm --outfile="$tmp-stage.mjs" >/dev/null
 node "$tmp-stage.mjs" target/temple-run/dist "$tmp" "$source_commit"
 rm -f "$tmp-stage.mjs"
 git -C "$tmp" add -A

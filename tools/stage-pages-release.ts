@@ -1,8 +1,6 @@
 /** Retain superseded hashed assets for the Pages 600-second HTML cache window. */
 import {readFile,writeFile,readdir,cp,mkdir,rm} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
-import {fileURLToPath} from 'node:url';
-import {realpathSync} from 'node:fs';
 export interface ReleaseMetadata {sourceCommit:string;builtAt:string;immutableAssets:string[];retainedFromPrevious:number;retainedAssets:Array<{path:string;expiresAt:number}>;}
 const hashed=(p:string)=>!p.includes('\\')&&(/^assets\/[^/]+-[\w-]{8,}\.(js|css)$/.test(p)||/^assets\/runtime\/[^/]+\.[a-f0-9]{12}\.(json|webp)$/.test(p));
 async function inventory(root:string,at='assets'):Promise<string[]>{
@@ -29,8 +27,4 @@ export async function stageRelease(dist:string,destination:string,commit:string,
  const metadata={sourceCommit:commit,builtAt:new Date(now).toISOString(),immutableAssets:current,retainedFromPrevious:retained.size,retainedAssets:[...expiry].map(([path,expiresAt])=>({path,expiresAt}))};
  await writeFile(join(destination,'.nojekyll'),'');
  await writeFile(join(destination,'deployment.json'),JSON.stringify(metadata)+'\n');return metadata;
-}
-if(process.argv[1]&&realpathSync(fileURLToPath(import.meta.url))===realpathSync(resolve(process.argv[1]))){
- const [dist,destination,commit]=process.argv.slice(2);if(!dist||!destination||!commit)throw Error('Usage: stage-pages-release dist checkout commit');
- const result=await stageRelease(dist,destination,commit);console.log(`Staged ${result.immutableAssets.length} current hashed assets; retained ${result.retainedFromPrevious} prior assets.`);
 }
