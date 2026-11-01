@@ -1,0 +1,232 @@
+{
+  "result": {
+    "type": "object",
+    "value": {
+      "checks": [
+        {
+          "name": "ArrowLeft: lane and survival",
+          "passed": true
+        },
+        {
+          "name": "ArrowLeft: edge clamp",
+          "passed": true
+        },
+        {
+          "name": "ArrowLeft: airborne lane change",
+          "passed": true
+        },
+        {
+          "name": "ArrowRight: lane and survival",
+          "passed": true
+        },
+        {
+          "name": "ArrowRight: edge clamp",
+          "passed": true
+        },
+        {
+          "name": "ArrowRight: airborne lane change",
+          "passed": true
+        },
+        {
+          "name": "slide lane change",
+          "passed": true
+        },
+        {
+          "name": "swipe lane 0",
+          "passed": true
+        },
+        {
+          "name": "swipe lane 1",
+          "passed": true
+        },
+        {
+          "name": "natural route: roots, gap, two corners, T left",
+          "passed": true
+        },
+        {
+          "name": "natural route: roots, gap, two corners, T right",
+          "passed": true
+        },
+        {
+          "name": "actual root still collides",
+          "passed": true
+        },
+        {
+          "name": "missed corner still fails",
+          "passed": true
+        },
+        {
+          "name": "failure reaches results",
+          "passed": true
+        },
+        {
+          "name": "restart resets input and powers",
+          "passed": true
+        }
+      ],
+      "restarted": {
+        "activeBranch": null,
+        "airborne": false,
+        "angelWings": {
+          "cooldown": 0,
+          "pendingRevive": false,
+          "permanentStock": 0,
+          "remaining": 0,
+          "stock": 0
+        },
+        "autoTurnQueued": false,
+        "boost": {
+          "active": false,
+          "left": 0,
+          "speedBefore": 0
+        },
+        "boostHandover": {
+          "deferred": 0,
+          "reasons": []
+        },
+        "chaseGap": 11.5,
+        "coinMeter": {
+          "count": 0,
+          "level": 1,
+          "maxLevel": 0
+        },
+        "coinSpawnLevel": 0,
+        "coins": 0,
+        "course": null,
+        "distance": -2,
+        "distanceExact": -2,
+        "enemyGap": 0,
+        "equipped": "jhony",
+        "falling": false,
+        "fastTurn": {
+          "active": false,
+          "elapsed": 0
+        },
+        "fps": 60,
+        "gems": 0,
+        "generation": {
+          "bonuses": [],
+          "enabled": {
+            "bonus": 1,
+            "boost": 1,
+            "magnet": 1,
+            "shield": 1
+          },
+          "lastBonus": 0,
+          "nextBonusCheck": 612,
+          "seed": 1
+        },
+        "generationPacing": {
+          "doubleObstaclePercent": 0,
+          "from": 0,
+          "known": true,
+          "minCoinRunSpaces": 12,
+          "minObstacleSpaces": 6,
+          "minTurnSpaces": 12
+        },
+        "groundY": 0,
+        "headStart": null,
+        "headStartReady": false,
+        "headStartStock": {
+          "mega": 0,
+          "normal": 0
+        },
+        "jumpVelocity": 0,
+        "jumpY": 0,
+        "lane": 1,
+        "nextJunction": "corner",
+        "nextTurn": 153,
+        "obstacles": [],
+        "phase": "playing",
+        "pickups": [],
+        "position": [
+          0,
+          0,
+          5
+        ],
+        "power": null,
+        "powerPickups": {
+          "bonus": 0,
+          "boost": 0,
+          "magnet": 0,
+          "shield": 0
+        },
+        "powerRemaining": 0,
+        "powers": [],
+        "progressDistance": 0,
+        "queuedForwardForce": 0,
+        "recoveringFromStumble": false,
+        "reviveProtectionRemaining": 0,
+        "rig": "ready",
+        "rigLoadStatus": "ready",
+        "runChallenges": {
+          "firstCoinDistance": null,
+          "powerFreeScore": 0,
+          "stumbled": false,
+          "summary": {
+            "cleanDistance": 0,
+            "coinFreeStart": 0,
+            "powerFreeScore": 0
+          },
+          "usedPower": false
+        },
+        "runElapsed": 0,
+        "runUpgrades": {
+          "availability": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "boostProgress": 250,
+          "coinBonusReward": 50,
+          "coinMultiplier": 1,
+          "levels": {
+            "bonus": 0,
+            "boost": 0,
+            "coin": 0,
+            "coinSpawn": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "magnetDuration": 15,
+          "magnetMultiplier": 1,
+          "shieldDuration": 15
+        },
+        "score": 0,
+        "scoreMultiplier": 20,
+        "session": {
+          "committed": false,
+          "deaths": 0,
+          "gemReviveUsed": false,
+          "gemRevives": 0,
+          "lastCommittedRunId": "f5179bf1-e2eb-4235-8fbc-3c4ec8737dba",
+          "phase": "playing",
+          "runId": "1c59498e-2717-42bb-8c18-bc28b1f6a15b",
+          "wingRevives": 0
+        },
+        "side": 0,
+        "simulation": {
+          "lastStepSeconds": 0,
+          "steps": 0
+        },
+        "slideDuration": 0,
+        "sliding": 0,
+        "speed": 20,
+        "stumbleAge": 7,
+        "stumbleRemaining": 0,
+        "swipeStumbleDelay": null,
+        "themePacing": {
+          "changes": [],
+          "elapsed": 0,
+          "level": 2
+        },
+        "turnCount": 0,
+        "turnDirection": 0,
+        "turnIntent": null,
+        "turnQueued": false,
+        "worldY": 0
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import {SeededRandom} from './obstacles/rng';
 import type {NativePathLevel} from './nativeThemePacing';
-export const COURSE_RULE_VERSION='beats-v7';
+export const COURSE_RULE_VERSION='beats-v8';
 /** Project pacing policy; weights/cooldowns are not recovered native values. */
 const THEMES:Record<NativePathLevel,readonly string[]>={
  1:['plankPit','plankBeam'],
@@ -25,9 +25,12 @@ export class CourseDirector {
   const eligible=THEMES[level].filter(k=>{
    if(progress<1000&&k==='fireWall')return false;
    if(progress<500&&['treeSlide','flameTower'].includes(k))return false;
-   if(progress<1500&&['narrowSmall','narrowLong'].includes(k))return false;
+   if(progress<300&&k==='narrowSmall'||progress<800&&k==='narrowLong')return false;
    return k!=='longGap'||at>=1400;
   });
+  // Web onboarding policy: show each half-road before repeat-heavy random selection.
+  const introduction=level===2?(progress>=300&&!this.hasPractised('narrowSmall')?'narrowSmall':progress>=800&&!this.hasPractised('narrowLong')?'narrowLong':null):null;
+  if(introduction)return {kind:introduction,intent:'single',allowCombination:false};
   // Two-item wood pool still alternates: relax oldest cooldown only if needed.
   let candidates=eligible.filter(k=>!this.recent.includes(k));
   if(!candidates.length)candidates=eligible.filter(k=>k!==this.recent.at(-1));

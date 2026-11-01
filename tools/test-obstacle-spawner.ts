@@ -77,9 +77,17 @@ const ids = new Set(Object.values(DEFS).map((d) => d.id));
 for (const [asset, mapping] of Object.entries(ASSET_DEFS)) {
   if (!ids.has(mapping.defId)) issues.push(`${asset}: missing def ${mapping.defId}`);
 }
+// Renderer aliases track-family meshes and builds fireWall procedurally.
+const rendererSources:Record<string,string|null>={
+ 'cliff-tree-slide':'../track/cliff-tree-slide.obj',
+ 'cliff-gap-a':'../track/cliff-cap-a.obj',
+ 'cliff-gap-b':'../track/cliff-cap-b.obj',
+ 'fire-wall':null,
+};
 for (const def of Object.values(DEFS)) {
   for (const prefab of def.prefabs) {
-    if (!existsSync(resolve(assetRoot, `${prefab}.obj`))) issues.push(`${def.id}: missing prefab ${prefab}`);
+    const source=prefab in rendererSources?rendererSources[prefab]:`${prefab}.obj`;
+    if (source!==null&&!existsSync(resolve(assetRoot, source))) issues.push(`${def.id}: missing prefab source ${source}`);
   }
 }
 

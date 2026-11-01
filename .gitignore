@@ -6,3 +6,8 @@ output/
 *.log
 target/temple-run/dist/
 target/temple-run/web/analysis-backup-main-*.js
+
+# Local bytecode and downloaded reference media (evidence frames remain versioned).
+__pycache__/
+*.pyc
+target/temple-run/analysis/reference-media/

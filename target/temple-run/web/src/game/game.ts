@@ -1,4 +1,6 @@
 import type {DeathCause,DeathKind} from './deathPresentation';
+import {branchGapRange,branchHasCenterGapAt} from './sidePath';
+import {RunDiagnostics} from './runDiagnostics';
 import {TurnIntentBuffer,TURN_INTENT_RULE_VERSION} from './turnInput';
 import {obstacleImpactReason,obstacleImpactCause} from './obstacles/feedback';
 import {RunTrace,parseRunTrace,type RunTraceData,type TraceCommand} from './runTrace';
@@ -252,7 +254,7 @@ export class Game {
     this.input.attach(window, canvas);
     this.unbindFocusPause=bindFocusPause(window,document,()=>{
       this.input.resetTransient();
-      if(this.session.pause()){this.publishSession();sfx.pauseMusic();}
+      if(this.session.pause()){this.publishSession();this.stopFootsteps();sfx.pauseMusic();}
     },()=>this.viewportBlocked());
     this.resize();
     window.addEventListener('resize', this.resize);
@@ -346,6 +348,8 @@ export class Game {
       },
       enableTilt: () => this.input.enableTilt(),
       stepLoop: () => this.stepLoop,
+      audioLoops:()=>sfx.activeLoops(),
+      roadTiles:()=>[...this.tiles.values()].map(e=>{const t=this.world.require(e,Tile);return {distance:t.distance,position:t.object?.position.toArray(),cuts:t.object?.userData.cutSignature,pool:t.object?.userData.poolKey};}),
       chaserInfo: () => {
         const box = new THREE.Box3().setFromObject(this.chaserGroup);
         const size = box.getSize(new THREE.Vector3());
@@ -592,6 +596,8 @@ export class Game {
   private runScoreMultiplier = 10;
   private turnIntent=new TurnIntentBuffer();
   private runUpgrades=captureRunUpgrades(()=>0);
+  private journal=new RunDiagnostics();
+  diagnostics(){return this.journal.read();}
   private activeTrace:RunTrace|null=null;
   private lastTrace:RunTraceData|null=null;
   private traceArmed=false;
@@ -729,7 +735,8 @@ export class Game {
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = true;
     this.session.start();
-    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({inputRulesVersion:TURN_INTENT_RULE_VERSION,startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
+    this.journal.start({runId:this.session.snapshot().runId,seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',runtimeRulesVersion:'playability-v2',inputRulesVersion:TURN_INTENT_RULE_VERSION,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades});
+    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({runtimeRulesVersion:'playability-v2',inputRulesVersion:TURN_INTENT_RULE_VERSION,startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
     if(this.viewportBlocked())this.session.pause();
     mutateUi.speed = RUN_SPEED;
     this.publishSession();
@@ -786,6 +793,7 @@ export class Game {
     this.traceCommand('pause');
     if (this.session.pause()) {
       this.input.resetTransient();
+      this.stopFootsteps();
       this.publishSession();
       sfx.pauseMusic();
     } else if (!this.viewportBlocked()&&this.session.resume()) {
@@ -915,6 +923,7 @@ export class Game {
       this.updateDeath(dt);
     }
     this.syncObjects(dt);
+    if(mutateUi.phase!=='playing')this.stopFootsteps();
     this.renderOnce();
     this.trackFps(frameDt);
   }
@@ -931,8 +940,12 @@ export class Game {
     this.world.update(dt);
     this.turnIntent.step(dt,this.world.require(this.runnerEntity,Turn).next);
     this.drainInput('tick');
+    const journalLane=this.world.require(this.runnerEntity,Lane),journalTurn=this.world.require(this.runnerEntity,Turn),journalJump=this.world.require(this.runnerEntity,Jump);
+    this.journal.sample(this.runElapsed,()=>({time:this.runElapsed,worldDistance:this.distance,progress:this.world.require(this.runnerEntity,RunStats).distance,lane:journalLane.index,side:journalLane.x,jump:journalJump.y,nextTurn:journalTurn.next,turnDirection:journalTurn.direction,queued:journalTurn.queued,branch:this.sideBranch,turnIntent:this.turnIntent.snapshot(),road:[...this.tiles.values()].map(e=>this.world.require(e,Tile)).filter(t=>Math.abs(t.distance-this.distance)<65).map(t=>({distance:t.distance,name:t.object?.name,poolKey:t.object?.userData.poolKey,cuts:t.object?.userData.cutSignature,narrow:t.object?.userData.narrowSection})),obstacles:this.obstacles.map(e=>this.world.require(e,Obstacle)).filter(o=>o.distance-this.distance>-12&&o.distance-this.distance<80).map(o=>({id:o.defId,kind:o.kind,distance:o.distance,lane:o.lane,name:o.object?.name}))}));
     this.updateTurnCue();
+    if(this.session.phase!=='playing'){this.stopFootsteps();return;}
     this.updateRunner(dt);
+    if(this.session.phase!=='playing'){this.stopFootsteps();return;}
     const challengeStats=this.world.require(this.runnerEntity,RunStats);
     stepRunChallenges(this.runChallenges,challengeStats.distance,challengeStats.coins,challengeStats.score);
     this.ensureTiles();
@@ -946,9 +959,12 @@ export class Game {
     }
     this.spawnWaves();
     this.updateObstacles(dt);
+    if(this.session.phase!=='playing'){this.stopFootsteps();return;}
     this.updatePickups(dt);
+    if(this.session.phase!=='playing'){this.stopFootsteps();return;}
     recordPowerFreeScore(this.runChallenges,challengeStats.score);
     this.updateChase(dt);
+    if(this.session.phase!=='playing'){this.stopFootsteps();return;}
     // Native GameController280 produces force after CharacterPlayer220's
     // movement and action expiry. Input next frame cannot erase that force.
     this.captureNativeForwardForce();
@@ -987,6 +1003,7 @@ export class Game {
     const actions=this.input.drain();
     this.traceDispatch=true;
     try {for (const action of actions) {
+      this.journal.input(this.runElapsed,action,stage);
       this.activeTrace?.append({kind:'input',stage,actions:[action]});
       if (action === 'left') this.move(-1);
       else if (action === 'right') this.move(1);
@@ -1179,7 +1196,7 @@ export class Game {
     if(!nativeTransitionSupported(distance))return false;
     if(surfaceAt(distance).level===3&&!nativeCliffSupported(side))return false;
     const branch=this.sidePathAt(distance,this.path);
-    if(branch&&!this.sideFork&&Math.abs(side)<.55)return false;
+    if(branch&&branchHasCenterGapAt(branch,distance)&&Math.abs(side+this.path.lateralAt(distance))<.55)return false;
     const narrow=branch?null:this.narrowAt(distance,this.path);
     if(narrow&&offNarrowSurface(narrow.side,side))return false;
     for(const entity of this.obstacles){
@@ -1373,6 +1390,7 @@ export class Game {
       this.graph.choose(this.sideFork, this.sideBranch);
       lane.index=1; // Once on the chosen road, its centre is a normal safe lane.
       sfx.play('branchChime');
+      this.journal.event(this.runElapsed,'branch-selected',{from:side.from,to:side.to,choice:this.sideBranch,sound:'branchChime'});
       this.rebuildBranchTiles(side.from,side.to);
     }
     if (side) {
@@ -1391,6 +1409,7 @@ export class Game {
         this.sideBranch = null;
         if (this.basePath) this.graph.merge(this.basePath);
         setHint('分路已合流');
+        this.journal.event(this.runElapsed,'branch-merged',{distance:trackPos.distance});
         this.basePath = null;
         this.rebuildTilesAhead();
       }
@@ -1532,7 +1551,7 @@ export class Game {
       }
     }
     const side=this.sidePathAt(distance);
-    if(side&&!this.sideFork){const span=[distance-side.to,distance-side.from] as const;cuts.push(['x',-.55,.55,span]);}
+    if(side){const [from,to]=branchGapRange(side);if(to>from){const span=[distance-to,distance-from] as const;cuts.push(['x',-.55,.55,span]);}}
     const narrow = group.userData.narrowSection as ReturnType<typeof narrowAt>;
     if (narrow) {
       const span = [distance - narrow.to, distance - narrow.from] as const;
@@ -1721,10 +1740,10 @@ export class Game {
       const template=transition==='a'?this.bundle.assets.transitionA:transition==='b'?this.bundle.assets.transitionB:null;
       const cliffTransition=this.difficulty.name==='classic'?nativeCliffTransitionAt(distance):null;
       const cliffTemplate=cliffTransition==='a'?this.bundle.assets.cliffCapA:cliffTransition==='b'?this.bundle.assets.cliffCapB:null;
-      const group = cliffTemplate?new THREE.Group():template?template.clone(true):this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, side ? this.path.lateralAt(distance) : 0);
+      const group = cliffTemplate?new THREE.Group():template?template.clone(true):this.acquireTile(index, terrain, narrow, clearScenery, surface.kind, Boolean(side), side?.last ?? false, surface.first, surface.last, 0);
       if(cliffTemplate){const cap=cliffTemplate.clone(true);cap.position.y=CLIFF_MESH_Y;group.add(cap);group.userData.nativeCliffCap=true;group.name='native-cliff-cap-'+cliffTransition;group.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});}
       if(template&&!cliffTemplate){group.name='native-transition-'+transition;group.traverse(o=>{if((o as THREE.Mesh).isMesh)o.userData.walkableSurface=true;});}
-      const point = this.path.at(distance);
+      const point = this.path.at(distance,side?-this.path.lateralAt(distance):0);
       group.position.set(point.x, this.meshY(distance), point.z);
       group.rotation.y = point.heading;
       alignNativeSceneryRoots(group);
@@ -1900,17 +1919,25 @@ export class Game {
   }
 
   private updateFootsteps(distance: number, speed: number): void {
+    const jump=this.world.require(this.runnerEntity,Jump),slide=this.world.require(this.runnerEntity,Slide);
+    if(this.session.phase!=='playing'||jump.airborne||this.nativeFalling||slide.remaining>0||this.introHeld()){
+      this.stopFootsteps();return;
+    }
     const terrain = terrainAt(distance, this.path);
     const loop = terrain === 'bridge' ? 'stepPlank' : terrain === 'cliff' ? 'stepCliff' : 'stepTemple';
-    if (loop !== this.stepLoop) {
+    if (loop !== this.stepLoop || !sfx.activeLoops().includes(loop)) {
       if (this.stepLoop) sfx.stopLoop(this.stepLoop, 0.18);
-      sfx.startLoop(loop, { gain: 0.55 });
-      this.stepLoop = loop;
+      this.stepLoop = sfx.startLoop(loop, { gain: 0.55 })?loop:null;
       if (terrain === 'bridge') sfx.setAmbience('water', 0.4);
       else sfx.setAmbience(null, 0.3);
       sfx.setHallReverb(terrain === 'hall');
     }
     sfx.setLoopRate(loop, 0.82 + Math.max(0, speed - RUN_SPEED_MIN) * 0.028);
+  }
+
+  private stopFootsteps():void {
+    if(this.stepLoop)sfx.stopLoop(this.stepLoop,.025);
+    this.stepLoop=null;
   }
 
   private spawnMonkey(distance: number): void {
@@ -2534,16 +2561,15 @@ export class Game {
     if (mutateUi.phase !== 'playing') return;
     if (this.world.elapsed < this.invincibleUntil) return;
     if(!this.session.die())return;
+    const pendingTurn=this.turnIntent.snapshot();
     this.turnIntent.clear();mutateUi.turnBufferedDirection=0;
     if(consumeAngelWings(this.angelWings))this.wingRevivePending=true;
-    if (this.stepLoop) {
-      sfx.stopLoop(this.stepLoop, 0.15);
-      this.stepLoop = null;
-    }
+    this.stopFootsteps();
     mutateUi.deathReason = reason;
     mutateUi.deathKind = kind;mutateUi.deathCause=cause;
     this.publishSession();
     this.deathElapsed=0;
+    this.journal.death({reason,kind,cause,time:this.runElapsed,pendingTurn,state:this.debugState()}, {camera:this.cameraPos.toArray(),look:this.cameraLook.toArray(),tiles:[...this.tiles.values()].map(e=>{const t=this.world.require(e,Tile);return {distance:t.distance,name:t.object?.name,poolKey:t.object?.userData.poolKey,cuts:t.object?.userData.cutSignature,narrow:t.object?.userData.narrowSection};}),junctions:[...this.junctions].map(([distance,g])=>({distance,cuts:g.userData.cutSignature}))});
     this.deathTimer = this.difficulty.name==='classic'?NATIVE_RESULT_DELAY:1.25;
     sfx.play(this.difficulty.name==='classic'&&kind==='water'?'splash':kind === 'fall' || kind === 'water' ? 'splat' : 'scream', { gain: 0.9 });
     void kind;
@@ -2725,6 +2751,7 @@ export class Game {
 
   dispose(): void {
     this.disposed = true;
+    this.stopFootsteps();sfx.stopAllLoops();sfx.stopAmbience(.05);sfx.stopFriction();sfx.stopWaterfall();sfx.stopWind();sfx.pauseMusic();
     this.unbindFocusPause?.();this.unbindFocusPause=null;
     cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.resize);

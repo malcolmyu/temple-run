@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import {resultIllustration,type DeathCause,type DeathKind} from '../game/deathPresentation';
 import NativeResultNumber from './NativeResultNumber.vue';
+import DiagnosticsExport from './DiagnosticsExport.vue';
 
 const props = defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; multiplier: number; reason: string; kind:DeathKind|'';cause?:DeathCause|'';skin?:string; reviveAvailable: boolean; reviveCost: number }>();
 const BASE = import.meta.env.BASE_URL;
@@ -32,6 +33,7 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
           <button @click="emit('store')">结算并去商店</button>
           <button @click="emit('menu')">主菜单</button>
         </div>
+        <DiagnosticsExport compact />
       </nav>
     </article>
   </section>

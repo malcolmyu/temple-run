@@ -28,3 +28,10 @@ const whole=new CoursePlan(75,0),chunked=new CoursePlan(75,0);whole.ensureThroug
 for(let d=600;d<=12000;d+=120)chunked.ensureThrough(d,2000);
 assert.deepEqual(chunked.features,whole.features,'generation batching cannot change beat decisions');
 assert.deepEqual(chunked.obstacles,whole.obstacles);
+
+const onboarding=new CourseDirector(1);
+assert.equal(onboarding.choose(2,299,900).kind==='narrowSmall',false);
+assert.equal(onboarding.choose(2,300,900).kind,'narrowSmall');
+onboarding.record('narrowSmall');
+assert.equal(onboarding.choose(2,799,1500).kind==='narrowLong',false);
+assert.equal(onboarding.choose(2,800,1500).kind,'narrowLong');

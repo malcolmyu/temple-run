@@ -42,3 +42,22 @@ for(let seed=1;seed<=200;seed++){
 }
 assert.ok(riskyForks>100);
 console.log('Risk forks:200 courses,one rich-arm hazard,safe arm,post-jump rewards,novice gate and invalid ownership rejection pass',{riskyForks});
+
+// The central opening stays in world space; connected aprons let either branch merge safely.
+const {branchGapRange,branchHasCenterGapAt}=await import('../target/temple-run/web/src/game/sidePath');
+assert.deepEqual(branchGapRange({from:100,to:136}),[106,130]);
+assert.equal(branchHasCenterGapAt({from:100,to:136},105.99),false);
+assert.equal(branchHasCenterGapAt({from:100,to:136},106),true);
+assert.equal(branchHasCenterGapAt({from:100,to:136},129.99),true);
+assert.equal(branchHasCenterGapAt({from:100,to:136},130),false);
+const staticGraph=new TrackGraph(),staticFork=staticGraph.forkLateral(100,1.9,136);
+for(const side of ['left','right'] as const){
+ staticGraph.choose(staticFork,side);
+ for(let at=100;at<=136;at+=.25){
+  const path=staticGraph.active,lateral=path.lateralAt(at);
+  const base=path.at(at,-lateral),original=staticFork.node.at;
+  assert.equal(original,100);assert.ok(Math.abs(base.x)<1e-9,'road anchor must not inherit the selected actor lateral');
+  if(branchHasCenterGapAt({from:100,to:136},at))assert.ok(Math.abs(lateral)>=.55,'chosen path centre stays on one surviving arm');
+ }
+}
+console.log('Fork geometry:static world anchors,shared centre-gap interval,entry/merge support for both arms pass');

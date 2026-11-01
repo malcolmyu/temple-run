@@ -691,13 +691,8 @@ export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: 
   // Once a graph branch is chosen, this tile is the complete active road.
   // Its centre must stay supported; the opposite branch was added above.
   if(Math.abs(activeLateral)>.001)return;
-  const gap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, TILE + 0.02), assets.material.water);
-  gap.rotation.x = -Math.PI / 2;
-  gap.position.set(0, 0.065, 0);
-  group.add(gap);
-  const face = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.4, TILE + 0.02), assets.material.stone);
-  face.position.set(0, -1.4, 0);
-  group.add(face);
+  // The common surface cutter owns the real centre opening and connected aprons.
+  // Do not paint a water rectangle over supported entry/merge floor.
   for (const side of [-1, 1] as const) {
     for (let i = 0; i < 4; i++) {
       const slab = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.18, 0.62), assets.material.stone);
@@ -706,17 +701,8 @@ export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: 
       group.add(slab);
     }
   }
-  if (!first) return;
-  for (const side of [-1, 1] as const) {
-    const arrow = new THREE.Mesh(
-      new THREE.ConeGeometry(0.3, 0.7, 3),
-      new THREE.MeshStandardMaterial({ color: 0xf5bb43, emissive: 0x8a5811, emissiveIntensity: 0.8 }),
-    );
-    arrow.rotation.x = Math.PI / 2;
-    arrow.rotation.z = side > 0 ? -Math.PI / 2 : Math.PI / 2;
-    arrow.position.set(side * 1.25, 0.13, -3.0);
-    group.add(arrow);
-  }
+  // Coins and the real opening guide the choice; omit the former gold cones.
+
 }
 
 /** Native standalone tree geometry already includes full prefab TRS and world scale.
@@ -1007,6 +993,19 @@ function contactShadow(group: THREE.Group, radius: number): void {
 export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: string): THREE.Group {
   const group = new THREE.Group();
   const kind = def.kind as ObstacleKind;
+  if(def.id==='stonePedestal'){
+    // Web lane blocker, not an independent recovered APK prefab. Match the real
+    // collision envelope instead of reusing a clipped, UV-mismatched fire tower.
+    group.name='web-stone-lane-blocker';
+    const stone=(assets.material.stone as THREE.MeshStandardMaterial).clone();
+    stone.color.setHex(0xa4aaa2);stone.roughness=1;
+    for(let i=0;i<5;i++){
+      const block=new THREE.Mesh(new THREE.BoxGeometry(1.3,.48,2.4),stone);
+      block.position.set(0,.24+i*.5,0);block.castShadow=true;block.receiveShadow=true;
+      group.add(block);
+    }
+    return group;
+  }
   if(def.id==='fireWall'){
     // Explicit web variant: no overhead tower/arch and no road surface cut.
     const base=new THREE.Mesh(new THREE.BoxGeometry(2.8,.2,1.4),assets.material.stone);

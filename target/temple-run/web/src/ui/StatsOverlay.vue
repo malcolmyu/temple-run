@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useModalDialog } from './useModalDialog';
 import { progress } from '../game/progress';
+import DiagnosticsExport from './DiagnosticsExport.vue';
 const emit = defineEmits<{ close: [] }>();
 const dialog=useModalDialog(()=>emit('close'));
 </script>
@@ -21,6 +22,7 @@ const dialog=useModalDialog(()=>emit('close'));
         <div><span>宝石余额</span><strong>◆ {{ progress.gems }}</strong></div>
         <div><span>解锁角色</span><strong>{{ progress.owned.length }} / 9</strong></div>
       </div>
+      <DiagnosticsExport />
       <button class="primary" @click="emit('close')"><span>完成</span><em>↗</em></button>
     </div>
   </section>

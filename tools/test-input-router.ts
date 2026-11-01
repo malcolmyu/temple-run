@@ -5,9 +5,9 @@ const base:DirectionalContext={playing:true,held:false,falling:false,lane:1,junc
 assert.equal(routeDirection({...base,remaining:14},1).kind,'buffer','a nearby early turn must retain intent instead of silently becoming a lane change');
 for(const direction of [-1,1] as const){
  assert.deepEqual(routeDirection(base,direction),{kind:'lane',index:1+direction},'distant cue never steals lane input');
- for(const remaining of [6,0,-2])assert.deepEqual(routeDirection({...base,remaining,turnDirection:direction},direction),{kind:'turn',direction,selectAlternateBranch:false});
+ for(const remaining of [6,0,-2,-2.7,-4])assert.deepEqual(routeDirection({...base,remaining,turnDirection:direction},direction),{kind:'turn',direction,selectAlternateBranch:false});
  for(const remaining of [6.01,14,19.8])assert.equal(routeDirection({...base,remaining,turnDirection:direction},direction).kind,'buffer');
- for(const remaining of [19.8001,-2.01,NaN])assert.equal(routeDirection({...base,remaining},direction).kind,'lane');
+ for(const remaining of [19.8001,-4.01,NaN])assert.equal(routeDirection({...base,remaining},direction).kind,'lane');
  assert.equal(routeDirection({...base,remaining:0,turnDirection:-direction},direction).kind,'lane');
  assert.equal(routeDirection({...base,remaining:0,queued:true},direction).kind,'lane');
  assert.equal(routeDirection({...base,remaining:0,junction:'tee',autoQueued:true,queued:true},direction).kind,'turn','manual T choice overrides boost automatic choice');

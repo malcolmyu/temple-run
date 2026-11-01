@@ -1,7 +1,9 @@
 /** Existing web geometry confirmation/late bounds, not native search radii. */
 export const TURN_INPUT_BEFORE = 6;
-export const TURN_INPUT_AFTER = 2;
-export const TURN_INTENT_RULE_VERSION='turn-intent-v1';
+// Keep input available through the same 4m grace period used by missed-turn death.
+// Previously the last 2m accepted a lane change but could never confirm the turn.
+export const TURN_INPUT_AFTER = 4;
+export const TURN_INTENT_RULE_VERSION='turn-intent-v2';
 /** TouchInput.TouchMoved/ctor; scene/saved sensitivity overrides are unresolved. */
 export function nativeTurnQueryRadius(sensitivity=.5):number {
   const f=Math.fround;

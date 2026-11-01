@@ -34,4 +34,3 @@ export function linearPathPoint(path:TrackPath,distance:number,side=0,smooth=fal
       heading: segment.heading,
     };
   }
-
