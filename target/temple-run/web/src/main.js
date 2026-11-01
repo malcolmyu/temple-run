@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { repairObjNormals } from './objNormals.js';
+import { repairObjNormals } from './objNormals.ts';
 import { loadRunnerRig } from './runnerRig.js';
 import * as sfx from './sfx.js';
 import './style.css';

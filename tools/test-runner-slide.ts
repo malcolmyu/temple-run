@@ -10,7 +10,7 @@ rig.setClip('slideLoop');rig.update(.1);
 const a=Array.from(rig.mesh.geometry.attributes.position.array);
 rig.update(.15);
 assert.ok(rig.getTime().clipTime<rig.clipDuration('slideLoop'));
-assert.ok(rig.mesh.geometry.attributes.position.array.some((v:number,i:number)=>Math.abs(v-a[i])>.0001),'slide loop must animate rather than hold the start pose');
+assert.ok(rig.mesh.geometry.attributes.position.array.some((v:number,i:number)=>Math.abs(v-Number(a[i]))>.0001),'slide loop must animate rather than hold the start pose');
 rig.setClip('slide',true);rig.update(.05);
 rig.setClip('slide',true);assert.equal(rig.getTime().clipTime,0,'repeated accepted slide must restart its start clip');
 rig.update(.025);assert.ok(Math.abs(rig.getTime().clipTime-.025)<1e-9);

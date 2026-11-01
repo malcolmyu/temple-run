@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --config target/temple-run/vite.config.js --host 0.0.0.0",
-    "build": "vite build --config target/temple-run/vite.config.js",
-    "temple:dev": "vite --config target/temple-run/vite.config.js --host 0.0.0.0",
-    "temple:build": "vite build --config target/temple-run/vite.config.js",
-    "temple:typecheck": "vue-tsc --noEmit -p target/temple-run/web/tsconfig.json",
+    "dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
+    "build": "vite build --config target/temple-run/vite.config.ts",
+    "temple:dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
+    "temple:build": "vite build --config target/temple-run/vite.config.ts",
+    "temple:typecheck": "npm run temple:typecheck:app && npm run temple:typecheck:tools",
     "temple:test:lightmap": "esbuild tools/test-native-lightmap.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-lightmap-test.mjs >/dev/null && node /tmp/temple-lightmap-test.mjs",
     "temple:test:t-junction": "esbuild tools/test-native-t-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-t-junction-test.mjs >/dev/null && node /tmp/temple-t-junction-test.mjs",
     "temple:test:pickup-reach": "esbuild tools/test-pickup-reach.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pickup-reach-test.mjs >/dev/null && node /tmp/temple-pickup-reach-test.mjs",
@@ -97,7 +97,7 @@
     "temple:test:course-director": "esbuild tools/test-course-director.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-course-director.mjs >/dev/null && node /tmp/temple-course-director.mjs",
     "temple:test:branch-rewards": "esbuild tools/test-branch-rewards.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-branch-rewards.mjs >/dev/null && node /tmp/temple-branch-rewards.mjs",
     "temple:test:power-free-score": "esbuild tools/test-power-free-score.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-power-free-score.mjs >/dev/null && node /tmp/temple-power-free-score.mjs",
-    "temple:qa": "vite --config target/temple-run/vite.config.js --host 127.0.0.1 --port 5175 --strictPort",
+    "temple:qa": "vite --config target/temple-run/vite.config.ts --host 127.0.0.1 --port 5175 --strictPort",
     "temple:test:focus-pause": "esbuild tools/test-focus-pause.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-focus-pause.mjs >/dev/null && node /tmp/temple-focus-pause.mjs",
     "temple:test:fire-wall": "esbuild tools/test-fire-wall.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-fire-wall.mjs >/dev/null && node /tmp/temple-fire-wall.mjs",
     "temple:test:graph-retention": "esbuild tools/test-track-graph-retention.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-graph-retention.mjs >/dev/null && node /tmp/temple-graph-retention.mjs",
@@ -117,7 +117,10 @@
     "temple:test:progress-load": "esbuild tools/test-progress-load.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-progress-load.mjs >/dev/null && node /tmp/temple-progress-load.mjs",
     "temple:test:gesture-input": "esbuild tools/test-input-gesture.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-gesture-test.mjs >/dev/null && node /tmp/temple-gesture-test.mjs",
     "temple:test:run-diagnostics": "esbuild tools/test-run-diagnostics.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-diagnostics-test.mjs >/dev/null && node /tmp/temple-diagnostics-test.mjs",
-    "temple:test:lane-blocker": "esbuild tools/test-lane-blocker.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-lane-blocker.mjs >/dev/null && node /tmp/temple-lane-blocker.mjs"
+    "temple:test:lane-blocker": "esbuild tools/test-lane-blocker.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-lane-blocker.mjs >/dev/null && node /tmp/temple-lane-blocker.mjs",
+    "temple:typecheck:app": "vue-tsc --noEmit -p target/temple-run/web/tsconfig.json",
+    "temple:typecheck:tools": "tsc --noEmit -p tsconfig.tools.json",
+    "temple:browser:compile": "node tools/compile-browser-test.ts"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",
@@ -129,6 +132,7 @@
     "vue-tsc": "^2.2.12"
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "@types/three": "^0.186.0"
   }
 }

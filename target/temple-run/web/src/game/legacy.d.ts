@@ -1,8 +1,3 @@
-declare module '*/objNormals.js' {
-  import type { Object3D } from 'three';
-  export function repairObjNormals(root: Object3D): number;
-}
-
 declare module '*/runnerRig.js' {
   import type { Object3D } from 'three';
   export interface RunnerRig {
