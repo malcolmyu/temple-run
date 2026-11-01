@@ -1,3 +1,6 @@
+import type {NativeMagnetCoin} from './nativeMagnet';
+import { createPowerEffects, type PowerEffects } from './powerEffects';
+import { FIRST_TURN_DISTANCE } from './pacing';
 import type { Object3D } from 'three';
 import { defineComponent } from './ecs/world';
 import type { Hitbox, LaneMask, ObstacleAction } from './obstacles/types';
@@ -23,7 +26,9 @@ export const Jump = defineComponent<{ y: number; v: number; airborne: boolean; l
   lastJumpAt: -10,
 }));
 
-export const Slide = defineComponent<{ remaining: number; lastSlideAt: number }>('Slide', () => ({
+export const Slide = defineComponent<{ remaining: number; duration: number; elapsed: number; lastSlideAt: number }>('Slide', () => ({
+  elapsed: 0,
+  duration: 0,
   remaining: 0,
   lastSlideAt: -10,
 }));
@@ -34,6 +39,7 @@ export const Turn = defineComponent<{
   next: number;
   direction: 0 | 1 | -1;
   queued: boolean;
+  autoQueued: boolean;
   cueShown: boolean;
   prebuilt: boolean;
   count: number;
@@ -41,9 +47,10 @@ export const Turn = defineComponent<{
   lastTurnDistance: number;
   forced: 0 | 1 | -1;
 }>('Turn', () => ({
-  next: 57,
+  next: FIRST_TURN_DISTANCE,
   direction: 0,
   queued: false,
+  autoQueued: false,
   cueShown: false,
   prebuilt: false,
   count: 0,
@@ -55,6 +62,7 @@ export const Turn = defineComponent<{
 export const Obstacle = defineComponent<{
   kind: ObstacleKind;
   defId: string;
+  branch?:'left'|'right';
   action: ObstacleAction;
   lanes: LaneMask;
   hitbox: Hitbox;
@@ -82,9 +90,15 @@ export const Obstacle = defineComponent<{
 
 export const Pickup = defineComponent<{
   kind: PickupKind;
+  side?:number;
+  pattern?:number;
+  baseAnchored?:boolean;
+  branch?:'left'|'right';
+  magnet?:NativeMagnetCoin;
   lane: number;
   distance: number;
   baseY: number;
+  value: number;
   taken: boolean;
   object: Object3D | null;
 }>('Pickup', () => ({
@@ -92,6 +106,7 @@ export const Pickup = defineComponent<{
   lane: 1,
   distance: 0,
   baseY: 1.3,
+  value: 1,
   taken: false,
   object: null,
 }));
@@ -111,29 +126,31 @@ export const Chase = defineComponent<{ gap: number; cooldown: number; lunge: num
 
 export const RunStats = defineComponent<{
   distance: number;
+  progressRemainder: number;
   coins: number;
   gems: number;
   multiplier: number;
   charge: number;
+  coinBonusLevel: number;
+  coinBonusMax: number;
   combo: number;
   comboTimer: number;
   score: number;
 }>('RunStats', () => ({
   distance: 0,
+  progressRemainder: 0,
   coins: 0,
   gems: 0,
   multiplier: 1,
   charge: 0,
+  coinBonusLevel: 1,
+  coinBonusMax: 0,
   combo: 0,
   comboTimer: 0,
   score: 0,
 }));
 
-export const Power = defineComponent<{ kind: PickupKind | null; until: number; shield: boolean }>('Power', () => ({
-  kind: null,
-  until: 0,
-  shield: false,
-}));
+export const Power = defineComponent<PowerEffects>('Power', createPowerEffects);
 
 export const Runner = defineComponent<{ rig: unknown }>('Runner', () => ({ rig: null }));
 export const Chaser = defineComponent<{ object: Object3D | null }>('Chaser', () => ({ object: null }));

@@ -1,0 +1,45 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "ids": [
+    "character2",
+    "character4",
+    "character6"
+  ],
+  "targets": [
+    2,
+    4,
+    6
+  ],
+  "nativeCharacterTypes": [
+    16,
+    17,
+    18,
+    19,
+    20,
+    22,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35
+  ],
+  "rule": "count positive character unlock levels;count/target*100;uses ownership rather than active character",
+  "instructionChecks": {
+    "0x1275884": "0x52800202",
+    "0x12758a0": "0x52800222",
+    "0x1275a2c": "0x710002bf",
+    "0x1275a3c": "0x7100071f",
+    "0x1275ac8": "0x1e2c1000",
+    "0x1275ad8": "0xf9440273",
+    "0x1275df4": "0x1e2a1000",
+    "0x1276120": "0x1e231000"
+  },
+  "limits": [
+    "Web counts its nine available asset-backed characters;not a complete mapping of original native character roster.",
+    "Web character prices/currencies remain assumptions.",
+    "No currency reward inferred."
+  ]
+}

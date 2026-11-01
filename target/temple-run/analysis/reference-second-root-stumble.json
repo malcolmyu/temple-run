@@ -1,0 +1,33 @@
+{
+  "bvid": "BV1ypuKzPErT",
+  "event": "nonfatal stumble after second root jump",
+  "visualBracket": [
+    19.8,
+    20.2
+  ],
+  "audioComposite": {
+    "videoSecond": 20.2114375,
+    "correlation": 0.9544835957873657
+  },
+  "audioMonkeys": {
+    "videoSecond": 20.2114375,
+    "correlation": 0.9376203345683356
+  },
+  "positiveControl": {
+    "videoSecond": 7.4541249999999994,
+    "correlation": 0.9592227106194551
+  },
+  "nativeCallAddresses": [
+    "0x1297b20",
+    "0x1297b34"
+  ],
+  "nativeEffects": {
+    "16": "gruntTrip",
+    "20": "monkeys"
+  },
+  "trigger": "unknown; investigate rejected horizontal swipe or landing; no synthetic obstacle or fixed slowdown justified",
+  "caveats": [
+    "audio timing has an apparent offset from video pose onset",
+    "waveform confirms effect combination, not touch input or collider identity"
+  ]
+}

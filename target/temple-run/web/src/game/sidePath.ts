@@ -12,6 +12,14 @@ export interface SidePathSection {
   safe: readonly number[];
 }
 
+/** Project fork geometry: retain 6m connected aprons at entry and merge. */
+export function branchGapRange(section:{from:number;to:number}):readonly [number,number] {
+  return [section.from+6,section.to-6];
+}
+export function branchHasCenterGapAt(section:{from:number;to:number},distance:number):boolean {
+  const [from,to]=branchGapRange(section);return distance>=from&&distance<to;
+}
+
 /**
  * A left/right fork: both outer lanes are walkable, the centre is a broken gap.
  * It is a gameplay lane split, not a separate graph branch yet; this gives the

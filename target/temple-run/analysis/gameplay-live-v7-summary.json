@@ -1,0 +1,144 @@
+{
+  "rulesVersion": "beats-v7",
+  "durationMs": 180010.60000057222,
+  "worldDistance": 6895.874734182628,
+  "scoreProgressDistance": 5621.25702927675,
+  "phaseAtEndBeforePause": "playing",
+  "environment": {
+    "devicePixelRatio": 2,
+    "physicalMobile": false,
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "viewport": {
+      "height": 812,
+      "width": 375
+    }
+  },
+  "frameStats": {
+    "frames": 10786,
+    "averageFps": 59.91772839259278,
+    "p95": 18.20000000001164,
+    "p99": 18.60000000000582,
+    "max": 66.79999999999563,
+    "over50": 1
+  },
+  "themeStats": {
+    "0": {
+      "frames": 64,
+      "averageFps": 59.02969931746906,
+      "p95": 18.5,
+      "p99": 33.39999999999782,
+      "max": 33.39999999999782,
+      "over50": 0
+    },
+    "1": {
+      "frames": 2119,
+      "averageFps": 59.94732330533527,
+      "p95": 18.29999999998836,
+      "p99": 18.60000000000582,
+      "max": 18.70000000001164,
+      "over50": 0
+    },
+    "2": {
+      "frames": 7472,
+      "averageFps": 59.91154387686702,
+      "p95": 18.20000000001164,
+      "p99": 18.60000000000582,
+      "max": 66.79999999999563,
+      "over50": 1
+    },
+    "3": {
+      "frames": 1131,
+      "averageFps": 59.95419944445624,
+      "p95": 18.20000000001164,
+      "p99": 18.60000000000582,
+      "max": 18.699999999982538,
+      "over50": 0
+    }
+  },
+  "longTasks": [
+    {
+      "duration": 82,
+      "start": 52349.199999809265
+    }
+  ],
+  "bufferStart": {
+    "height": 1624,
+    "width": 750
+  },
+  "bufferEnd": {
+    "height": 1624,
+    "width": 750
+  },
+  "narrows": [
+    {
+      "coinsAtEntry": 163,
+      "coinsAtExit": 168,
+      "entered": true,
+      "from": 2634,
+      "grounded": true,
+      "length": 12,
+      "passed": true,
+      "side": "left",
+      "to": 2646
+    },
+    {
+      "coinsAtEntry": 239,
+      "coinsAtExit": 253,
+      "entered": true,
+      "from": 3258,
+      "grounded": true,
+      "length": 36,
+      "passed": true,
+      "side": "right",
+      "to": 3294
+    },
+    {
+      "coinsAtEntry": 347,
+      "coinsAtExit": 361,
+      "entered": true,
+      "from": 4962,
+      "grounded": true,
+      "length": 60,
+      "passed": true,
+      "side": "right",
+      "to": 5022
+    }
+  ],
+  "resourceSamples": 181,
+  "sampleRanges": {
+    "courseFeatures": {
+      "min": 3,
+      "max": 7
+    },
+    "graphForks": {
+      "min": 0,
+      "max": 2
+    },
+    "pathSegments": {
+      "min": 1,
+      "max": 5
+    },
+    "sceneObjects": {
+      "min": 77,
+      "max": 164
+    },
+    "pickups": {
+      "min": 0,
+      "max": 36
+    }
+  },
+  "loop": {
+    "actualContinue": true,
+    "naturalFailure": "missed",
+    "results": true,
+    "actualRetry": true
+  },
+  "keys": "Actual native keys separately verified after intro with freeze/advance25ms: lane0 then lane1, both playing. Initial immediate-retry key attempts were inside intro; a later unbounded real-time attempt had already ended, neither counted as successful lane movement.",
+  "mainSaveUnchanged": true,
+  "limits": [
+    "desktop Chrome with automated control/state sampling overhead; no physical mobile performance claim",
+    "180s is finite; caches warm during sample, no heap bound or indefinite stability proof",
+    "48m narrow not encountered in this run; previous targeted case remains separate",
+    "frame interval max and LongTask duration are distinct measurements, not attributed to an identified root cause"
+  ]
+}

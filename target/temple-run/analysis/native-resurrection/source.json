@@ -1,0 +1,30 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "GameController.HandleResurrecting": {
+      "address": "0x126d458",
+      "end": "0x126d4d0",
+      "sha256": "65b9a3d7ab9994e4d672afdf6f463c1e56e6768887af6eeb9b10a3c8ab9bee48"
+    },
+    "GameController.ResurrectPlayer": {
+      "address": "0x126d4d0",
+      "end": "0x126dfd0",
+      "sha256": "d9da4f6e3c4a5b7a0266d81beb0cc20e486ae9f64f14813131e7a25291e1004c"
+    },
+    "CharacterPlayer.Resurrect": {
+      "address": "0x1298d60",
+      "end": "0x1298e34",
+      "sha256": "0c6f2324ce32a1f70d48a7bf842271d94274d626ec75263e74d358d988d6b352"
+    },
+    "GameController.get_ResurrectionSlowDownPercent": {
+      "address": "0x12725f8",
+      "end": "0x127265c",
+      "sha256": "269430791549c7dbf8f6fa86590f7f958a040c9bb1f47231daee77ec61c00778"
+    }
+  },
+  "configDefaultDistance": 150,
+  "configDefaultSlowdown": 0.8500000238418579,
+  "resurrectionAge": 10,
+  "startBoostAgeAddition": 10,
+  "source": "PlayerConfigData..ctor12a1df4..12a1df8 writes150 at38; get_ResurrectionBoostDistance12725e4 reads38"
+}

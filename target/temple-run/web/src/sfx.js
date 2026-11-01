@@ -36,6 +36,7 @@ const CLIPS = {
   splash: { file: 'splash.wav', gain: 0.8 },
   sizzle: { file: 'sizzle.wav', gain: 0.7 },
   monkey: { file: 'monkeyRoar.wav', gain: 0.8 },
+  monkeys: { file: 'monkeys.wav', gain: 1 },
   buy: { file: 'cashRegister.wav', gain: 0.8 },
   magnet: { file: 'magnet.mp3', gain: 1 },
   shimmer: { file: 'shimmer.mp3', gain: 0.85 },
@@ -155,7 +156,7 @@ export function preload() {
 }
 
 const nodeStats={created:0,ended:0,loops:0,amb:0,friction:0,fall:0,wind:0,music:0};
-export function stats(){return {...nodeStats,active:nodeStats.created-nodeStats.ended,loopsOpen:loops.size,ambOn:!!amb,frictionOn:!!friction,fallOn:!!fallNode,windOn:!!windNode}}
+export function stats(){return {...nodeStats,active:nodeStats.created-nodeStats.ended,played:{...playedCounts},loopsOpen:loops.size,ambOn:!!amb,frictionOn:!!friction,fallOn:!!fallNode,windOn:!!windNode}}
 function playBuffer(file, { gain = 1, rate = 1, when = 0, loop = false, detune = 0 } = {}) {
   if (!ctx || muted) return null;
   const buffer = buffers.get(file);

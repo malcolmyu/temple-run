@@ -1,0 +1,658 @@
+{
+  "fixture": {
+    "accepted": true,
+    "chaser": {
+      "children": 1,
+      "enemyLoaded": true,
+      "formation": [
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.37923349227906267
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "visible": true
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.48923349227906265
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            -0.6933332920074463,
+            0,
+            0.5454545617103577
+          ],
+          "visible": true
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.03256682958603894
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            1.0133333444595338,
+            0,
+            0.7636363506317139
+          ],
+          "visible": true
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.08256678190231886
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            -0.400000011920929,
+            0,
+            5.454545402526856
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.19256678190231977
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            0.8533333539962769,
+            0,
+            6.981818389892578
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.3025667819023199
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            -1.119999933242798,
+            0,
+            8.770909309387207
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.41256678190232
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            0.0533333346247673,
+            0,
+            11.519999313354491
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.5225667819023196
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            1.2800000667572022,
+            0,
+            15.38181838989258
+          ],
+          "visible": false
+        }
+      ],
+      "gap": 11.5,
+      "pos": [
+        -1.65,
+        0,
+        -174
+      ],
+      "presentationGap": 11.477200000000046,
+      "visible": true
+    },
+    "checks": {
+      "behindCurrentFacing": true,
+      "notOnPreviousArm": true,
+      "playing": true,
+      "turned": true
+    },
+    "runner": {
+      "animation": {
+        "clipName": "jump",
+        "clipTime": 0.47761842399835586
+      },
+      "children": 2,
+      "heading": -1.5707963267948966,
+      "modelPosition": [
+        0,
+        0.2,
+        0
+      ],
+      "modelScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "pos": [
+        9.83,
+        3.38,
+        -174
+      ],
+      "rig": true,
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "state": {
+      "airborne": true,
+      "chaseGap": 11.5,
+      "coins": 0,
+      "distance": 186,
+      "distanceExact": 186.83120062255864,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "jumpVelocity": -5.5,
+      "jumpY": 3.3825000762939457,
+      "lane": 1,
+      "nextTurn": 333,
+      "obstacles": [],
+      "phase": "playing",
+      "pickups": [
+        {
+          "ahead": -9,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": -5,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 0,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 4,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 8,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 13,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 17,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 22,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 26,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 31,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 36,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 40,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 44,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 49,
+          "kind": "coin",
+          "lane": 0
+        }
+      ],
+      "progressDistance": 46.36087226181013,
+      "queuedForwardForce": 0,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 4.709999999999884,
+      "score": 920,
+      "side": 0,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 27.120001220703127,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "turnCount": 1,
+      "turnDirection": 0,
+      "turnQueued": false
+    }
+  },
+  "natural": {
+    "accepted": true,
+    "chaser": {
+      "children": 1,
+      "enemyLoaded": true,
+      "formation": [
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.1692335518837126
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "visible": true
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.27923355188371257
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            -0.6933332920074463,
+            0,
+            0.5454545617103577
+          ],
+          "visible": true
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.38923355188371256
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            1.0133333444595338,
+            0,
+            0.7636363506317139
+          ],
+          "visible": true
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.2392334684372024
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            -0.400000011920929,
+            0,
+            5.454545402526856
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.34923346843720326
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            0.8533333539962769,
+            0,
+            6.981818389892578
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.4592334684372035
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            -1.119999933242798,
+            0,
+            8.770909309387207
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.0025668057441798897
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            0.0533333346247673,
+            0,
+            11.519999313354491
+          ],
+          "visible": false
+        },
+        {
+          "animation": {
+            "clipName": "run",
+            "clipTime": 0.11256680574417942
+          },
+          "modelPosition": [
+            0,
+            0,
+            0
+          ],
+          "modelScale": [
+            0.2,
+            0.2,
+            0.2
+          ],
+          "position": [
+            1.2800000667572022,
+            0,
+            15.38181838989258
+          ],
+          "visible": false
+        }
+      ],
+      "gap": 11.5,
+      "pos": [
+        -1.87,
+        0,
+        -174
+      ],
+      "presentationGap": 15,
+      "visible": true
+    },
+    "runner": {
+      "animation": {
+        "clipName": "run",
+        "clipTime": 0.3291555881500243
+      },
+      "children": 2,
+      "heading": -1.5707963267948966,
+      "modelPosition": [
+        0,
+        0.2,
+        0
+      ],
+      "modelScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "pos": [
+        13.13,
+        0,
+        -174
+      ],
+      "rig": true,
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "state": {
+      "airborne": false,
+      "chaseGap": 11.5,
+      "coins": 0,
+      "distance": 190,
+      "distanceExact": 190.13107014465237,
+      "falling": false,
+      "fps": 60,
+      "gems": 0,
+      "jumpVelocity": 0,
+      "jumpY": 0,
+      "lane": 1,
+      "nextTurn": 333,
+      "obstacles": [],
+      "phase": "playing",
+      "pickups": [
+        {
+          "ahead": -13,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": -8,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": -4,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 1,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 5,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 9,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 14,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 19,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 23,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 28,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 32,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 37,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 41,
+          "kind": "coin",
+          "lane": 0
+        },
+        {
+          "ahead": 46,
+          "kind": "coin",
+          "lane": 0
+        }
+      ],
+      "progressDistance": 104.04152461623876,
+      "queuedForwardForce": 0.30000000000000004,
+      "recoveringFromStumble": false,
+      "rig": "ready",
+      "runElapsed": 8.290000000001296,
+      "score": 2080,
+      "side": 0,
+      "slideDuration": 0,
+      "sliding": 0,
+      "speed": 28.257003784179688,
+      "stumbleRemaining": 0,
+      "swipeStumbleDelay": null,
+      "turnCount": 1,
+      "turnDirection": 0,
+      "turnQueued": false
+    }
+  }
+}

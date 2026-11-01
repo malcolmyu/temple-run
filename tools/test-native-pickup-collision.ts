@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import{nativePickupWithinReach as hit}from'../target/temple-run/web/src/game/nativePickupCollision';
+assert.equal(hit('bonus',0,0,3,0),false,'high bonus cannot be collected by grounded/sliding feet');
+assert.equal(hit('bonus',0,0,1.5,0),true,'jump can reach that same bonus');
+assert.equal(hit('shield',0,0,3,0),false);
+assert.equal(hit('shield',0,0,2,0),true);
+assert.equal(hit('coin',1,0,1.3,0),true,'fixed native AABB still reaches low coins while visually sliding');
+assert.equal(hit('coin',1,1.3,1.3,0),false,'adjacent lane is outside original yellow pickup sphere');
+assert.equal(hit('coin',1,.9,1.3,0),true);
+assert.equal(hit('coin',2,.9,1.3,0),false,'red/blue radius is smaller than yellow');
+assert.equal(hit('coin',1,.8,1.3,.8),false,'sphere corner distance, not separate axis padding');
+assert.equal(hit('coin',1,0,-.7,0),false,'airborne feet do not collect coins far below');
+assert.equal(hit('coin',1,0,1.3,.94),true);
+assert.equal(hit('coin',1,0,1.3,.96),false);
+console.log('Native pickup collision: translated fixed AABB, exact per-type sphere radii, 3D corner distance, no grounded high-power pickup.');

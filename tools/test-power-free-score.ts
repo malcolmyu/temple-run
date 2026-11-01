@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {createRunChallenges,stepRunChallenges,markChallengePowerUsed,summarizeRunChallenges} from '../target/temple-run/web/src/game/nativeRunChallenges';
+const a=createRunChallenges();stepRunChallenges(a,1000,200,999999);markChallengePowerUsed(a,999999);stepRunChallenges(a,1100,300,1100000);assert.equal(a.powerFreeScore,999999);
+const b=createRunChallenges();stepRunChallenges(b,1200,400,1000000);markChallengePowerUsed(b,1000010);stepRunChallenges(b,1300,500,2000000);assert.equal(b.powerFreeScore,1000010,'later aid must preserve already earned clean prefix');
+assert.equal(b.usedPower,true);assert.equal(createRunChallenges().powerFreeScore,0);
+Object.assign(globalThis,{localStorage:{getItem:()=>JSON.stringify({bestScore:2000000}),setItem:()=>{}}});
+const p=await import('../target/temple-run/web/src/game/progress');const o=await import('../target/temple-run/web/src/game/objectives');
+assert.equal(p.progress.bestPowerFreeScore,0,'old best score cannot imply no-power play');
+p.recordRun(2000,0,0,2000000,summarizeRunChallenges(a,2000));assert.equal(o.claim('score1000000nopowers'),false);
+p.recordRun(2000,0,0,2000000,summarizeRunChallenges(b,2000));const before={coins:p.progress.coins,gems:p.progress.gems,m:o.nextRunScoreMultiplier()};assert.ok(o.claim('score1000000nopowers'));assert.equal(o.claim('score1000000nopowers'),false);assert.equal(p.progress.coins,before.coins);assert.equal(p.progress.gems,before.gems);assert.equal(o.nextRunScoreMultiplier(),before.m);
+console.log('Power-free score:before/after threshold,sticky first use,earned prefix,old-save default,settlement and once-only confirmation pass');

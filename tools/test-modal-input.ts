@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {Input} from '../target/temple-run/web/src/game/input';
+const win=new EventTarget(),canvas=new EventTarget();const input=new Input();input.setClassicControls(true);
+input.attach(win as Window,canvas as HTMLCanvasElement);
+const key=(code:string)=>{const e=new Event('keydown',{cancelable:true});Object.assign(e,{code,repeat:false});win.dispatchEvent(e);return e;};
+key('KeyA');input.push('left');assert.equal(input.steeringAxis,-1);
+input.setBlocked(true);assert.deepEqual(input.drain(),[]);assert.equal(input.steeringAxis,null);
+for(const code of ['Enter','Escape','Space','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','KeyD'])assert.equal(key(code).defaultPrevented,false,'modal keeps native button/scroll keyboard behavior');
+input.push('start');assert.deepEqual(input.drain(),[]);assert.equal(input.steeringAxis,null);
+input.setBlocked(false);assert.deepEqual(input.drain(),[]);assert.equal(input.steeringAxis,null);
+assert.equal(key('ArrowRight').defaultPrevented,true);assert.deepEqual(input.drain(),['right']);
+key('Enter');assert.deepEqual(input.drain(),['start']);key('KeyD');assert.equal(input.steeringAxis,1);
+input.setBlocked(true);input.setBlocked(false);assert.equal(input.steeringAxis,null);
+console.log('Modal input:queued/held clearing,blocked keyboard/debug actions,native defaults and restored gameplay pass');

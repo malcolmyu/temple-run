@@ -1,0 +1,568 @@
+{
+  "purchase": {
+    "bestCleanRunDistance": 0,
+    "bestCoinFreeStart": 0,
+    "bestCoinMeterFills": 0,
+    "bestDistance": 0,
+    "bestPowerFreeScore": 0,
+    "bestPowerPickups": {
+      "bonus": 0,
+      "boost": 0,
+      "magnet": 0,
+      "shield": 0
+    },
+    "bestRunCoins": 0,
+    "bestScore": 0,
+    "bestWingResurrections": 0,
+    "claimed": [],
+    "coins": 0,
+    "equipped": "jhony",
+    "gems": 0,
+    "headStartUsed": 0,
+    "headStarts": 0,
+    "legacyMigrationComplete": true,
+    "lifetimeCoins": 0,
+    "megaStarts": 0,
+    "music": true,
+    "owned": [
+      "jhony"
+    ],
+    "permaWings": 0,
+    "runs": 0,
+    "sound": true,
+    "totalDistance": 0,
+    "upgradeSchema": 2,
+    "upgrades": {
+      "bonus": 1,
+      "boost": 1,
+      "coin": 0,
+      "coinSpawn": 0,
+      "magnet": 1,
+      "shield": 1
+    },
+    "wings": 0
+  },
+  "checks": [
+    {
+      "name": "seed1: normal run reaches5500m",
+      "passed": true
+    },
+    {
+      "name": "seed1: first generated power before1000m",
+      "passed": true
+    },
+    {
+      "name": "seed1: generated gaps strictly exceed600m",
+      "passed": true
+    },
+    {
+      "name": "seed1: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed1: results restart clears generator",
+      "passed": true
+    },
+    {
+      "name": "seed2: normal run reaches5500m",
+      "passed": true
+    },
+    {
+      "name": "seed2: first generated power before1000m",
+      "passed": true
+    },
+    {
+      "name": "seed2: generated gaps strictly exceed600m",
+      "passed": true
+    },
+    {
+      "name": "seed2: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed2: results restart clears generator",
+      "passed": true
+    },
+    {
+      "name": "seed3: normal run reaches5500m",
+      "passed": true
+    },
+    {
+      "name": "seed3: first generated power before1000m",
+      "passed": true
+    },
+    {
+      "name": "seed3: generated gaps strictly exceed600m",
+      "passed": true
+    },
+    {
+      "name": "seed3: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed3: results restart clears generator",
+      "passed": true
+    },
+    {
+      "name": "seed4: normal run reaches5500m",
+      "passed": true
+    },
+    {
+      "name": "seed4: first generated power before1000m",
+      "passed": true
+    },
+    {
+      "name": "seed4: generated gaps strictly exceed600m",
+      "passed": true
+    },
+    {
+      "name": "seed4: failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "seed4: results restart clears generator",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected bonus",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected shield",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected magnet",
+      "passed": true
+    },
+    {
+      "name": "normally generated and collected boost",
+      "passed": true
+    },
+    {
+      "name": "natural boost expiry observed",
+      "passed": true
+    },
+    {
+      "name": "natural boost releases grounded and supported",
+      "passed": true
+    },
+    {
+      "name": "natural magnet expiry observed",
+      "passed": true
+    },
+    {
+      "name": "natural magnet expiry leaves run playable",
+      "passed": true
+    },
+    {
+      "name": "collected magnet uses captured duration",
+      "passed": true
+    },
+    {
+      "name": "natural shield expiry observed",
+      "passed": true
+    },
+    {
+      "name": "natural shield expiry leaves run playable",
+      "passed": true
+    },
+    {
+      "name": "collected shield uses captured duration",
+      "passed": true
+    },
+    {
+      "name": "collected boost uses captured budget",
+      "passed": true
+    },
+    {
+      "name": "instant bonus grants captured reward",
+      "passed": true
+    }
+  ],
+  "runSummaries": [
+    {
+      "seed": 1,
+      "rules": "beats-v7",
+      "phase": "playing",
+      "worldDistance": 5500.04653785735,
+      "progress": 4399.038969348573,
+      "upgrades": {
+        "availability": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "boostProgress": 250,
+        "coinBonusReward": 50,
+        "coinMultiplier": 1,
+        "levels": {
+          "bonus": 1,
+          "boost": 1,
+          "coin": 0,
+          "coinSpawn": 0,
+          "magnet": 1,
+          "shield": 1
+        },
+        "magnetDuration": 15,
+        "magnetMultiplier": 1,
+        "shieldDuration": 15
+      },
+      "pickups": {
+        "bonus": 2,
+        "boost": 0,
+        "magnet": 1,
+        "shield": 3
+      }
+    },
+    {
+      "seed": 2,
+      "rules": "beats-v7",
+      "phase": "playing",
+      "worldDistance": 5500.592513351509,
+      "progress": 4769.082609527068,
+      "upgrades": {
+        "availability": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "boostProgress": 250,
+        "coinBonusReward": 50,
+        "coinMultiplier": 1,
+        "levels": {
+          "bonus": 1,
+          "boost": 1,
+          "coin": 0,
+          "coinSpawn": 0,
+          "magnet": 1,
+          "shield": 1
+        },
+        "magnetDuration": 15,
+        "magnetMultiplier": 1,
+        "shieldDuration": 15
+      },
+      "pickups": {
+        "bonus": 0,
+        "boost": 3,
+        "magnet": 3,
+        "shield": 0
+      }
+    },
+    {
+      "seed": 3,
+      "rules": "beats-v7",
+      "phase": "playing",
+      "worldDistance": 5500.130811539021,
+      "progress": 4414.38254357927,
+      "upgrades": {
+        "availability": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "boostProgress": 250,
+        "coinBonusReward": 50,
+        "coinMultiplier": 1,
+        "levels": {
+          "bonus": 1,
+          "boost": 1,
+          "coin": 0,
+          "coinSpawn": 0,
+          "magnet": 1,
+          "shield": 1
+        },
+        "magnetDuration": 15,
+        "magnetMultiplier": 1,
+        "shieldDuration": 15
+      },
+      "pickups": {
+        "bonus": 3,
+        "boost": 0,
+        "magnet": 1,
+        "shield": 3
+      }
+    },
+    {
+      "seed": 4,
+      "rules": "beats-v7",
+      "phase": "playing",
+      "worldDistance": 5500.461119766523,
+      "progress": 4400.3543623373325,
+      "upgrades": {
+        "availability": {
+          "bonus": 1,
+          "boost": 1,
+          "magnet": 1,
+          "shield": 1
+        },
+        "boostProgress": 250,
+        "coinBonusReward": 50,
+        "coinMultiplier": 1,
+        "levels": {
+          "bonus": 1,
+          "boost": 1,
+          "coin": 0,
+          "coinSpawn": 0,
+          "magnet": 1,
+          "shield": 1
+        },
+        "magnetDuration": 15,
+        "magnetMultiplier": 1,
+        "shieldDuration": 15
+      },
+      "pickups": {
+        "bonus": 2,
+        "boost": 0,
+        "magnet": 2,
+        "shield": 1
+      }
+    }
+  ],
+  "expirations": [
+    {
+      "distance": 2918.2852651977764,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "magnet",
+      "phase": "playing",
+      "remainingBefore": 1.3642420526593924e-11,
+      "seed": 1,
+      "supported": true
+    },
+    {
+      "distance": 5311.046537857317,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "shield",
+      "phase": "playing",
+      "remainingBefore": 1.3642420526593924e-11,
+      "seed": 1,
+      "supported": true
+    },
+    {
+      "distance": 969.7864988708492,
+      "falling": false,
+      "fromBoost": true,
+      "kind": "shield",
+      "phase": "playing",
+      "remainingBefore": 0.024999999999977263,
+      "seed": 2,
+      "supported": true
+    },
+    {
+      "distance": 1703.203431854243,
+      "falling": false,
+      "fromBoost": true,
+      "kind": "shield",
+      "phase": "playing",
+      "remainingBefore": 3.637978807091713e-12,
+      "seed": 2,
+      "supported": true
+    },
+    {
+      "distance": 2450.784376831048,
+      "falling": false,
+      "fromBoost": true,
+      "kind": "shield",
+      "phase": "playing",
+      "remainingBefore": 3.637978807091713e-12,
+      "seed": 2,
+      "supported": true
+    },
+    {
+      "distance": 3325.608898315422,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "magnet",
+      "phase": "playing",
+      "remainingBefore": 1.3642420526593924e-11,
+      "seed": 2,
+      "supported": true
+    },
+    {
+      "distance": 4081.989205169678,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "magnet",
+      "phase": "playing",
+      "remainingBefore": 1.3642420526593924e-11,
+      "seed": 2,
+      "supported": true
+    },
+    {
+      "distance": 1193.1811506652832,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "shield",
+      "phase": "playing",
+      "remainingBefore": 1.3642420526593924e-11,
+      "seed": 3,
+      "supported": true
+    },
+    {
+      "distance": 2597.445175476085,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "magnet",
+      "phase": "playing",
+      "remainingBefore": 1.3642420526593924e-11,
+      "seed": 3,
+      "supported": true
+    },
+    {
+      "distance": 5430.830811539009,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "shield",
+      "phase": "playing",
+      "remainingBefore": 1.3642420526593924e-11,
+      "seed": 3,
+      "supported": true
+    },
+    {
+      "distance": 1849.7045136261029,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "magnet",
+      "phase": "playing",
+      "remainingBefore": 0.024999999945521267,
+      "seed": 4,
+      "supported": true
+    },
+    {
+      "distance": 3337.439718246462,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "magnet",
+      "phase": "playing",
+      "remainingBefore": 0.024999999945521267,
+      "seed": 4,
+      "supported": true
+    },
+    {
+      "distance": 4925.061119766423,
+      "falling": false,
+      "fromBoost": false,
+      "kind": "shield",
+      "phase": "playing",
+      "remainingBefore": 0.024999999945521267,
+      "seed": 4,
+      "supported": true
+    }
+  ],
+  "releases": [
+    {
+      "airborne": false,
+      "distance": 969.7864988708492,
+      "falling": false,
+      "handover": {
+        "deferred": 0.1,
+        "reasons": []
+      },
+      "lane": 1,
+      "phase": "playing",
+      "powers": [],
+      "seed": 2,
+      "supported": true
+    },
+    {
+      "airborne": false,
+      "distance": 1703.203431854243,
+      "falling": false,
+      "handover": {
+        "deferred": 0.1,
+        "reasons": []
+      },
+      "lane": 1,
+      "phase": "playing",
+      "powers": [],
+      "seed": 2,
+      "supported": true
+    },
+    {
+      "airborne": false,
+      "distance": 2450.784376831048,
+      "falling": false,
+      "handover": {
+        "deferred": 0.1,
+        "reasons": []
+      },
+      "lane": 1,
+      "phase": "playing",
+      "powers": [],
+      "seed": 2,
+      "supported": true
+    }
+  ],
+  "restarted": {
+    "phase": "playing",
+    "powers": []
+  },
+  "input": [
+    {
+      "name": "ArrowLeft: lane and survival",
+      "passed": true
+    },
+    {
+      "name": "ArrowLeft: edge clamp",
+      "passed": true
+    },
+    {
+      "name": "ArrowLeft: airborne lane change",
+      "passed": true
+    },
+    {
+      "name": "ArrowRight: lane and survival",
+      "passed": true
+    },
+    {
+      "name": "ArrowRight: edge clamp",
+      "passed": true
+    },
+    {
+      "name": "ArrowRight: airborne lane change",
+      "passed": true
+    },
+    {
+      "name": "slide lane change",
+      "passed": true
+    },
+    {
+      "name": "swipe lane 0",
+      "passed": true
+    },
+    {
+      "name": "swipe lane 1",
+      "passed": true
+    },
+    {
+      "name": "natural route: roots, gap, two corners, T left",
+      "passed": true
+    },
+    {
+      "name": "natural route: roots, gap, two corners, T right",
+      "passed": true
+    },
+    {
+      "name": "actual root still collides",
+      "passed": true
+    },
+    {
+      "name": "missed corner still fails",
+      "passed": true
+    },
+    {
+      "name": "failure reaches results",
+      "passed": true
+    },
+    {
+      "name": "restart resets input and powers",
+      "passed": true
+    }
+  ],
+  "mainUnchanged": true
+}

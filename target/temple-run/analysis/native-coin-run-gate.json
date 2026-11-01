@@ -1,0 +1,24 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "fields": {
+    "SpacesSinceLastCoinRun": "0x84",
+    "CoinRunCount": "0x88",
+    "sMinSpacesBetweenCoinRuns": "0x3c",
+    "sMaxCoinsPerRun": "0x40"
+  },
+  "rule": "AddCoins rejects CoinRunCount>=sMaxCoinsPerRun and SpacesSinceLastCoinRun<=sMinSpacesBetweenCoinRuns. Eligibility requires strict greater-than spacing; other geometry/config filters also apply.",
+  "limits": [
+    "Native per-element counter propagation and max-run counting not yet ported.",
+    "Web adapter uses complete12m empty cells between emitted run endpoints;Existing5-coin web layout,2m spacing and6m corner margin are web choices, not recovered native values."
+  ],
+  "instructionChecks": {
+    "0x12e4d40": "0xb9408b75",
+    "0x12e4d54": "0xb9404109",
+    "0x12e4d58": "0x6b0902bf",
+    "0x12e4d5c": "0x54fffc2a",
+    "0x12e4d64": "0xb9408775",
+    "0x12e4d78": "0xb9403d09",
+    "0x12e4d7c": "0x6b0902bf",
+    "0x12e4d80": "0x54fffb0d"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "window": "second-stumble-slide-window/observations.json",
+  "review": "manual exact-decoder-frame pose review; stride3 from29.97fps source",
+  "intervals": [
+    {
+      "visiblePose": "descending/landing",
+      "samplePTS": [
+        19.52,
+        19.621
+      ],
+      "meaning": "landing transition bracket; exact grounded physics flag unknown"
+    },
+    {
+      "visiblePose": "running cycle",
+      "samplePTS": [
+        19.621,
+        19.721,
+        19.821,
+        19.921
+      ],
+      "minimumVisibleSpan": 0.3,
+      "meaning": "multiple upright alternating-leg poses, inconsistent with immediate persistent prone slide assumption"
+    },
+    {
+      "visiblePose": "stumble/recovery",
+      "samplePTS": [
+        20.021,
+        20.121,
+        20.221,
+        20.321,
+        20.421,
+        20.521,
+        20.622,
+        20.722
+      ],
+      "meaning": "do not infer IsSliding or accelerating from stumble animation alone"
+    },
+    {
+      "visiblePose": "lowering toward slide",
+      "samplePTS": [
+        20.822,
+        20.922
+      ],
+      "meaning": "pose transition only, not exact touch timestamp"
+    },
+    {
+      "visiblePose": "prone slide",
+      "samplePTS": [
+        21.021,
+        21.121,
+        21.221,
+        21.321,
+        21.421
+      ],
+      "meaning": "visible prone pose"
+    }
+  ],
+  "audioEvents": [
+    {
+      "kind": "land",
+      "audioSecond": 19.784761
+    },
+    {
+      "kind": "stumble",
+      "audioSecond": 20.2114485
+    }
+  ],
+  "limitations": [
+    "audio latency not removed",
+    "source visual cadence does not uniquely determine all inputs",
+    "pose-based interval is not native collider state",
+    "source transition timings do not justify changing acceleration coefficients"
+  ]
+}

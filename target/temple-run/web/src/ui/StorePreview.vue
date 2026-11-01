@@ -11,7 +11,9 @@ const BASE = import.meta.env.BASE_URL;
 let renderer: THREE.WebGLRenderer | null = null;
 let scene: THREE.Scene | null = null;
 let camera: THREE.PerspectiveCamera | null = null;
-let rig: { object: THREE.Object3D; update(dt: number, timeScale?: number): void; setClip(name: string, restart?: boolean): void } | null = null;
+let rig: { dispose(): void; object: THREE.Object3D; update(dt: number, timeScale?: number): void; setClip(name: string, restart?: boolean): void } | null = null;
+const loading = ref(false);
+const failed = ref(false);
 let token = 0;
 let raf = 0;
 let last = 0;
@@ -87,21 +89,28 @@ function resize(): void {
 async function loadSkin(id: string): Promise<void> {
   const skin = skinById(id);
   const my = ++token;
+  loading.value = true;
+  failed.value = false;
+  rig?.dispose();
+  rig = null;
   try {
     const loaded = await loadRunnerRig(
       `${BASE}assets/characters/rig-${skin.rig}.json`,
       `${BASE}assets/characters/${skin.texture}`,
       { scale: 0.27, yOffset: 0, clipFallbackUrl: DEFAULT_RIG_URL },
     );
-    if (my !== token || !scene) return;
-    if (rig) scene.remove(rig.object);
+    if (my !== token || !scene) { loaded.dispose(); return; }
     normalizeRigHeight(loaded, 2.15);
     loaded.setClip('run');
     loaded.object.rotation.y = Math.PI;
     scene.add(loaded.object);
     rig = loaded;
   } catch (error) {
+    if (my !== token) return;
+    failed.value = true;
     console.warn('preview rig unavailable', error);
+  } finally {
+    if (my === token) loading.value = false;
   }
 }
 
@@ -135,9 +144,19 @@ watch(
 );
 
 onBeforeUnmount(() => {
+  token++;
   cancelAnimationFrame(raf);
   window.removeEventListener('resize', resize);
-  if (rig && scene) scene.remove(rig.object);
+  rig?.dispose();
+  rig = null;
+  scene?.traverse(object => {
+    if (object instanceof THREE.Mesh) {
+      object.geometry.dispose();
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach(material => material.dispose());
+    }
+  });
+  scene = null;
   renderer?.dispose();
 });
 </script>
@@ -145,6 +164,11 @@ onBeforeUnmount(() => {
 <template>
   <div class="store-preview">
     <canvas ref="canvas" aria-label="角色 3D 预览" />
-    <span class="preview-hint">拖动旋转</span>
+    <span class="preview-hint" role="status">{{ loading ? '角色加载中…' : failed ? '预览加载失败' : '拖动旋转' }}</span>
+    <button v-if="failed" class="preview-retry menu-btn" @click="loadSkin(props.skinId)">重新加载预览</button>
   </div>
 </template>
+
+<style scoped>
+.preview-retry { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); min-height:44px; }
+</style>

@@ -1,3 +1,5 @@
+import { TiltSteering } from './steering';
+
 export type Action = 'left' | 'right' | 'jump' | 'slide' | 'pause' | 'start';
 
 type Handler = (action: Action) => void;
@@ -9,11 +11,21 @@ type Handler = (action: Action) => void;
  */
 export class Input {
   private queue: Action[] = [];
+  private blocked=false;
+  setBlocked(blocked:boolean):void {
+    if(this.blocked===blocked)return;
+    this.blocked=blocked;this.resetTransient();
+  }
   private handlers: Handler[] = [];
-  private touchStart: { x: number; y: number } | null = null;
+  private cancelPointer=()=>{this.touchStart=null;};
+  private touchStart: { x: number; y: number; id: number; consumed: boolean } | null = null;
+
+  resetTransient():void {
+    this.queue=[];this.leanLeft=false;this.leanRight=false;this.tilt.reset();this.cancelPointer();
+  }
 
   push(action: Action): void {
-    this.queue.push(action);
+    if(!this.blocked)this.queue.push(action);
   }
 
   drain(): Action[] {
@@ -32,10 +44,26 @@ export class Input {
 
   private tiltEnabled = false;
   private tiltListening = false;
-  private lastTiltAt = 0;
+  private readonly tilt = new TiltSteering();
+
+  private classicControls=false;
+  private leanLeft=false;
+  private leanRight=false;
+  setClassicControls(enabled:boolean):void {
+    this.classicControls=enabled;this.leanLeft=false;this.leanRight=false;
+  }
+  // Desktop equivalent of holding a phone tilted; arrows/swipes change lanes, or turn at a junction.
+  get steeringAxis(): number | null {
+    if(this.blocked)return null;
+    if(this.classicControls&&(this.leanLeft||this.leanRight))return Number(this.leanRight)-Number(this.leanLeft);
+    return this.tiltEnabled?this.tilt.axis:null;
+  }
+  get isTiltEnabled(): boolean { return this.tiltEnabled; }
 
   /** Opt-in device orientation steering (the original's "tilt to turn"). */
   async enableTilt(): Promise<boolean> {
+    if (typeof DeviceOrientationEvent === 'undefined') return false;
+    this.tilt.reset();
     this.tiltEnabled = true;
     const anyOrientation = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> };
     if (typeof anyOrientation.requestPermission === 'function') {
@@ -53,13 +81,8 @@ export class Input {
     if (!this.tiltListening) {
       this.tiltListening = true;
       window.addEventListener('deviceorientation', (event) => {
-        if (!this.tiltEnabled) return;
-        const now = performance.now();
-        if (now - this.lastTiltAt < 280) return;
-        const gamma = event.gamma ?? 0;
-        if (Math.abs(gamma) < 18) return;
-        this.lastTiltAt = now;
-        this.push(gamma > 0 ? 'right' : 'left');
+        if (!this.tiltEnabled||this.blocked) return;
+        this.tilt.sample(event.gamma);
       });
     }
     return true;
@@ -67,11 +90,22 @@ export class Input {
 
   disableTilt(): void {
     this.tiltEnabled = false;
+    this.tilt.reset();
   }
 
   attach(windowTarget: Window, canvas: HTMLCanvasElement): void {
+    const clearPointer=():void=>{
+      const start=this.touchStart;this.touchStart=null;
+      if(start&&canvas.hasPointerCapture?.(start.id))canvas.releasePointerCapture(start.id);
+    };
+    this.cancelPointer=clearPointer;
     windowTarget.addEventListener('keydown', (event) => {
-      if (event.repeat) return;
+      if (this.blocked||event.repeat) return;
+      if(this.classicControls&&(event.code==='KeyA'||event.code==='KeyD')){
+        event.preventDefault();
+        if(event.code==='KeyA')this.leanLeft=true;else this.leanRight=true;
+        return;
+      }
       const map: Record<string, Action> = {
         ArrowLeft: 'left',
         KeyA: 'left',
@@ -93,25 +127,47 @@ export class Input {
       }
     });
 
-    canvas.addEventListener('pointerdown', (event) => {
-      this.touchStart = { x: event.clientX, y: event.clientY };
+    windowTarget.addEventListener('keyup',event=>{
+      if(event.code==='KeyA')this.leanLeft=false;
+      if(event.code==='KeyD')this.leanRight=false;
     });
-    canvas.addEventListener('pointerup', (event) => {
-      if (!this.touchStart) return;
-      const dx = event.clientX - this.touchStart.x;
-      const dy = event.clientY - this.touchStart.y;
-      this.touchStart = null;
+    windowTarget.addEventListener('blur',()=>this.resetTransient());
+
+    canvas.addEventListener('pointerdown', (event) => {
+      if(this.blocked||event.button!==0||this.touchStart)return;
+      this.touchStart = { x: event.clientX, y: event.clientY, id:event.pointerId, consumed:false };
+      // Keep mouse/pen swipes bound when they leave the canvas. Synthetic test
+      // pointers have no active browser pointer and may reject capture.
+      try { canvas.setPointerCapture?.(event.pointerId); } catch { /* no active pointer */ }
+    });
+    const recognizeGesture=(event:PointerEvent,allowTap:boolean):void=>{
+      const start=this.touchStart;
+      if(this.blocked||!start||start.id!==event.pointerId||start.consumed)return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
       const absX = Math.abs(dx);
       const absY = Math.abs(dy);
       if (Math.max(absX, absY) < 18) {
-        this.push('jump');
+        if(allowTap){start.consumed=true;this.push('jump');}
         return;
       }
+      // Native TouchMoved recognizes before release. Keep capture until the end,
+      // but consume only one action per gesture so later movement/up cannot repeat it.
+      start.consumed=true;
       if (absX > absY) this.push(dx > 0 ? 'right' : 'left');
       else this.push(dy > 0 ? 'slide' : 'jump');
+    };
+    canvas.addEventListener('pointermove',event=>recognizeGesture(event,false));
+    canvas.addEventListener('pointerup', (event) => {
+      if (event.button!==0||!this.touchStart||this.touchStart.id!==event.pointerId) return;
+      recognizeGesture(event,true);
+      clearPointer();
     });
-    canvas.addEventListener('pointercancel', () => {
-      this.touchStart = null;
+    canvas.addEventListener('pointercancel', event => {
+      if(this.touchStart?.id===event.pointerId)clearPointer();
+    });
+    canvas.addEventListener('lostpointercapture', event => {
+      if(this.touchStart?.id===event.pointerId)this.touchStart=null;
     });
   }
 }

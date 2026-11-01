@@ -1,0 +1,30 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "sceneComponentSHA256": "6e4b2a9dcf5652c4825a8692e2ea92afdae1a4bf5cb95fa6458fb0e22b424172",
+  "sceneDefaults": {
+    "HeadStartStartDistance": 25.0,
+    "HeadStartEndDistance": 100.0,
+    "HeadStartBoostDistance": 950.0,
+    "HeadStartMegaBoostDistance": 2350.0
+  },
+  "rule": "StartBoost(configured target-current metric distance,false); StartBoost separately adds50 braking allowance",
+  "instructionChecks": {
+    "0x1277a0c": "0xbd419660",
+    "0x1277a10": "0xbd412661",
+    "0x1277a14": "0x2a1f03e1",
+    "0x1277a1c": "0x1e213800",
+    "0x1277a20": "0x940084aa",
+    "0x1277b7c": "0xbd419a60",
+    "0x1277b80": "0xbd412661",
+    "0x1277b84": "0x2a1f03e1",
+    "0x1277b8c": "0x1e213800",
+    "0x1277b90": "0x9400844e",
+    "0x127796c": "0x540006ed",
+    "0x1277978": "0x54000685"
+  },
+  "limits": [
+    "Web inventory consumption now uses25<metric progress<100.99-stock cap and at most one kind per run are web adapters; full native state exclusions not fully ported.",
+    "Prices are constructor defaults; active remote configuration unknown.",
+    "Native special mega=true boost mode remains available for other mechanisms, but both head-start methods pass false."
+  ]
+}

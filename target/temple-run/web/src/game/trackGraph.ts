@@ -30,6 +30,13 @@ export class TrackGraph {
     this.active = active;
   }
 
+  reset(active = new TrackPath()): void {
+    this.active=active;
+    this.forks.length=0;
+    this.nodes.length=0;
+    this.nextNodeId=1;
+  }
+
   fork(at: number): TrackGraphFork {
     const left = this.active.clone();
     const right = this.active.clone();
@@ -53,6 +60,7 @@ export class TrackGraph {
     const right = this.active.clone();
     left.lateral = -separation;
     right.lateral = separation;
+    left.branchSpan={from:at,to:mergeAt};right.branchSpan={from:at,to:mergeAt};
     const node: GraphNode = { id: this.nextNodeId++, at, edges: [] };
     const edges: GraphEdge[] = [
       { side: 'left', path: left, mergeAt },
@@ -63,6 +71,20 @@ export class TrackGraph {
     const fork = { at, left, right, chosen: null, mergeAt, node, edges };
     this.forks.push(fork);
     return fork;
+  }
+
+  /** Drop unreachable historical branch snapshots. Keep the active path and any
+   * fork whose merge is still ahead; callers retain the visible/revive tail. */
+  pruneBefore(distance:number):void {
+    if(!Number.isFinite(distance))return;
+    for(let i=this.forks.length-1;i>=0;i--)if(this.forks[i].mergeAt<distance)this.forks.splice(i,1);
+    const retained=new Set(this.forks.map(f=>f.node));
+    for(let i=this.nodes.length-1;i>=0;i--)if(!retained.has(this.nodes[i]))this.nodes.splice(i,1);
+  }
+
+  compactBefore(distance:number):void {
+    const paths=new Set([this.active,...this.forks.flatMap(f=>[f.left,f.right])]);
+    for(const path of paths)path.compactBefore(distance);
   }
 
   /** Explicit branch->base distance remap at a merge node (branch length is same today). */

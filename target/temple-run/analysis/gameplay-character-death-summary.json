@@ -1,0 +1,117 @@
+{
+  "verifiedProfiles": [
+    "scarlett",
+    "karma",
+    "barry",
+    "conquistador"
+  ],
+  "nativeDefault": "jhony",
+  "explicitUnverifiedFallback": [
+    "selene",
+    "werewolf",
+    "ghost",
+    "skeleton"
+  ],
+  "cases": [
+    {
+      "skin": "jhony",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationTree@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "jhony",
+      "cause": "fireWall",
+      "image": "/assets/ui/deathIllustrationBurnt@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "scarlett",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationGirlTree@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "scarlett",
+      "cause": "fireWall",
+      "image": "/assets/ui/deathIllustrationGirlBurnt@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "karma",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationChinaTreeB@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "karma",
+      "cause": "fireWall",
+      "image": "/assets/ui/deathIllustrationBurnt@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "barry",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationIndiTree@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "barry",
+      "cause": "fireWall",
+      "image": "/assets/ui/deathIllustrationBurnt@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "conquistador",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationIndiTree@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "conquistador",
+      "cause": "fireWall",
+      "image": "/assets/ui/deathIllustrationConqBurnt@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "selene",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationTree@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "werewolf",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationTree@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "ghost",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationTree@2x.png",
+      "actualUiRetry": true
+    },
+    {
+      "skin": "skeleton",
+      "cause": "treeJump",
+      "image": "/assets/ui/deathIllustrationTree@2x.png",
+      "actualUiRetry": true
+    }
+  ],
+  "dataTests": {
+    "nativePoolChoices": 24,
+    "pngProvenanceHashes": 21,
+    "coreGroups": 21
+  },
+  "inputChecks": 15,
+  "mainSaveUnchanged": true,
+  "source": "APK ImageData TextAsset + CharacterPlayer scene Characters prefab array + native ActiveCharacterId/fallback/random selection instruction checks",
+  "selectionPolicy": "web picks deterministic representative, prefers water named card for water/missed; native candidate pool retained in analysis",
+  "method": "diagnostic setSkin(force=true) to load actual rig; natural normal-course obstacle approach,25ms progression, actual UI retry. Does not repeat shop purchase acceptance.",
+  "correction": "Video ending red illustration is GirlTree, not a burnt/fire card. Earlier colour-based classification withdrawn.",
+  "limits": [
+    "four verified native families plus default only; no guessed modern-family mapping",
+    "not complete native random art/caption selection",
+    "not physical-device or human-timing evidence"
+  ]
+}

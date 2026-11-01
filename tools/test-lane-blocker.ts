@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import * as THREE from 'three';
+import {buildObstacle} from '../target/temple-run/web/src/game/render';
+import {DEFS} from '../target/temple-run/web/src/game/obstacles/catalog';
+const stone=new THREE.MeshStandardMaterial({color:0x999999});
+const blocker=buildObstacle({material:{stone},obstacles:{}} as any,DEFS.stonePedestal,'stone-pedestal');
+const box=new THREE.Box3().setFromObject(blocker);
+const size=box.getSize(new THREE.Vector3());
+assert.ok(Math.abs(size.x-1.3)<.001&&Math.abs(size.z-2.4)<.001);
+assert.ok(Math.abs(box.min.y)<.001&&Math.abs(box.max.y-2.48)<.001);
+assert.equal(blocker.name,'web-stone-lane-blocker');
+assert.equal(blocker.children.length,5);
+console.log('Lane blocker: readable stone courses fit the collision envelope, no clipped brazier or gold cap.');

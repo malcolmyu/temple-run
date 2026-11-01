@@ -1,0 +1,58 @@
+{
+  "source": "verified full-rate decoded reference frames; see per-window observations.json",
+  "firstVisibleSlideTransition": {
+    "lastRunningFrame": 141,
+    "lastRunningPTS": 4.705,
+    "firstLoweringFrame": 142,
+    "firstLoweringPTS": 4.738,
+    "proneByFrame": 147,
+    "proneByPTS": 4.905
+  },
+  "repeatUprightPulses": [
+    {
+      "lastProneFrame": 165,
+      "lastPronePTS": 5.506,
+      "firstUprightFrame": 166,
+      "firstUprightPTS": 5.539,
+      "proneAgainByFrame": 172,
+      "proneAgainByPTS": 5.739
+    },
+    {
+      "lastProneFrame": 188,
+      "lastPronePTS": 6.273,
+      "firstUprightFrame": 189,
+      "firstUprightPTS": 6.307,
+      "proneAgainByFrame": 195,
+      "proneAgainByPTS": 6.507
+    }
+  ],
+  "uprightPulseFrameSeparation": 23,
+  "uprightPulseNominalSeconds": 0.7674333333333333,
+  "nativeStrictSlideTimerExpiry": [
+    {
+      "simulationHz": 30,
+      "ticks": 23,
+      "elapsedF32": 0.7666668891906738,
+      "nominalTime": 0.7666666666666667
+    },
+    {
+      "simulationHz": 60,
+      "ticks": 46,
+      "elapsedF32": 0.76666659116745,
+      "nominalTime": 0.7666666666666667
+    },
+    {
+      "simulationHz": 120,
+      "ticks": 91,
+      "elapsedF32": 0.7583329677581787,
+      "nominalTime": 0.7583333333333333
+    }
+  ],
+  "limitations": [
+    "visual pose transitions are not exact swipe/IsSliding transitions",
+    "render sampling cannot distinguish30Hz from60Hz simulation here",
+    "clip restart may resemble run pose without a measurable acceleration interval",
+    "no continuous-slide inference from1fps poses",
+    "later full-run controls remain unrecovered"
+  ]
+}

@@ -1,24 +1,46 @@
+import {upgradeCost} from './upgradeCatalog';
+import {UPGRADE_SCHEMA,migrateUpgradeLevels} from './upgradeLevels';
+import type {RunUtilitySummary} from './nativeUtilityObjectives';
+import {NATIVE_UTILITY_PRICES} from './nativeStorePrices';
+import { createPowerPickupCounts, sanitizePowerPickupCounts, POWER_PICKUP_KINDS, type PowerPickupCounts } from './nativePowerPickups';
+import type { RunChallengeSummary } from './nativeRunChallenges';
 import { reactive } from 'vue';
+import { ANGEL_WINGS_PRICE } from './nativeAngelWings';
 import { SKINS } from './skins';
 
 /** Durable meta-progression: currency banks, unlocks, lifetime stats. */
 export interface Progress {
+  legacyMigrationComplete: boolean;
   coins: number;
   gems: number;
+  wings: number;
+  permaWings:number;
+  headStarts:number;
+  megaStarts:number;
   runs: number;
   bestDistance: number;
   totalDistance: number;
   lifetimeCoins: number;
   bestScore: number;
+  bestRunCoins: number;
+  bestPowerPickups:PowerPickupCounts;
+  bestCoinFreeStart:number;
+  bestCleanRunDistance:number;
+  bestPowerFreeScore:number;
+  bestCoinMeterFills:number;
+  bestWingResurrections:number;
+  headStartUsed:number;
   owned: string[];
   equipped: string;
   claimed: string[];
   upgrades: Record<string, number>;
+  upgradeSchema:number;
   music: boolean;
   sound: boolean;
 }
 
 const KEY = 'temple.v2.progress';
+const PROGRESS_COUNTERS = ['coins', 'gems', 'wings','permaWings','headStarts','megaStarts', 'runs', 'bestDistance', 'totalDistance', 'lifetimeCoins', 'bestScore', 'bestRunCoins','bestCoinFreeStart','bestCleanRunDistance','bestPowerFreeScore','bestCoinMeterFills','bestWingResurrections','headStartUsed'] as const;
 
 /** One-time import of the legacy (pre-v2) keys, so existing players keep their progress. */
 function migrateLegacy(defaults: Progress): Progress | null {
@@ -51,6 +73,7 @@ function migrateLegacy(defaults: Progress): Progress | null {
   const upgrades = (chars.upgrades ?? {}) as Record<string, unknown>;
   const migrated: Progress = {
     ...defaults,
+    legacyMigrationComplete: true,
     coins: num(chars.bank),
     gems: num(chars.gems),
     runs: num(stats.runs),
@@ -58,13 +81,17 @@ function migrateLegacy(defaults: Progress): Progress | null {
     totalDistance: num(stats.totalDistance),
     lifetimeCoins: num(stats.totalCoins),
     bestScore: 0,
+    bestRunCoins: 0,
+    bestPowerPickups:createPowerPickupCounts(),
+    bestCoinFreeStart:0,bestCleanRunDistance:0,bestPowerFreeScore:0,
+    bestCoinMeterFills:0,bestWingResurrections:0,headStartUsed:0,
     owned,
     equipped,
     claimed: [],
-    upgrades: {
+    upgrades: migrateUpgradeLevels({
       magnet: Math.max(0, Math.min(3, num(upgrades.magnet))),
       coin: Math.max(0, Math.min(3, num(upgrades.coin))),
-    },
+    }),
     music: settings.music !== false,
     sound: settings.sfx !== false,
   };
@@ -76,19 +103,27 @@ function migrateLegacy(defaults: Progress): Progress | null {
   return migrated;
 }
 
-function load(): Progress {
+export function loadProgress(): Progress {
   const defaults: Progress = {
+    legacyMigrationComplete: false,
     coins: 0,
     gems: 0,
+    wings: 0,
+    permaWings:0,
+    headStarts:0,megaStarts:0,
     runs: 0,
     bestDistance: 0,
     totalDistance: 0,
     lifetimeCoins: 0,
     bestScore: 0,
+    bestRunCoins: 0,
+    bestPowerPickups:createPowerPickupCounts(),
+    bestCoinFreeStart:0,bestCleanRunDistance:0,bestPowerFreeScore:0,
+    bestCoinMeterFills:0,bestWingResurrections:0,headStartUsed:0,
     owned: [SKINS[0].id],
     equipped: SKINS[0].id,
     claimed: [],
-    upgrades: { magnet: 0, coin: 0 },
+    upgrades: { magnet: 0, coin: 0 },upgradeSchema:UPGRADE_SCHEMA,
     music: true,
     sound: true,
   };
@@ -101,18 +136,30 @@ function load(): Progress {
       ...saved,
       owned: Array.isArray(saved.owned) && saved.owned.length ? saved.owned : defaults.owned,
       claimed: Array.isArray(saved.claimed) ? saved.claimed : [],
-      upgrades: { magnet: 0, coin: 0, ...(saved.upgrades ?? {}) },
+      upgrades: migrateUpgradeLevels(saved.upgrades,saved.upgradeSchema),upgradeSchema:UPGRADE_SCHEMA,
+      legacyMigrationComplete: saved.legacyMigrationComplete === true,
     };
+    merged.bestPowerPickups=sanitizePowerPickupCounts(saved.bestPowerPickups);
+    // A removed/unknown character must never stay equipped or unlock a catalogue entry.
+    merged.owned = [...new Set([SKINS[0].id, ...merged.owned.filter(
+      id => typeof id === 'string' && SKINS.some(skin => skin.id === id),
+    )])];
+    if (!merged.owned.includes(merged.equipped)) merged.equipped = SKINS[0].id;
+    for (const key of PROGRESS_COUNTERS) {
+      const value = merged[key];
+      merged[key] = typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    }
+    merged.permaWings=Math.min(99,merged.permaWings);
+    merged.headStarts=Math.min(99,merged.headStarts);merged.megaStarts=Math.min(99,merged.megaStarts);
     // Earlier v2 builds could create the new key with defaults before the player ever ran.
     // In that case still import the legacy save instead of treating the empty v2 key as real.
     const meaningful =
-      Number(saved.bestDistance) > 0 ||
-      Number(saved.coins) > 0 ||
-      Number(saved.gems) > 0 ||
-      Number(saved.runs) > 0 ||
-      Number(saved.totalDistance) > 0 ||
+      merged.legacyMigrationComplete ||
+      PROGRESS_COUNTERS.some(key => merged[key] > 0) ||
       (Array.isArray(saved.owned) && saved.owned.length > 1) ||
-      (Array.isArray(saved.claimed) && saved.claimed.length > 0);
+      (Array.isArray(saved.claimed) && saved.claimed.length > 0) ||
+      Object.values(merged.bestPowerPickups).some(count=>count>0) ||
+      Object.values(merged.upgrades).some(level => Number.isFinite(level) && level > 0);
     if (!meaningful) {
       const legacy = migrateLegacy(defaults);
       if (legacy) {
@@ -129,9 +176,12 @@ function load(): Progress {
   }
 }
 
-export const progress = reactive<Progress>(load());
+export const progress = reactive<Progress>(loadProgress());
 
 export function saveProgress(): void {
+  // Once this version has saved a real action, an empty bank/inventory is a
+  // valid current profile, not permission to import stale pre-v2 values again.
+  progress.legacyMigrationComplete = true;
   try {
     localStorage.setItem(KEY, JSON.stringify(progress));
   } catch {
@@ -162,7 +212,7 @@ export function buySkin(id: string): boolean {
 }
 
 export function equipSkin(id: string): void {
-  if (!isOwned(id)) return;
+  if (!SKINS.some(skin => skin.id === id) || !isOwned(id)) return;
   progress.equipped = id;
   saveProgress();
 }
@@ -180,15 +230,18 @@ export function upgradeLevel(id: string): number {
   return progress.upgrades[id] ?? 0;
 }
 
-export function buyUpgrade(id: string, cost: number): boolean {
-  if (progress.coins < cost) return false;
+/** The catalogue owns the debit. A supplied quote must still match the current
+ * tier, so stale/invalid callers cannot buy free, unknown or over-max levels. */
+export function buyUpgrade(id: string, quotedCost?: number): boolean {
+  const level=upgradeLevel(id),cost=upgradeCost(id,level);
+  if(cost===null||(quotedCost!==undefined&&quotedCost!==cost)||!Number.isFinite(progress.coins)||progress.coins<cost)return false;
   progress.coins -= cost;
   progress.upgrades[id] = upgradeLevel(id) + 1;
   saveProgress();
   return true;
 }
 
-export function recordRun(distance: number, coins: number, gems: number, score: number): void {
+export function recordRun(distance: number, coins: number, gems: number, score: number,challenges?:RunChallengeSummary,pickups?:PowerPickupCounts,utilities?:RunUtilitySummary): void {
   progress.runs += 1;
   progress.coins += coins;
   progress.gems += gems;
@@ -196,5 +249,37 @@ export function recordRun(distance: number, coins: number, gems: number, score: 
   progress.lifetimeCoins += coins;
   progress.bestDistance = Math.max(progress.bestDistance, Math.floor(distance));
   progress.bestScore = Math.max(progress.bestScore, Math.floor(score));
+  progress.bestRunCoins = Math.max(progress.bestRunCoins, Math.floor(coins));
+  if(utilities){
+    progress.bestCoinMeterFills=Math.max(progress.bestCoinMeterFills,utilities.coinMeterFills);
+    progress.bestWingResurrections=Math.max(progress.bestWingResurrections,utilities.wingResurrections);
+    progress.headStartUsed=Math.max(progress.headStartUsed,utilities.headStartUsed);
+  }
+  if(pickups)for(const kind of POWER_PICKUP_KINDS)progress.bestPowerPickups[kind]=Math.max(progress.bestPowerPickups[kind],pickups[kind]);
+  if(challenges){
+    const free=challenges.powerFreeScore;
+    if(typeof free==='number'&&Number.isFinite(free))progress.bestPowerFreeScore=Math.max(progress.bestPowerFreeScore,Math.max(0,Math.floor(free)));
+    progress.bestCoinFreeStart=Math.max(progress.bestCoinFreeStart,Math.floor(challenges.coinFreeStart));
+    progress.bestCleanRunDistance=Math.max(progress.bestCleanRunDistance,Math.floor(challenges.cleanDistance));
+  }
   saveProgress();
+}
+
+export function buyAngelWings():boolean {
+ if(progress.coins<ANGEL_WINGS_PRICE||progress.wings>=99)return false;
+ progress.coins-=ANGEL_WINGS_PRICE;progress.wings++;saveProgress();return true;
+}
+
+/** Native consumable inventory;99-slot cap is a web storage/UI adapter. */
+export function buyHeadStart(kind:'normal'|'mega'):boolean {
+ if(kind!=='normal'&&kind!=='mega')return false;
+ const key=kind==='mega'?'megaStarts':'headStarts',cost=kind==='mega'?NATIVE_UTILITY_PRICES.megaStart:NATIVE_UTILITY_PRICES.headStart;
+ if(progress.coins<cost||progress[key]>=99)return false;
+ progress.coins-=cost;progress[key]++;saveProgress();return true;
+}
+
+export function buyPermaWings():boolean {
+ const cost=NATIVE_UTILITY_PRICES.permanentWings;
+ if(progress.coins<cost||progress.permaWings>=99)return false;
+ progress.coins-=cost;progress.permaWings++;saveProgress();return true;
 }

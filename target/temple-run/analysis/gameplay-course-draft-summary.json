@@ -1,0 +1,32 @@
+{
+  "rulesVersion": "beats-v7",
+  "change": "obstacles/narrows/branches assembled in local draft, preflighted, then copied to published course arrays; rejected draft cleared before recovery publish",
+  "equivalence": {
+    "seeds": 100,
+    "modes": [
+      "generated",
+      "fixture"
+    ],
+    "stagesPerCase": 10,
+    "extentPerCase": 30000,
+    "themes": "mixed1/3/2 requests",
+    "fastTurn": "every fourth stage",
+    "fields": "serialized extent/features/turns/obstacles/narrows/branches/surfaces/rejections and generated coin rows",
+    "result": "all200 case hashes match pre-edit baseline"
+  },
+  "browserChecks": {
+    "roads": 30,
+    "coins": 20,
+    "input": 15
+  },
+  "coreGroups": 20,
+  "typecheck": true,
+  "build": true,
+  "mainSaveUnchanged": true,
+  "limits": [
+    "encounter hazard/support publication only; theme queue/surfaces/turn metadata remain existing synchronous course ownership",
+    "not a recovery transaction for arbitrary thrown exceptions or a native incremental old-tile mutation adapter",
+    "seed equivalence is scoped to the recorded cases, not all possible inputs",
+    "browser regressions use controlled advancement, not real-time performance or physical mobile acceptance"
+  ]
+}

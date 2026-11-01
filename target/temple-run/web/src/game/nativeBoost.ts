@@ -1,0 +1,32 @@
+/** IL2CPP StartBoost adds a50-progress braking allowance to the configured cruise budget.
+ * ComputeDistanceTraveled subtracts its metric delta, not physical world metres.
+ */
+export const BOOST_PROGRESS = 250;
+/** LoadLevelInformation jump table6b7888, upgrade levels0..6. */
+export function nativeBoostProgress(level=0):number {
+ return [250,250,375,500,625,750,750][Math.trunc(level)]??250;
+}
+export const BOOST_BRAKING_PROGRESS = 50;
+export const BOOST_TAIL_SECONDS = 4;
+export const BOOST_ACCELERATION = 30; // HandleControls raw force +/-150, scale.2
+export interface NativeBoostState { active:boolean; left:number; speedBefore:number; mega?:boolean; }
+export const createNativeBoost=():NativeBoostState=>({active:false,left:0,speedBefore:0});
+export function startNativeBoost(state:NativeBoostState,speed:number,progress=BOOST_PROGRESS,mega=false,normalMaxSpeed=42):boolean {
+ const first=!state.active;
+ if(first)state.speedBefore=mega?normalMaxSpeed:speed;
+ state.mega=mega;
+ state.active=true;state.left=progress+BOOST_BRAKING_PROGRESS;
+ return first;
+}
+export const boostCruising=(state:NativeBoostState):boolean=>state.active&&state.left>BOOST_BRAKING_PROGRESS;
+export function boostAcceleration(state:NativeBoostState,speed:number,normalForce:number):number {
+ if(!state.active)return normalForce;
+ if(boostCruising(state))return BOOST_ACCELERATION;
+ return speed>state.speedBefore?-BOOST_ACCELERATION:normalForce;
+}
+export function consumeBoostProgress(state:NativeBoostState,delta:number):void {
+ if(state.active)state.left-=Math.max(0,delta);
+}
+
+/** CharacterPlayer.GetMaxRunVelocity1298344..1298364. */
+export const nativeBoostSpeedLimit=(state:NativeBoostState,normalMax=42):number=>normalMax*(state.active?(state.mega?2.5:2):1);

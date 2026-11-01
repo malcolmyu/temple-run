@@ -1,4 +1,13 @@
+import { NATIVE_POWER_OBJECTIVES } from './nativePowerObjectives';
+import { NATIVE_CHALLENGE_OBJECTIVES } from './nativeChallengeObjectives';
+import { NATIVE_SESSION_OBJECTIVES } from './nativeSessionObjectives';
+import { NATIVE_DISTANCE_OBJECTIVES } from './nativeDistanceObjectives';
 import { progress, claimObjective } from './progress';
+import { nativeScoreMultiplier } from './scoring';
+import { NATIVE_UPGRADE_OBJECTIVES, nativeUpgradeObjectiveCount } from './nativeUpgradeObjectives';
+import { NATIVE_LIFETIME_OBJECTIVES } from './nativeLifetimeObjectives';
+import {NATIVE_UTILITY_OBJECTIVES} from './nativeUtilityObjectives';
+import {NATIVE_CHARACTER_OBJECTIVES,unlockedCharacterCount} from './nativeCharacterObjectives';
 
 export interface Objective {
   id: string;
@@ -12,6 +21,14 @@ export interface Objective {
 }
 
 export const OBJECTIVES: Objective[] = [
+  ...NATIVE_CHARACTER_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(unlockedCharacterCount(progress.owned),row.target),done:()=>unlockedCharacterCount(progress.owned)>=row.target})),
+  ...NATIVE_UTILITY_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(progress[row.metric],row.target),done:()=>progress[row.metric]>=row.target})),
+  ...NATIVE_LIFETIME_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(progress[row.metric],row.target),done:()=>progress[row.metric]>=row.target})),
+  ...NATIVE_UPGRADE_OBJECTIVES.map(row=>({...row,coins:0,gems:0,target:5,current:()=>nativeUpgradeObjectiveCount(progress.upgrades,row.level),done:()=>nativeUpgradeObjectiveCount(progress.upgrades,row.level)===5})),
+  ...NATIVE_POWER_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(progress.bestPowerPickups[row.kind],row.target),done:()=>progress.bestPowerPickups[row.kind]>=row.target})),
+  ...NATIVE_CHALLENGE_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(progress[row.metric],row.target),done:()=>progress[row.metric]>=row.target})),
+  ...NATIVE_SESSION_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(progress[row.metric],row.target),done:()=>progress[row.metric]>=row.target})),
+  ...NATIVE_DISTANCE_OBJECTIVES.map(row=>({...row,coins:0,gems:0,current:()=>Math.min(progress.bestDistance,row.target),done:()=>progress.bestDistance>=row.target})),
   {
     id: 'first-500',
     title: '初次远征',
@@ -62,4 +79,10 @@ export function claim(id: string): boolean {
   const objective = OBJECTIVES.find((o) => o.id === id);
   if (!objective || !objective.done()) return false;
   return claimObjective(id, objective.coins, objective.gems);
+}
+
+/** Web objective catalogue adapts the native completed-achievement count rule.
+ * Completion counts before reward claiming; a claim cannot increase it twice. */
+export function nextRunScoreMultiplier(): number {
+  return nativeScoreMultiplier(OBJECTIVES.filter(objective => objective.done() || objectiveClaimed(objective.id)).length);
 }

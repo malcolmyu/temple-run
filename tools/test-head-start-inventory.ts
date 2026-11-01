@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+const saved=new Map<string,string>();Object.assign(globalThis,{localStorage:{getItem:(k:string)=>saved.get(k)??null,setItem:(k:string,v:string)=>saved.set(k,v)}});
+const {progress,buyHeadStart}=await import('../target/temple-run/web/src/game/progress');
+assert.equal(progress.headStarts,0);assert.equal(progress.megaStarts,0);
+progress.coins=9999;assert.equal(buyHeadStart('normal'),false);assert.equal(progress.coins,9999);
+progress.coins=12500;assert.ok(buyHeadStart('normal'));assert.equal(progress.coins,2500);assert.ok(buyHeadStart('mega'));assert.equal(progress.coins,0);
+assert.equal(progress.headStarts,1);assert.equal(progress.megaStarts,1);
+assert.deepEqual([JSON.parse(saved.get('temple.v2.progress')!).headStarts,JSON.parse(saved.get('temple.v2.progress')!).megaStarts],[1,1]);
+assert.equal(buyHeadStart('normal'),false);assert.equal(progress.headStarts,1);
+progress.coins=50000;progress.megaStarts=99;assert.equal(buyHeadStart('mega'),false);assert.equal(progress.coins,50000);
+console.log('Paid head-start inventories: old defaults0, independent stocks, exact charge, insufficient funds, cap and saved quantities pass');

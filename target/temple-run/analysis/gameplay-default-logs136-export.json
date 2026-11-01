@@ -1,0 +1,2249 @@
+{
+  "deaths": [
+    {
+      "death": {
+        "cause": "treeJump",
+        "kind": "impact",
+        "reason": "撞上了树根",
+        "state": {
+          "activeBranch": null,
+          "airborne": false,
+          "angelWings": {
+            "cooldown": 0,
+            "pendingRevive": false,
+            "permanentStock": 0,
+            "remaining": 0,
+            "stock": 0
+          },
+          "autoTurnQueued": false,
+          "boost": {
+            "active": false,
+            "left": 0,
+            "speedBefore": 0
+          },
+          "boostHandover": {
+            "deferred": 0,
+            "reasons": []
+          },
+          "chaseGap": 11.5,
+          "coinMeter": {
+            "count": 0,
+            "level": 1,
+            "maxLevel": 0
+          },
+          "coinSpawnLevel": 0,
+          "coins": 0,
+          "course": {
+            "branches": [],
+            "coinStart": 0,
+            "extent": 477,
+            "features": [
+              {
+                "from": 0,
+                "generatedAtProgress": 0,
+                "kind": "treeJump",
+                "minTurnSpaces": 12,
+                "nativeStageKnown": false,
+                "pathLevel": 2,
+                "surface": "stone",
+                "to": 153
+              },
+              {
+                "from": 153,
+                "generatedAtProgress": 0,
+                "kind": "treeTrip",
+                "minTurnSpaces": 12,
+                "nativeStageKnown": false,
+                "pathLevel": 2,
+                "surface": "stone",
+                "to": 309
+              },
+              {
+                "from": 309,
+                "generatedAtProgress": 0,
+                "kind": "pit",
+                "minTurnSpaces": 12,
+                "nativeStageKnown": false,
+                "pathLevel": 2,
+                "surface": "stone",
+                "to": 477
+              }
+            ],
+            "layoutRejections": [],
+            "longGapDecisions": [],
+            "longGapFallbacks": [],
+            "narrows": [],
+            "opening": "generated",
+            "retainedFrom": 0,
+            "rulesVersion": "beats-v7",
+            "surfaces": [
+              {
+                "from": 0,
+                "kind": "stone",
+                "level": 2,
+                "to": null
+              }
+            ],
+            "turnOffset": 0,
+            "turns": [
+              {
+                "direction": -1,
+                "distance": 153,
+                "junction": "corner"
+              },
+              {
+                "direction": -1,
+                "distance": 309,
+                "junction": "corner"
+              },
+              {
+                "direction": -1,
+                "distance": 477,
+                "junction": "corner"
+              }
+            ]
+          },
+          "distance": 73,
+          "distanceExact": 73.15375,
+          "enemyGap": 4.738000000000042,
+          "equipped": "jhony",
+          "falling": false,
+          "fastTurn": {
+            "active": false,
+            "elapsed": 37.579227447509766
+          },
+          "fps": 60,
+          "gems": 0,
+          "generation": {
+            "bonuses": [],
+            "enabled": {
+              "bonus": 0,
+              "boost": 0,
+              "magnet": 0,
+              "shield": 0
+            },
+            "lastBonus": 0,
+            "nextBonusCheck": 612,
+            "seed": 1
+          },
+          "generationPacing": {
+            "doubleObstaclePercent": 0,
+            "from": 0,
+            "known": true,
+            "minCoinRunSpaces": 12,
+            "minObstacleSpaces": 6,
+            "minTurnSpaces": 12
+          },
+          "groundY": 0,
+          "headStart": null,
+          "headStartReady": false,
+          "headStartStock": {
+            "mega": 0,
+            "normal": 0
+          },
+          "jumpVelocity": 0,
+          "jumpY": 0,
+          "lane": 1,
+          "nextJunction": "corner",
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "action": "jump",
+              "ahead": -1,
+              "defId": "treeJump",
+              "full": true,
+              "kind": "hurdle",
+              "lane": 1
+            }
+          ],
+          "phase": "dying",
+          "pickups": [],
+          "position": [
+            0,
+            0,
+            -69.47875
+          ],
+          "power": null,
+          "powerPickups": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "powerRemaining": 0,
+          "powers": [],
+          "progressDistance": 40.9125529150058,
+          "queuedForwardForce": 0,
+          "recoveringFromStumble": false,
+          "reviveProtectionRemaining": 0,
+          "rig": "ready",
+          "rigLoadStatus": "ready",
+          "runChallenges": {
+            "firstCoinDistance": null,
+            "powerFreeScore": 400,
+            "stumbled": false,
+            "summary": {
+              "cleanDistance": 40.9125529150058,
+              "coinFreeStart": 40.9125529150058,
+              "powerFreeScore": 400
+            },
+            "usedPower": false
+          },
+          "runElapsed": 4.175006866455078,
+          "runUpgrades": {
+            "availability": {
+              "bonus": 0,
+              "boost": 0,
+              "magnet": 0,
+              "shield": 0
+            },
+            "boostProgress": 250,
+            "coinBonusReward": 50,
+            "coinMultiplier": 1,
+            "levels": {
+              "bonus": 0,
+              "boost": 0,
+              "coin": 0,
+              "coinSpawn": 0,
+              "magnet": 0,
+              "shield": 0
+            },
+            "magnetDuration": 15,
+            "magnetMultiplier": 1,
+            "shieldDuration": 15
+          },
+          "score": 400,
+          "scoreMultiplier": 10,
+          "session": {
+            "committed": false,
+            "deaths": 1,
+            "gemReviveUsed": false,
+            "gemRevives": 0,
+            "lastCommittedRunId": null,
+            "phase": "dying",
+            "runId": "9c8b4fe6-c9b2-4391-ae12-a95bca51f647",
+            "wingRevives": 0
+          },
+          "side": 0,
+          "simulation": {
+            "lastStepSeconds": 0.025,
+            "steps": 167
+          },
+          "slideDuration": 0,
+          "sliding": 0,
+          "speed": 27,
+          "stumbleAge": 10.150000000000045,
+          "stumbleRemaining": 0,
+          "swipeStumbleDelay": null,
+          "themePacing": {
+            "changes": [],
+            "elapsed": 37.579227447509766,
+            "level": 2
+          },
+          "turnCount": 0,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "turnQueued": false,
+          "worldY": 0
+        },
+        "time": 4.175006866455078
+      },
+      "header": {
+        "difficulty": "classic",
+        "inputRulesVersion": "turn-intent-v1",
+        "rulesVersion": "beats-v7",
+        "runId": "9c8b4fe6-c9b2-4391-ae12-a95bca51f647",
+        "seed": 1,
+        "skin": "jhony",
+        "upgrades": {
+          "availability": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "boostProgress": 250,
+          "coinBonusReward": 50,
+          "coinMultiplier": 1,
+          "levels": {
+            "bonus": 0,
+            "boost": 0,
+            "coin": 0,
+            "coinSpawn": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "magnetDuration": 15,
+          "magnetMultiplier": 1,
+          "shieldDuration": 15
+        }
+      },
+      "inputs": [
+        {
+          "action": "left",
+          "stage": "tick",
+          "time": 1.6249990463256836
+        },
+        {
+          "action": "right",
+          "stage": "tick",
+          "time": 1.6249990463256836
+        }
+      ],
+      "recent": [
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 0,
+          "queued": false,
+          "side": 0,
+          "time": 0.02500000037252903,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 0,
+          "queued": false,
+          "side": 0,
+          "time": 0.27500003576278687,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 0,
+          "queued": false,
+          "side": 0,
+          "time": 0.5250000357627869,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 0,
+          "queued": false,
+          "side": 0,
+          "time": 0.7999997735023499,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 3.544803570292569,
+          "queued": false,
+          "side": 0,
+          "time": 1.0749995708465576,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -1.49625
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 6.051237294763268,
+          "queued": false,
+          "side": 0,
+          "time": 1.3499993085861206,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 4.255000000000001
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 8.72438066334522,
+          "queued": false,
+          "side": 0,
+          "time": 1.6249990463256836,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 10.195000000000002
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 11.535382112033696,
+          "queued": false,
+          "side": 0,
+          "time": 1.8999987840652464,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 16.286250000000003
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 14.213383553785684,
+          "queued": false,
+          "side": 0,
+          "time": 2.1499991416931152,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 21.955000000000005
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 17.010786043431587,
+          "queued": false,
+          "side": 0,
+          "time": 2.4000000953674316,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 27.748750000000005
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 19.93019374777388,
+          "queued": false,
+          "side": 0,
+          "time": 2.650001049041748,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 33.6675
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 22.974210833615064,
+          "queued": false,
+          "side": 0,
+          "time": 2.9000020027160645,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 39.71125
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 26.14544146775762,
+          "queued": false,
+          "side": 0,
+          "time": 3.150002956390381,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 45.88
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 29.446489817004032,
+          "queued": false,
+          "side": 0,
+          "time": 3.4000039100646973,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 52.173750000000005
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 32.87996004815679,
+          "queued": false,
+          "side": 0,
+          "time": 3.6500048637390137,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 58.59250000000001
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 36.44845632801836,
+          "queued": false,
+          "side": 0,
+          "time": 3.90000581741333,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 65.13625
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "progress": 40.154582823391245,
+          "queued": false,
+          "side": 0,
+          "time": 4.1500067710876465,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 71.805
+        }
+      ],
+      "recordedAt": "2026-11-01T01:35:37.514Z",
+      "scene": {
+        "camera": [
+          0,
+          7,
+          -59.478750000000005
+        ],
+        "junctions": [],
+        "look": [
+          0,
+          4,
+          -69.47875
+        ],
+        "tiles": [
+          {
+            "cuts": "[]",
+            "distance": 36,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 48,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 60,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 72,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 84,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 96,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 108,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 120,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 132,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 144,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 156,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 168,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 180,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 192,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          }
+        ]
+      },
+      "schema": 1
+    },
+    {
+      "death": {
+        "cause": "treeJump",
+        "kind": "impact",
+        "pendingTurn": null,
+        "reason": "撞上了树根",
+        "state": {
+          "activeBranch": null,
+          "airborne": false,
+          "angelWings": {
+            "cooldown": 0,
+            "pendingRevive": false,
+            "permanentStock": 0,
+            "remaining": 0,
+            "stock": 0
+          },
+          "autoTurnQueued": false,
+          "boost": {
+            "active": false,
+            "left": 0,
+            "speedBefore": 0
+          },
+          "boostHandover": {
+            "deferred": 0,
+            "reasons": []
+          },
+          "chaseGap": 11.5,
+          "coinMeter": {
+            "count": 0,
+            "level": 1,
+            "maxLevel": 0
+          },
+          "coinSpawnLevel": 0,
+          "coins": 0,
+          "course": {
+            "branches": [],
+            "coinStart": 0,
+            "extent": 477,
+            "features": [
+              {
+                "from": 0,
+                "generatedAtProgress": 0,
+                "kind": "treeJump",
+                "minTurnSpaces": 12,
+                "nativeStageKnown": false,
+                "pathLevel": 2,
+                "surface": "stone",
+                "to": 153
+              },
+              {
+                "from": 153,
+                "generatedAtProgress": 0,
+                "kind": "treeTrip",
+                "minTurnSpaces": 12,
+                "nativeStageKnown": false,
+                "pathLevel": 2,
+                "surface": "stone",
+                "to": 309
+              },
+              {
+                "from": 309,
+                "generatedAtProgress": 0,
+                "kind": "pit",
+                "minTurnSpaces": 12,
+                "nativeStageKnown": false,
+                "pathLevel": 2,
+                "surface": "stone",
+                "to": 477
+              }
+            ],
+            "layoutRejections": [],
+            "longGapDecisions": [],
+            "longGapFallbacks": [],
+            "narrows": [],
+            "opening": "generated",
+            "retainedFrom": 0,
+            "rulesVersion": "beats-v7",
+            "surfaces": [
+              {
+                "from": 0,
+                "kind": "stone",
+                "level": 2,
+                "to": null
+              }
+            ],
+            "turnOffset": 0,
+            "turns": [
+              {
+                "direction": -1,
+                "distance": 153,
+                "junction": "corner"
+              },
+              {
+                "direction": -1,
+                "distance": 309,
+                "junction": "corner"
+              },
+              {
+                "direction": -1,
+                "distance": 477,
+                "junction": "corner"
+              }
+            ]
+          },
+          "distance": 73,
+          "distanceExact": 73.15375,
+          "enemyGap": 4.738000000000042,
+          "equipped": "jhony",
+          "falling": false,
+          "fastTurn": {
+            "active": false,
+            "elapsed": 37.579227447509766
+          },
+          "fps": 60,
+          "gems": 0,
+          "generation": {
+            "bonuses": [],
+            "enabled": {
+              "bonus": 0,
+              "boost": 0,
+              "magnet": 0,
+              "shield": 0
+            },
+            "lastBonus": 0,
+            "nextBonusCheck": 612,
+            "seed": 1
+          },
+          "generationPacing": {
+            "doubleObstaclePercent": 0,
+            "from": 0,
+            "known": true,
+            "minCoinRunSpaces": 12,
+            "minObstacleSpaces": 6,
+            "minTurnSpaces": 12
+          },
+          "groundY": 0,
+          "headStart": null,
+          "headStartReady": false,
+          "headStartStock": {
+            "mega": 0,
+            "normal": 0
+          },
+          "jumpVelocity": 0,
+          "jumpY": 0,
+          "lane": 1,
+          "nextJunction": "corner",
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "action": "jump",
+              "ahead": -1,
+              "defId": "treeJump",
+              "full": true,
+              "kind": "hurdle",
+              "lane": 1
+            }
+          ],
+          "phase": "dying",
+          "pickups": [],
+          "position": [
+            0,
+            0,
+            -69.47875
+          ],
+          "power": null,
+          "powerPickups": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "powerRemaining": 0,
+          "powers": [],
+          "progressDistance": 40.9125529150058,
+          "queuedForwardForce": 0,
+          "recoveringFromStumble": false,
+          "reviveProtectionRemaining": 0,
+          "rig": "ready",
+          "rigLoadStatus": "ready",
+          "runChallenges": {
+            "firstCoinDistance": null,
+            "powerFreeScore": 400,
+            "stumbled": false,
+            "summary": {
+              "cleanDistance": 40.9125529150058,
+              "coinFreeStart": 40.9125529150058,
+              "powerFreeScore": 400
+            },
+            "usedPower": false
+          },
+          "runElapsed": 4.175006866455078,
+          "runUpgrades": {
+            "availability": {
+              "bonus": 0,
+              "boost": 0,
+              "magnet": 0,
+              "shield": 0
+            },
+            "boostProgress": 250,
+            "coinBonusReward": 50,
+            "coinMultiplier": 1,
+            "levels": {
+              "bonus": 0,
+              "boost": 0,
+              "coin": 0,
+              "coinSpawn": 0,
+              "magnet": 0,
+              "shield": 0
+            },
+            "magnetDuration": 15,
+            "magnetMultiplier": 1,
+            "shieldDuration": 15
+          },
+          "score": 400,
+          "scoreMultiplier": 10,
+          "session": {
+            "committed": false,
+            "deaths": 1,
+            "gemReviveUsed": false,
+            "gemRevives": 0,
+            "lastCommittedRunId": null,
+            "phase": "dying",
+            "runId": "8bbc324a-5107-49df-8155-533ade0ca12c",
+            "wingRevives": 0
+          },
+          "side": 0,
+          "simulation": {
+            "lastStepSeconds": 0.025,
+            "steps": 167
+          },
+          "slideDuration": 0,
+          "sliding": 0,
+          "speed": 27,
+          "stumbleAge": 10.150000000000045,
+          "stumbleRemaining": 0,
+          "swipeStumbleDelay": null,
+          "themePacing": {
+            "changes": [],
+            "elapsed": 37.579227447509766,
+            "level": 2
+          },
+          "turnCount": 0,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "turnQueued": false,
+          "worldY": 0
+        },
+        "time": 4.175006866455078
+      },
+      "header": {
+        "difficulty": "classic",
+        "inputRulesVersion": "turn-intent-v1",
+        "rulesVersion": "beats-v7",
+        "runId": "8bbc324a-5107-49df-8155-533ade0ca12c",
+        "seed": 1,
+        "skin": "jhony",
+        "upgrades": {
+          "availability": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "boostProgress": 250,
+          "coinBonusReward": 50,
+          "coinMultiplier": 1,
+          "levels": {
+            "bonus": 0,
+            "boost": 0,
+            "coin": 0,
+            "coinSpawn": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "magnetDuration": 15,
+          "magnetMultiplier": 1,
+          "shieldDuration": 15
+        }
+      },
+      "inputs": [
+        {
+          "action": "left",
+          "stage": "tick",
+          "time": 1.6249990463256836
+        },
+        {
+          "action": "right",
+          "stage": "tick",
+          "time": 1.6249990463256836
+        }
+      ],
+      "recent": [
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [],
+          "progress": 0,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 0.02500000037252903,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 0,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 0.27500003576278687,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 0,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 0.5250000357627869,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 0,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 0.7999997735023499,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -2
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 3.544803570292569,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 1.0749995708465576,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": -1.49625
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 6.051237294763268,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 1.3499993085861206,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 4.255000000000001
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 8.72438066334522,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 1.6249990463256836,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 10.195000000000002
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 11.535382112033696,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 1.8999987840652464,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 16.286250000000003
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 14.213383553785684,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 2.1499991416931152,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 21.955000000000005
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 17.010786043431587,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 2.4000000953674316,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 27.748750000000005
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 19.93019374777388,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 96,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 2.650001049041748,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 33.6675
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 22.974210833615064,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 96,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 2.9000020027160645,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 39.71125
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 26.14544146775762,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 12,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 96,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 108,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 3.150002956390381,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 45.88
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 29.446489817004032,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 96,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 108,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 3.4000039100646973,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 52.173750000000005
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 32.87996004815679,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 24,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 96,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 108,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 120,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 3.6500048637390137,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 58.59250000000001
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 36.44845632801836,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 96,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 108,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 120,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 3.90000581741333,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 65.13625
+        },
+        {
+          "branch": null,
+          "jump": 0,
+          "lane": 1,
+          "nextTurn": 153,
+          "obstacles": [
+            {
+              "distance": 72,
+              "id": "treeJump",
+              "kind": "hurdle",
+              "lane": 1,
+              "name": ""
+            }
+          ],
+          "progress": 40.154582823391245,
+          "queued": false,
+          "road": [
+            {
+              "cuts": "[]",
+              "distance": 36,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 48,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 60,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 72,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 84,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 96,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 108,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 120,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            },
+            {
+              "cuts": "[]",
+              "distance": 132,
+              "name": "",
+              "narrow": null,
+              "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+            }
+          ],
+          "side": 0,
+          "time": 4.1500067710876465,
+          "turnDirection": 0,
+          "turnIntent": null,
+          "worldDistance": 71.805
+        }
+      ],
+      "recordedAt": "2026-11-01T01:38:16.880Z",
+      "scene": {
+        "camera": [
+          0,
+          7,
+          -59.478750000000005
+        ],
+        "junctions": [],
+        "look": [
+          0,
+          4,
+          -69.47875
+        ],
+        "tiles": [
+          {
+            "cuts": "[]",
+            "distance": 36,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 48,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:1:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 60,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 72,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 84,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 96,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 108,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 120,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 132,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 144,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 156,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 168,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 180,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          },
+          {
+            "cuts": "[]",
+            "distance": 192,
+            "name": "",
+            "narrow": null,
+            "poolKey": "temple:stone:0:0:0:0:0.00:0:none:0:0:none"
+          }
+        ]
+      },
+      "schema": 1
+    }
+  ],
+  "exportedAt": "2026-11-01T01:38:17.080Z",
+  "schema": 1
+}

@@ -1,0 +1,56 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "boundsMethod": {
+    "token": "0x600052f",
+    "address": "0x1298e34",
+    "end": "0x1298ec0",
+    "sha256": "4d0999b1272b18b99d56b11a6b96b60a68f833a63a605e6156bdb535171de389"
+  },
+  "intersectionMethod": {
+    "token": "0x60009f8",
+    "address": "0x12e0d94",
+    "end": "0x12e0e14",
+    "sha256": "6bf225c5c1eb37a3f734240fe5351202710c27c8fa5f1803a683fc9e6b34da24"
+  },
+  "nativeBoundsMin": [
+    -1.7469000816345215,
+    -0.16484999656677246,
+    -1.7469000816345215
+  ],
+  "nativeBoundsMax": [
+    1.7469000816345215,
+    9.586649894714355,
+    1.7469000816345215
+  ],
+  "nativeRadiusByTypes1Through6": [
+    3.0,
+    2.25,
+    2.25,
+    2.25,
+    3.0,
+    3.0
+  ],
+  "boostDefaultRadius": 2.25,
+  "slidingChangesBounds": false,
+  "rule": "pickup sphere versus fixed translated CharacterPlayer AABB; native Bounds.SqrDistance <= radius squared",
+  "magnetAttraction": "separate; not recovered by this export",
+  "boundsMin": [
+    -0.3493800163269043,
+    -0.032969999313354495,
+    -0.3493800163269043
+  ],
+  "boundsMax": [
+    0.3493800163269043,
+    1.9173299789428713,
+    0.3493800163269043
+  ],
+  "radii": {
+    "yellow": 0.6000000000000001,
+    "red": 0.45,
+    "blue": 0.45,
+    "bonus": 0.45,
+    "shield": 0.6000000000000001,
+    "magnet": 0.6000000000000001,
+    "boost": 0.45
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "metadataSHA256": "5bd950811d6b26080d8e3b722ecfa91d8a0d726e7786f91f351b13c91ce5467b",
+  "method": {
+    "start": "0x12e3e48",
+    "end": "0x12e4bf4",
+    "sha256": "a28aaefa8dbe9bddaaf3c8b4fa5cb7f4f033810181d3df1838cf22180f688f8f"
+  },
+  "verified": {
+    "iteration": {
+      "first": 1,
+      "lastInclusive": 37,
+      "formula": "w22=-16; type=w22+17; increment until w22==21"
+    },
+    "turnFilterWhenNotAllowed": {
+      "types": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "names": [
+        "kPathTurnA",
+        "kPathTurnB",
+        "kPathTurnC",
+        "kPathTurnD",
+        "kPathTLeft",
+        "kPathTRight",
+        "kPathTUp",
+        "kPathTDown"
+      ]
+    },
+    "sidePathsDisabled": {
+      "parentStraightVert1Rejects": [
+        7,
+        8
+      ],
+      "parentStraightHorz2Rejects": [
+        9,
+        10
+      ],
+      "staticField": "sAllowSidePaths",
+      "offset": 15
+    },
+    "genericPoolExcluded": {
+      "mask": "0x3e0001b000",
+      "types": [
+        12,
+        13,
+        15,
+        16,
+        33,
+        34,
+        35,
+        36,
+        37
+      ],
+      "names": [
+        "kPathStraightHoleLongAVert",
+        "kPathStraightHoleLongBVert",
+        "kPathStraightHoleLongAHorz",
+        "kPathStraightHoleLongBHorz",
+        "kPathSingleLevelStepDownCapAHorz",
+        "kPathSingleLevelStepDownCapBHorz",
+        "kPathSingleLevelStepDownCapAVert",
+        "kPathSingleLevelStepDownCapBVert",
+        "kPathTemple"
+      ]
+    },
+    "extraRandomGate": {
+      "types": [
+        11,
+        14,
+        31,
+        32
+      ],
+      "names": [
+        "kPathStraightHoleVert",
+        "kPathStraightHoleHorz",
+        "kPathStraightFlameTowerHighHorz",
+        "kPathStraightFlameTowerHighVert"
+      ],
+      "rule": "in the eligible-obstacle branch, Range(0,2)==0 skips this candidate; surviving eligibility still required"
+    },
+    "selection": "if count>0, Range(0,count) selects one slot from the constructed int candidate array"
+  },
+  "resolvedMethodNames": {
+    "0x12e3780": "DoesPieceTypeFitOnSide",
+    "0x12e3df4": "ACertainTypeCheck",
+    "0x12e3e48": "GetRandomPathElementForSide"
+  },
+  "pathTypes": {
+    "0": "kPathNone",
+    "1": "kPathStraightVert",
+    "2": "kPathStraightHorz",
+    "3": "kPathTurnA",
+    "4": "kPathTurnB",
+    "5": "kPathTurnC",
+    "6": "kPathTurnD",
+    "7": "kPathTLeft",
+    "8": "kPathTRight",
+    "9": "kPathTUp",
+    "10": "kPathTDown",
+    "11": "kPathStraightHoleVert",
+    "12": "kPathStraightHoleLongAVert",
+    "13": "kPathStraightHoleLongBVert",
+    "14": "kPathStraightHoleHorz",
+    "15": "kPathStraightHoleLongAHorz",
+    "16": "kPathStraightHoleLongBHorz",
+    "17": "kPathStraightNarrowSmallVert",
+    "18": "kPathStraightNarrowSmallHorz",
+    "19": "kPathStraightNarrowLongLeftVert",
+    "20": "kPathStraightNarrowLongLeftAVert",
+    "21": "kPathStraightNarrowLongLeftBVert",
+    "22": "kPathStraightNarrowLongRightVert",
+    "23": "kPathStraightNarrowLongRightAVert",
+    "24": "kPathStraightNarrowLongRightBVert",
+    "25": "kPathStraightNarrowLongUpHorz",
+    "26": "kPathStraightNarrowLongUpAHorz",
+    "27": "kPathStraightNarrowLongUpBHorz",
+    "28": "kPathStraightNarrowLongDownHorz",
+    "29": "kPathStraightNarrowLongDownAHorz",
+    "30": "kPathStraightNarrowLongDownBHorz",
+    "31": "kPathStraightFlameTowerHighHorz",
+    "32": "kPathStraightFlameTowerHighVert",
+    "33": "kPathSingleLevelStepDownCapAHorz",
+    "34": "kPathSingleLevelStepDownCapBHorz",
+    "35": "kPathSingleLevelStepDownCapAVert",
+    "36": "kPathSingleLevelStepDownCapBVert",
+    "37": "kPathTemple",
+    "38": "kPathMax"
+  },
+  "instructionChecks": {
+    "0x12e4238": "0x128001f6",
+    "0x12e4248": "0x110046d9",
+    "0x12e425c": "0x97fffd49",
+    "0x12e4278": "0x11003ac8",
+    "0x12e427c": "0x71001d1f",
+    "0x12e4280": "0x1a9f97e8",
+    "0x12e4284": "0xa1a011a",
+    "0x12e42a4": "0x39403d09",
+    "0x12e42b0": "0x11002aca",
+    "0x12e42b4": "0x7100055f",
+    "0x12e42bc": "0x7100053f",
+    "0x12e42c4": "0x2a1f03fa",
+    "0x12e4384": "0x7100093f",
+    "0x12e4388": "0x110022c9",
+    "0x12e42cc": "0x51007f29",
+    "0x12e42d0": "0x7100093f",
+    "0x12e42d4": "0x540001c3",
+    "0x12e42d8": "0x71003b3f",
+    "0x12e42e0": "0x71002f3f",
+    "0x12e4364": "0x52800041",
+    "0x12e4368": "0x2a1f03e0",
+    "0x12e4370": "0x94473ede",
+    "0x12e4374": "0x340004a0",
+    "0x12e43f4": "0xd2960009",
+    "0x12e43f8": "0xf2a00029",
+    "0x12e43fc": "0xf2c007c9",
+    "0x12e4400": "0xea09011f",
+    "0x12e4404": "0x54000460",
+    "0x12e4408": "0x110006d6",
+    "0x12e440c": "0x710056df",
+    "0x12e4410": "0x54fff1c1",
+    "0x12e44a8": "0x11000718",
+    "0x12e44ac": "0xb9002119",
+    "0x12e44d8": "0x34000f78",
+    "0x12e44dc": "0x2a1f03e0",
+    "0x12e44e0": "0x2a1803e1",
+    "0x12e44e8": "0x94473e80",
+    "0x12e4504": "0xb940211a"
+  },
+  "limits": [
+    "No unconditional global probabilities: state, direction, occupied neighbours, configuration and extra random gates alter the candidate pool.",
+    "This slice does not decode DoesPieceTypeFitOnSide(0x12e3780), ACertainTypeCheck(0x12e3df4), all fallback/assembly paths or post-selection substitutions.",
+    "Excluded from this generic pool does not mean absent from the game; long-hole and transition caps have separate assembly.",
+    "No native full road-length distribution or universal T-junction percentage inferred. Current web weighted beats, recovery policy and group lengths remain project design.",
+    "PathType31/32 names say high flame tower; this does not establish the web low-fire-wall variant as an independent native mechanic."
+  ]
+}

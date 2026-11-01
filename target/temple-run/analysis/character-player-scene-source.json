@@ -1,0 +1,609 @@
+{
+  "componentPathID": 6392,
+  "serializedStart": 128,
+  "serializedEnd": 900,
+  "componentSHA256": "d923307c39747b96569af5a840fe8266911abf507bd280cb4c75fc8f29739aa1",
+  "fields": [
+    {
+      "name": "CharacterShader",
+      "offset": 128,
+      "kind": 18,
+      "value": [
+        2,
+        113
+      ]
+    },
+    {
+      "name": "InvincibilityShader",
+      "offset": 140,
+      "kind": 18,
+      "value": [
+        2,
+        111
+      ]
+    },
+    {
+      "name": "InvincibilityTexture",
+      "offset": 152,
+      "kind": 18,
+      "value": [
+        2,
+        57
+      ]
+    },
+    {
+      "name": "AnimateObject",
+      "offset": 164,
+      "kind": 18,
+      "value": [
+        0,
+        4100
+      ]
+    },
+    {
+      "name": "CharacterModel",
+      "offset": 176,
+      "kind": 18,
+      "value": [
+        0,
+        55
+      ]
+    },
+    {
+      "name": "RenderObject",
+      "offset": 188,
+      "kind": 29,
+      "value": [
+        [
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "name": "AttachmentsRenderObjects",
+      "offset": 204,
+      "kind": 29,
+      "value": []
+    },
+    {
+      "name": "ShadowSpot",
+      "offset": 208,
+      "kind": 18,
+      "value": [
+        0,
+        3292
+      ]
+    },
+    {
+      "name": "ShadowSPrite",
+      "offset": 220,
+      "kind": 18,
+      "value": [
+        0,
+        4839
+      ]
+    },
+    {
+      "name": "DustSprite",
+      "offset": 232,
+      "kind": 18,
+      "value": [
+        0,
+        5654
+      ]
+    },
+    {
+      "name": "IsDead",
+      "offset": 244,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "TimeSinceDeath",
+      "offset": 248,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "DeathType",
+      "offset": 252,
+      "kind": 17,
+      "value": 0
+    },
+    {
+      "name": "StartRunVelocity",
+      "offset": 256,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "DeathRunVelocity",
+      "offset": 260,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "MaxRunVelocity",
+      "offset": 264,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "IsFalling",
+      "offset": 268,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "TimeSinceFallStart",
+      "offset": 272,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "IsJumping",
+      "offset": 276,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "JumpAfterDelay",
+      "offset": 280,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "JumpDelay",
+      "offset": 284,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "IsSliding",
+      "offset": 288,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "TimeSinceSlideStart",
+      "offset": 292,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "SlideDuration",
+      "offset": 296,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "IsStumbling",
+      "offset": 300,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "StumbleAfterDelay",
+      "offset": 304,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "StumbleDelay",
+      "offset": 308,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "TimeSinceStumbleStart",
+      "offset": 312,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "StumbleDuration",
+      "offset": 316,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "StumbleKillTimer",
+      "offset": 320,
+      "kind": 12,
+      "value": 7.0
+    },
+    {
+      "name": "StumbleKillVelocityPercent",
+      "offset": 324,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "DidStumble",
+      "offset": 328,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "IsStrafing",
+      "offset": 332,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "TimeSinceStrafeStart",
+      "offset": 336,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "StrafeDuration",
+      "offset": 340,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "IsOnGround",
+      "offset": 344,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "IsOverGround",
+      "offset": 348,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "IsGroundHeightChangeHigher",
+      "offset": 352,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "GroundHeight",
+      "offset": 356,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "Score",
+      "offset": 360,
+      "kind": 8,
+      "value": 0
+    },
+    {
+      "name": "ScoreMultiplier",
+      "offset": 364,
+      "kind": 8,
+      "value": 10
+    },
+    {
+      "name": "BonusLevel",
+      "offset": 368,
+      "kind": 8,
+      "value": 0
+    },
+    {
+      "name": "BonusLevelMax",
+      "offset": 372,
+      "kind": 8,
+      "value": 0
+    },
+    {
+      "name": "CoinCountTotal",
+      "offset": 376,
+      "kind": 8,
+      "value": 0
+    },
+    {
+      "name": "CoinCountForBonus",
+      "offset": 380,
+      "kind": 8,
+      "value": 0
+    },
+    {
+      "name": "CoinCountForBonusThreshold",
+      "offset": 384,
+      "kind": 8,
+      "value": 0
+    },
+    {
+      "name": "HasInvincibility",
+      "offset": 388,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "InvincibilityTimeLeft",
+      "offset": 392,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "AngelWingsCount",
+      "offset": 396,
+      "kind": 8,
+      "value": 0
+    },
+    {
+      "name": "AreWingsPermanent",
+      "offset": 400,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "HasAngelWings",
+      "offset": 404,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "AngelWingsTimeLeft",
+      "offset": 408,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "AngelWingsRechargeTimeLeft",
+      "offset": 412,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "HasVacuum",
+      "offset": 416,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "VacuumTimeLeft",
+      "offset": 420,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "HasBoost",
+      "offset": 424,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "IsMegaBoost",
+      "offset": 428,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "BoostDistanceLeft",
+      "offset": 432,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "VelocityBeforeBoost",
+      "offset": 436,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "BoostSlowdownDistance",
+      "offset": 440,
+      "kind": 12,
+      "value": 50.0
+    },
+    {
+      "name": "TimeSinceLastPowerup",
+      "offset": 444,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "ActiveCharacterId",
+      "offset": 448,
+      "kind": 8,
+      "value": 4
+    },
+    {
+      "name": "BaseAnimationFPS",
+      "offset": 452,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "PlayerXOffset",
+      "offset": 456,
+      "kind": 12,
+      "value": 0.0
+    },
+    {
+      "name": "GameInterface",
+      "offset": 460,
+      "kind": 18,
+      "value": [
+        0,
+        6393
+      ]
+    },
+    {
+      "name": "GameOverInterface",
+      "offset": 472,
+      "kind": 18,
+      "value": [
+        0,
+        6395
+      ]
+    },
+    {
+      "name": "PickupEffect",
+      "offset": 484,
+      "kind": 18,
+      "value": [
+        0,
+        6064
+      ]
+    },
+    {
+      "name": "Hold",
+      "offset": 496,
+      "kind": 2,
+      "value": 0
+    },
+    {
+      "name": "Audio",
+      "offset": 500,
+      "kind": 18,
+      "value": [
+        0,
+        5102
+      ]
+    },
+    {
+      "name": "Characters",
+      "offset": 512,
+      "kind": 21,
+      "value": [
+        [
+          2,
+          177
+        ],
+        [
+          2,
+          183
+        ],
+        [
+          2,
+          206
+        ],
+        [
+          2,
+          203
+        ],
+        [
+          2,
+          186
+        ],
+        [
+          2,
+          204
+        ],
+        [
+          2,
+          201
+        ],
+        [
+          2,
+          174
+        ],
+        [
+          2,
+          207
+        ],
+        [
+          2,
+          205
+        ],
+        [
+          2,
+          185
+        ],
+        [
+          2,
+          188
+        ],
+        [
+          2,
+          195
+        ],
+        [
+          2,
+          197
+        ],
+        [
+          2,
+          173
+        ]
+      ]
+    },
+    {
+      "name": "Textures",
+      "offset": 696,
+      "kind": 21,
+      "value": [
+        [
+          2,
+          63
+        ],
+        [
+          2,
+          55
+        ],
+        [
+          2,
+          70
+        ],
+        [
+          2,
+          67
+        ],
+        [
+          2,
+          80
+        ],
+        [
+          2,
+          68
+        ],
+        [
+          2,
+          62
+        ],
+        [
+          2,
+          76
+        ],
+        [
+          2,
+          79
+        ],
+        [
+          2,
+          59
+        ],
+        [
+          2,
+          60
+        ],
+        [
+          2,
+          56
+        ],
+        [
+          2,
+          61
+        ],
+        [
+          2,
+          47
+        ],
+        [
+          2,
+          66
+        ]
+      ]
+    },
+    {
+      "name": "debugColor",
+      "offset": 880,
+      "kind": 17,
+      "value": 1065353216
+    },
+    {
+      "name": "ColorDebugging",
+      "offset": 896,
+      "kind": 2,
+      "value": 0
+    }
+  ]
+}

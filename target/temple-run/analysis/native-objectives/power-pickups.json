@@ -1,0 +1,114 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "fields": {
+    "NumMagnetBonusesPickedUp": "0x174",
+    "NumBoostsPickedUp": "0x178",
+    "NumInvisibilityBonusesPickedUp": "0x17c",
+    "NumMegaCoinsPickedUp": "0x180"
+  },
+  "records": [
+    {
+      "id": "magnets5",
+      "kind": "magnet",
+      "threshold": 5,
+      "field": "0x174",
+      "loadAddress": "0x1276b54"
+    },
+    {
+      "id": "magnets10",
+      "kind": "magnet",
+      "threshold": 10,
+      "field": "0x174",
+      "loadAddress": "0x1276c30"
+    },
+    {
+      "id": "magnets20",
+      "kind": "magnet",
+      "threshold": 20,
+      "field": "0x174",
+      "loadAddress": "0x1276d0c"
+    },
+    {
+      "id": "coinBonuses5",
+      "kind": "bonus",
+      "threshold": 5,
+      "field": "0x180",
+      "loadAddress": "0x1276de8"
+    },
+    {
+      "id": "coinBonuses10",
+      "kind": "bonus",
+      "threshold": 10,
+      "field": "0x180",
+      "loadAddress": "0x1276ec4"
+    },
+    {
+      "id": "coinBonuses20",
+      "kind": "bonus",
+      "threshold": 20,
+      "field": "0x180",
+      "loadAddress": "0x1276fa0"
+    },
+    {
+      "id": "invisibilityBonuses5",
+      "kind": "shield",
+      "threshold": 5,
+      "field": "0x17c",
+      "loadAddress": "0x127707c"
+    },
+    {
+      "id": "invisibilityBonuses10",
+      "kind": "shield",
+      "threshold": 10,
+      "field": "0x17c",
+      "loadAddress": "0x1277158"
+    },
+    {
+      "id": "invisibilityBonuses20",
+      "kind": "shield",
+      "threshold": 20,
+      "field": "0x17c",
+      "loadAddress": "0x1277234"
+    },
+    {
+      "id": "boosts5",
+      "kind": "boost",
+      "threshold": 5,
+      "field": "0x178",
+      "loadAddress": "0x1277310"
+    },
+    {
+      "id": "boosts10",
+      "kind": "boost",
+      "threshold": 10,
+      "field": "0x178",
+      "loadAddress": "0x12773ec"
+    },
+    {
+      "id": "boosts20",
+      "kind": "boost",
+      "threshold": 20,
+      "field": "0x178",
+      "loadAddress": "0x12774c8"
+    }
+  ],
+  "pickupIncrementChecks": {
+    "0x12711f8": "0xb94182a8",
+    "0x12711fc": "0x11000508",
+    "0x1271200": "0xb90182a8",
+    "0x1271254": "0xb9417ea8",
+    "0x1271258": "0x11000508",
+    "0x127125c": "0xb9017ea8",
+    "0x12712b0": "0xb94176a8",
+    "0x12712b4": "0x11000508",
+    "0x12712b8": "0xb90176a8",
+    "0x12712e8": "0xb9417aa8",
+    "0x12712ec": "0x11000508",
+    "0x12712f0": "0xb9017aa8"
+  },
+  "rule": "Session pickup count /5,10,20 *100. Increment in HandleBonusItemPickup; activating or refreshing a timed effect alone is not a pickup.",
+  "limits": [
+    "Web best-per-kind record updates at final settlement; complete native runtime completion timing remains pending.",
+    "Controlled20-per-kind test does not prove natural20-per-kind reachability."
+  ]
+}

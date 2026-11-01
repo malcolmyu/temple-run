@@ -1,0 +1,2621 @@
+{
+  "assumptions": [
+    "APK constructor defaults20/42 world units per second",
+    "120Hz semi-implicit integration; smoothDeltaTime equals simulation step",
+    "no jumps, slides, stumbles, powers or turn/camera effects",
+    "video sample phase is approximate to0.1sec",
+    "baseline is deliberately not fitted; residuals do not prove remote configuration differences"
+  ],
+  "observations": [
+    {
+      "videoSecond": 2,
+      "gameSecond": 0,
+      "observedProgress": 0,
+      "observedScore": 0,
+      "defaultNoInputSpeed": 20,
+      "defaultNoInputWorldDistance": 0,
+      "defaultNoInputProgress": 0,
+      "progressResidual": 0
+    },
+    {
+      "videoSecond": 3,
+      "gameSecond": 1,
+      "observedProgress": 7,
+      "observedScore": 140,
+      "defaultNoInputSpeed": 22.666666666666586,
+      "defaultNoInputWorldDistance": 21.6222222222222,
+      "defaultNoInputProgress": 9.749334034701908,
+      "progressResidual": 2.749334034701908
+    },
+    {
+      "videoSecond": 4,
+      "gameSecond": 2,
+      "observedProgress": 18,
+      "observedScore": 360,
+      "defaultNoInputSpeed": 24.666666666666472,
+      "defaultNoInputWorldDistance": 45.29722222222206,
+      "defaultNoInputProgress": 21.433479127102082,
+      "progressResidual": 3.433479127102082
+    },
+    {
+      "videoSecond": 5,
+      "gameSecond": 3,
+      "observedProgress": 30,
+      "observedScore": 600,
+      "defaultNoInputSpeed": 26.66666666666636,
+      "defaultNoInputWorldDistance": 70.9722222222218,
+      "defaultNoInputProgress": 35.17387432674392,
+      "progressResidual": 5.1738743267439204
+    },
+    {
+      "videoSecond": 6,
+      "gameSecond": 4,
+      "observedProgress": 43,
+      "observedScore": 860,
+      "defaultNoInputSpeed": 27.519166666666425,
+      "defaultNoInputWorldDistance": 98.2551597222215,
+      "defaultNoInputProgress": 50.68243689399342,
+      "progressResidual": 7.682436893993419
+    },
+    {
+      "videoSecond": 7,
+      "gameSecond": 5,
+      "observedProgress": 56,
+      "observedScore": 1120,
+      "defaultNoInputSpeed": 27.81916666666658,
+      "defaultNoInputWorldDistance": 125.92557638888802,
+      "defaultNoInputProgress": 66.63367643395914,
+      "progressResidual": 10.633676433959138
+    },
+    {
+      "videoSecond": 8,
+      "gameSecond": 6,
+      "observedProgress": 66,
+      "observedScore": 1320,
+      "defaultNoInputSpeed": 28.119166666666732,
+      "defaultNoInputWorldDistance": 153.89599305555467,
+      "defaultNoInputProgress": 82.93267120039525,
+      "progressResidual": 16.932671200395248
+    },
+    {
+      "videoSecond": 9,
+      "gameSecond": 7,
+      "observedProgress": 76,
+      "observedScore": 1520,
+      "defaultNoInputSpeed": 28.419166666666886,
+      "defaultNoInputWorldDistance": 182.16640972222152,
+      "defaultNoInputProgress": 99.58317119349724,
+      "progressResidual": 23.583171193497236
+    },
+    {
+      "videoSecond": 10,
+      "gameSecond": 8,
+      "observedProgress": 85,
+      "observedScore": 1700,
+      "defaultNoInputSpeed": 28.71916666666704,
+      "defaultNoInputWorldDistance": 210.73682638888846,
+      "defaultNoInputProgress": 116.58892641346078,
+      "progressResidual": 31.588926413460783
+    },
+    {
+      "videoSecond": 11,
+      "gameSecond": 9,
+      "observedProgress": 95,
+      "observedScore": 1900,
+      "defaultNoInputSpeed": 29.019166666667193,
+      "defaultNoInputWorldDistance": 239.60724305555556,
+      "defaultNoInputProgress": 133.9536868604814,
+      "progressResidual": 38.95368686048141
+    },
+    {
+      "videoSecond": 12,
+      "gameSecond": 10,
+      "observedProgress": 104,
+      "observedScore": 2080,
+      "defaultNoInputSpeed": 29.319166666667346,
+      "defaultNoInputWorldDistance": 268.7776597222228,
+      "defaultNoInputProgress": 151.68120253475473,
+      "progressResidual": 47.68120253475473
+    },
+    {
+      "videoSecond": 13,
+      "gameSecond": 11,
+      "observedProgress": 114,
+      "observedScore": 2280,
+      "defaultNoInputSpeed": 29.6191666666675,
+      "defaultNoInputWorldDistance": 298.2480763888902,
+      "defaultNoInputProgress": 169.77522343647613,
+      "progressResidual": 55.775223436476125
+    },
+    {
+      "videoSecond": 14,
+      "gameSecond": 12,
+      "observedProgress": 124,
+      "observedScore": 2480,
+      "defaultNoInputSpeed": 29.919166666667653,
+      "defaultNoInputWorldDistance": 328.0184930555577,
+      "defaultNoInputProgress": 188.2394995658414,
+      "progressResidual": 64.23949956584141
+    },
+    {
+      "videoSecond": 15,
+      "gameSecond": 13,
+      "observedProgress": 133,
+      "observedScore": 2660,
+      "defaultNoInputSpeed": 30.219166666667807,
+      "defaultNoInputWorldDistance": 358.0889097222254,
+      "defaultNoInputProgress": 207.07778092304622,
+      "progressResidual": 74.07778092304622
+    },
+    {
+      "videoSecond": 16,
+      "gameSecond": 14,
+      "observedProgress": 143,
+      "observedScore": 2860,
+      "defaultNoInputSpeed": 30.51916666666796,
+      "defaultNoInputWorldDistance": 388.4593263888933,
+      "defaultNoInputProgress": 226.29381750828617,
+      "progressResidual": 83.29381750828617
+    },
+    {
+      "videoSecond": 17,
+      "gameSecond": 15,
+      "observedProgress": 153,
+      "observedScore": 3060,
+      "defaultNoInputSpeed": 30.819166666668114,
+      "defaultNoInputWorldDistance": 419.12974305556133,
+      "defaultNoInputProgress": 245.89135932175645,
+      "progressResidual": 92.89135932175645
+    },
+    {
+      "videoSecond": 18,
+      "gameSecond": 16,
+      "observedProgress": 162,
+      "observedScore": 3240,
+      "defaultNoInputSpeed": 31.119166666668267,
+      "defaultNoInputWorldDistance": 450.10015972222953,
+      "defaultNoInputProgress": 265.8741563636531,
+      "progressResidual": 103.87415636365313
+    },
+    {
+      "videoSecond": 19,
+      "gameSecond": 17,
+      "observedProgress": 172,
+      "observedScore": 3440,
+      "defaultNoInputSpeed": 31.41916666666842,
+      "defaultNoInputWorldDistance": 481.3705763888979,
+      "defaultNoInputProgress": 286.2459586341714,
+      "progressResidual": 114.24595863417142
+    },
+    {
+      "videoSecond": 20,
+      "gameSecond": 18,
+      "observedProgress": 182,
+      "observedScore": 3640,
+      "defaultNoInputSpeed": 31.719166666668574,
+      "defaultNoInputWorldDistance": 512.9409930555664,
+      "defaultNoInputProgress": 307.0105161335073,
+      "progressResidual": 125.01051613350728
+    },
+    {
+      "videoSecond": 21,
+      "gameSecond": 19,
+      "observedProgress": 190,
+      "observedScore": 3800,
+      "defaultNoInputSpeed": 32.0191666666687,
+      "defaultNoInputWorldDistance": 544.8114097222352,
+      "defaultNoInputProgress": 328.1715788618559,
+      "progressResidual": 138.1715788618559
+    },
+    {
+      "videoSecond": 22,
+      "gameSecond": 20,
+      "observedProgress": 198,
+      "observedScore": 3960,
+      "defaultNoInputSpeed": 32.31916666666843,
+      "defaultNoInputWorldDistance": 576.9818263889038,
+      "defaultNoInputProgress": 349.73289681941293,
+      "progressResidual": 151.73289681941293
+    },
+    {
+      "videoSecond": 23,
+      "gameSecond": 21,
+      "observedProgress": 206,
+      "observedScore": 4120,
+      "defaultNoInputSpeed": 32.61916666666816,
+      "defaultNoInputWorldDistance": 609.4522430555722,
+      "defaultNoInputProgress": 371.69822000637294,
+      "progressResidual": 165.69822000637294
+    },
+    {
+      "videoSecond": 24,
+      "gameSecond": 22,
+      "observedProgress": 214,
+      "observedScore": 4280,
+      "defaultNoInputSpeed": 32.919166666667884,
+      "defaultNoInputWorldDistance": 642.2226597222402,
+      "defaultNoInputProgress": 394.07129842293256,
+      "progressResidual": 180.07129842293256
+    },
+    {
+      "videoSecond": 25,
+      "gameSecond": 23,
+      "observedProgress": 222,
+      "observedScore": 4440,
+      "defaultNoInputSpeed": 33.21916666666761,
+      "defaultNoInputWorldDistance": 675.2930763889082,
+      "defaultNoInputProgress": 416.8558820692867,
+      "progressResidual": 194.85588206928668
+    },
+    {
+      "videoSecond": 26,
+      "gameSecond": 24,
+      "observedProgress": 230,
+      "observedScore": 4600,
+      "defaultNoInputSpeed": 33.51916666666734,
+      "defaultNoInputWorldDistance": 708.6634930555756,
+      "defaultNoInputProgress": 440.0557209456311,
+      "progressResidual": 210.0557209456311
+    },
+    {
+      "videoSecond": 27,
+      "gameSecond": 25,
+      "observedProgress": 238,
+      "observedScore": 4760,
+      "defaultNoInputSpeed": 33.819166666667066,
+      "defaultNoInputWorldDistance": 742.333909722243,
+      "defaultNoInputProgress": 463.674565052161,
+      "progressResidual": 225.67456505216097
+    },
+    {
+      "videoSecond": 28,
+      "gameSecond": 26,
+      "observedProgress": 247,
+      "observedScore": 4940,
+      "defaultNoInputSpeed": 34.11916666666679,
+      "defaultNoInputWorldDistance": 776.3043263889099,
+      "defaultNoInputProgress": 487.71616438907256,
+      "progressResidual": 240.71616438907256
+    },
+    {
+      "videoSecond": 29,
+      "gameSecond": 27,
+      "observedProgress": 255,
+      "observedScore": 5100,
+      "defaultNoInputSpeed": 34.41916666666652,
+      "defaultNoInputWorldDistance": 810.5747430555767,
+      "defaultNoInputProgress": 512.1842689565606,
+      "progressResidual": 257.1842689565606
+    },
+    {
+      "videoSecond": 30,
+      "gameSecond": 28,
+      "observedProgress": 264,
+      "observedScore": 5280,
+      "defaultNoInputSpeed": 34.71916666666625,
+      "defaultNoInputWorldDistance": 845.1451597222431,
+      "defaultNoInputProgress": 537.0826287548211,
+      "progressResidual": 273.08262875482114
+    },
+    {
+      "videoSecond": 31,
+      "gameSecond": 29,
+      "observedProgress": 273,
+      "observedScore": 5460,
+      "defaultNoInputSpeed": 35.019166666665974,
+      "defaultNoInputWorldDistance": 880.0155763889094,
+      "defaultNoInputProgress": 562.41499378405,
+      "progressResidual": 289.41499378405
+    },
+    {
+      "videoSecond": 32,
+      "gameSecond": 30,
+      "observedProgress": 280,
+      "observedScore": 5600,
+      "defaultNoInputSpeed": 35.3191666666657,
+      "defaultNoInputWorldDistance": 915.1859930555752,
+      "defaultNoInputProgress": 588.1851140444425,
+      "progressResidual": 308.18511404444246
+    },
+    {
+      "videoSecond": 33,
+      "gameSecond": 31,
+      "observedProgress": 288,
+      "observedScore": 5760,
+      "defaultNoInputSpeed": 35.61916666666543,
+      "defaultNoInputWorldDistance": 950.6564097222409,
+      "defaultNoInputProgress": 614.3967395361941,
+      "progressResidual": 326.3967395361941
+    },
+    {
+      "videoSecond": 34,
+      "gameSecond": 32,
+      "observedProgress": 295,
+      "observedScore": 5900,
+      "defaultNoInputSpeed": 35.77416666666529,
+      "defaultNoInputWorldDistance": 986.3736597222397,
+      "defaultNoInputProgress": 640.97431577234,
+      "progressResidual": 345.97431577234
+    },
+    {
+      "videoSecond": 35,
+      "gameSecond": 33,
+      "observedProgress": 302,
+      "observedScore": 6040,
+      "defaultNoInputSpeed": 35.8741666666652,
+      "defaultNoInputWorldDistance": 1022.1982430555718,
+      "defaultNoInputProgress": 667.7118505893587,
+      "progressResidual": 365.71185058935873
+    },
+    {
+      "videoSecond": 36,
+      "gameSecond": 34,
+      "observedProgress": 310,
+      "observedScore": 6200,
+      "defaultNoInputSpeed": 35.974166666665106,
+      "defaultNoInputWorldDistance": 1058.1228263889034,
+      "defaultNoInputProgress": 694.5988628447291,
+      "progressResidual": 384.59886284472907
+    },
+    {
+      "videoSecond": 37,
+      "gameSecond": 35,
+      "observedProgress": 318,
+      "observedScore": 6360,
+      "defaultNoInputSpeed": 36.074166666665015,
+      "defaultNoInputWorldDistance": 1094.1474097222354,
+      "defaultNoInputProgress": 721.6357692051391,
+      "progressResidual": 403.6357692051391
+    },
+    {
+      "videoSecond": 38,
+      "gameSecond": 36,
+      "observedProgress": 325,
+      "observedScore": 6500,
+      "defaultNoInputSpeed": 36.174166666664924,
+      "defaultNoInputWorldDistance": 1130.2719930555675,
+      "defaultNoInputProgress": 748.8229863372768,
+      "progressResidual": 423.8229863372768
+    },
+    {
+      "videoSecond": 39,
+      "gameSecond": 37,
+      "observedProgress": 333,
+      "observedScore": 6660,
+      "defaultNoInputSpeed": 36.27416666666483,
+      "defaultNoInputWorldDistance": 1166.4965763888986,
+      "defaultNoInputProgress": 776.160930907831,
+      "progressResidual": 443.160930907831
+    },
+    {
+      "videoSecond": 40,
+      "gameSecond": 38,
+      "observedProgress": 341,
+      "observedScore": 6820,
+      "defaultNoInputSpeed": 36.37416666666474,
+      "defaultNoInputWorldDistance": 1202.8211597222298,
+      "defaultNoInputProgress": 803.6500195834902,
+      "progressResidual": 462.65001958349023
+    },
+    {
+      "videoSecond": 41,
+      "gameSecond": 39,
+      "observedProgress": 349,
+      "observedScore": 6980,
+      "defaultNoInputSpeed": 36.47416666666465,
+      "defaultNoInputWorldDistance": 1239.2457430555614,
+      "defaultNoInputProgress": 831.2906690309433,
+      "progressResidual": 482.29066903094326
+    },
+    {
+      "videoSecond": 42,
+      "gameSecond": 40,
+      "observedProgress": 357,
+      "observedScore": 7140,
+      "defaultNoInputSpeed": 36.57416666666456,
+      "defaultNoInputWorldDistance": 1275.7703263888932,
+      "defaultNoInputProgress": 859.0832959168779,
+      "progressResidual": 502.0832959168779
+    },
+    {
+      "videoSecond": 43,
+      "gameSecond": 41,
+      "observedProgress": 366,
+      "observedScore": 7320,
+      "defaultNoInputSpeed": 36.67416666666447,
+      "defaultNoInputWorldDistance": 1312.394909722224,
+      "defaultNoInputProgress": 887.0283169079821,
+      "progressResidual": 521.0283169079821
+    },
+    {
+      "videoSecond": 44,
+      "gameSecond": 42,
+      "observedProgress": 374,
+      "observedScore": 7480,
+      "defaultNoInputSpeed": 36.77416666666438,
+      "defaultNoInputWorldDistance": 1349.1194930555548,
+      "defaultNoInputProgress": 915.1261486709454,
+      "progressResidual": 541.1261486709454
+    },
+    {
+      "videoSecond": 45,
+      "gameSecond": 43,
+      "observedProgress": 383,
+      "observedScore": 7660,
+      "defaultNoInputSpeed": 36.87416666666429,
+      "defaultNoInputWorldDistance": 1385.944076388886,
+      "defaultNoInputProgress": 943.3772078724548,
+      "progressResidual": 560.3772078724548
+    },
+    {
+      "videoSecond": 46,
+      "gameSecond": 44,
+      "observedProgress": 391,
+      "observedScore": 7820,
+      "defaultNoInputSpeed": 36.974166666664196,
+      "defaultNoInputWorldDistance": 1422.8686597222174,
+      "defaultNoInputProgress": 971.7819111792,
+      "progressResidual": 580.7819111792
+    },
+    {
+      "videoSecond": 47,
+      "gameSecond": 45,
+      "observedProgress": 399,
+      "observedScore": 7980,
+      "defaultNoInputSpeed": 37.074166666664105,
+      "defaultNoInputWorldDistance": 1459.8932430555478,
+      "defaultNoInputProgress": 1000.3406752578686,
+      "progressResidual": 601.3406752578686
+    },
+    {
+      "videoSecond": 48,
+      "gameSecond": 46,
+      "observedProgress": 406,
+      "observedScore": 8120,
+      "defaultNoInputSpeed": 37.174166666664014,
+      "defaultNoInputWorldDistance": 1497.0178263888783,
+      "defaultNoInputProgress": 1029.0539167751488,
+      "progressResidual": 623.0539167751488
+    },
+    {
+      "videoSecond": 49,
+      "gameSecond": 47,
+      "observedProgress": 414,
+      "observedScore": 8280,
+      "defaultNoInputSpeed": 37.27416666666392,
+      "defaultNoInputWorldDistance": 1534.2424097222092,
+      "defaultNoInputProgress": 1057.9220523977287,
+      "progressResidual": 643.9220523977287
+    },
+    {
+      "videoSecond": 50,
+      "gameSecond": 48,
+      "observedProgress": 421,
+      "observedScore": 8420,
+      "defaultNoInputSpeed": 37.37416666666383,
+      "defaultNoInputWorldDistance": 1571.5669930555403,
+      "defaultNoInputProgress": 1086.9454987922988,
+      "progressResidual": 665.9454987922988
+    },
+    {
+      "videoSecond": 51,
+      "gameSecond": 49,
+      "observedProgress": 428,
+      "observedScore": 8560,
+      "defaultNoInputSpeed": 37.47416666666374,
+      "defaultNoInputWorldDistance": 1608.9915763888703,
+      "defaultNoInputProgress": 1116.1246726255458,
+      "progressResidual": 688.1246726255458
+    },
+    {
+      "videoSecond": 52,
+      "gameSecond": 50,
+      "observedProgress": 436,
+      "observedScore": 8720,
+      "defaultNoInputSpeed": 37.57416666666365,
+      "defaultNoInputWorldDistance": 1646.5161597222004,
+      "defaultNoInputProgress": 1145.459990564159,
+      "progressResidual": 709.4599905641589
+    },
+    {
+      "videoSecond": 53,
+      "gameSecond": 51,
+      "observedProgress": 443,
+      "observedScore": 8860,
+      "defaultNoInputSpeed": 37.67416666666356,
+      "defaultNoInputWorldDistance": 1684.140743055531,
+      "defaultNoInputProgress": 1174.9518692748259,
+      "progressResidual": 731.9518692748259
+    },
+    {
+      "videoSecond": 54,
+      "gameSecond": 52,
+      "observedProgress": 451,
+      "observedScore": 9020,
+      "defaultNoInputSpeed": 37.77416666666347,
+      "defaultNoInputWorldDistance": 1721.8653263888616,
+      "defaultNoInputProgress": 1204.6007254242336,
+      "progressResidual": 753.6007254242336
+    },
+    {
+      "videoSecond": 55,
+      "gameSecond": 53,
+      "observedProgress": 458,
+      "observedScore": 9160,
+      "defaultNoInputSpeed": 37.87416666666338,
+      "defaultNoInputWorldDistance": 1759.6899097221913,
+      "defaultNoInputProgress": 1234.4069756790743,
+      "progressResidual": 776.4069756790743
+    },
+    {
+      "videoSecond": 56,
+      "gameSecond": 54,
+      "observedProgress": 466,
+      "observedScore": 9320,
+      "defaultNoInputSpeed": 37.97416666666329,
+      "defaultNoInputWorldDistance": 1797.614493055521,
+      "defaultNoInputProgress": 1264.3710367060335,
+      "progressResidual": 798.3710367060335
+    },
+    {
+      "videoSecond": 57,
+      "gameSecond": 55,
+      "observedProgress": 474,
+      "observedScore": 9480,
+      "defaultNoInputSpeed": 38.074166666663196,
+      "defaultNoInputWorldDistance": 1835.6390763888512,
+      "defaultNoInputProgress": 1294.4933251717998,
+      "progressResidual": 820.4933251717998
+    },
+    {
+      "videoSecond": 58,
+      "gameSecond": 56,
+      "observedProgress": 482,
+      "observedScore": 9640,
+      "defaultNoInputSpeed": 38.174166666663105,
+      "defaultNoInputWorldDistance": 1873.7636597221815,
+      "defaultNoInputProgress": 1324.7742577430624,
+      "progressResidual": 842.7742577430624
+    },
+    {
+      "videoSecond": 59,
+      "gameSecond": 57,
+      "observedProgress": 490,
+      "observedScore": 9800,
+      "defaultNoInputSpeed": 38.274166666663014,
+      "defaultNoInputWorldDistance": 1911.9882430555108,
+      "defaultNoInputProgress": 1355.2142510865108,
+      "progressResidual": 865.2142510865108
+    },
+    {
+      "videoSecond": 60,
+      "gameSecond": 58,
+      "observedProgress": 498,
+      "observedScore": 9960,
+      "defaultNoInputSpeed": 38.37416666666292,
+      "defaultNoInputWorldDistance": 1950.3128263888402,
+      "defaultNoInputProgress": 1385.8137218688305,
+      "progressResidual": 887.8137218688305
+    },
+    {
+      "videoSecond": 61,
+      "gameSecond": 59,
+      "observedProgress": 507,
+      "observedScore": 10140,
+      "defaultNoInputSpeed": 38.47416666666283,
+      "defaultNoInputWorldDistance": 1988.73740972217,
+      "defaultNoInputProgress": 1416.5730867567113,
+      "progressResidual": 909.5730867567113
+    },
+    {
+      "videoSecond": 62,
+      "gameSecond": 60,
+      "observedProgress": 515,
+      "observedScore": 10300,
+      "defaultNoInputSpeed": 38.57416666666274,
+      "defaultNoInputWorldDistance": 2027.2619930555,
+      "defaultNoInputProgress": 1447.4927624168415,
+      "progressResidual": 932.4927624168415
+    },
+    {
+      "videoSecond": 63,
+      "gameSecond": 61,
+      "observedProgress": 524,
+      "observedScore": 10480,
+      "defaultNoInputSpeed": 38.67416666666265,
+      "defaultNoInputWorldDistance": 2065.8865763888293,
+      "defaultNoInputProgress": 1478.5731655159095,
+      "progressResidual": 954.5731655159095
+    },
+    {
+      "videoSecond": 64,
+      "gameSecond": 62,
+      "observedProgress": 532,
+      "observedScore": 10640,
+      "defaultNoInputSpeed": 38.77416666666256,
+      "defaultNoInputWorldDistance": 2104.6111597221593,
+      "defaultNoInputProgress": 1509.814712720604,
+      "progressResidual": 977.8147127206039
+    },
+    {
+      "videoSecond": 65,
+      "gameSecond": 63,
+      "observedProgress": 541,
+      "observedScore": 10820,
+      "defaultNoInputSpeed": 38.87416666666247,
+      "defaultNoInputWorldDistance": 2143.4357430554883,
+      "defaultNoInputProgress": 1541.2178206976137,
+      "progressResidual": 1000.2178206976137
+    },
+    {
+      "videoSecond": 66,
+      "gameSecond": 64,
+      "observedProgress": 550,
+      "observedScore": 11000,
+      "defaultNoInputSpeed": 38.97416666666238,
+      "defaultNoInputWorldDistance": 2182.3603263888176,
+      "defaultNoInputProgress": 1572.7829061136272,
+      "progressResidual": 1022.7829061136272
+    },
+    {
+      "videoSecond": 67,
+      "gameSecond": 65,
+      "observedProgress": 557,
+      "observedScore": 11140,
+      "defaultNoInputSpeed": 39.074166666662286,
+      "defaultNoInputWorldDistance": 2221.3849097221464,
+      "defaultNoInputProgress": 1604.5103856353312,
+      "progressResidual": 1047.5103856353312
+    },
+    {
+      "videoSecond": 68,
+      "gameSecond": 66,
+      "observedProgress": 562,
+      "observedScore": 11240,
+      "defaultNoInputSpeed": 39.174166666662195,
+      "defaultNoInputWorldDistance": 2260.5094930554756,
+      "defaultNoInputProgress": 1636.400675929415,
+      "progressResidual": 1074.400675929415
+    },
+    {
+      "videoSecond": 69,
+      "gameSecond": 67,
+      "observedProgress": 570,
+      "observedScore": 11400,
+      "defaultNoInputSpeed": 39.274166666662104,
+      "defaultNoInputWorldDistance": 2299.7340763888037,
+      "defaultNoInputProgress": 1668.4541936625685,
+      "progressResidual": 1098.4541936625685
+    },
+    {
+      "videoSecond": 70,
+      "gameSecond": 68,
+      "observedProgress": 578,
+      "observedScore": 11560,
+      "defaultNoInputSpeed": 39.37416666666201,
+      "defaultNoInputWorldDistance": 2339.058659722132,
+      "defaultNoInputProgress": 1700.671355501478,
+      "progressResidual": 1122.671355501478
+    },
+    {
+      "videoSecond": 71,
+      "gameSecond": 69,
+      "observedProgress": 586,
+      "observedScore": 11720,
+      "defaultNoInputSpeed": 39.47416666666192,
+      "defaultNoInputWorldDistance": 2378.483243055461,
+      "defaultNoInputProgress": 1733.052578112833,
+      "progressResidual": 1147.052578112833
+    },
+    {
+      "videoSecond": 72,
+      "gameSecond": 70,
+      "observedProgress": 594,
+      "observedScore": 11880,
+      "defaultNoInputSpeed": 39.57416666666183,
+      "defaultNoInputWorldDistance": 2418.0078263887904,
+      "defaultNoInputProgress": 1765.5982781633222,
+      "progressResidual": 1171.5982781633222
+    },
+    {
+      "videoSecond": 73,
+      "gameSecond": 71,
+      "observedProgress": 602,
+      "observedScore": 12040,
+      "defaultNoInputSpeed": 39.67416666666174,
+      "defaultNoInputWorldDistance": 2457.6324097221186,
+      "defaultNoInputProgress": 1798.3088723196315,
+      "progressResidual": 1196.3088723196315
+    },
+    {
+      "videoSecond": 74,
+      "gameSecond": 72,
+      "observedProgress": 611,
+      "observedScore": 12220,
+      "defaultNoInputSpeed": 39.77416666666165,
+      "defaultNoInputWorldDistance": 2497.356993055447,
+      "defaultNoInputProgress": 1831.1847772484537,
+      "progressResidual": 1220.1847772484537
+    },
+    {
+      "videoSecond": 75,
+      "gameSecond": 73,
+      "observedProgress": 619,
+      "observedScore": 12380,
+      "defaultNoInputSpeed": 39.87416666666156,
+      "defaultNoInputWorldDistance": 2537.1815763887753,
+      "defaultNoInputProgress": 1864.2264096164731,
+      "progressResidual": 1245.2264096164731
+    },
+    {
+      "videoSecond": 76,
+      "gameSecond": 74,
+      "observedProgress": 628,
+      "observedScore": 12560,
+      "defaultNoInputSpeed": 39.97416666666147,
+      "defaultNoInputWorldDistance": 2577.1061597221037,
+      "defaultNoInputProgress": 1897.4341860903805,
+      "progressResidual": 1269.4341860903805
+    },
+    {
+      "videoSecond": 77,
+      "gameSecond": 75,
+      "observedProgress": 637,
+      "observedScore": 12740,
+      "defaultNoInputSpeed": 40.07416666666138,
+      "defaultNoInputWorldDistance": 2617.130743055431,
+      "defaultNoInputProgress": 1930.8085233368615,
+      "progressResidual": 1293.8085233368615
+    },
+    {
+      "videoSecond": 78,
+      "gameSecond": 76,
+      "observedProgress": 646,
+      "observedScore": 12920,
+      "defaultNoInputSpeed": 40.174166666661286,
+      "defaultNoInputWorldDistance": 2657.2553263887585,
+      "defaultNoInputProgress": 1964.3498380226083,
+      "progressResidual": 1318.3498380226083
+    },
+    {
+      "videoSecond": 79,
+      "gameSecond": 77,
+      "observedProgress": 655,
+      "observedScore": 13100,
+      "defaultNoInputSpeed": 40.274166666661195,
+      "defaultNoInputWorldDistance": 2697.479909722087,
+      "defaultNoInputProgress": 1998.0585468143072,
+      "progressResidual": 1343.0585468143072
+    },
+    {
+      "videoSecond": 80,
+      "gameSecond": 78,
+      "observedProgress": 664,
+      "observedScore": 13280,
+      "defaultNoInputSpeed": 40.374166666661104,
+      "defaultNoInputWorldDistance": 2737.8044930554156,
+      "defaultNoInputProgress": 2031.9350663786472,
+      "progressResidual": 1367.9350663786472
+    },
+    {
+      "videoSecond": 81,
+      "gameSecond": 79,
+      "observedProgress": 673,
+      "observedScore": 13460,
+      "defaultNoInputSpeed": 40.47416666666101,
+      "defaultNoInputWorldDistance": 2778.229076388743,
+      "defaultNoInputProgress": 2065.979813382316,
+      "progressResidual": 1392.979813382316
+    },
+    {
+      "videoSecond": 82,
+      "gameSecond": 80,
+      "observedProgress": 682,
+      "observedScore": 13640,
+      "defaultNoInputSpeed": 40.57416666666092,
+      "defaultNoInputWorldDistance": 2818.753659722071,
+      "defaultNoInputProgress": 2100.1932044920013,
+      "progressResidual": 1418.1932044920013
+    },
+    {
+      "videoSecond": 83,
+      "gameSecond": 81,
+      "observedProgress": 692,
+      "observedScore": 13840,
+      "defaultNoInputSpeed": 40.67416666666083,
+      "defaultNoInputWorldDistance": 2859.3782430553983,
+      "defaultNoInputProgress": 2134.575656374391,
+      "progressResidual": 1442.5756563743912
+    },
+    {
+      "videoSecond": 84,
+      "gameSecond": 82,
+      "observedProgress": 701,
+      "observedScore": 14020,
+      "defaultNoInputSpeed": 40.77416666666074,
+      "defaultNoInputWorldDistance": 2900.102826388726,
+      "defaultNoInputProgress": 2169.1275856961756,
+      "progressResidual": 1468.1275856961756
+    },
+    {
+      "videoSecond": 85,
+      "gameSecond": 83,
+      "observedProgress": 711,
+      "observedScore": 14220,
+      "defaultNoInputSpeed": 40.87416666666065,
+      "defaultNoInputWorldDistance": 2940.9274097220527,
+      "defaultNoInputProgress": 2203.8494091240455,
+      "progressResidual": 1492.8494091240455
+    },
+    {
+      "videoSecond": 86,
+      "gameSecond": 84,
+      "observedProgress": 720,
+      "observedScore": 14400,
+      "defaultNoInputSpeed": 40.97416666666056,
+      "defaultNoInputWorldDistance": 2981.8519930553794,
+      "defaultNoInputProgress": 2238.741543324685,
+      "progressResidual": 1518.7415433246852
+    },
+    {
+      "videoSecond": 87,
+      "gameSecond": 85,
+      "observedProgress": 730,
+      "observedScore": 14600,
+      "defaultNoInputSpeed": 41.07416666666047,
+      "defaultNoInputWorldDistance": 3022.8765763887072,
+      "defaultNoInputProgress": 2273.804404964784,
+      "progressResidual": 1543.8044049647842
+    },
+    {
+      "videoSecond": 88,
+      "gameSecond": 86,
+      "observedProgress": 739,
+      "observedScore": 14780,
+      "defaultNoInputSpeed": 41.174166666660376,
+      "defaultNoInputWorldDistance": 3064.001159722035,
+      "defaultNoInputProgress": 2309.0384107110335,
+      "progressResidual": 1570.0384107110335
+    },
+    {
+      "videoSecond": 89,
+      "gameSecond": 87,
+      "observedProgress": 749,
+      "observedScore": 14980,
+      "defaultNoInputSpeed": 41.274166666660285,
+      "defaultNoInputWorldDistance": 3105.225743055362,
+      "defaultNoInputProgress": 2344.4439772301184,
+      "progressResidual": 1595.4439772301184
+    },
+    {
+      "videoSecond": 90,
+      "gameSecond": 88,
+      "observedProgress": 759,
+      "observedScore": 15180,
+      "defaultNoInputSpeed": 41.374166666660194,
+      "defaultNoInputWorldDistance": 3146.550326388689,
+      "defaultNoInputProgress": 2380.0215211887275,
+      "progressResidual": 1621.0215211887275
+    },
+    {
+      "videoSecond": 91,
+      "gameSecond": 89,
+      "observedProgress": 769,
+      "observedScore": 15380,
+      "defaultNoInputSpeed": 41.4741666666601,
+      "defaultNoInputWorldDistance": 3187.9749097220156,
+      "defaultNoInputProgress": 2415.77145925355,
+      "progressResidual": 1646.77145925355
+    },
+    {
+      "videoSecond": 92,
+      "gameSecond": 90,
+      "observedProgress": 778,
+      "observedScore": 15560,
+      "defaultNoInputSpeed": 41.57416666666001,
+      "defaultNoInputWorldDistance": 3229.4994930553426,
+      "defaultNoInputProgress": 2451.6942080912736,
+      "progressResidual": 1673.6942080912736
+    },
+    {
+      "videoSecond": 93,
+      "gameSecond": 91,
+      "observedProgress": 788,
+      "observedScore": 15760,
+      "defaultNoInputSpeed": 41.67416666665992,
+      "defaultNoInputWorldDistance": 3271.1240763886685,
+      "defaultNoInputProgress": 2487.790184368589,
+      "progressResidual": 1699.790184368589
+    },
+    {
+      "videoSecond": 94,
+      "gameSecond": 92,
+      "observedProgress": 798,
+      "observedScore": 15960,
+      "defaultNoInputSpeed": 41.77416666665983,
+      "defaultNoInputWorldDistance": 3312.8486597219944,
+      "defaultNoInputProgress": 2524.0598047521803,
+      "progressResidual": 1726.0598047521803
+    },
+    {
+      "videoSecond": 95,
+      "gameSecond": 93,
+      "observedProgress": 808,
+      "observedScore": 16160,
+      "defaultNoInputSpeed": 41.87416666665974,
+      "defaultNoInputWorldDistance": 3354.6732430553216,
+      "defaultNoInputProgress": 2560.5034859087355,
+      "progressResidual": 1752.5034859087355
+    },
+    {
+      "videoSecond": 96,
+      "gameSecond": 94,
+      "observedProgress": 818,
+      "observedScore": 16360,
+      "defaultNoInputSpeed": 41.97416666665965,
+      "defaultNoInputWorldDistance": 3396.5978263886486,
+      "defaultNoInputProgress": 2597.121644504947,
+      "progressResidual": 1779.1216445049472
+    },
+    {
+      "videoSecond": 97,
+      "gameSecond": 95,
+      "observedProgress": 828,
+      "observedScore": 16560,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3438.5945972219715,
+      "defaultNoInputProgress": 2633.86599651957,
+      "progressResidual": 1805.8659965195702
+    },
+    {
+      "videoSecond": 98,
+      "gameSecond": 96,
+      "observedProgress": 838,
+      "observedScore": 16760,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3480.5945972219606,
+      "defaultNoInputProgress": 2670.615998436232,
+      "progressResidual": 1832.615998436232
+    },
+    {
+      "videoSecond": 99,
+      "gameSecond": 97,
+      "observedProgress": 848,
+      "observedScore": 16960,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3522.5945972219497,
+      "defaultNoInputProgress": 2707.366000352894,
+      "progressResidual": 1859.366000352894
+    },
+    {
+      "videoSecond": 100,
+      "gameSecond": 98,
+      "observedProgress": 858,
+      "observedScore": 17160,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3564.594597221939,
+      "defaultNoInputProgress": 2744.116002269556,
+      "progressResidual": 1886.1160022695558
+    },
+    {
+      "videoSecond": 101,
+      "gameSecond": 99,
+      "observedProgress": 868,
+      "observedScore": 17360,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3606.594597221928,
+      "defaultNoInputProgress": 2780.8660041862177,
+      "progressResidual": 1912.8660041862177
+    },
+    {
+      "videoSecond": 102,
+      "gameSecond": 100,
+      "observedProgress": 878,
+      "observedScore": 17560,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3648.594597221917,
+      "defaultNoInputProgress": 2817.6160061028795,
+      "progressResidual": 1939.6160061028795
+    },
+    {
+      "videoSecond": 103,
+      "gameSecond": 101,
+      "observedProgress": 888,
+      "observedScore": 17760,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3690.594597221906,
+      "defaultNoInputProgress": 2854.3660080195414,
+      "progressResidual": 1966.3660080195414
+    },
+    {
+      "videoSecond": 104,
+      "gameSecond": 102,
+      "observedProgress": 898,
+      "observedScore": 17960,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3732.594597221895,
+      "defaultNoInputProgress": 2891.116009936203,
+      "progressResidual": 1993.1160099362032
+    },
+    {
+      "videoSecond": 105,
+      "gameSecond": 103,
+      "observedProgress": 908,
+      "observedScore": 18160,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3774.594597221884,
+      "defaultNoInputProgress": 2927.866011852865,
+      "progressResidual": 2019.866011852865
+    },
+    {
+      "videoSecond": 106,
+      "gameSecond": 104,
+      "observedProgress": 919,
+      "observedScore": 18380,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3816.5945972218733,
+      "defaultNoInputProgress": 2964.616013769527,
+      "progressResidual": 2045.616013769527
+    },
+    {
+      "videoSecond": 107,
+      "gameSecond": 105,
+      "observedProgress": 929,
+      "observedScore": 18580,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3858.5945972218624,
+      "defaultNoInputProgress": 3001.366015686189,
+      "progressResidual": 2072.366015686189
+    },
+    {
+      "videoSecond": 108,
+      "gameSecond": 106,
+      "observedProgress": 939,
+      "observedScore": 18780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3900.5945972218515,
+      "defaultNoInputProgress": 3038.1160176028507,
+      "progressResidual": 2099.1160176028507
+    },
+    {
+      "videoSecond": 109,
+      "gameSecond": 107,
+      "observedProgress": 949,
+      "observedScore": 18980,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3942.5945972218406,
+      "defaultNoInputProgress": 3074.8660195195125,
+      "progressResidual": 2125.8660195195125
+    },
+    {
+      "videoSecond": 110,
+      "gameSecond": 108,
+      "observedProgress": 960,
+      "observedScore": 19200,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 3984.5945972218296,
+      "defaultNoInputProgress": 3111.6160214361744,
+      "progressResidual": 2151.6160214361744
+    },
+    {
+      "videoSecond": 111,
+      "gameSecond": 109,
+      "observedProgress": 970,
+      "observedScore": 19400,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4026.5945972218187,
+      "defaultNoInputProgress": 3148.3660233528362,
+      "progressResidual": 2178.3660233528362
+    },
+    {
+      "videoSecond": 112,
+      "gameSecond": 110,
+      "observedProgress": 981,
+      "observedScore": 19620,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4068.594597221808,
+      "defaultNoInputProgress": 3185.116025269498,
+      "progressResidual": 2204.116025269498
+    },
+    {
+      "videoSecond": 113,
+      "gameSecond": 111,
+      "observedProgress": 989,
+      "observedScore": 19780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4110.594597221816,
+      "defaultNoInputProgress": 3221.86602718616,
+      "progressResidual": 2232.86602718616
+    },
+    {
+      "videoSecond": 114,
+      "gameSecond": 112,
+      "observedProgress": 997,
+      "observedScore": 19940,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4152.59459722186,
+      "defaultNoInputProgress": 3258.616029102822,
+      "progressResidual": 2261.616029102822
+    },
+    {
+      "videoSecond": 115,
+      "gameSecond": 113,
+      "observedProgress": 1005,
+      "observedScore": 20100,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4194.594597221903,
+      "defaultNoInputProgress": 3295.3660310194837,
+      "progressResidual": 2290.3660310194837
+    },
+    {
+      "videoSecond": 116,
+      "gameSecond": 114,
+      "observedProgress": 1014,
+      "observedScore": 20280,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4236.594597221947,
+      "defaultNoInputProgress": 3332.1160329361455,
+      "progressResidual": 2318.1160329361455
+    },
+    {
+      "videoSecond": 117,
+      "gameSecond": 115,
+      "observedProgress": 1022,
+      "observedScore": 20440,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4278.594597221991,
+      "defaultNoInputProgress": 3368.8660348528074,
+      "progressResidual": 2346.8660348528074
+    },
+    {
+      "videoSecond": 118,
+      "gameSecond": 116,
+      "observedProgress": 1031,
+      "observedScore": 20620,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4320.594597222034,
+      "defaultNoInputProgress": 3405.6160367694692,
+      "progressResidual": 2374.6160367694692
+    },
+    {
+      "videoSecond": 119,
+      "gameSecond": 117,
+      "observedProgress": 1039,
+      "observedScore": 20780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4362.594597222078,
+      "defaultNoInputProgress": 3442.366038686131,
+      "progressResidual": 2403.366038686131
+    },
+    {
+      "videoSecond": 120,
+      "gameSecond": 118,
+      "observedProgress": 1049,
+      "observedScore": 20980,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4404.594597222122,
+      "defaultNoInputProgress": 3479.116040602793,
+      "progressResidual": 2430.116040602793
+    },
+    {
+      "videoSecond": 121,
+      "gameSecond": 119,
+      "observedProgress": 1058,
+      "observedScore": 21160,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4446.594597222165,
+      "defaultNoInputProgress": 3515.866042519455,
+      "progressResidual": 2457.866042519455
+    },
+    {
+      "videoSecond": 122,
+      "gameSecond": 120,
+      "observedProgress": 1067,
+      "observedScore": 21340,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4488.594597222209,
+      "defaultNoInputProgress": 3552.6160444361167,
+      "progressResidual": 2485.6160444361167
+    },
+    {
+      "videoSecond": 123,
+      "gameSecond": 121,
+      "observedProgress": 1076,
+      "observedScore": 21520,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4530.594597222253,
+      "defaultNoInputProgress": 3589.3660463527785,
+      "progressResidual": 2513.3660463527785
+    },
+    {
+      "videoSecond": 124,
+      "gameSecond": 122,
+      "observedProgress": 1086,
+      "observedScore": 21720,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4572.594597222296,
+      "defaultNoInputProgress": 3626.1160482694404,
+      "progressResidual": 2540.1160482694404
+    },
+    {
+      "videoSecond": 125,
+      "gameSecond": 123,
+      "observedProgress": 1095,
+      "observedScore": 21900,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4614.59459722234,
+      "defaultNoInputProgress": 3662.8660501861023,
+      "progressResidual": 2567.8660501861023
+    },
+    {
+      "videoSecond": 126,
+      "gameSecond": 124,
+      "observedProgress": 1105,
+      "observedScore": 22100,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4656.5945972223835,
+      "defaultNoInputProgress": 3699.616052102764,
+      "progressResidual": 2594.616052102764
+    },
+    {
+      "videoSecond": 127,
+      "gameSecond": 125,
+      "observedProgress": 1115,
+      "observedScore": 22300,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4698.594597222427,
+      "defaultNoInputProgress": 3736.366054019426,
+      "progressResidual": 2621.366054019426
+    },
+    {
+      "videoSecond": 128,
+      "gameSecond": 126,
+      "observedProgress": 1125,
+      "observedScore": 22500,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4740.594597222471,
+      "defaultNoInputProgress": 3773.116055936088,
+      "progressResidual": 2648.116055936088
+    },
+    {
+      "videoSecond": 129,
+      "gameSecond": 127,
+      "observedProgress": 1135,
+      "observedScore": 22700,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4782.5945972225145,
+      "defaultNoInputProgress": 3809.8660578527497,
+      "progressResidual": 2674.8660578527497
+    },
+    {
+      "videoSecond": 130,
+      "gameSecond": 128,
+      "observedProgress": 1144,
+      "observedScore": 22880,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4824.594597222558,
+      "defaultNoInputProgress": 3846.6160597694115,
+      "progressResidual": 2702.6160597694115
+    },
+    {
+      "videoSecond": 131,
+      "gameSecond": 129,
+      "observedProgress": 1151,
+      "observedScore": 23020,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4866.594597222602,
+      "defaultNoInputProgress": 3883.3660616860734,
+      "progressResidual": 2732.3660616860734
+    },
+    {
+      "videoSecond": 132,
+      "gameSecond": 130,
+      "observedProgress": 1159,
+      "observedScore": 23180,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4908.5945972226455,
+      "defaultNoInputProgress": 3920.1160636027353,
+      "progressResidual": 2761.1160636027353
+    },
+    {
+      "videoSecond": 133,
+      "gameSecond": 131,
+      "observedProgress": 1168,
+      "observedScore": 23360,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4950.594597222689,
+      "defaultNoInputProgress": 3956.866065519397,
+      "progressResidual": 2788.866065519397
+    },
+    {
+      "videoSecond": 134,
+      "gameSecond": 132,
+      "observedProgress": 1176,
+      "observedScore": 23520,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 4992.594597222733,
+      "defaultNoInputProgress": 3993.616067436059,
+      "progressResidual": 2817.616067436059
+    },
+    {
+      "videoSecond": 135,
+      "gameSecond": 133,
+      "observedProgress": 1185,
+      "observedScore": 23700,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5034.594597222776,
+      "defaultNoInputProgress": 4030.366069352721,
+      "progressResidual": 2845.366069352721
+    },
+    {
+      "videoSecond": 136,
+      "gameSecond": 134,
+      "observedProgress": 1194,
+      "observedScore": 23880,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5076.59459722282,
+      "defaultNoInputProgress": 4067.1160712693827,
+      "progressResidual": 2873.1160712693827
+    },
+    {
+      "videoSecond": 137,
+      "gameSecond": 135,
+      "observedProgress": 1202,
+      "observedScore": 24040,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5118.594597222864,
+      "defaultNoInputProgress": 4103.866073186045,
+      "progressResidual": 2901.8660731860446
+    },
+    {
+      "videoSecond": 138,
+      "gameSecond": 136,
+      "observedProgress": 1211,
+      "observedScore": 24220,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5160.594597222907,
+      "defaultNoInputProgress": 4140.616075102706,
+      "progressResidual": 2929.6160751027064
+    },
+    {
+      "videoSecond": 139,
+      "gameSecond": 137,
+      "observedProgress": 1220,
+      "observedScore": 24400,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5202.594597222951,
+      "defaultNoInputProgress": 4177.366077019368,
+      "progressResidual": 2957.3660770193683
+    },
+    {
+      "videoSecond": 140,
+      "gameSecond": 138,
+      "observedProgress": 1229,
+      "observedScore": 24580,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5244.594597222995,
+      "defaultNoInputProgress": 4214.11607893603,
+      "progressResidual": 2985.11607893603
+    },
+    {
+      "videoSecond": 141,
+      "gameSecond": 139,
+      "observedProgress": 1239,
+      "observedScore": 24780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5286.594597223038,
+      "defaultNoInputProgress": 4250.866080852692,
+      "progressResidual": 3011.866080852692
+    },
+    {
+      "videoSecond": 142,
+      "gameSecond": 140,
+      "observedProgress": 1248,
+      "observedScore": 24960,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5328.594597223082,
+      "defaultNoInputProgress": 4287.616082769354,
+      "progressResidual": 3039.616082769354
+    },
+    {
+      "videoSecond": 143,
+      "gameSecond": 141,
+      "observedProgress": 1258,
+      "observedScore": 25160,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5370.594597223126,
+      "defaultNoInputProgress": 4324.366084686016,
+      "progressResidual": 3066.3660846860157
+    },
+    {
+      "videoSecond": 144,
+      "gameSecond": 142,
+      "observedProgress": 1267,
+      "observedScore": 25340,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5412.594597223169,
+      "defaultNoInputProgress": 4361.116086602678,
+      "progressResidual": 3094.1160866026776
+    },
+    {
+      "videoSecond": 145,
+      "gameSecond": 143,
+      "observedProgress": 1277,
+      "observedScore": 25540,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5454.594597223213,
+      "defaultNoInputProgress": 4397.866088519339,
+      "progressResidual": 3120.8660885193394
+    },
+    {
+      "videoSecond": 146,
+      "gameSecond": 144,
+      "observedProgress": 1286,
+      "observedScore": 26220,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5496.594597223257,
+      "defaultNoInputProgress": 4434.616090436001,
+      "progressResidual": 3148.6160904360013
+    },
+    {
+      "videoSecond": 147,
+      "gameSecond": 145,
+      "observedProgress": 1296,
+      "observedScore": 26420,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5538.5945972233,
+      "defaultNoInputProgress": 4471.366092352663,
+      "progressResidual": 3175.366092352663
+    },
+    {
+      "videoSecond": 148,
+      "gameSecond": 146,
+      "observedProgress": 1305,
+      "observedScore": 26600,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5580.594597223344,
+      "defaultNoInputProgress": 4508.116094269325,
+      "progressResidual": 3203.116094269325
+    },
+    {
+      "videoSecond": 149,
+      "gameSecond": 147,
+      "observedProgress": 1314,
+      "observedScore": 26780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5622.594597223388,
+      "defaultNoInputProgress": 4544.866096185987,
+      "progressResidual": 3230.866096185987
+    },
+    {
+      "videoSecond": 150,
+      "gameSecond": 148,
+      "observedProgress": 1322,
+      "observedScore": 26940,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5664.594597223431,
+      "defaultNoInputProgress": 4581.616098102649,
+      "progressResidual": 3259.6160981026487
+    },
+    {
+      "videoSecond": 151,
+      "gameSecond": 149,
+      "observedProgress": 1330,
+      "observedScore": 27100,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5706.594597223475,
+      "defaultNoInputProgress": 4618.366100019311,
+      "progressResidual": 3288.3661000193106
+    },
+    {
+      "videoSecond": 152,
+      "gameSecond": 150,
+      "observedProgress": 1338,
+      "observedScore": 27260,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5748.594597223519,
+      "defaultNoInputProgress": 4655.116101935972,
+      "progressResidual": 3317.1161019359724
+    },
+    {
+      "videoSecond": 153,
+      "gameSecond": 151,
+      "observedProgress": 1347,
+      "observedScore": 27440,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5790.594597223562,
+      "defaultNoInputProgress": 4691.866103852634,
+      "progressResidual": 3344.8661038526343
+    },
+    {
+      "videoSecond": 154,
+      "gameSecond": 152,
+      "observedProgress": 1356,
+      "observedScore": 27620,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5832.594597223606,
+      "defaultNoInputProgress": 4728.616105769296,
+      "progressResidual": 3372.616105769296
+    },
+    {
+      "videoSecond": 155,
+      "gameSecond": 153,
+      "observedProgress": 1365,
+      "observedScore": 27800,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5874.5945972236495,
+      "defaultNoInputProgress": 4765.366107685958,
+      "progressResidual": 3400.366107685958
+    },
+    {
+      "videoSecond": 156,
+      "gameSecond": 154,
+      "observedProgress": 1374,
+      "observedScore": 27980,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5916.594597223693,
+      "defaultNoInputProgress": 4802.11610960262,
+      "progressResidual": 3428.11610960262
+    },
+    {
+      "videoSecond": 157,
+      "gameSecond": 155,
+      "observedProgress": 1383,
+      "observedScore": 28160,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 5958.594597223737,
+      "defaultNoInputProgress": 4838.866111519282,
+      "progressResidual": 3455.8661115192817
+    },
+    {
+      "videoSecond": 158,
+      "gameSecond": 156,
+      "observedProgress": 1392,
+      "observedScore": 28340,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6000.5945972237805,
+      "defaultNoInputProgress": 4875.616113435944,
+      "progressResidual": 3483.6161134359436
+    },
+    {
+      "videoSecond": 159,
+      "gameSecond": 157,
+      "observedProgress": 1402,
+      "observedScore": 28540,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6042.594597223824,
+      "defaultNoInputProgress": 4912.366115352605,
+      "progressResidual": 3510.3661153526054
+    },
+    {
+      "videoSecond": 160,
+      "gameSecond": 158,
+      "observedProgress": 1412,
+      "observedScore": 28740,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6084.594597223868,
+      "defaultNoInputProgress": 4949.116117269267,
+      "progressResidual": 3537.1161172692673
+    },
+    {
+      "videoSecond": 161,
+      "gameSecond": 159,
+      "observedProgress": 1420,
+      "observedScore": 28900,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6126.5945972239115,
+      "defaultNoInputProgress": 4985.866119185929,
+      "progressResidual": 3565.866119185929
+    },
+    {
+      "videoSecond": 162,
+      "gameSecond": 160,
+      "observedProgress": 1429,
+      "observedScore": 29080,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6168.594597223955,
+      "defaultNoInputProgress": 5022.616121102591,
+      "progressResidual": 3593.616121102591
+    },
+    {
+      "videoSecond": 163,
+      "gameSecond": 161,
+      "observedProgress": 1438,
+      "observedScore": 29260,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6210.594597223999,
+      "defaultNoInputProgress": 5059.366123019253,
+      "progressResidual": 3621.366123019253
+    },
+    {
+      "videoSecond": 164,
+      "gameSecond": 162,
+      "observedProgress": 1447,
+      "observedScore": 29440,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6252.594597224042,
+      "defaultNoInputProgress": 5096.116124935915,
+      "progressResidual": 3649.1161249359147
+    },
+    {
+      "videoSecond": 165,
+      "gameSecond": 163,
+      "observedProgress": 1457,
+      "observedScore": 29640,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6294.594597224086,
+      "defaultNoInputProgress": 5132.866126852577,
+      "progressResidual": 3675.8661268525766
+    },
+    {
+      "videoSecond": 166,
+      "gameSecond": 164,
+      "observedProgress": 1467,
+      "observedScore": 29840,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6336.59459722413,
+      "defaultNoInputProgress": 5169.6161287692385,
+      "progressResidual": 3702.6161287692385
+    },
+    {
+      "videoSecond": 167,
+      "gameSecond": 165,
+      "observedProgress": 1476,
+      "observedScore": 30020,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6378.594597224173,
+      "defaultNoInputProgress": 5206.3661306859,
+      "progressResidual": 3730.3661306859003
+    },
+    {
+      "videoSecond": 168,
+      "gameSecond": 166,
+      "observedProgress": 1486,
+      "observedScore": 30220,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6420.594597224217,
+      "defaultNoInputProgress": 5243.116132602562,
+      "progressResidual": 3757.116132602562
+    },
+    {
+      "videoSecond": 169,
+      "gameSecond": 167,
+      "observedProgress": 1495,
+      "observedScore": 30400,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6462.594597224261,
+      "defaultNoInputProgress": 5279.866134519224,
+      "progressResidual": 3784.866134519224
+    },
+    {
+      "videoSecond": 170,
+      "gameSecond": 168,
+      "observedProgress": 1505,
+      "observedScore": 30600,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6504.594597224304,
+      "defaultNoInputProgress": 5316.616136435886,
+      "progressResidual": 3811.616136435886
+    },
+    {
+      "videoSecond": 171,
+      "gameSecond": 169,
+      "observedProgress": 1515,
+      "observedScore": 30800,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6546.594597224348,
+      "defaultNoInputProgress": 5353.366138352548,
+      "progressResidual": 3838.3661383525478
+    },
+    {
+      "videoSecond": 172,
+      "gameSecond": 170,
+      "observedProgress": 1525,
+      "observedScore": 31000,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6588.594597224392,
+      "defaultNoInputProgress": 5390.11614026921,
+      "progressResidual": 3865.1161402692096
+    },
+    {
+      "videoSecond": 173,
+      "gameSecond": 171,
+      "observedProgress": 1534,
+      "observedScore": 31180,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6630.594597224435,
+      "defaultNoInputProgress": 5426.8661421858715,
+      "progressResidual": 3892.8661421858715
+    },
+    {
+      "videoSecond": 174,
+      "gameSecond": 172,
+      "observedProgress": 1544,
+      "observedScore": 31380,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6672.594597224479,
+      "defaultNoInputProgress": 5463.616144102533,
+      "progressResidual": 3919.6161441025333
+    },
+    {
+      "videoSecond": 175,
+      "gameSecond": 173,
+      "observedProgress": 1552,
+      "observedScore": 31540,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6714.594597224523,
+      "defaultNoInputProgress": 5500.366146019195,
+      "progressResidual": 3948.366146019195
+    },
+    {
+      "videoSecond": 176,
+      "gameSecond": 174,
+      "observedProgress": 1559,
+      "observedScore": 31680,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6756.594597224566,
+      "defaultNoInputProgress": 5537.116147935857,
+      "progressResidual": 3978.116147935857
+    },
+    {
+      "videoSecond": 177,
+      "gameSecond": 175,
+      "observedProgress": 1567,
+      "observedScore": 31840,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6798.59459722461,
+      "defaultNoInputProgress": 5573.866149852519,
+      "progressResidual": 4006.866149852519
+    },
+    {
+      "videoSecond": 178,
+      "gameSecond": 176,
+      "observedProgress": 1574,
+      "observedScore": 31980,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6840.594597224654,
+      "defaultNoInputProgress": 5610.616151769181,
+      "progressResidual": 4036.6161517691808
+    },
+    {
+      "videoSecond": 179,
+      "gameSecond": 177,
+      "observedProgress": 1582,
+      "observedScore": 32140,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6882.594597224697,
+      "defaultNoInputProgress": 5647.366153685843,
+      "progressResidual": 4065.3661536858426
+    },
+    {
+      "videoSecond": 180,
+      "gameSecond": 178,
+      "observedProgress": 1589,
+      "observedScore": 32280,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6924.594597224741,
+      "defaultNoInputProgress": 5684.1161556025045,
+      "progressResidual": 4095.1161556025045
+    },
+    {
+      "videoSecond": 181,
+      "gameSecond": 179,
+      "observedProgress": 1598,
+      "observedScore": 32460,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 6966.594597224785,
+      "defaultNoInputProgress": 5720.866157519166,
+      "progressResidual": 4122.866157519166
+    },
+    {
+      "videoSecond": 182,
+      "gameSecond": 180,
+      "observedProgress": 1606,
+      "observedScore": 33120,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7008.594597224828,
+      "defaultNoInputProgress": 5757.616159435828,
+      "progressResidual": 4151.616159435828
+    },
+    {
+      "videoSecond": 183,
+      "gameSecond": 181,
+      "observedProgress": 1614,
+      "observedScore": 33280,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7050.594597224872,
+      "defaultNoInputProgress": 5794.36616135249,
+      "progressResidual": 4180.36616135249
+    },
+    {
+      "videoSecond": 184,
+      "gameSecond": 182,
+      "observedProgress": 1622,
+      "observedScore": 33440,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7092.594597224916,
+      "defaultNoInputProgress": 5831.116163269152,
+      "progressResidual": 4209.116163269152
+    },
+    {
+      "videoSecond": 185,
+      "gameSecond": 183,
+      "observedProgress": 1631,
+      "observedScore": 33620,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7134.594597224959,
+      "defaultNoInputProgress": 5867.866165185814,
+      "progressResidual": 4236.866165185814
+    },
+    {
+      "videoSecond": 186,
+      "gameSecond": 184,
+      "observedProgress": 1639,
+      "observedScore": 33780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7176.594597225003,
+      "defaultNoInputProgress": 5904.616167102476,
+      "progressResidual": 4265.616167102476
+    },
+    {
+      "videoSecond": 187,
+      "gameSecond": 185,
+      "observedProgress": 1646,
+      "observedScore": 33920,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7218.5945972250465,
+      "defaultNoInputProgress": 5941.3661690191375,
+      "progressResidual": 4295.3661690191375
+    },
+    {
+      "videoSecond": 188,
+      "gameSecond": 186,
+      "observedProgress": 1653,
+      "observedScore": 34060,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7260.59459722509,
+      "defaultNoInputProgress": 5978.116170935799,
+      "progressResidual": 4325.116170935799
+    },
+    {
+      "videoSecond": 189,
+      "gameSecond": 187,
+      "observedProgress": 1660,
+      "observedScore": 34200,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7302.594597225134,
+      "defaultNoInputProgress": 6014.866172852461,
+      "progressResidual": 4354.866172852461
+    },
+    {
+      "videoSecond": 190,
+      "gameSecond": 188,
+      "observedProgress": 1668,
+      "observedScore": 34360,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7344.5945972251775,
+      "defaultNoInputProgress": 6051.616174769123,
+      "progressResidual": 4383.616174769123
+    },
+    {
+      "videoSecond": 191,
+      "gameSecond": 189,
+      "observedProgress": 1675,
+      "observedScore": 34500,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7386.594597225221,
+      "defaultNoInputProgress": 6088.366176685785,
+      "progressResidual": 4413.366176685785
+    },
+    {
+      "videoSecond": 192,
+      "gameSecond": 190,
+      "observedProgress": 1683,
+      "observedScore": 34660,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7428.594597225265,
+      "defaultNoInputProgress": 6125.116178602447,
+      "progressResidual": 4442.116178602447
+    },
+    {
+      "videoSecond": 193,
+      "gameSecond": 191,
+      "observedProgress": 1690,
+      "observedScore": 34800,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7470.5945972253085,
+      "defaultNoInputProgress": 6161.866180519109,
+      "progressResidual": 4471.866180519109
+    },
+    {
+      "videoSecond": 194,
+      "gameSecond": 192,
+      "observedProgress": 1698,
+      "observedScore": 34960,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7512.594597225352,
+      "defaultNoInputProgress": 6198.6161824357705,
+      "progressResidual": 4500.6161824357705
+    },
+    {
+      "videoSecond": 195,
+      "gameSecond": 193,
+      "observedProgress": 1706,
+      "observedScore": 35120,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7554.594597225396,
+      "defaultNoInputProgress": 6235.366184352432,
+      "progressResidual": 4529.366184352432
+    },
+    {
+      "videoSecond": 196,
+      "gameSecond": 194,
+      "observedProgress": 1714,
+      "observedScore": 35280,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7596.594597225439,
+      "defaultNoInputProgress": 6272.116186269094,
+      "progressResidual": 4558.116186269094
+    },
+    {
+      "videoSecond": 197,
+      "gameSecond": 195,
+      "observedProgress": 1722,
+      "observedScore": 35440,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7638.594597225483,
+      "defaultNoInputProgress": 6308.866188185756,
+      "progressResidual": 4586.866188185756
+    },
+    {
+      "videoSecond": 198,
+      "gameSecond": 196,
+      "observedProgress": 1730,
+      "observedScore": 35600,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7680.594597225527,
+      "defaultNoInputProgress": 6345.616190102418,
+      "progressResidual": 4615.616190102418
+    },
+    {
+      "videoSecond": 199,
+      "gameSecond": 197,
+      "observedProgress": 1738,
+      "observedScore": 35760,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7722.59459722557,
+      "defaultNoInputProgress": 6382.36619201908,
+      "progressResidual": 4644.36619201908
+    },
+    {
+      "videoSecond": 200,
+      "gameSecond": 198,
+      "observedProgress": 1746,
+      "observedScore": 35920,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7764.594597225614,
+      "defaultNoInputProgress": 6419.116193935742,
+      "progressResidual": 4673.116193935742
+    },
+    {
+      "videoSecond": 201,
+      "gameSecond": 199,
+      "observedProgress": 1754,
+      "observedScore": 36080,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7806.594597225658,
+      "defaultNoInputProgress": 6455.8661958524035,
+      "progressResidual": 4701.8661958524035
+    },
+    {
+      "videoSecond": 202,
+      "gameSecond": 200,
+      "observedProgress": 1763,
+      "observedScore": 36260,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7848.594597225701,
+      "defaultNoInputProgress": 6492.616197769065,
+      "progressResidual": 4729.616197769065
+    },
+    {
+      "videoSecond": 203,
+      "gameSecond": 201,
+      "observedProgress": 1771,
+      "observedScore": 36420,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7890.594597225745,
+      "defaultNoInputProgress": 6529.366199685727,
+      "progressResidual": 4758.366199685727
+    },
+    {
+      "videoSecond": 204,
+      "gameSecond": 202,
+      "observedProgress": 1780,
+      "observedScore": 36600,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7932.594597225789,
+      "defaultNoInputProgress": 6566.116201602389,
+      "progressResidual": 4786.116201602389
+    },
+    {
+      "videoSecond": 205,
+      "gameSecond": 203,
+      "observedProgress": 1789,
+      "observedScore": 36780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 7974.594597225832,
+      "defaultNoInputProgress": 6602.866203519051,
+      "progressResidual": 4813.866203519051
+    },
+    {
+      "videoSecond": 206,
+      "gameSecond": 204,
+      "observedProgress": 1798,
+      "observedScore": 36960,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8016.594597225876,
+      "defaultNoInputProgress": 6639.616205435713,
+      "progressResidual": 4841.616205435713
+    },
+    {
+      "videoSecond": 207,
+      "gameSecond": 205,
+      "observedProgress": 1808,
+      "observedScore": 37160,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8058.59459722592,
+      "defaultNoInputProgress": 6676.366207352375,
+      "progressResidual": 4868.366207352375
+    },
+    {
+      "videoSecond": 208,
+      "gameSecond": 206,
+      "observedProgress": 1818,
+      "observedScore": 37360,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8100.594597225963,
+      "defaultNoInputProgress": 6713.1162092690365,
+      "progressResidual": 4895.1162092690365
+    },
+    {
+      "videoSecond": 209,
+      "gameSecond": 207,
+      "observedProgress": 1828,
+      "observedScore": 37560,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8142.594597226007,
+      "defaultNoInputProgress": 6749.866211185698,
+      "progressResidual": 4921.866211185698
+    },
+    {
+      "videoSecond": 210,
+      "gameSecond": 208,
+      "observedProgress": 1837,
+      "observedScore": 37740,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8184.594597226051,
+      "defaultNoInputProgress": 6786.61621310236,
+      "progressResidual": 4949.61621310236
+    },
+    {
+      "videoSecond": 211,
+      "gameSecond": 209,
+      "observedProgress": 1845,
+      "observedScore": 37900,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8226.594597226094,
+      "defaultNoInputProgress": 6823.366215019022,
+      "progressResidual": 4978.366215019022
+    },
+    {
+      "videoSecond": 212,
+      "gameSecond": 210,
+      "observedProgress": 1853,
+      "observedScore": 38060,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8268.594597226138,
+      "defaultNoInputProgress": 6860.116216935684,
+      "progressResidual": 5007.116216935684
+    },
+    {
+      "videoSecond": 213,
+      "gameSecond": 211,
+      "observedProgress": 1860,
+      "observedScore": 38200,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8310.594597226182,
+      "defaultNoInputProgress": 6896.866218852346,
+      "progressResidual": 5036.866218852346
+    },
+    {
+      "videoSecond": 214,
+      "gameSecond": 212,
+      "observedProgress": 1867,
+      "observedScore": 38340,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8352.594597226225,
+      "defaultNoInputProgress": 6933.616220769008,
+      "progressResidual": 5066.616220769008
+    },
+    {
+      "videoSecond": 215,
+      "gameSecond": 213,
+      "observedProgress": 1875,
+      "observedScore": 38500,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8394.594597226269,
+      "defaultNoInputProgress": 6970.3662226856695,
+      "progressResidual": 5095.3662226856695
+    },
+    {
+      "videoSecond": 216,
+      "gameSecond": 214,
+      "observedProgress": 1884,
+      "observedScore": 38680,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8436.594597226313,
+      "defaultNoInputProgress": 7007.116224602331,
+      "progressResidual": 5123.116224602331
+    },
+    {
+      "videoSecond": 217,
+      "gameSecond": 215,
+      "observedProgress": 1893,
+      "observedScore": 38860,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8478.594597226356,
+      "defaultNoInputProgress": 7043.866226518993,
+      "progressResidual": 5150.866226518993
+    },
+    {
+      "videoSecond": 218,
+      "gameSecond": 216,
+      "observedProgress": 1902,
+      "observedScore": 39040,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8520.5945972264,
+      "defaultNoInputProgress": 7080.616228435655,
+      "progressResidual": 5178.616228435655
+    },
+    {
+      "videoSecond": 219,
+      "gameSecond": 217,
+      "observedProgress": 1911,
+      "observedScore": 39220,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8562.594597226444,
+      "defaultNoInputProgress": 7117.366230352317,
+      "progressResidual": 5206.366230352317
+    },
+    {
+      "videoSecond": 220,
+      "gameSecond": 218,
+      "observedProgress": 1920,
+      "observedScore": 39400,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8604.594597226487,
+      "defaultNoInputProgress": 7154.116232268979,
+      "progressResidual": 5234.116232268979
+    },
+    {
+      "videoSecond": 221,
+      "gameSecond": 219,
+      "observedProgress": 1929,
+      "observedScore": 39580,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8646.59459722653,
+      "defaultNoInputProgress": 7190.866234185641,
+      "progressResidual": 5261.866234185641
+    },
+    {
+      "videoSecond": 222,
+      "gameSecond": 220,
+      "observedProgress": 1939,
+      "observedScore": 39780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8688.594597226574,
+      "defaultNoInputProgress": 7227.6162361023025,
+      "progressResidual": 5288.6162361023025
+    },
+    {
+      "videoSecond": 223,
+      "gameSecond": 221,
+      "observedProgress": 1948,
+      "observedScore": 39960,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8730.594597226618,
+      "defaultNoInputProgress": 7264.366238018964,
+      "progressResidual": 5316.366238018964
+    },
+    {
+      "videoSecond": 224,
+      "gameSecond": 222,
+      "observedProgress": 1957,
+      "observedScore": 40140,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8772.594597226662,
+      "defaultNoInputProgress": 7301.116239935626,
+      "progressResidual": 5344.116239935626
+    },
+    {
+      "videoSecond": 225,
+      "gameSecond": 223,
+      "observedProgress": 1967,
+      "observedScore": 40340,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8814.594597226705,
+      "defaultNoInputProgress": 7337.866241852288,
+      "progressResidual": 5370.866241852288
+    },
+    {
+      "videoSecond": 226,
+      "gameSecond": 224,
+      "observedProgress": 1976,
+      "observedScore": 40520,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8856.59459722675,
+      "defaultNoInputProgress": 7374.61624376895,
+      "progressResidual": 5398.61624376895
+    },
+    {
+      "videoSecond": 227,
+      "gameSecond": 225,
+      "observedProgress": 1986,
+      "observedScore": 40720,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8898.594597226793,
+      "defaultNoInputProgress": 7411.366245685612,
+      "progressResidual": 5425.366245685612
+    },
+    {
+      "videoSecond": 228,
+      "gameSecond": 226,
+      "observedProgress": 1995,
+      "observedScore": 40900,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8940.594597226836,
+      "defaultNoInputProgress": 7448.116247602274,
+      "progressResidual": 5453.116247602274
+    },
+    {
+      "videoSecond": 229,
+      "gameSecond": 227,
+      "observedProgress": 2004,
+      "observedScore": 41080,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 8982.59459722688,
+      "defaultNoInputProgress": 7484.866249518936,
+      "progressResidual": 5480.866249518936
+    },
+    {
+      "videoSecond": 230,
+      "gameSecond": 228,
+      "observedProgress": 2014,
+      "observedScore": 41280,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9024.594597226924,
+      "defaultNoInputProgress": 7521.616251435597,
+      "progressResidual": 5507.616251435597
+    },
+    {
+      "videoSecond": 231,
+      "gameSecond": 229,
+      "observedProgress": 2024,
+      "observedScore": 41480,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9066.594597226967,
+      "defaultNoInputProgress": 7558.366253352259,
+      "progressResidual": 5534.366253352259
+    },
+    {
+      "videoSecond": 232,
+      "gameSecond": 230,
+      "observedProgress": 2034,
+      "observedScore": 41680,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9108.594597227011,
+      "defaultNoInputProgress": 7595.116255268921,
+      "progressResidual": 5561.116255268921
+    },
+    {
+      "videoSecond": 233,
+      "gameSecond": 231,
+      "observedProgress": 2043,
+      "observedScore": 41860,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9150.594597227055,
+      "defaultNoInputProgress": 7631.866257185583,
+      "progressResidual": 5588.866257185583
+    },
+    {
+      "videoSecond": 234,
+      "gameSecond": 232,
+      "observedProgress": 2053,
+      "observedScore": 42060,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9192.594597227098,
+      "defaultNoInputProgress": 7668.616259102245,
+      "progressResidual": 5615.616259102245
+    },
+    {
+      "videoSecond": 235,
+      "gameSecond": 233,
+      "observedProgress": 2063,
+      "observedScore": 42260,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9234.594597227142,
+      "defaultNoInputProgress": 7705.366261018907,
+      "progressResidual": 5642.366261018907
+    },
+    {
+      "videoSecond": 236,
+      "gameSecond": 234,
+      "observedProgress": 2073,
+      "observedScore": 42460,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9276.594597227186,
+      "defaultNoInputProgress": 7742.116262935569,
+      "progressResidual": 5669.116262935569
+    },
+    {
+      "videoSecond": 237,
+      "gameSecond": 235,
+      "observedProgress": 2082,
+      "observedScore": 42640,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9318.59459722723,
+      "defaultNoInputProgress": 7778.86626485223,
+      "progressResidual": 5696.86626485223
+    },
+    {
+      "videoSecond": 238,
+      "gameSecond": 236,
+      "observedProgress": 2092,
+      "observedScore": 42840,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9360.594597227273,
+      "defaultNoInputProgress": 7815.616266768892,
+      "progressResidual": 5723.616266768892
+    },
+    {
+      "videoSecond": 239,
+      "gameSecond": 237,
+      "observedProgress": 2102,
+      "observedScore": 43040,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9402.594597227317,
+      "defaultNoInputProgress": 7852.366268685554,
+      "progressResidual": 5750.366268685554
+    },
+    {
+      "videoSecond": 240,
+      "gameSecond": 238,
+      "observedProgress": 2113,
+      "observedScore": 43260,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9444.59459722736,
+      "defaultNoInputProgress": 7889.116270602216,
+      "progressResidual": 5776.116270602216
+    },
+    {
+      "videoSecond": 241,
+      "gameSecond": 239,
+      "observedProgress": 2123,
+      "observedScore": 43460,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9486.594597227404,
+      "defaultNoInputProgress": 7925.866272518878,
+      "progressResidual": 5802.866272518878
+    },
+    {
+      "videoSecond": 242,
+      "gameSecond": 240,
+      "observedProgress": 2131,
+      "observedScore": 43620,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9528.594597227448,
+      "defaultNoInputProgress": 7962.61627443554,
+      "progressResidual": 5831.61627443554
+    },
+    {
+      "videoSecond": 243,
+      "gameSecond": 241,
+      "observedProgress": 2139,
+      "observedScore": 43780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9570.594597227491,
+      "defaultNoInputProgress": 7999.366276352202,
+      "progressResidual": 5860.366276352202
+    },
+    {
+      "videoSecond": 244,
+      "gameSecond": 242,
+      "observedProgress": 2147,
+      "observedScore": 43940,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9612.594597227535,
+      "defaultNoInputProgress": 8036.116278268863,
+      "progressResidual": 5889.116278268863
+    },
+    {
+      "videoSecond": 245,
+      "gameSecond": 243,
+      "observedProgress": 2155,
+      "observedScore": 44100,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9654.594597227579,
+      "defaultNoInputProgress": 8072.866280185525,
+      "progressResidual": 5917.866280185525
+    },
+    {
+      "videoSecond": 246,
+      "gameSecond": 244,
+      "observedProgress": 2164,
+      "observedScore": 44280,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9696.594597227622,
+      "defaultNoInputProgress": 8109.616282102187,
+      "progressResidual": 5945.616282102187
+    },
+    {
+      "videoSecond": 247,
+      "gameSecond": 245,
+      "observedProgress": 2172,
+      "observedScore": 44440,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9738.594597227666,
+      "defaultNoInputProgress": 8146.366284018849,
+      "progressResidual": 5974.366284018849
+    },
+    {
+      "videoSecond": 248,
+      "gameSecond": 246,
+      "observedProgress": 2180,
+      "observedScore": 44600,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9780.59459722771,
+      "defaultNoInputProgress": 8183.116285935511,
+      "progressResidual": 6003.116285935511
+    },
+    {
+      "videoSecond": 249,
+      "gameSecond": 247,
+      "observedProgress": 2189,
+      "observedScore": 44780,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9822.594597227753,
+      "defaultNoInputProgress": 8219.866287852172,
+      "progressResidual": 6030.866287852172
+    },
+    {
+      "videoSecond": 250,
+      "gameSecond": 248,
+      "observedProgress": 2197,
+      "observedScore": 44940,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9864.594597227797,
+      "defaultNoInputProgress": 8256.616289768834,
+      "progressResidual": 6059.616289768834
+    },
+    {
+      "videoSecond": 251,
+      "gameSecond": 249,
+      "observedProgress": 2206,
+      "observedScore": 45120,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9906.59459722784,
+      "defaultNoInputProgress": 8293.366291685496,
+      "progressResidual": 6087.3662916854955
+    },
+    {
+      "videoSecond": 252,
+      "gameSecond": 250,
+      "observedProgress": 2215,
+      "observedScore": 45300,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9948.594597227884,
+      "defaultNoInputProgress": 8330.116293602157,
+      "progressResidual": 6115.116293602157
+    },
+    {
+      "videoSecond": 253,
+      "gameSecond": 251,
+      "observedProgress": 2223,
+      "observedScore": 45460,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 9990.594597227928,
+      "defaultNoInputProgress": 8366.86629551882,
+      "progressResidual": 6143.866295518819
+    },
+    {
+      "videoSecond": 254,
+      "gameSecond": 252,
+      "observedProgress": 2232,
+      "observedScore": 45640,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10032.594597227971,
+      "defaultNoInputProgress": 8403.616297435481,
+      "progressResidual": 6171.616297435481
+    },
+    {
+      "videoSecond": 255,
+      "gameSecond": 253,
+      "observedProgress": 2241,
+      "observedScore": 45820,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10074.594597228015,
+      "defaultNoInputProgress": 8440.366299352143,
+      "progressResidual": 6199.366299352143
+    },
+    {
+      "videoSecond": 256,
+      "gameSecond": 254,
+      "observedProgress": 2250,
+      "observedScore": 46000,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10116.594597228059,
+      "defaultNoInputProgress": 8477.116301268805,
+      "progressResidual": 6227.116301268805
+    },
+    {
+      "videoSecond": 257,
+      "gameSecond": 255,
+      "observedProgress": 2259,
+      "observedScore": 46180,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10158.594597228102,
+      "defaultNoInputProgress": 8513.866303185467,
+      "progressResidual": 6254.866303185467
+    },
+    {
+      "videoSecond": 258,
+      "gameSecond": 256,
+      "observedProgress": 2269,
+      "observedScore": 46380,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10200.594597228146,
+      "defaultNoInputProgress": 8550.616305102129,
+      "progressResidual": 6281.6163051021285
+    },
+    {
+      "videoSecond": 259,
+      "gameSecond": 257,
+      "observedProgress": 2280,
+      "observedScore": 46600,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10242.59459722819,
+      "defaultNoInputProgress": 8587.36630701879,
+      "progressResidual": 6307.36630701879
+    },
+    {
+      "videoSecond": 260,
+      "gameSecond": 258,
+      "observedProgress": 2291,
+      "observedScore": 46820,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10284.594597228233,
+      "defaultNoInputProgress": 8624.116308935452,
+      "progressResidual": 6333.116308935452
+    },
+    {
+      "videoSecond": 261,
+      "gameSecond": 259,
+      "observedProgress": 2304,
+      "observedScore": 47080,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10326.594597228277,
+      "defaultNoInputProgress": 8660.866310852114,
+      "progressResidual": 6356.866310852114
+    },
+    {
+      "videoSecond": 262,
+      "gameSecond": 260,
+      "observedProgress": 2312,
+      "observedScore": 47240,
+      "defaultNoInputSpeed": 42,
+      "defaultNoInputWorldDistance": 10368.59459722832,
+      "defaultNoInputProgress": 8697.616312768776,
+      "progressResidual": 6385.616312768776
+    }
+  ]
+}

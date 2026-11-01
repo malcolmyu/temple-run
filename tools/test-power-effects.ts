@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import {createPowerEffects,activatePower,hasPower,activePowers,stepPowerEffects} from '../target/temple-run/web/src/game/powerEffects';
+import {nativeBoostSpeedLimit,boostAcceleration,consumeBoostProgress} from '../target/temple-run/web/src/game/nativeBoost';
+const p=createPowerEffects();
+activatePower(p,'magnet',10,15);activatePower(p,'shield',12,15);
+assert.equal(hasPower(p,'magnet',26),false);assert.equal(hasPower(p,'shield',26),true);
+activatePower(p,'magnet',20,15);assert.equal(p.expires.magnet,35);assert.equal(p.expires.shield,27);
+activatePower(p,'bonus',28,100);assert.equal(p.expires.magnet,35);
+assert.deepEqual(activePowers(p,35),[]);
+activatePower(p,'boost',40,999,22);
+assert.equal(p.boost.left,300,'boost must use configured progress budget, ignoring time duration');
+assert.equal(p.expires.shield,44,'native first boost replaces invincibility with4 seconds');
+assert.equal(boostAcceleration(p.boost,25,1),30);
+stepPowerEffects(p,40.1,.1);assert.equal(p.expires.shield,44.1,'cruise freezes tail countdown');
+consumeBoostProgress(p.boost,250);const atBoundary=p.expires.shield;
+stepPowerEffects(p,40.2,.1);assert.equal(p.expires.shield,atBoundary+.1,'50 progress still freezes the native clock');
+consumeBoostProgress(p.boost,1);assert.equal(p.boost.left,49);
+assert.equal(boostAcceleration(p.boost,60,1),-30);assert.equal(boostAcceleration(p.boost,21,1),1);
+const end=p.expires.shield;stepPowerEffects(p,41,.1);assert.equal(p.expires.shield,end,'braking no longer freezes countdown');
+activatePower(p,'boost',41,5,60);assert.equal(p.boost.speedBefore,22,'refresh must retain pre-boost speed');assert.equal(p.boost.left,300);assert.equal(p.expires.shield,end);
+p.boost.left=0;stepPowerEffects(p,45,.1);assert.equal(hasPower(p,'boost',45),false);
+assert.deepEqual(activePowers(createPowerEffects(),0),[]);
+console.log('Powers: independent magnet/shield, progress-based boost, frozen tail, braking, refresh and clean reset pass.');
+
+const upgraded=createPowerEffects();activatePower(upgraded,'boost',0,10,20,750);
+assert.equal(upgraded.boost.left,800);consumeBoostProgress(upgraded.boost,100);
+activatePower(upgraded,'boost',1,10,60,750);assert.equal(upgraded.boost.left,800);assert.equal(upgraded.boost.speedBefore,20);
+
+// Mega boost differs from normal boost in cap and first-start braking target.
+const mega=createPowerEffects();
+activatePower(mega,'boost',0,10,20,1000,true);
+assert.equal(nativeBoostSpeedLimit(mega.boost),105);assert.equal(mega.boost.mega,true);assert.equal(mega.boost.speedBefore,42);assert.equal(mega.boost.left,1050);
+activatePower(mega,'boost',1,10,80,250,false);
+assert.equal(nativeBoostSpeedLimit(mega.boost),84);assert.equal(mega.boost.mega,false);assert.equal(mega.boost.speedBefore,42);
+console.log('Mega flag follows latest boost activation, first mega restores normal maximum, refresh preserves braking target.');

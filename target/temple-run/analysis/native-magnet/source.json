@@ -1,0 +1,49 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "fields": {
+    "CoinMagnetMultiplier": "0x150",
+    "GodMode": "0x291"
+  },
+  "nativeLevels1Through6": [
+    1,
+    1,
+    2,
+    2,
+    3,
+    3
+  ],
+  "constants": {
+    "0x697690": 8100.0,
+    "0x697568": 10000000.0,
+    "0x69761c": 0.06666667014360428
+  },
+  "world": {
+    "scale": 0.2,
+    "radius": 18,
+    "forceCoefficient": 80000,
+    "speedCap": 100,
+    "pickupRadius": 2.4
+  },
+  "rule": "HasVacuum multiplies AddCoins only,not preceding AddScore;coin attraction flag persists after expiration;force queued then velocity/position simulated.",
+  "limits": [
+    "Web ECS frame ordering and path cleanup are adapters.",
+    "Global force-vacuum flag not exposed by the web mode.",
+    "Legacy web coin-value upgrade remains an extra multiplier."
+  ],
+  "instructionChecks": {
+    "0x126a370": "0x52800069",
+    "0x126a38c": "0x52800049",
+    "0x126a3a0": "0x52800029",
+    "0x126a3a8": "0xb9015269",
+    "0x1271118": "0xb94152a8",
+    "0x1271134": "0x1b087f61",
+    "0x1271138": "0x94009e5c",
+    "0x1270f54": "0x1e20282f",
+    "0x1270f64": "0x1e2021e0",
+    "0x127106c": "0x1e2f1863",
+    "0x1271094": "0x1e251008",
+    "0x1271098": "0x390203b8",
+    "0x1296564": "0x52a87f48",
+    "0x1296574": "0x940129f4"
+  }
+}

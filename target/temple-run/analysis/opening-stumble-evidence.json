@@ -1,0 +1,30 @@
+{
+  "source": "BV1ypuKzPErT",
+  "before": {
+    "videoSeconds": [
+      5,
+      7
+    ],
+    "progressPerSecond": 13.0,
+    "inferredRmsWorldSpeed": 24.979991993593593
+  },
+  "after": {
+    "videoSeconds": [
+      8,
+      12
+    ],
+    "progressPerSecond": 9.5,
+    "inferredRmsWorldSpeed": 21.354156504062622
+  },
+  "inferredSpeedRatio": 0.8548504142651103,
+  "nativeStumbleRatio": 0.8500000238418579,
+  "observations": [
+    "upright at game2.0s; low pose by2.8s",
+    "tree/root contact around game5.0..5.4s; chase pack visible by5.8s"
+  ],
+  "limits": [
+    "low pose suggests slide; exact input events not recorded",
+    "score-derived RMS speeds assume smoothDeltaTime matches real time",
+    "native acceleration/config and actual route still require joint migration"
+  ]
+}

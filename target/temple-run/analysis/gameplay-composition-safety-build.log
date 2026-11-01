@@ -1,0 +1,26 @@
+
+> sheep-summit@1.0.0 temple:typecheck
+> vue-tsc --noEmit -p target/temple-run/web/tsconfig.json
+
+
+> sheep-summit@1.0.0 build
+> vite build --config target/temple-run/vite.config.js
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 178 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/index.html                    0.84 kB │ gzip:   0.54 kB
+../dist/legacy.html                   9.32 kB │ gzip:   3.33 kB
+../dist/assets/main-DMJSXeeF.css     20.65 kB │ gzip:   5.61 kB
+../dist/assets/legacy-BY8Fp4ul.css   40.35 kB │ gzip:   9.80 kB
+../dist/assets/legacy-Bi3YDZA1.js   111.31 kB │ gzip:  40.01 kB
+../dist/assets/main-DUQcj7I2.js     327.74 kB │ gzip: 109.72 kB
+../dist/assets/sfx-BDBy7ySj.js      554.39 kB │ gzip: 142.93 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.29s

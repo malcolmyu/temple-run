@@ -1,0 +1,57 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "objectives": [
+    {
+      "id": "upgrade1",
+      "threshold": 1
+    },
+    {
+      "id": "upgrade5",
+      "threshold": 5
+    }
+  ],
+  "types": [
+    6,
+    7,
+    8,
+    5,
+    9
+  ],
+  "formula": "count of native upgrade levels >=threshold /5 *100",
+  "instructionChecks": {
+    "0x1275544": "0x528000c2",
+    "0x1275560": "0x528000e2",
+    "0x1275580": "0x52800102",
+    "0x12755a0": "0x528000a2",
+    "0x12755e0": "0x52800122",
+    "0x12755bc": "0x7100027f",
+    "0x12755cc": "0x710006bf",
+    "0x12755d4": "0x710002df",
+    "0x12755dc": "0x7100001f",
+    "0x12755f8": "0x7100001f",
+    "0x1275600": "0x1e229000",
+    "0x1275758": "0x7100127f",
+    "0x1275768": "0x710016bf",
+    "0x1275770": "0x710012df",
+    "0x1275778": "0x7100101f",
+    "0x1275794": "0x7100101f",
+    "0x127579c": "0x1e229000"
+  },
+  "storeStateTable": [
+    8,
+    8,
+    8,
+    5,
+    8,
+    5,
+    5,
+    5,
+    5,
+    5
+  ],
+  "limits": [
+    "Web achievement evaluation uses persisted upgrades;native evaluation is during UpdateAchievementRecords.",
+    "GetFullLevel is not GetStoreItemMaxLevel:store-state table includes8;BuyItem6->7 and7->6 branches exist.No extra effect/reward inferred.",
+    "Web legacy coin-value upgrade excluded;no currency reward invented."
+  ]
+}

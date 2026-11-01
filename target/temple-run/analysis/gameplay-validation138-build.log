@@ -1,0 +1,22 @@
+
+> sheep-summit@1.0.0 temple:build
+> vite build --config target/temple-run/vite.config.js
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 195 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/index.html                    0.84 kB │ gzip:   0.53 kB
+../dist/legacy.html                   9.32 kB │ gzip:   3.33 kB
+../dist/assets/main-Co4L8iSD.css     22.47 kB │ gzip:   5.99 kB
+../dist/assets/legacy-BY8Fp4ul.css   40.35 kB │ gzip:   9.80 kB
+../dist/assets/legacy-CbXsDASM.js   111.31 kB │ gzip:  40.01 kB
+../dist/assets/main-fcrcH3fu.js     345.55 kB │ gzip: 115.75 kB
+../dist/assets/sfx-D4sV09-4.js      554.44 kB │ gzip: 142.94 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.33s

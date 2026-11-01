@@ -1,4 +1,6 @@
+import { nativeUnlitMaterial } from './nativeUnlit.js';
 import * as THREE from 'three';
+import { sampleCurveComponent } from './nativeAnimationCurve.js';
 
 // CPU-skinned runner built from the original Unity SkinnedMeshRenderer data.
 // The JSON stores Unity-space data (bone local TRS raw, mesh positions with x negated
@@ -34,7 +36,7 @@ function samplePosition(curve, time, out) {
   while (i < n && times[i] < time) i++;
   const t0 = times[i - 1], t1 = times[i];
   const alpha = (time - t0) / (t1 - t0 || 1);
-  out.fromArray(values[i - 1]).lerp(new THREE.Vector3().fromArray(values[i]), alpha);
+  out.set(...[0, 1, 2].map((axis) => sampleCurveComponent(curve, i - 1, i, alpha, axis)));
   return out;
 }
 
@@ -254,7 +256,14 @@ export function buildRunnerRig(data, options = {}) {
           rows[3][0], rows[3][1], rows[3][2], rows[3][3]);
     return m;
   });
-  const rest = computeBindRest(data);
+  // The default actor has its original skeleton and complete absolute-local clips.
+  // Its native SetupCharacter supplies the model offset; do not rebase root motion.
+  const authoredSkeleton = options.authoredSkeleton === true;
+  const rest = authoredSkeleton ? data.bones.map((bone) => ({
+    position: new THREE.Vector3().fromArray(bone.position),
+    quaternion: new THREE.Quaternion().fromArray(bone.rotation),
+    scale: new THREE.Vector3().fromArray(bone.scale ?? [1, 1, 1]),
+  })) : computeBindRest(data);
 
   // Unity's per-frame hip/spine local rotations are authored for one specific skeleton. The
   // shop-skin prefabs ("Bone X" rigs) reuse that clip verbatim, so applying its local values
@@ -333,7 +342,7 @@ export function buildRunnerRig(data, options = {}) {
   // Clip root translation is authored in a scene where the root sits ~3.8u above the
   // bind pose. Keep only the relative motion (bob) by subtracting the first key offset.
   const rootPositionOffset = new Map();
-  if (!lockRootPosition) {
+  if (!lockRootPosition && !authoredSkeleton) {
     const baseClip = clipData.run || Object.values(clipData)[0];
     data.bones.forEach((bone, i) => {
       if (bone.parent >= 0) return;
@@ -372,13 +381,7 @@ export function buildRunnerRig(data, options = {}) {
   }
   geometry.setIndex(indexArray);
 
-  const material = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    roughness: 0.82,
-    metalness: 0.04,
-    side: THREE.FrontSide,
-    map: options.texture || null,
-  });
+  const material = nativeUnlitMaterial(options.texture || null);
   const mesh = new THREE.Mesh(geometry, material);
   mesh.castShadow = true;
   mesh.frustumCulled = false;
@@ -398,6 +401,7 @@ export function buildRunnerRig(data, options = {}) {
   const vertex = new THREE.Vector3();
   const out = new THREE.Vector3();
 
+  let glowMaterial = null;
   let clipName = 'run';
   let clipTime = 0;
   let clipLoops = true;
@@ -407,7 +411,7 @@ export function buildRunnerRig(data, options = {}) {
     if (name === clipName && !restart) return;
     clipName = name;
     clipTime = 0;
-    clipLoops = name === 'run';
+    clipLoops = name === 'run' || name === 'slideLoop';
   }
 
   function applyPose(time) {
@@ -455,10 +459,10 @@ export function buildRunnerRig(data, options = {}) {
     geometry.computeVertexNormals();
   }
 
-  function update(dt, timeScale = 1) {
+  function update(dt, timeScale = 1, scaleAllClips = false) {
     const clip = clipData[clipName];
     if (!clip) return;
-    clipTime += dt * (clipName === 'run' ? timeScale : 1);
+    clipTime += dt * (scaleAllClips || clipName === 'run' ? timeScale : 1);
     if (clipLoops) clipTime %= clip.duration;
     else clipTime = Math.min(clipTime, clip.duration);
     applyPose(clipTime);
@@ -471,15 +475,58 @@ export function buildRunnerRig(data, options = {}) {
   applyPose(0);
   skin();
 
+  let disposed = false;
   return {
+    dispose() {
+      if (disposed) return;
+      disposed = true;
+      holder.removeFromParent();
+      geometry.dispose();
+      material.dispose();
+      glowMaterial?.map?.dispose();
+      glowMaterial?.dispose();
+      if (options.ownsTexture) options.texture?.dispose();
+    },
     object: holder,
     mesh,
     material,
+    /** @param {boolean} active @param {THREE.Texture|null} [texture]
+     * @param {number} [dt] @param {number} [remaining] */
+    setInvincibility(active, texture = null, dt = 0, remaining = Infinity) {
+      if (active) {
+        if (!glowMaterial) {
+          const map = texture?.clone() || null;
+          if (map) {
+            map.wrapS = map.wrapT = THREE.RepeatWrapping;
+            map.needsUpdate = true;
+          }
+          glowMaterial = new THREE.MeshBasicMaterial({
+            // Native shader111: texture * white RGB, SetAlpha(.5).
+            map, color: 0xffffff, transparent: true, opacity: .5,
+            depthWrite: false, side: THREE.FrontSide, fog: false, toneMapped: false,
+          });
+        }
+        if (mesh.material !== glowMaterial) {
+          glowMaterial.opacity = .5;
+          glowMaterial.map?.offset.set(0, 0);
+        }
+        // CharacterPlayer.Update: independent .5 -> 0 warning cycle.
+        // Native writes texture offsets, but shader111 does not read _MainTex_ST.
+        const delta = Math.fround(Math.fround(dt) * 2);
+        const next = Math.fround(glowMaterial.opacity - delta);
+        glowMaterial.opacity = remaining > 2.5 || next <= 0 ? .5 : next;
+        mesh.material = glowMaterial;
+      } else {
+        glowMaterial?.map?.offset.set(0, 0);
+        mesh.material = material;
+      }
+    },
     setClip,
     update,
     getClip: () => clipName,
-    setTime(t) {
-      clipLoops = false;
+    clipDuration: (name) => clipData[name]?.duration || 0,
+    setTime(t, loop = false) {
+      clipLoops = loop;
       clipTime = t;
       applyPose(t);
       skin();
@@ -506,6 +553,7 @@ export function buildRunnerRig(data, options = {}) {
 }
 
 export async function loadRunnerRig(url, textureUrl, options = {}) {
+  let failed = false, ownedTexture = null;
   const [data, texture] = await Promise.all([
     fetch(url).then((r) => {
       if (!r.ok) throw new Error(`runner rig ${url}: ${r.status}`);
@@ -514,13 +562,19 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
     textureUrl
       ? new Promise((resolve, reject) => {
           new THREE.TextureLoader().load(textureUrl, (tex) => {
+            ownedTexture = tex;
+            if (failed) tex.dispose();
             tex.colorSpace = THREE.SRGBColorSpace;
             tex.flipY = true; // Unity bakes these UVs for a non-flipped V (verified against the atlas regions)
             resolve(tex);
           }, undefined, reject);
         })
       : Promise.resolve(null),
-  ]);
+  ]).catch(error => {
+    failed = true;
+    ownedTexture?.dispose();
+    throw error;
+  });
   let fallbackClips = options.fallbackClips || null, fallbackRig = options.fallbackRig || null;
   if ((!fallbackClips || !fallbackRig) && options.clipFallbackUrl) {
     try {
@@ -536,14 +590,19 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
     const bip01 = data.bones.some((b) => /^bip0?1/i.test(String(b.name || '')));
     if (!bip01) forceFallbackClips = true;
   }
-  return buildRunnerRig(data, { ...options, texture, fallbackClips, fallbackRig, forceFallbackClips });
+  try {
+    return buildRunnerRig(data, { ...options, texture, ownsTexture: true, fallbackClips, fallbackRig, forceFallbackClips });
+  } catch (error) {
+    texture?.dispose();
+    throw error;
+  }
 }
 
 
 // Different APK prefabs were authored at very different unit scales (raw rest heights range
 // 1.2-10.8). Normalise a freshly built rig to the same on-screen height and drop its feet
 // onto y = 0 so swapping skins never changes the apparent size. Shared by both entries.
-export function normalizeRigHeight(rig, targetH = 2.55) {
+export function normalizeRigHeight(rig, targetH = 2.55, options = {}) {
   try {
     if (rig.update) rig.update(0, 0);
     const o = rig.object;
@@ -551,7 +610,7 @@ export function normalizeRigHeight(rig, targetH = 2.55) {
     let box = new THREE.Box3().setFromObject(o);
     let size = box.getSize(new THREE.Vector3());
     // Some prefabs are authored lying flat (huge XZ, thin Y): stand them upright first.
-    if (size.y > 1e-3 && Math.max(size.x, size.z) > size.y * 1.6) {
+    if (options.autoOrient !== false && size.y > 1e-3 && Math.max(size.x, size.z) > size.y * 1.6) {
       o.rotation.x -= Math.PI / 2;
       o.updateWorldMatrix(true, true);
       box = new THREE.Box3().setFromObject(o);

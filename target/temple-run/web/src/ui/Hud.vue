@@ -1,18 +1,19 @@
 <script setup lang="ts">
+import { progress } from '../game/progress';
 import { computed } from 'vue';
+import SpriteNumber from './SpriteNumber.vue';
+import NativeScoreNumber from './NativeScoreNumber.vue';
 import { mutableUi as ui } from '../game/state';
 import { getGame } from '../game/boot';
 
+const assist = new URLSearchParams(window.location.search).get('assist') === '1';
 const emit = defineEmits<{ pause: [] }>();
 defineProps<{ disabled?: boolean }>();
 const uiAsset = (file: string): string => `${import.meta.env.BASE_URL}assets/ui/${file}`;
 
 const turnLabel = computed(() => (ui.turnDirection < 0 ? '前方左转' : ui.turnDirection > 0 ? '前方右转' : ''));
-const powerLabel = computed(() => {
-  if (!ui.power) return '';
-  const names: Record<string, string> = { magnet: '磁铁', shield: '护盾', boost: '加速', bonus: '金币加成', coin: '金币', gem: '宝石' };
-  return `${names[ui.power] ?? ui.power} ${Math.ceil(ui.powerRemaining)}s`;
-});
+const reviveProtected = computed(() => (ui.phase==='playing'||ui.phase==='paused') && ui.reviveProtectionRemaining>0);
+const powerNames: Record<string,string> = {magnet:'磁铁',shield:'无敌',boost:'加速'};
 const cueLabel = computed(() => {
   const map: Record<string, string> = { jump: '↑ 跳过', slide: '↓ 滑铲', dodge: '↔ 换道', run: '' };
   return ui.nextCue ? map[ui.nextCue] ?? '' : '';
@@ -25,52 +26,60 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 
 <template>
   <div class="hud">
-    <header class="hud-top">
-      <div class="brand">
-        <span class="brand-mark">◆</span>
-        <span>神庙逃亡<small>THE LOST RELIC · WEB RUNNER</small></span>
-      </div>
-      <div class="hud-actions">
-        <button class="icon-btn" aria-label="暂停" @click="emit('pause')">Ⅱ</button>
-      </div>
-    </header>
+    <div class="relic-vines" aria-hidden="true" />
+    <div class="relic-left" aria-hidden="true" />
+    <div class="relic-right" aria-hidden="true" />
+    <div class="relic-score">
+      <strong><NativeScoreNumber :value="ui.score" /></strong>
+      <span><img :src="uiAsset('hud-coin.png')" alt="" /><SpriteNumber :value="ui.coins" label="金币" :height="16" /></span>
+    </div>
+    <button class="relic-pause" aria-label="暂停" @click="emit('pause')">
+      <img :src="uiAsset('bag.png')" alt="" /><img class="pause-glyph" :src="uiAsset('hud-pause.png')" alt="" />
+    </button>
+    <div v-if="ui.phase === 'playing'" class="coin-meter" aria-label="金币充能">
+      <small>金币充能 {{ Math.floor(ui.charge) }}/100 · 等级 {{ ui.coinBonusLevel }}</small>
+      <div><i :style="{width: `${ui.charge}%`}" /></div>
+    </div>
+    <div v-if="assist" class="run-distance">{{ ui.distance }} m</div>
 
-    <div class="score-card">
-      <span class="score-word">SCORE</span>
-      <strong class="score-value">{{ ui.score }}</strong>
-      <div class="score-meta">
-        <span>{{ ui.distance }} m</span>
-        <span>● {{ ui.coins }}</span>
-        <span>◆ {{ ui.gems }}</span>
-      </div>
-      <div class="energy" :title="`能量 ${Math.round(ui.charge)}%`">
-        <i :style="{ width: `${Math.min(100, ui.charge)}%` }" />
+    <div v-if="assist && ui.multiplier > 1" class="multi-badge">×{{ ui.multiplier }}</div>
+    <div v-if="ui.phase==='playing' && ui.reviveProtectionRemaining>2.4" class="revive-arrival" aria-hidden="true" :style="{opacity:Math.min(1,(ui.reviveProtectionRemaining-2.4)/.6)}" />
+    <div v-if="ui.powers.length || reviveProtected" class="power-badge" role="status">
+      <div v-if="reviveProtected" class="revive-protection">复活保护 {{ Math.ceil(Math.max(0,ui.reviveProtectionRemaining-1e-6)) }}s</div>
+      <div v-for="effect in ui.powers" :key="effect.kind">
+        <template v-if="effect.unit === 'progress'">加速中</template>
+        <template v-else>{{ effect.slowing ? '减速' : powerNames[effect.kind] }} {{ Math.ceil(Math.max(0,effect.remaining-1e-6)) }}s</template>
       </div>
     </div>
+    <div v-if="assist && cueLabel && !turnLabel" class="action-cue">{{ cueLabel }}</div>
 
-    <div v-if="ui.multiplier > 1" class="multi-badge">×{{ ui.multiplier }}</div>
-    <div v-if="ui.power" class="power-badge">{{ powerLabel }}</div>
-    <div v-if="cueLabel && !turnLabel" class="action-cue">{{ cueLabel }}</div>
-
-    <div v-if="turnLabel" class="turn-cue" :class="{ ready: ui.turnQueued }">
-      <span class="turn-arrow" :class="ui.turnDirection < 0 ? 'left' : 'right'">{{ ui.turnDirection < 0 ? '←' : '→' }}</span>
-      <strong>{{ ui.turnQueued ? '转弯已确认' : turnLabel }}</strong>
-      <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
+    <div v-if="assist && turnLabel || ui.turnBufferedDirection" class="turn-cue" :class="{ ready: ui.turnQueued || !!ui.turnBufferedDirection, 'below-milestone': !!ui.milestone }" role="status">
+      <span class="turn-arrow" :class="(ui.turnBufferedDirection || ui.turnDirection) < 0 ? 'left' : 'right'">{{ (ui.turnBufferedDirection || ui.turnDirection) < 0 ? '←' : '→' }}</span>
+      <strong>{{ ui.turnBufferedDirection ? (ui.turnBufferedDirection < 0 ? '左转已预备' : '右转已预备') : ui.turnQueued ? '转弯已确认' : turnLabel }}</strong>
+      <small v-if="!ui.turnQueued && !ui.turnBufferedDirection">{{ ui.turnRemaining }} m</small>
     </div>
 
-    <div v-if="turnLabel && ui.turnRemaining <= 18" class="turn-edge" :class="ui.turnDirection < 0 ? 'left' : 'right'">
+    <div v-if="assist && turnLabel && ui.turnRemaining <= 18" class="turn-edge" :class="ui.turnDirection < 0 ? 'left' : 'right'">
       <span>{{ ui.turnQueued ? '已确认' : ui.turnDirection < 0 ? '← 左转' : '右转 →' }}</span>
       <small v-if="!ui.turnQueued">{{ ui.turnRemaining }} m</small>
     </div>
 
+    <div v-if="ui.phase==='playing' && (ui.headStartReady || ui.permaWingsReady) && (progress.headStarts>0 || progress.megaStarts>0 || progress.permaWings>0)" class="head-start-actions">
+      <button v-if="ui.headStartReady && progress.headStarts>0" @click.stop="getGame()?.useHeadStart('normal')">普通起跑 ×{{ progress.headStarts }}</button>
+      <button v-if="ui.headStartReady && progress.megaStarts>0" @click.stop="getGame()?.useHeadStart('mega')">超级起跑 ×{{ progress.megaStarts }}</button>
+      <button v-if="ui.permaWingsReady && progress.permaWings>0" @click.stop="getGame()?.usePermaWings()">本局永久翼 ×{{ progress.permaWings }}</button>
+    </div>
+    <button v-if="ui.phase==='playing' && (progress.wings>0 || ui.wingsRemaining>0 || ui.wingsCooldown>0)" class="wings-action" :disabled="!ui.wingsReady" @click.stop="getGame()?.useAngelWings()">
+      {{ ui.wingsPermanent ? '本局永久翼已激活' : ui.wingsRemaining>0 ? `天使之翼 ${Math.ceil(ui.wingsRemaining)}s` : ui.wingsCooldown>0 ? `冷却 ${Math.ceil(ui.wingsCooldown)}s` : `天使之翼 ×${progress.wings}` }}
+    </button>
     <div v-if="ui.milestone" :key="ui.milestone.id" class="milestone" :class="ui.milestone.art">
-      <img class="nj-art" :src="uiAsset(`${ui.milestone.art}.png`)" alt="NICE JOB" />
-      <span class="ms-text">{{ ui.milestone.value }}<em>{{ ui.milestone.unit }}</em></span>
+      <img class="milestone-board" :src="uiAsset('hud-milestone.png')" alt="" />
+      <span class="ms-text"><SpriteNumber :value="ui.milestone.value" label="里程" :height="28" /><em>{{ ui.milestone.unit }}</em></span>
     </div>
 
-    <div v-if="ui.hint" class="hint">{{ ui.hint }}</div>
+    <div v-if="ui.hint && (assist || ui.hint.includes('半边路') || ui.hint.includes('分路') || ui.hint.includes('复活') || ui.hint.includes('金币充能'))" class="hint">{{ ui.hint }}</div>
 
-    <div class="touch-pad">
+    <div v-if="assist" class="touch-pad">
       <div class="pad-group">
         <button class="pad-btn" @click="press('left')">←</button>
         <button class="pad-btn" @click="press('right')">→</button>
@@ -82,3 +91,19 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
     </div>
   </div>
 </template>
+
+<style scoped>
+.wings-action{position:absolute;left:calc(18px + env(safe-area-inset-left));bottom:calc(54px + env(safe-area-inset-bottom));min-height:44px;padding:8px 12px;background:#28382e;border:1px solid #b99c61;color:#f4dfac;border-radius:8px;pointer-events:auto}.wings-action:disabled{opacity:.75}
+.coin-meter{position:absolute;left:calc(18px + env(safe-area-inset-left));bottom:calc(24px + env(safe-area-inset-bottom));width:158px;color:#eed89b;text-shadow:0 1px 3px #000;pointer-events:none}
+.coin-meter small{font-size:11px}.coin-meter>div{height:5px;background:#17251ccc;border:1px solid #ba9a54;border-radius:4px;overflow:hidden;margin-top:4px}
+.coin-meter i{display:block;height:100%;background:#edc65d}
+</style>
+
+<style scoped>
+.head-start-actions{position:absolute;left:calc(18px + env(safe-area-inset-left));right:calc(18px + env(safe-area-inset-right));bottom:calc(108px + env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;gap:8px;pointer-events:auto}.head-start-actions button{min-height:44px;padding:8px 12px;background:#28382e;border:1px solid #b99c61;color:#f4dfac;border-radius:8px}
+</style>
+
+<style scoped>
+.revive-protection{color:#fff1bd;font-weight:700}
+.revive-arrival{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 44px 12px #e6b65488;border:2px solid #f6d78988;box-sizing:border-box}
+</style>

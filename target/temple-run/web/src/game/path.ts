@@ -22,16 +22,30 @@ export const normAngle = (a: number): number => ((a + Math.PI) % (Math.PI * 2) +
  */
 export class TrackPath {
   readonly segments: PathSegment[] = [{ start: 0, end: Infinity, x: 0, z: PLAYER_Z, heading: 0 }];
+  /** Number of discarded prefix segments; authored turn ordinals stay stable. */
+  segmentOffset=0;
   /** Lateral offset of a branch path from the main centerline. */
   lateral = 0;
+  branchSpan: {from:number;to:number}|null=null;
+  lateralAt(distance:number):number {
+    if(!this.branchSpan)return this.lateral;
+    const {from,to}=this.branchSpan;
+    const edge=Math.min(12,(to-from)/2);
+    const t=Math.max(0,Math.min(1,(distance-from)/edge,(to-distance)/edge));
+    return this.lateral*t*t*(3-2*t);
+  }
+
+  /** Upper-bound search preserves historical segment numbering and duplicate
+   * starts. Keep index0 for pre-start/NaN distances,matching the old scan. */
+  private indexAt(distance:number):number {
+    let lo=1,hi=this.segments.length;
+    while(lo<hi){const mid=lo+Math.floor((hi-lo)/2);if(distance>=this.segments[mid].start)lo=mid+1;else hi=mid;}
+    return lo-1;
+  }
 
   /** World position and heading at a distance. `smooth` rounds the corner for actors. */
   at(distance: number, side = 0, smooth = false): PathPoint {
-    let index = 0;
-    for (let i = 1; i < this.segments.length; i++) {
-      if (distance >= this.segments[i].start) index = i;
-      else break;
-    }
+    const index=this.indexAt(distance);
     const segment = this.segments[index];
     const travel = distance - segment.start;
     const bx = segment.x - Math.sin(segment.heading) * travel;
@@ -47,15 +61,15 @@ export class TrackPath {
         const k = e * e * (3 - 2 * e);
         const heading = prev.heading + normAngle(segment.heading - prev.heading) * k;
         return {
-          x: px + (bx - px) * k + Math.cos(heading) * (this.lateral + side),
-          z: pz + (bz - pz) * k - Math.sin(heading) * (this.lateral + side),
+          x: px + (bx - px) * k + Math.cos(heading) * (this.lateralAt(distance) + side),
+          z: pz + (bz - pz) * k - Math.sin(heading) * (this.lateralAt(distance) + side),
           heading,
         };
       }
     }
     return {
-      x: bx + Math.cos(segment.heading) * (this.lateral + side),
-      z: bz - Math.sin(segment.heading) * (this.lateral + side),
+      x: bx + Math.cos(segment.heading) * (this.lateralAt(distance) + side),
+      z: bz - Math.sin(segment.heading) * (this.lateralAt(distance) + side),
       heading: segment.heading,
     };
   }
@@ -79,22 +93,32 @@ export class TrackPath {
   /** Deep copy; used by TrackGraph branches so a fork can own its own segments. */
   clone(): TrackPath {
     const copy = new TrackPath();
+    copy.segmentOffset=this.segmentOffset;
     copy.lateral = this.lateral;
+    copy.branchSpan=this.branchSpan?{...this.branchSpan}:null;
     copy.segments.length = 0;
     for (const segment of this.segments) copy.segments.push({ ...segment });
     return copy;
   }
 
+  /** Keep the segment containing the retained horizon plus its predecessor,
+   * so smoothing and junction heading queries retain their incoming geometry.
+   * Positions before this horizon are intentionally no longer historical queries. */
+  compactBefore(distance:number):void {
+    if(!Number.isFinite(distance))return;
+    const remove=Math.max(0,this.indexAt(distance)-1);
+    if(remove){this.segments.splice(0,remove);this.segmentOffset+=remove;}
+  }
+
   /** Segment that contains a distance (used by scenery systems). */
   segmentAt(distance: number): PathSegment {
-    for (let i = this.segments.length - 1; i >= 0; i--) {
-      if (distance >= this.segments[i].start) return this.segments[i];
-    }
-    return this.segments[0];
+    return this.segments[this.indexAt(distance)];
   }
 
   /** True when a distance is within `margin` metres of any corner. */
   nearTurn(distance: number, margin = 22): boolean {
-    return this.segments.some((segment, index) => index > 0 && Math.abs(distance - segment.start) < margin);
+    const index=this.indexAt(distance);
+    return (index>0&&Math.abs(distance-this.segments[index].start)<margin)
+      || (index+1<this.segments.length&&Math.abs(distance-this.segments[index+1].start)<margin);
   }
 }

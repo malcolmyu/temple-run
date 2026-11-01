@@ -1,0 +1,66 @@
+{
+  "librarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "methods": {
+    "GameController.HandleDelayedJumping": {
+      "address": "0x126fcf4",
+      "end": "0x126ff60",
+      "sha256": "1489d94b1c1b1289449710a2a19f0d52954e1e18bd86018b60759317b9c1a44b"
+    },
+    "GameController.SimulateEnemies": {
+      "address": "0x127176c",
+      "end": "0x1272148",
+      "sha256": "0e02d8fd9011a1506f6ce80781b40044e93d1b20f272eb3daf51499790471e2c"
+    },
+    "Enemy.Start": {
+      "address": "0x12ae0f0",
+      "end": "0x12ae0f4",
+      "sha256": "788f1512f26f87f558ccda89030f23036527961be061f31e047ad5b93b8aafe2"
+    },
+    "Enemy.Run": {
+      "address": "0x12ae1b0",
+      "end": "0x12ae1b4",
+      "sha256": "110f46b5b35c069160560c6ad6786f647dd44e8760a52a46fc22dbbcd7630b91"
+    },
+    "Enemy.Jump": {
+      "address": "0x12ae1b4",
+      "end": "0x12ae1f4",
+      "sha256": "237704ff6609d6ade01739cef95fb293d38eecbc76055371acb587dfd12db5c4"
+    },
+    "Enemy.Update": {
+      "address": "0x12ae1f4",
+      "end": "0x12ae380",
+      "sha256": "46c93df0d1de8db5df9b29331e1fa4758f64513fa94e58d938f43f9a4984e184"
+    },
+    "Enemy.Reset": {
+      "address": "0x12ae0f4",
+      "end": "0x12ae1b0",
+      "sha256": "3d4673ec9794663ed0e7faf0b0765210e78dc0021cea3306729875557d687aeb"
+    },
+    "Enemy.OnDrawGizmos": {
+      "address": "0x12ae380",
+      "end": "0x12ae390",
+      "sha256": "82daed24badefdda809b1bf8d72b8e397022f89106d8587a5f4ddfd55584ded6"
+    },
+    "Enemy.OnDrawGizmosSelected": {
+      "address": "0x12ae390",
+      "end": "0x12ae500",
+      "sha256": "115b0c0fe6e46fa46bfe0432cb9dc3ae863a36a5ad63bfa7c77fdc18d5f15ec8"
+    },
+    "Enemy..ctor": {
+      "address": "0x12ae500",
+      "end": "0x12ae510",
+      "sha256": "97da30351008cef52c00d11755478d4e21e441880dc6a53cf1d2dba84582c6a7"
+    }
+  },
+  "delay": "horizontal enemy-player separation / player forward speed",
+  "resetJumpVelocityRaw": 80,
+  "jumpVelocityRawClamp": [
+    80,
+    100
+  ],
+  "jumpVelocityUpdateEvidence": "SimulateEnemies1271a9c..1271ad4: player speed clamped and stored at Enemy+0x80",
+  "gravityRaw": 250,
+  "worldScale": 0.2,
+  "groundSnap": "only when IsOverGround and y < GroundHeight; clears jumping and vertical velocity",
+  "scope": "flat-road delayed jump integrated; native enemy falling/level changes remain unverified"
+}

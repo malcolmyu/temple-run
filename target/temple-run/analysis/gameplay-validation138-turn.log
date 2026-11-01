@@ -1,0 +1,9 @@
+
+> sheep-summit@1.0.0 temple:test:turn
+> esbuild tools/test-turn-input.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-turn-test.mjs >/dev/null && node /tmp/temple-turn-test.mjs
+
+
+  ../../../../tmp/temple-turn-test.mjs  1.4kb
+
+⚡ Done in 2ms
+Turn input OK: early cue rejection, both directions, approach/late edges, duplicate and invalid input

@@ -1,0 +1,33 @@
+{
+  "sourceHashes": {
+    "transition-region-source.json": "5b891d815d1cf0f0e776e72e5aa03c27c3615b2d8b2d5c89857d4a23525bfdf1",
+    "native-water-plane-source.json": "ad1073e787b0884b2ea030e4953e350143701ce1b0f059ff78cdf249ffc44d1c"
+  },
+  "native": {
+    "stoneGroundY": 0.0,
+    "woodGroundY": -3.0,
+    "waterY": -6.1,
+    "woodGroundAboveWater": 3.0999999999999996,
+    "normalWoodCameraY": 4.0,
+    "normalWoodCameraAboveWater": 10.1
+  },
+  "currentFlatFrame": {
+    "woodGroundY": 0,
+    "waterY": -6.1,
+    "normalWoodCameraY": 7,
+    "woodGroundAboveWater": 6.1,
+    "normalWoodCameraAboveWater": 13.1
+  },
+  "nativeWaterUpdate": "GameCamera.UpdateWater12b02e4 preserves existing water Y; only camera XZ are truncated to200raw grid",
+  "exportNormalization": "plank exports add15.25raw before scale.2, shifting authored deck+3.05m; native ground Height is-15raw, deck is-.05m below it",
+  "migrationConsumers": [
+    "terrain tile/obstacle meshes",
+    "runner/enemy base height",
+    "coin/power world heights",
+    "camera follow/focus/ground height",
+    "safety net height",
+    "transition cap geometry and floor contact",
+    "death thresholds in absolute versus relative frame"
+  ],
+  "scope": "Evidence only; no isolated water patch. Exact source boundary timing and transition mechanics need integration audit"
+}

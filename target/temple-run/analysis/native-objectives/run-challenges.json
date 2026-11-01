@@ -1,0 +1,38 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "fields": {
+    "GameController.MaxDistanceWithoutCoins": "0xf8",
+    "GameController.DistanceTraveled": "0x124",
+    "GameController.DidStumble": "0x164",
+    "CharacterPlayer.DidStumble": "0x124",
+    "CharacterPlayer.CoinCountTotal": "0x148"
+  },
+  "verified": {
+    "coinFree": "ComputeDistanceTraveled locks MaxDistanceWithoutCoins when first coin total>=1; HandleEndGame uses full DistanceTraveled when total0. Conditions divide this opening prefix by500/1000.",
+    "noTrip": "CharacterPlayer.Stumble sets DidStumble before fatal check; controller copies to sticky flag. Both2500/5000 branches skip when controller DidStumble true."
+  },
+  "limits": [
+    "Web persists records at final settlement. Earlier runtime native completion updates and compound interaction timings remain incompletely ported.",
+    "A clean segment later in a stumbled run is not used to satisfy the clean-run gate.",
+    "Legacy aggregate bestDistance cannot infer either condition."
+  ],
+  "instructionChecks": {
+    "0x126e474": "0xbd40fa60",
+    "0x126e47c": "0x540000c1",
+    "0x126e480": "0xb9414908",
+    "0x126e490": "0xbd00fa60",
+    "0x1272260": "0xb9414908",
+    "0x1272264": "0x35000068",
+    "0x127226c": "0xbd00fa60",
+    "0x1297a54": "0x39049268",
+    "0x126c770": "0x3905926a",
+    "0x1274030": "0x39459388",
+    "0x1274034": "0x35000e28",
+    "0x1274114": "0x39459388",
+    "0x1274118": "0x35000708",
+    "0x1273b38": "0xbd40fb80",
+    "0x1273b3c": "0x52a87f48",
+    "0x1273cf0": "0xbd40fb80",
+    "0x1273cf4": "0x52a88f48"
+  }
+}

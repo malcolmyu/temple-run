@@ -1,0 +1,10 @@
+import { referenceWorldDistance as W } from '../target/temple-run/web/src/game/referenceCoordinates';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { referenceCoinValue } from '../target/temple-run/web/src/game/coinValues';
+assert.equal(referenceCoinValue(W(1437)),1);
+const run=Array.from({length:12},(_,i)=>referenceCoinValue(W(1600)+i*2.2));
+assert.ok(run.includes(1)&&run.includes(2));
+const native=['yellow','red','blue'].map(color=>readFileSync(`target/temple-run/web/public/assets/track/coin-${color}.obj`,'utf8'));
+assert.equal(new Set(native.map(text=>text.split('\n').filter(line=>line.startsWith('vt ')).join('\n'))).size,3,'native coin colors must retain distinct atlas UVs');
+console.log('Native coin variants have distinct UVs; estimated reference late run mixes values 1/2 at converted physical coordinates');

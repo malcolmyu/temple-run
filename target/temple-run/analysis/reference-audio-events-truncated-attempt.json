@@ -1,0 +1,528 @@
+{
+  "bvid": "BV1ypuKzPErT",
+  "sourceVideoSHA256": "c875a3c5aae235494ac3bf7d0b6a093d5feac90656f541c597d53f6bf613ef64",
+  "sampleRate": 8000,
+  "duration": 131.703625,
+  "method": "350..3500Hz FFT normalized waveform correlation,20s hops with template halo; positive peaks above per-template thresholds; nonmax suppression",
+  "templates": {
+    "jump": {
+      "seconds": 0.170125,
+      "threshold": 0.78,
+      "files": [
+        {
+          "file": "gruntJump.wav",
+          "SHA256": "00e250cb12f6edc874e5f7ad2a662d80384e84956edba9c2ede81ba2951fee4e"
+        }
+      ]
+    },
+    "land": {
+      "seconds": 0.2555,
+      "threshold": 0.7,
+      "files": [
+        {
+          "file": "gruntJumpLand.wav",
+          "SHA256": "ce8a670609a00db7b66f248a6a4092926cd1bb922889212942d6192dc3703ba4"
+        }
+      ]
+    },
+    "stumble": {
+      "seconds": 2.242875,
+      "threshold": 0.78,
+      "files": [
+        {
+          "file": "gruntTrip.wav",
+          "SHA256": "70276b59cb1ab6dc043430424994a666f689e28ce83fcb42b53f3f1a367d5d3f"
+        },
+        {
+          "file": "monkeys.wav",
+          "SHA256": "9904a8e1ceeecdf70ccb292388fee567d43dedba98aa7d20d2e3d61dce64a325"
+        }
+      ]
+    },
+    "slide": {
+      "seconds": 0.83825,
+      "threshold": 0.75,
+      "files": [
+        {
+          "file": "slide.wav",
+          "SHA256": "1aec045a79b3ffd508f69691df7a5b3c2b78c696d96d2aefc692e55bdcf85813"
+        }
+      ]
+    },
+    "turn": {
+      "seconds": 0.1895,
+      "threshold": 0.75,
+      "files": [
+        {
+          "file": "footstepsTurn.wav",
+          "SHA256": "32319a99ba0c1a60f4bf5970a312f2a09bf68f166cfcf4047871f2869cd310cd"
+        }
+      ]
+    },
+    "pickup": {
+      "seconds": 0.1775,
+      "threshold": 0.75,
+      "files": [
+        {
+          "file": "bonusPickup.wav",
+          "SHA256": "8457b12513a4e3fa3932ad07c5038d6a23bf15ed2d36bae4c9f88acf0e6dc267"
+        }
+      ]
+    },
+    "splash": {
+      "seconds": 2.51825,
+      "threshold": 0.75,
+      "files": [
+        {
+          "file": "splash.wav",
+          "SHA256": "aeafd1be055620c4e69d19a46c39ad31d4fd72221f6b0e66f105fa904d9f0a6e"
+        }
+      ]
+    },
+    "splat": {
+      "seconds": 0.326,
+      "threshold": 0.75,
+      "files": [
+        {
+          "file": "splat.wav",
+          "SHA256": "09be1ce5f86390b2035ef811330700d1dbebb5affb55e64ba5e1a6b3358d3f9b"
+        }
+      ]
+    }
+  },
+  "counts": {
+    "jump": 37,
+    "land": 37,
+    "stumble": 3,
+    "slide": 0,
+    "turn": 0,
+    "pickup": 0,
+    "splash": 0,
+    "splat": 1
+  },
+  "positiveControls": [
+    {
+      "kind": "jump",
+      "knownSecond": 9.7154375,
+      "recovered": [],
+      "passed": false
+    },
+    {
+      "kind": "jump",
+      "knownSecond": 18.974125,
+      "recovered": [],
+      "passed": false
+    },
+    {
+      "kind": "stumble",
+      "knownSecond": 7.454125,
+      "recovered": [],
+      "passed": false
+    },
+    {
+      "kind": "stumble",
+      "knownSecond": 20.2114375,
+      "recovered": [],
+      "passed": false
+    }
+  ],
+  "events": [
+    {
+      "kind": "splat",
+      "audioSecond": 0.31375,
+      "ncc": 0.9561127440726743
+    },
+    {
+      "kind": "stumble",
+      "audioSecond": 7.439125,
+      "ncc": 0.9298443778588313
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 9.7005,
+      "ncc": 0.8486582363351673
+    },
+    {
+      "kind": "land",
+      "audioSecond": 10.4685,
+      "ncc": 0.819793932265193
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 15.247125,
+      "ncc": 0.9777159024470918
+    },
+    {
+      "kind": "land",
+      "audioSecond": 16.015125,
+      "ncc": 0.8967669773395609
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 17.380375,
+      "ncc": 0.9034650032483917
+    },
+    {
+      "kind": "land",
+      "audioSecond": 18.191125,
+      "ncc": 0.8219787193625806
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 18.959125,
+      "ncc": 0.9502241190747088
+    },
+    {
+      "kind": "land",
+      "audioSecond": 19.76975,
+      "ncc": 0.7455423308223458
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 23.951125,
+      "ncc": 0.9763341755865358
+    },
+    {
+      "kind": "land",
+      "audioSecond": 24.719125,
+      "ncc": 0.9369929520357559
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 25.572375,
+      "ncc": 0.9207431632754332
+    },
+    {
+      "kind": "land",
+      "audioSecond": 26.340375,
+      "ncc": 0.819820979256182
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 29.11375,
+      "ncc": 0.9701010238579616
+    },
+    {
+      "kind": "land",
+      "audioSecond": 29.9245,
+      "ncc": 0.8167778047511354
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 33.295125,
+      "ncc": 0.9420459819239315
+    },
+    {
+      "kind": "land",
+      "audioSecond": 34.063125,
+      "ncc": 0.8847808286319649
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 34.660375,
+      "ncc": 0.9229013243611456
+    },
+    {
+      "kind": "land",
+      "audioSecond": 35.38575,
+      "ncc": 0.8252619826331986
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 41.359125,
+      "ncc": 0.9702288810459361
+    },
+    {
+      "kind": "land",
+      "audioSecond": 42.127125,
+      "ncc": 0.8846097352108262
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 44.34575,
+      "ncc": 0.9763288793207298
+    },
+    {
+      "kind": "land",
+      "audioSecond": 45.11375,
+      "ncc": 0.8520876886420876
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 45.668375,
+      "ncc": 0.9218260304717977
+    },
+    {
+      "kind": "land",
+      "audioSecond": 46.436375,
+      "ncc": 0.8170073947121207
+    },
+    {
+      "kind": "stumble",
+      "audioSecond": 46.735125,
+      "ncc": 0.9271445052071771
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 49.46575,
+      "ncc": 0.9763385179255503
+    },
+    {
+      "kind": "land",
+      "audioSecond": 50.23375,
+      "ncc": 0.9193976825631242
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 52.495125,
+      "ncc": 0.9712335595553562
+    },
+    {
+      "kind": "land",
+      "audioSecond": 53.263125,
+      "ncc": 0.9020084713572313
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 54.45775,
+      "ncc": 0.9703265425565294
+    },
+    {
+      "kind": "land",
+      "audioSecond": 55.22575,
+      "ncc": 0.9157279304657278
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 58.127125,
+      "ncc": 0.9707962620089619
+    },
+    {
+      "kind": "land",
+      "audioSecond": 58.895125,
+      "ncc": 0.8181170876901862
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 59.748375,
+      "ncc": 0.9183999380369322
+    },
+    {
+      "kind": "land",
+      "audioSecond": 60.559125,
+      "ncc": 0.7710181569769069
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 61.62575,
+      "ncc": 0.9722220879718062
+    },
+    {
+      "kind": "land",
+      "audioSecond": 62.436375,
+      "ncc": 0.8681321396405509
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 65.167125,
+      "ncc": 0.9742694981726786
+    },
+    {
+      "kind": "land",
+      "audioSecond": 65.935125,
+      "ncc": 0.886677756118737
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 75.364375,
+      "ncc": 0.9129134747108908
+    },
+    {
+      "kind": "land",
+      "audioSecond": 76.175125,
+      "ncc": 0.897679909418077
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 76.559125,
+      "ncc": 0.9756775489063398
+    },
+    {
+      "kind": "land",
+      "audioSecond": 77.36975,
+      "ncc": 0.9165818894499369
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 80.399125,
+      "ncc": 0.9502338931600876
+    },
+    {
+      "kind": "land",
+      "audioSecond": 81.20975,
+      "ncc": 0.8408937642291945
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 82.276375,
+      "ncc": 0.867797290529077
+    },
+    {
+      "kind": "land",
+      "audioSecond": 83.044375,
+      "ncc": 0.8483755946383685
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 85.56175,
+      "ncc": 0.9652440121450777
+    },
+    {
+      "kind": "land",
+      "audioSecond": 86.32975,
+      "ncc": 0.8894296418959046
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 88.335125,
+      "ncc": 0.973472509134584
+    },
+    {
+      "kind": "land",
+      "audioSecond": 89.14575,
+      "ncc": 0.749429381097311
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 91.791125,
+      "ncc": 0.9787450559424999
+    },
+    {
+      "kind": "land",
+      "audioSecond": 92.60175,
+      "ncc": 0.8389678624591732
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 96.100375,
+      "ncc": 0.9063146809333539
+    },
+    {
+      "kind": "land",
+      "audioSecond": 96.911125,
+      "ncc": 0.8858095259096518
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 98.276375,
+      "ncc": 0.897779506601152
+    },
+    {
+      "kind": "land",
+      "audioSecond": 99.0445,
+      "ncc": 0.797740081459393
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 99.983125,
+      "ncc": 0.9624930604411439
+    },
+    {
+      "kind": "land",
+      "audioSecond": 100.79375,
+      "ncc": 0.9432912341460706
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 102.628375,
+      "ncc": 0.9299359067515469
+    },
+    {
+      "kind": "land",
+      "audioSecond": 103.439125,
+      "ncc": 0.9207020917689515
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 107.96175,
+      "ncc": 0.9590751461175889
+    },
+    {
+      "kind": "land",
+      "audioSecond": 108.772375,
+      "ncc": 0.8591285705112192
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 109.455125,
+      "ncc": 0.9684889619322228
+    },
+    {
+      "kind": "land",
+      "audioSecond": 110.26575,
+      "ncc": 0.9355534999005551
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 111.16175,
+      "ncc": 0.962655717576505
+    },
+    {
+      "kind": "land",
+      "audioSecond": 111.759125,
+      "ncc": 0.8709154900473159
+    },
+    {
+      "kind": "stumble",
+      "audioSecond": 112.143125,
+      "ncc": 0.9296362436718056
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 121.103125,
+      "ncc": 0.9597366737388464
+    },
+    {
+      "kind": "land",
+      "audioSecond": 121.91375,
+      "ncc": 0.8828387368580319
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 123.876375,
+      "ncc": 0.9346663869566729
+    },
+    {
+      "kind": "land",
+      "audioSecond": 124.687125,
+      "ncc": 0.9208731931217278
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 126.13775,
+      "ncc": 0.9761125967361128
+    },
+    {
+      "kind": "land",
+      "audioSecond": 126.948375,
+      "ncc": 0.8368963996464256
+    },
+    {
+      "kind": "jump",
+      "audioSecond": 128.31375,
+      "ncc": 0.9698706150763108
+    },
+    {
+      "kind": "land",
+      "audioSecond": 129.124375,
+      "ncc": 0.8419968084891456
+    }
+  ],
+  "caveats": [
+    "audio-video latency is not removed",
+    "audio events are not touch timestamps; hidden repeated inputs may be silent/rejected",
+    "thresholded detection can miss quiet/mixed effects; absence is not proof of no action",
+    "footstepsTurn and collision effects do not by themselves identify a collider or turn gesture",
+    "all runs/menu transitions in the full recording are included"
+  ]
+}

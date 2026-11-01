@@ -1,0 +1,137 @@
+{
+  "binarySHA256": "0c14a3403b5e3d449995b386f48885e79397db8d2d1f84e25c9995741f82c48d",
+  "metadataSHA256": "5bd950811d6b26080d8e3b722ecfa91d8a0d726e7786f91f351b13c91ce5467b",
+  "method": {
+    "start": "0x12e3e48",
+    "end": "0x12e4bf4",
+    "sha256": "a28aaefa8dbe9bddaaf3c8b4fa5cb7f4f033810181d3df1838cf22180f688f8f"
+  },
+  "fieldOffsets": {
+    "Type": "0x30",
+    "Level": "0x34",
+    "Obstacles": "0x38",
+    "OriginalPick": "0x98",
+    "FinalPick": "0x9c"
+  },
+  "resolvedMethods": {
+    "0x12e1958": "Instantiate",
+    "0x12e1c18": "SetupTerrain",
+    "0x12e2934": "AddObstacle",
+    "0x12e6348": "AddSafteyNet",
+    "0x12e664c": "UpdatePathDescription",
+    "0x12e681c": "UpdateCachedComponents"
+  },
+  "obstacleEnums": {
+    "kObstacleNone": 0,
+    "kObstacleHole": 1,
+    "kObstacleNarrow": 2,
+    "kObstacleTreeStumble": 3,
+    "kObstacleTreeJump": 4,
+    "kObstacleTreeSlide": 5,
+    "kObstacleFlameTower": 6,
+    "kObstacleLevelChange": 7
+  },
+  "longHoleRewrite": {
+    "conditions": [
+      "parent.Obstacles==kObstacleHole(1)",
+      "parent.Type is single hole11 or14",
+      "final candidate is single hole11 or14; level3 additionally forces final candidate to parent single-hole orientation before this check"
+    ],
+    "validSides": [
+      {
+        "side": 1,
+        "orientation": "north",
+        "mutatedParentType": 12,
+        "newType": 13
+      },
+      {
+        "side": 2,
+        "orientation": "east",
+        "mutatedParentType": 15,
+        "newType": 16
+      },
+      {
+        "side": 3,
+        "orientation": "south",
+        "mutatedParentType": 13,
+        "newType": 12
+      },
+      {
+        "side": 4,
+        "orientation": "west",
+        "mutatedParentType": 16,
+        "newType": 15
+      }
+    ],
+    "effect": "parent Type+Level rewritten and SetupTerrain called before new final prefab Instantiate"
+  },
+  "traceFields": "new element stores OriginalPick=w26 candidate pool result and FinalPick=w24 postprocessed type at0x12e4ab0",
+  "publicationCalls": [
+    "Instantiate(finalType,level)",
+    "assign obstacle category directly or AddObstacle",
+    "conditionally AddCoins/AddBonusItems",
+    "AddSafteyNet(oppositeSide)",
+    "UpdatePathDescription(parent)",
+    "UpdateCachedComponents"
+  ],
+  "ACertainTypeCheck": {
+    "groups": [
+      [
+        19,
+        20,
+        21
+      ],
+      [
+        22,
+        23,
+        24
+      ],
+      [
+        25,
+        26,
+        27
+      ],
+      [
+        28,
+        29,
+        30
+      ]
+    ],
+    "meaning": "true exactly when both integer arguments fall in the same listed family; false otherwise",
+    "tableAddress": "0x6b7c49",
+    "methodSHA256": "51624f70c11c7a1beed6ac173164571c72a97b5c7e435c97bb77f6d8d3f6675b"
+  },
+  "oppositeSides": [
+    3,
+    4,
+    1,
+    2
+  ],
+  "instructionChecks": {
+    "0x12e4910": "0x11000d09",
+    "0x12e4930": "0x71000d3f",
+    "0x12e4938": "0x7100051f",
+    "0x12e4944": "0x71003adf",
+    "0x12e4950": "0x71002edf",
+    "0x12e4964": "0x7100051f",
+    "0x12e496c": "0x71003adf",
+    "0x12e4974": "0x71002edf",
+    "0x12e497c": "0x71002f1f",
+    "0x12e4984": "0x71003b1f",
+    "0x12e4998": "0x528001e9",
+    "0x12e49a8": "0x52800218",
+    "0x12e49bc": "0x52800189",
+    "0x12e49cc": "0x528001b8",
+    "0x12e49d8": "0x52800209",
+    "0x12e49e8": "0x528001f8",
+    "0x12e49f4": "0x528001a9",
+    "0x12e4a04": "0x52800198",
+    "0x12e4ab0": "0x2913601a"
+  },
+  "limits": [
+    "The complete method is hash-checked; only the described branches have recovered semantics.",
+    "This does not yield unconditional long-hole probability; state/theme and candidate eligibility are upstream.",
+    "Other obstacle promotion, level transitions, fallback and configuration branches remain partly undecoded.",
+    "Web full-feature long holes remain an explicit adapter; no runtime rule changed by this audit."
+  ]
+}
