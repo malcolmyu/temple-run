@@ -136,6 +136,12 @@ export class CoursePlan {
    if(kind==='branch'&&this.opening==='generated'&&(progress??2000)>=1000){
     mid=Math.max(mid,from+96);to=Math.max(to,mid+120);
    }
+   if(kind==='branch'){
+    // Web readability budget: merge before the72m prebuild horizon, plus24m
+    // recovery. At the normal42m/s ceiling this leaves>=2.28s before the turn.
+    const mergeAt=mid+((this.opening==='generated'&&(progress??2000)>=1000)?78:18);
+    to+=12*Math.ceil(Math.max(0,mergeAt+96-to)/12);
+   }
    // Build privately: no published obstacle/support array sees a draft that
    // has not passed structural, action and lateral preflight.
    const draft:{obstacles:CourseObstacle[];narrows:CourseNarrow[];branches:CourseBranch[]}={obstacles:[],narrows:[],branches:[]};

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+import {buildNativeNarrowFloor} from '../target/temple-run/web/src/game/render';
 import {DEFS} from '../target/temple-run/web/src/game/obstacles/catalog';
 import {collisionWouldHit,insideGroundSupport} from '../target/temple-run/web/src/game/obstacles/collision';
 const runner={prevDistance:99.8,distance:100,laneIndex:1,side:0,jumpY:0,jumpV:0,slideRemaining:0,lastJumpAt:10,lastSlideAt:10,now:10,jumpWindow:1,slideWindow:1};
@@ -30,3 +31,14 @@ assert.equal(insideGroundSupport(DEFS.narrowBeamLeft.groundSupportRegion,0,0),fa
 for(const[cap,missing]of [[DEFS.narrowWallLeftB,-1.3],[DEFS.narrowWallRightB,1.3]]as const){assert.equal(insideGroundSupport(cap.groundSupportRegion,missing,5.9),true);assert.equal(insideGroundSupport(cap.groundSupportRegion,missing,0),false);}
 for(const[cap,missing]of [[DEFS.narrowWallLeftA,-1.3],[DEFS.narrowWallRightA,1.3]]as const){assert.equal(insideGroundSupport(cap.groundSupportRegion,missing,-5.9),true);assert.equal(insideGroundSupport(cap.groundSupportRegion,missing,0),false);}
 console.log('Native narrow: eight full prefab TRS meshes, correct support strips/concave notches, strict ground support and airborne crossing.');
+
+const floorMaterial=new THREE.MeshBasicMaterial();let sampled=0;
+for(const def of Object.values(DEFS).filter(d=>d.id.startsWith('narrow'))){
+ const shape=def as typeof DEFS.narrowBeamLeft;
+ const floor=buildNativeNarrowFloor(shape,floorMaterial);floor.updateMatrixWorld(true);
+ for(let z=-5.8;z<6;z+=.4)for(let x=-1.3;x<1.4;x+=.65){
+  const hit=new THREE.Raycaster(new THREE.Vector3(x,.2,z),new THREE.Vector3(0,-1,0),0,.4).intersectObject(floor,true).length>0;
+  assert.equal(hit,insideGroundSupport(shape.groundSupportRegion,x,z),`${def.id} visible support polygon ${x}/${z}`);sampled++;
+ }
+}
+console.log(`Narrow floor adapter: ${sampled} ground points match native support including entry/exit rims.`);

@@ -1005,6 +1005,22 @@ function contactShadow(group: THREE.Group, radius: number): void {
   group.add(shadow);
 }
 
+/** Native Region2D is the support contract. The exported narrow mesh omits
+ * small supported rim/edge triangles; draw that same polygon at road height.
+ * Original prefab walls/UVs remain untouched. This is a web visual adapter. */
+export function buildNativeNarrowFloor(def:ObstacleDef,material:THREE.Material):THREE.Mesh {
+  const points=(def.groundSupportRegion??[]).map(([x,z])=>new THREE.Vector2(x,z));
+  const faces=THREE.ShapeUtils.triangulateShape(points,[]),positions:number[]=[],uvs:number[]=[];
+  for(const face of faces){
+    const [a,b,c]=face.map(i=>points[i]);
+    const ordered=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x)>0?[a,c,b]:[a,b,c];
+    for(const p of ordered){positions.push(p.x,.025,p.y);uvs.push(p.x/4+.5,p.y/12+.5);}
+  }
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+  geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));geometry.computeVertexNormals();
+  const floor=new THREE.Mesh(geometry,material);floor.name='native-narrow-support-floor';floor.userData.walkableSurface=true;return floor;
+}
+
 export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: string): THREE.Group {
   const group = new THREE.Group();
   const kind = def.kind as ObstacleKind;
@@ -1041,6 +1057,7 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
   if (prefab) {
     const clone = prefab.clone(true);if(cliffSource)clone.position.y=CLIFF_MESH_Y;
     group.add(clone);
+    if(def.id.startsWith('narrow')&&def.groundSupportRegion)group.add(buildNativeNarrowFloor(def,assets.material.stone));
     if (def.id === 'flameTower' && assets.texture.safetyNet) {
       group.add(buildNativeFlame(assets.texture.safetyNet));
     }
