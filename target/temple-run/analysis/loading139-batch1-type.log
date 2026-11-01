@@ -1,0 +1,11 @@
+
+> sheep-summit@1.0.0 temple:typecheck
+> npm run temple:typecheck:app && npm run temple:typecheck:tools
+
+
+> sheep-summit@1.0.0 temple:typecheck:app
+> vue-tsc --noEmit -p target/temple-run/web/tsconfig.json
+
+
+> sheep-summit@1.0.0 temple:typecheck:tools
+> tsc --noEmit -p tsconfig.tools.json

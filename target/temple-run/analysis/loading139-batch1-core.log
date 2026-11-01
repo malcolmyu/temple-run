@@ -1,0 +1,290 @@
+
+> sheep-summit@1.0.0 temple:test:core
+> npm run temple:test:input-router && npm run temple:test:modal-input && npm run temple:test:game-session && npm run temple:test:encounter-safety && npm run temple:test:action-safety && npm run temple:test:lateral-safety && npm run temple:test:boost-handover && npm run temple:test:upgrade-purchase && npm run temple:test:course-director && npm run temple:test:mixed-encounters && npm run temple:test:course-compaction && npm run temple:test:path-compaction && npm run temple:test:fire-wall && npm run temple:test:branch-rewards && npm run temple:test:native-coin-values && npm run temple:test:run-upgrades && npm run temple:test:seed-contract && npm run temple:test:run-trace && npm run temple:test:long-narrow && npm run temple:test:narrow-coins && npm run temple:test:death-presentation && npm run temple:test:progress-load && npm run temple:test:gesture-input && npm run temple:test:run-diagnostics && npm run temple:test:lane-blocker
+
+
+> sheep-summit@1.0.0 temple:test:input-router
+> esbuild tools/test-input-router.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-input-router.mjs >/dev/null && node /tmp/temple-input-router.mjs
+
+
+  ../../../../tmp/temple-input-router.mjs  5.6kb
+
+⚡ Done in 1ms
+InputRouter:ordinary lanes,edge clamping,both turn windows,T exits/boost override,duplicate/manual input,inactive/held/falling guards pass
+
+> sheep-summit@1.0.0 temple:test:modal-input
+> esbuild tools/test-modal-input.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-modal-input.mjs >/dev/null && node /tmp/temple-modal-input.mjs
+
+
+  ../../../../tmp/temple-modal-input.mjs  7.1kb
+
+⚡ Done in 1ms
+Modal input:queued/held clearing,blocked keyboard/debug actions,native defaults and restored gameplay pass
+
+> sheep-summit@1.0.0 temple:test:game-session
+> esbuild tools/test-game-session.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-game-session.mjs >/dev/null && node /tmp/temple-game-session.mjs
+
+
+  ../../../../tmp/temple-game-session.mjs  4.7kb
+
+⚡ Done in 1ms
+GameSession:guarded phases,same identity across revivals,one paid revive,reentrant/double commit,failed callback retry,new-run reset and menu receipt pass
+
+> sheep-summit@1.0.0 temple:test:encounter-safety
+> esbuild tools/test-encounter-safety.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-encounter-safety.mjs >/dev/null && node /tmp/temple-encounter-safety.mjs
+
+
+  ../../../../tmp/temple-encounter-safety.mjs  48.5kb
+
+⚡ Done in 3ms
+Encounter safety:20fps positive-airborne budget,35/37 rejection38 acceptance,pair/clearance/support/fast-turn guards and200 generated courses pass
+Composition safety: gap/action and gap/support conflicts, overlapping forks rejected; independent layouts retained
+
+> sheep-summit@1.0.0 temple:test:action-safety
+> esbuild tools/test-action-safety.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-action-safety.mjs >/dev/null && node /tmp/temple-action-safety.mjs
+
+
+  ../../../../tmp/temple-action-safety.mjs  46.2kb
+
+⚡ Done in 4ms
+Action budgets:jump/slide recovery,mixed transitions,turn reaction,paired-support exclusion and200 courses pass;48m pairs=1056
+
+> sheep-summit@1.0.0 temple:test:lateral-safety
+> esbuild tools/test-lateral-safety.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-lateral-safety.mjs >/dev/null && node /tmp/temple-lateral-safety.mjs
+
+
+  ../../../../tmp/temple-lateral-safety.mjs  45.7kb
+
+⚡ Done in 2ms
+Lateral safety: blocked corridor, forced opposite lanes, transfer budgets, narrow/stone overlap and 200 courses pass { narrows: 2229, stones: 1086 }
+
+> sheep-summit@1.0.0 temple:test:boost-handover
+> esbuild tools/test-boost-handover.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-boost-handover.mjs >/dev/null && node /tmp/temple-boost-handover.mjs
+
+
+  ../../../../tmp/temple-boost-handover.mjs  16.1kb
+
+⚡ Done in 2ms
+Boost handover: ground/air/junction/hazard/rear clearance, speed-scaled reaction and coupled expiry pass
+
+> sheep-summit@1.0.0 temple:test:upgrade-purchase
+> esbuild tools/test-upgrade-purchase.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='"/"' --outfile=/tmp/temple-upgrade-purchase.mjs >/dev/null && node /tmp/temple-upgrade-purchase.mjs
+
+
+  ../../../../tmp/temple-upgrade-purchase.mjs  2.0mb ⚠️
+
+⚡ Done in 25ms
+Upgrade transactions:catalogue debit,stale/invalid quotes,unknown ids,insufficient funds,all tiers,max caps,unlock eligibility and migration agree
+
+> sheep-summit@1.0.0 temple:test:course-director
+> esbuild tools/test-course-director.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-course-director.mjs >/dev/null && node /tmp/temple-course-director.mjs
+
+
+  ../../../../tmp/temple-course-director.mjs  46.7kb
+
+⚡ Done in 3ms
+Director:theme pools,novice gates,first exposure,no immediate repeats,max3 pressure,recovery,seed replay and100 courses pass { rests: 4519, combos: 759 }
+
+> sheep-summit@1.0.0 temple:test:mixed-encounters
+> esbuild tools/test-mixed-encounters.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-mixed-encounters.mjs >/dev/null && node /tmp/temple-mixed-encounters.mjs
+
+
+  ../../../../tmp/temple-mixed-encounters.mjs  46.0kb
+
+⚡ Done in 2ms
+Mixed encounters:200 deterministic16000m courses,both action orders,repeat retention,theme and safety constraints pass {
+  repeat: 771,
+  'jump-slide': 286,
+  'slide-jump': 152,
+  'dodge-jump': 161,
+  'dodge-slide': 141
+}
+
+> sheep-summit@1.0.0 temple:test:course-compaction
+> esbuild tools/test-course-compaction.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-course-compaction.mjs >/dev/null && node /tmp/temple-course-compaction.mjs
+
+
+  ../../../../tmp/temple-course-compaction.mjs  68.2kb
+
+⚡ Done in 4ms
+Course history:20x60000m,theme changes,seed/RNG tail,coin stream,absolute turns and retained obstacles/surfaces match full history { peak: 7 }
+
+> sheep-summit@1.0.0 temple:test:path-compaction
+> esbuild tools/test-path-compaction.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-path-compaction.mjs >/dev/null && node /tmp/temple-path-compaction.mjs
+
+
+  ../../../../tmp/temple-path-compaction.mjs  8.6kb
+
+⚡ Done in 1ms
+Path compaction:2000 turns,retained-horizon/smooth/side/turn proximity/ordinal/clone/branch merge pass { peak: 4, offset: 1997 }
+
+> sheep-summit@1.0.0 temple:test:fire-wall
+> esbuild tools/test-fire-wall.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-fire-wall.mjs >/dev/null && node /tmp/temple-fire-wall.mjs
+
+
+  ../../../../tmp/temple-fire-wall.mjs  45.5kb
+
+⚡ Done in 2ms
+Web fire wall:jump-only strict height,tower distinction and200 normal courses pass { count: 1034 }
+
+> sheep-summit@1.0.0 temple:test:branch-rewards
+> esbuild tools/test-branch-rewards.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-branch-rewards.mjs >/dev/null && node /tmp/temple-branch-rewards.mjs
+
+
+  ../../../../tmp/temple-branch-rewards.mjs  74.2kb
+
+⚡ Done in 3ms
+Branch rewards:stable seed,coin/gem choices,both arms,full separation and base-anchor world positions pass { gemForks: 71, coinForks: 129 }
+Risk forks:200 courses,one rich-arm hazard,safe arm,post-jump rewards,novice gate and invalid ownership rejection pass { riskyForks: 1074 }
+Fork geometry:static world anchors,shared centre-gap interval,entry/merge support for both arms pass
+
+> sheep-summit@1.0.0 temple:test:native-coin-values
+> esbuild tools/test-native-coin-values.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-native-coin-values.mjs >/dev/null && node /tmp/temple-native-coin-values.mjs
+
+
+  ../../../../tmp/temple-native-coin-values.mjs  1.8kb
+
+⚡ Done in 1ms
+Native coin defaults: every upgrade threshold, >=boundary, yellow/red and red/blue pairs, disabled base and invalid-level fallback pass.
+
+> sheep-summit@1.0.0 temple:test:run-upgrades
+> esbuild tools/test-run-upgrades.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-run-upgrades.mjs >/dev/null && node /tmp/temple-run-upgrades.mjs
+
+
+  ../../../../tmp/temple-run-upgrades.mjs  4.3kb
+
+⚡ Done in 2ms
+Run upgrades:all six levels captured,source mutation isolated,next-run values,caps/invalid levels and nested immutability pass
+
+> sheep-summit@1.0.0 temple:test:seed-contract
+> esbuild tools/test-seed-contract.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-seed-contract.mjs >/dev/null && node /tmp/temple-seed-contract.mjs
+
+
+  ../../../../tmp/temple-seed-contract.mjs  46.0kb
+
+⚡ Done in 5ms
+Seed contract:same inputs exact,opening stable,different progress diverges after opening {
+  seed: 1,
+  rulesVersion: 'beats-v8',
+  distance: 12000,
+  sameSeedSameProgressScheduleExact: true,
+  openingIndependentOfLaterProgress: true,
+  sameSeedDifferentProgressChangesCourse: true,
+  firstDifferentFeatureIndex: 3,
+  novice: {
+    kind: 'recovery',
+    from: 477,
+    to: 645,
+    surface: 'stone',
+    pathLevel: 2,
+    beatIntent: 'recovery',
+    generatedAtProgress: 0,
+    minTurnSpaces: 12,
+    nativeStageKnown: true,
+    fastTurn: false
+  },
+  experienced: {
+    kind: 'recovery',
+    from: 477,
+    to: 621,
+    surface: 'stone',
+    pathLevel: 2,
+    beatIntent: 'recovery',
+    generatedAtProgress: 2000,
+    minTurnSpaces: 4,
+    nativeStageKnown: true,
+    fastTurn: false
+  },
+  scope: 'Pure course generation; not a gameplay replay or a claim of a live UI bug.'
+}
+
+> sheep-summit@1.0.0 temple:test:run-trace
+> esbuild tools/test-run-trace.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-run-trace.mjs >/dev/null && node /tmp/temple-run-trace.mjs
+
+
+  ../../../../tmp/temple-run-trace.mjs  4.3kb
+
+⚡ Done in 2ms
+Run trace:header/event isolation,ordered stages,cap/truncation,serialization and invalid-event rejection pass
+Trace byte cap and idempotent stop pass
+
+> sheep-summit@1.0.0 temple:test:long-narrow
+> esbuild tools/test-long-narrow.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-long-narrow.mjs >/dev/null && node /tmp/temple-long-narrow.mjs
+
+
+  ../../../../tmp/temple-long-narrow.mjs  46.4kb
+
+⚡ Done in 2ms
+Long narrow:100 seeds, B/body*/A native compatibility,12m grid, entry/exit safety, both sides/three lengths and fixture pass {
+  count: 874,
+  variants: [
+    'left:36',
+    'left:48',
+    'left:60',
+    'right:36',
+    'right:48',
+    'right:60'
+  ]
+}
+
+> sheep-summit@1.0.0 temple:test:narrow-coins
+> esbuild tools/test-narrow-coins.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-narrow-coins.mjs >/dev/null && node /tmp/temple-narrow-coins.mjs
+
+
+  ../../../../tmp/temple-narrow-coins.mjs  52.2kb
+
+⚡ Done in 4ms
+Narrow coins:100 seeds, native-ground-supported low rows, both sides/all four lengths pass {
+  collected: 10540,
+  variants: [
+    'left:12',  'left:36',
+    'left:48',  'left:60',
+    'right:12', 'right:36',
+    'right:48', 'right:60'
+  ]
+}
+
+> sheep-summit@1.0.0 temple:test:death-presentation
+> esbuild tools/test-death-presentation.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-death-presentation.mjs >/dev/null && node /tmp/temple-death-presentation.mjs
+
+
+  ../../../../tmp/temple-death-presentation.mjs  3.7kb
+
+⚡ Done in 1ms
+Death presentation:24 native-pool choices,21 PNG provenance hashes/dimensions and unverified-role fallback pass
+
+> sheep-summit@1.0.0 temple:test:progress-load
+> esbuild tools/test-progress-load.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='"/"' --outfile=/tmp/temple-progress-load.mjs >/dev/null && node /tmp/temple-progress-load.mjs
+
+
+  ../../../../tmp/temple-progress-load.mjs  2.0mb ⚠️
+
+⚡ Done in 21ms
+Progress load: purchase-only inventory and lifetime counters survive reload; empty/invalid profiles still migrate.
+
+> sheep-summit@1.0.0 temple:test:gesture-input
+> esbuild tools/test-input-gesture.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-gesture-test.mjs >/dev/null && node /tmp/temple-gesture-test.mjs
+
+
+  ../../../../tmp/temple-gesture-test.mjs  8.4kb
+
+⚡ Done in 1ms
+Gesture input: recognition before release, four directions, one command, cancellation, second pointer, modal/reset and release fallback pass
+
+> sheep-summit@1.0.0 temple:test:run-diagnostics
+> esbuild tools/test-run-diagnostics.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-diagnostics-test.mjs >/dev/null && node /tmp/temple-diagnostics-test.mjs
+
+
+  ../../../../tmp/temple-diagnostics-test.mjs  4.5kb
+
+⚡ Done in 1ms
+Default death diagnostics: bounded samples/inputs/history, reset isolation, persistence, corrupt storage and quota fallback pass
+
+> sheep-summit@1.0.0 temple:test:lane-blocker
+> esbuild tools/test-lane-blocker.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='"/"' --outfile=/tmp/temple-lane-blocker.mjs >/dev/null && node /tmp/temple-lane-blocker.mjs
+
+
+  ../../../../tmp/temple-lane-blocker.mjs  630.7kb
+
+⚡ Done in 30ms
+Lane blocker: readable stone courses fit the collision envelope, no clipped brazier or gold cap.
