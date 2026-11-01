@@ -1,7 +1,7 @@
 // Source-constrained opening controls. Timing estimates, NOT recovered touch input.
 (()=>{const g=window.__templeGame;g.restart();g.freeze();const offset=2.703-61/60;
 const config=window.__referenceReplayConfig??{};
-const events=[[9.4,1],[9.45,'jump'],[15.05,'jump'],[17.05,1],[17.2,'jump'],[18.77,'jump'],...(config.events??[])];
+const events:Array<[number,string|number]> =[[9.4,1],[9.45,'jump'],[15.05,'jump'],[17.05,1],[17.2,'jump'],[18.77,'jump'],...(config.events??[])];
 const hypothesis=window.__openingRejectedSwipeHypothesis??null;
 if(hypothesis)events.push([hypothesis.time,hypothesis.direction<0?'left':'right']);events.sort((a,b)=>a[0]-b[0]);
 const rows=[],actions=[];let index=0,lastSecond=1,lastStumble=false;

@@ -7,27 +7,27 @@
  const key=(target,key,shiftKey=false)=>target.dispatchEvent(new KeyboardEvent('keydown',{key,shiftKey,bubbles:true,cancelable:true}));
  g.toMenu();g.freeze();await flush();
  for(const name of ['STORE','目标','升级','STATS','OPTIONS','玩法说明']){
-  const entry=Array.from(document.querySelectorAll('.menu-row button')).find(b=>b.textContent.trim()===name);
+  const entry=Array.from(document.querySelectorAll<HTMLElement>('.menu-row button')).find(b=>b.textContent.trim()===name);
   entry.focus();entry.click();await flush();
-  const root=document.querySelector('[role="dialog"]');
+  const root=document.querySelector<HTMLElement>('[role="dialog"]');
   check(`${name}: focus enters panel`,root&&root.contains(document.activeElement));
   const first=document.activeElement;
   key(first,'Tab',true);
   const last=document.activeElement;
   check(`${name}: reverse Tab stays in panel`,root.contains(last)&&/返回|完成/.test(last.textContent));
   key(last,'Tab');check(`${name}: forward Tab wraps`,document.activeElement===first);
-  const background=document.querySelector('.overlay:not([role="dialog"]) .primary');
+  const background=document.querySelector<HTMLElement>('.overlay:not([role="dialog"]) .primary');
   background.focus();check(`${name}: background focus redirected`,root.contains(document.activeElement));
   key(document.activeElement,'Escape');await flush();
-  check(`${name}: Escape closes without starting`,!document.querySelector('[role="dialog"]')&&g.state().phase==='menu');
+  check(`${name}: Escape closes without starting`,!document.querySelector<HTMLElement>('[role="dialog"]')&&g.state().phase==='menu');
   check(`${name}: focus returns to entry`,document.activeElement===entry);
  }
  const seen=localStorage.getItem('temple.v2.tutorial');
  try{
   localStorage.removeItem('temple.v2.tutorial');
-  const entry=document.querySelector('.overlay:not([role="dialog"]) .primary');
+  const entry=document.querySelector<HTMLElement>('.overlay:not([role="dialog"]) .primary');
   entry.focus();entry.click();await flush();
-  const root=document.querySelector('.tutorial-overlay');
+  const root=document.querySelector<HTMLElement>('.tutorial-overlay');
   check('tutorial: focus enters primer',root&&root.contains(document.activeElement));
   const first=document.activeElement;
   key(first,'Tab',true);
@@ -36,7 +36,7 @@
   const before=g.state();g.advance(2000);
   check('tutorial: does not advance world',g.state().phase==='menu'&&g.state().distanceExact===before.distanceExact);
   key(document.activeElement,'Escape');await flush();
-  check('tutorial: cancel closes without opening store',!document.querySelector('.tutorial-overlay')&&!document.querySelector('.store-card')&&g.state().phase==='menu');
+  check('tutorial: cancel closes without opening store',!document.querySelector<HTMLElement>('.tutorial-overlay')&&!document.querySelector<HTMLElement>('.store-card')&&g.state().phase==='menu');
   check('tutorial: cancel does not mark seen',localStorage.getItem('temple.v2.tutorial')===null);
   check('tutorial: focus returns to start',document.activeElement===entry);
  }finally{

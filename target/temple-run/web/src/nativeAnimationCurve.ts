@@ -1,6 +1,7 @@
 // Unweighted Unity scalar keyframes store derivatives per second.
 // Tangent-free legacy/exported rigs retain their existing linear interpolation.
-export function sampleCurveComponent(curve, left, right, alpha, component) {
+export interface NativeCurve { times:number[]; values:number[][]; outSlopes?:number[][]; inSlopes?:number[][]; }
+export function sampleCurveComponent(curve:NativeCurve, left:number, right:number, alpha:number, component:number):number {
   const a = curve.values[left][component], b = curve.values[right][component];
   if (alpha <= 0) return a;
   if (alpha >= 1) return b;

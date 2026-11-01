@@ -1,6 +1,6 @@
-import { nativeUnlitMaterial } from './nativeUnlit.js';
+import { nativeUnlitMaterial } from './nativeUnlit.ts';
 import * as THREE from 'three';
-import { sampleCurveComponent } from './nativeAnimationCurve.js';
+import { sampleCurveComponent } from './nativeAnimationCurve.ts';
 
 // CPU-skinned runner built from the original Unity SkinnedMeshRenderer data.
 // The JSON stores Unity-space data (bone local TRS raw, mesh positions with x negated

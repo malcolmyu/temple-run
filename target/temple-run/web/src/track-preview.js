@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { repairObjNormals } from './objNormals.js';
+import { repairObjNormals } from './objNormals.ts';
 import { loadRunnerRig } from './runnerRig.js';
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x5a7264);

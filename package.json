@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --config target/temple-run/vite.config.js --host 0.0.0.0",
-    "build": "vite build --config target/temple-run/vite.config.js",
-    "temple:dev": "vite --config target/temple-run/vite.config.js --host 0.0.0.0",
-    "temple:build": "vite build --config target/temple-run/vite.config.js",
+    "dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
+    "build": "vite build --config target/temple-run/vite.config.ts",
+    "temple:dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
+    "temple:build": "vite build --config target/temple-run/vite.config.ts",
     "temple:typecheck": "vue-tsc --noEmit -p target/temple-run/web/tsconfig.json",
     "temple:test:lightmap": "esbuild tools/test-native-lightmap.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-lightmap-test.mjs >/dev/null && node /tmp/temple-lightmap-test.mjs",
     "temple:test:t-junction": "esbuild tools/test-native-t-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-t-junction-test.mjs >/dev/null && node /tmp/temple-t-junction-test.mjs",
@@ -97,7 +97,7 @@
     "temple:test:course-director": "esbuild tools/test-course-director.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-course-director.mjs >/dev/null && node /tmp/temple-course-director.mjs",
     "temple:test:branch-rewards": "esbuild tools/test-branch-rewards.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-branch-rewards.mjs >/dev/null && node /tmp/temple-branch-rewards.mjs",
     "temple:test:power-free-score": "esbuild tools/test-power-free-score.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-power-free-score.mjs >/dev/null && node /tmp/temple-power-free-score.mjs",
-    "temple:qa": "vite --config target/temple-run/vite.config.js --host 127.0.0.1 --port 5175 --strictPort",
+    "temple:qa": "vite --config target/temple-run/vite.config.ts --host 127.0.0.1 --port 5175 --strictPort",
     "temple:test:focus-pause": "esbuild tools/test-focus-pause.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-focus-pause.mjs >/dev/null && node /tmp/temple-focus-pause.mjs",
     "temple:test:fire-wall": "esbuild tools/test-fire-wall.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-fire-wall.mjs >/dev/null && node /tmp/temple-fire-wall.mjs",
     "temple:test:graph-retention": "esbuild tools/test-track-graph-retention.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-graph-retention.mjs >/dev/null && node /tmp/temple-graph-retention.mjs",
@@ -129,6 +129,7 @@
     "vue-tsc": "^2.2.12"
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
     "@types/three": "^0.186.0"
   }
 }

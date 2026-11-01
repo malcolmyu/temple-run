@@ -13,7 +13,7 @@ const _c = new THREE.Vector3();
 const _cb = new THREE.Vector3();
 const _ab = new THREE.Vector3();
 
-function needsRepair(geometry) {
+function needsRepair(geometry:THREE.BufferGeometry) {
   const position = geometry.attributes.position;
   if (!position) return false;
   const normal = geometry.attributes.normal;
@@ -23,10 +23,11 @@ function needsRepair(geometry) {
   return false;
 }
 
-export function repairObjNormals(root) {
+export function repairObjNormals(root:THREE.Object3D|null) {
   if (!root) return 0;
   let repaired = 0;
-  root.traverse((part) => {
+  root.traverse((object) => {
+    const part=object as THREE.Mesh;
     if (!part.isMesh || !part.geometry) return;
     const geometry = part.geometry;
     const position = geometry.attributes.position;

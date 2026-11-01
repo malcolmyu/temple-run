@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -26,7 +26,7 @@ function lanAddress() {
   return candidates[0]?.address ?? null;
 }
 
-function lanUrlPlugin() {
+function lanUrlPlugin():Plugin {
   return {
     name: 'temple-lan-url',
     apply: 'serve',

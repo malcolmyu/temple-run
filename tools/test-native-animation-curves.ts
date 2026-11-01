@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFileSync,writeFileSync} from 'node:fs';
-import {sampleCurveComponent} from '../target/temple-run/web/src/nativeAnimationCurve.js';
+import {sampleCurveComponent} from '../target/temple-run/web/src/nativeAnimationCurve.ts';
 // A cubic x(t)=t^3 on a non-unit interval verifies derivative units and signs.
 const c={times:[1,3],values:[[1],[27]],outSlopes:[[3],[27]],inSlopes:[[3],[27]]};
 for(const t of [1,1.25,1.5,2,2.75,3])assert.ok(Math.abs(sampleCurveComponent(c,0,1,(t-1)/2,0)-t**3)<1e-10);

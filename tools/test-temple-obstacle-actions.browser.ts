@@ -2,7 +2,7 @@
 (()=>{
  const g=window.__templeGame,checks=[],check=(name,ok)=>{checks.push({name,passed:!!ok});if(!ok)throw Error(name);};
  const prep=(id,lane=1)=>{g.restart();g.freeze();g.advance(4300);const at=g.state().distanceExact;g.spawnObstacleDef(id,lane,12);return at+12;};
- const run=(at,action)=>{let acted=false;for(let n=0;g.state().phase==='playing'&&g.state().distanceExact<at+4&&n<100;n++){const s=g.state();if(action&&!acted&&at-s.distanceExact<8){g.press(action);acted=true;}g.advance(25);}return g.state();};
+ const run=(at,action=null)=>{let acted=false;for(let n=0;g.state().phase==='playing'&&g.state().distanceExact<at+4&&n<100;n++){const s=g.state();if(action&&!acted&&at-s.distanceExact<8){g.press(action);acted=true;}g.advance(25);}return g.state();};
  let at=prep('towerArch'),s=run(at);check('decorative arch standing passage does not stumble',s.phase==='playing'&&s.stumbleAge>10&&s.stumbleRemaining===0);
  for(const [id,action,safe] of [['flameTower',null,false],['flameTower','jump',true],['flameTower','slide',true],['treeSlide',null,false],['treeSlide','slide',true],['treeSlide','jump',false]]){
   at=prep(id);s=run(at,action);check(id+': '+(action??'standing')+' collision result',safe?s.phase==='playing':s.phase==='dying'&&g.death().kind==='impact');

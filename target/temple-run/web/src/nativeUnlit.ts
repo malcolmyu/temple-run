@@ -5,7 +5,7 @@ import * as THREE from 'three';
  * @param {THREE.Texture|null} texture
  * @param {THREE.Side} [side]
  */
-export function nativeUnlitMaterial(texture, side = THREE.FrontSide) {
+export function nativeUnlitMaterial(texture:THREE.Texture|null, side:THREE.Side = THREE.FrontSide) {
   return new THREE.MeshBasicMaterial({
     map: texture, color: 0xffffff, side, toneMapped: false, fog: false,
   });
