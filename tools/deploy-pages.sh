@@ -4,6 +4,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "Commit project changes before deployment so deployment.json matches the built source." >&2
+  exit 1
+fi
 npm run temple:build
 
 remote="$(git remote get-url origin)"
@@ -17,7 +21,7 @@ if git -C "$tmp" fetch --depth=1 origin gh-pages; then
 else
   git -C "$tmp" checkout -q --orphan gh-pages
 fi
-./node_modules/.bin/esbuild tools/stage-pages-release.ts --bundle --platform=node --format=esm --outfile="$tmp-stage.mjs" >/dev/null
+./node_modules/.bin/esbuild tools/stage-pages-cli.ts --bundle --platform=node --format=esm --outfile="$tmp-stage.mjs" >/dev/null
 node "$tmp-stage.mjs" target/temple-run/dist "$tmp" "$source_commit"
 rm -f "$tmp-stage.mjs"
 git -C "$tmp" add -A

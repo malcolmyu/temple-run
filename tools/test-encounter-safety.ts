@@ -36,5 +36,5 @@ assert.ok(validateEncounterLayout({...wide,obstacles:pair,branches:[{from:96,to:
 assert.deepEqual(validateEncounterLayout({...wide,obstacles:pair}),[],'matching endcaps remain legal');
 assert.deepEqual(validateEncounterLayout({...wide,obstacles:[...pair,{...arch,distance:240}]}),[],'separate action remains legal');
 assert.ok(validateEncounterLayout({...wide,branches:[{from:60,to:180},{from:120,to:240}]}).includes('overlapping-branches'));
-assert.deepEqual(validateEncounterLayout({...wide,branches:[{from:60,to:180},{from:180,to:300}]}),[],'touching branch endpoints do not overlap');
+assert.deepEqual(validateEncounterLayout({...wide,to:420,branches:[{from:60,to:180},{from:180,to:300}]}),[],'touching branch endpoints do not overlap');
 console.log('Composition safety: gap/action and gap/support conflicts, overlapping forks rejected; independent layouts retained');

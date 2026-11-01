@@ -564,5 +564,20 @@
     "target/temple-run/dist/assets/three-65SRy6Mp.js",
     "target/temple-run/dist/assets/upgrades-EzozjAh6.js",
     "target/temple-run/dist/assets/vue-yA5kcq01.js"
-  ]
+  ],
+  "inlineModules": [
+    {
+      "original": "target/temple-run/web/entrance-search.html#script",
+      "target": "target/temple-run/web/src/entrance-search.ts"
+    },
+    {
+      "original": "tools/build-game-audit.py#client-script",
+      "target": "tools/game-audit-client.ts"
+    }
+  ],
+  "generatedInlineJavascript": {
+    "path": "docs/audit/index.html",
+    "source": "tools/game-audit-client.ts",
+    "reason": "Generated standalone report embeds esbuild output; not hand-written JavaScript source."
+  }
 }

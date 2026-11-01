@@ -69,4 +69,4 @@ npm run build
 npm run temple:browser:compile -- tools/test-temple-input-router.browser.ts /tmp/temple-input.js
 ```
 
-`temple:typecheck`包含源码JS白名单/哈希检查、现行游戏strict检查和工具全集检查。需要重新生成交付纹理/模型时运行`npm run temple:assets`（Python+Pillow）；原图不覆盖，常规构建只校验已提交的衍生资源。Pages部署保留上一代哈希资源，避免缓存旧HTML引用失效，下一代再清理更旧文件。
+`temple:typecheck`包含源码JS白名单/哈希检查、现行游戏strict检查和工具全集检查。需要重新生成交付纹理/模型时运行`npm run temple:assets`（Python+Pillow）；原图不覆盖，常规构建只校验已提交的衍生资源。Pages部署保留上一代哈希资源，避免缓存旧HTML引用失效，600秒窗口过期后清理旧文件。

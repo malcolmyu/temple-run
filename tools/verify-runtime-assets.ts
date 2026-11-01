@@ -8,6 +8,7 @@ const hash=(bytes:Buffer)=>createHash('sha256').update(bytes).digest('hex');
 for(const row of report.textures){
  assert.equal(hash(readFileSync(base+row.source)),row.sourceSha256,`Stale derivative: ${row.source}; run temple:assets`);
  assert.equal(manifest.textures[row.source],row.runtime);
+ if(row.lossless)assert.ok(row.rgbaRms.every((v:number)=>v===0),`Lossless pixels differ: ${row.runtime}`);
  const digest=row.runtime.split('.').at(-2);
  assert.ok(hash(readFileSync(base+row.runtime)).startsWith(digest),`Delivery digest: ${row.runtime}`);
 }

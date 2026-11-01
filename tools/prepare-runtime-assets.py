@@ -12,7 +12,7 @@ paths=list((public/'assets/ui').glob('*.png'))+list((public/'assets/characters')
 for p in sorted(paths):
  key=p.relative_to(public).as_posix();sourceSha=hashlib.sha256(p.read_bytes()).hexdigest()
  old=previousBySource.get(key)
- if old and old.get('sourceSha256')==sourceSha and previous.get('pipelineVersion')==1 and (public/old['runtime']).exists():
+ if old and old.get('sourceSha256')==sourceSha and previous.get('pipelineVersion')==2 and (public/old['runtime']).exists():
   mapping[key]=old['runtime'];records.append(old);continue
  im=Image.open(p);original=im.copy();name=p.stem;size=im.size;lossless=True
  if name in ['wallTexture','treeTexture']:
@@ -21,7 +21,7 @@ for p in sorted(paths):
   # Opaque native shader samples RGB only; alpha is never used for compositing.
   im=im.convert('RGB');lossless=False
  if name=='EffectsTexture2x':lossless=False
- temp=out/(name+'.tmp.webp');im.save(temp,'WEBP',lossless=lossless,quality=94,method=6)
+ temp=out/(name+'.tmp.webp');im.save(temp,'WEBP',lossless=lossless,quality=94,method=6,exact=True)
  b=temp.read_bytes();dest=out/(name+'.'+hashlib.sha256(b).hexdigest()[:12]+'.webp');temp.replace(dest)
  key=p.relative_to(public).as_posix();mapping[key]=dest.relative_to(public).as_posix()
  decoded=Image.open(dest).convert('RGBA');reference=original.resize(decoded.size,Image.Resampling.LANCZOS).convert('RGBA')
@@ -47,7 +47,7 @@ css=[]
 for selector,file in [('relic-vines','hud-vines.png'),('relic-left','hud-left.png'),('relic-right','hud-right.png'),('relic-score strong','hud-score.png')]:
  css.append('.'+selector+" { background-image:url('/"+mapping['assets/ui/'+file]+"'); }")
 (root/'target/temple-run/web/src/ui/runtime-assets.generated.css').write_text('/* Generated lossless HUD delivery URLs. */\n'+'\n'.join(css)+'\n')
-(root/'target/temple-run/analysis/loading139-runtime-assets.json').write_text(json.dumps({'pipelineVersion':1,'textures':records,'rigs':rigRecords,'models':{'count':len(pack),'bytes':len(b),'gzipBytes':len(gzip.compress(b,mtime=0)),'path':manifest['worldPack']}},indent=2)+'\n')
+(root/'target/temple-run/analysis/loading139-runtime-assets.json').write_text(json.dumps({'pipelineVersion':2,'textures':records,'rigs':rigRecords,'models':{'count':len(pack),'bytes':len(b),'gzipBytes':len(gzip.compress(b,mtime=0)),'path':manifest['worldPack']}},indent=2)+'\n')
 # Prune only stale reproducible files from the dedicated derivative directory.
 keep=set(mapping.values())|set(rigs.values())|{manifest['worldPack']}
 for p in out.iterdir():

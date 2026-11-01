@@ -101,6 +101,13 @@ export class TrackGraph {
 
   /** Merge back to a branch at the fork distance; caller supplies the destination. */
   merge(destination: TrackPath): void {
-    this.active = destination;
+    // A corner may have been prebuilt on the selected lateral road before its
+    // merge. The saved base is then stale: restoring it removes that corner
+    // from rendering while Turn still requires it. Keep the live centreline;
+    // only retire the temporary lateral coordinate frame.
+    if(this.active.branchSpan){
+      const merged=this.active.clone();merged.lateral=0;merged.branchSpan=null;
+      this.active=merged;
+    }else this.active = destination;
   }
 }

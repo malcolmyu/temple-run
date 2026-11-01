@@ -466,6 +466,16 @@ export class Game {
       terrain: (d: number) => terrainAt(d, this.path),
       narrow: (d: number) => this.narrowAt(d, this.path),
       sidePath: (d: number) => this.sidePathAt(d, this.path),
+      roadProbe: (distance=this.distance,side=0) => {
+        const point=this.path.at(distance,side),ground=nativeGroundHeightAt(distance);
+        const ray=new THREE.Raycaster(new THREE.Vector3(point.x,ground+2,point.z),new THREE.Vector3(0,-1,0),0,4);
+        const roots=[...[...this.tiles.values()].map(e=>this.world.require(e,Tile).object),...this.junctions.values(),
+          ...this.obstacles.map(e=>this.world.require(e,Obstacle)).filter(o=>(DEFS[o.defId as DefId] as ObstacleDef | undefined)?.groundSupportRegion).map(o=>o.object)].filter((o):o is THREE.Object3D=>!!o);
+        for(const root of roots)root.updateMatrixWorld(true);
+        const hits=ray.intersectObjects(roots,true).filter(h=>Math.abs(h.point.y-ground)<.2);
+        return {distance,side,point,ground,supported:this.nativeGroundSupported(distance,side,side<-.65?0:side>.65?2:1),
+          visibleFloor:hits.map(h=>({y:h.point.y,name:h.object.name})),segments:this.path.segments.map(s=>({...s}))};
+      },
       groundSupport: (ahead=0) => [0,1,2].map(lane=>this.nativeGroundSupported(this.distance+ahead,LANES[lane],lane)),
       graph: () => ({ forks: this.graph.forks.map((f) => ({ at: f.at, chosen: f.chosen })), activeSegments: this.graph.active.segments.length }),
       death: () => ({ reason: mutateUi.deathReason, kind: mutateUi.deathKind, cause:mutateUi.deathCause, elapsed:this.deathElapsed, delay:this.deathTimer }),
@@ -740,8 +750,8 @@ export class Game {
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = true;
     this.session.start();
-    this.journal.start({runId:this.session.snapshot().runId,seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',runtimeRulesVersion:'playability-v2',inputRulesVersion:TURN_INTENT_RULE_VERSION,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades});
-    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({runtimeRulesVersion:'playability-v2',inputRulesVersion:TURN_INTENT_RULE_VERSION,startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
+    this.journal.start({runId:this.session.snapshot().runId,seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',runtimeRulesVersion:'playability-v3',inputRulesVersion:TURN_INTENT_RULE_VERSION,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades});
+    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({runtimeRulesVersion:'playability-v3',inputRulesVersion:TURN_INTENT_RULE_VERSION,startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
     if(this.viewportBlocked())this.session.pause();
     mutateUi.speed = RUN_SPEED;
     this.publishSession();
@@ -2046,12 +2056,12 @@ export class Game {
   }
 
   private branchChoiceHint(span:{from:number;to:number}):string {
-    if(!activeCourse())return '前方左右分路 · 选一边！';
+    if(!activeCourse())return '前方分路 · 中央断路，靠左或右！';
     const rewards=branchRewards(this.runSeed,span.from,span.to);
     const label=(side:'left'|'right')=>rewards.some(r=>r.branch===side&&r.kind==='gem')?'宝石':`金币×${rewards.filter(r=>r.branch===side).length}`;
     const risky=activeCourse()?.branches.find(b=>b.from===span.from)?.riskyArm;
     const risk=(side:'left'|'right')=>risky?(risky===side?' · 火墙需跳':' · 安全'):'';
-    return `分路选择 · 左${label('left')}${risk('left')} / 右${label('right')}${risk('right')}`;
+    return `分路中央断路 · 左${label('left')}${risk('left')} / 右${label('right')}${risk('right')}`;
   }
 
   private pickupPoint(pickup:{distance:number;side?:number;lane:number;baseAnchored?:boolean}) {

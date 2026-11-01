@@ -68,6 +68,7 @@ export function validateEncounterLayout(group:EncounterLayout):string[]{
   if(group.branches.slice(i+1).some(b=>overlaps(a.from,a.to,b.from,b.to)))reasons.add('overlapping-branches');
  }
  for(const branch of group.branches){
+  if(group.to-branch.to<96)reasons.add('branch-turn-clearance');
   if(group.obstacles.some(o=>!o.branch&&o.distance>=branch.from-6&&o.distance<=branch.to+6)||group.narrows.some(n=>n.from<branch.to&&n.to>branch.from))reasons.add('branch-support-conflict');
  }
  return [...reasons];
