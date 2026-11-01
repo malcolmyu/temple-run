@@ -4,11 +4,15 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "Commit project changes before deployment so deployment.json matches the built source." >&2
+  exit 1
+fi
 npm run temple:build
 
 remote="$(git remote get-url origin)"
 tmp="$(mktemp -d)"
-trap 'rm -rf "$tmp"' EXIT
+trap 'rm -rf "$tmp"; rm -f "$tmp-stage.mjs"' EXIT
 source_commit="$(git rev-parse HEAD)"
 git -C "$tmp" init -q
 git -C "$tmp" remote add origin "$remote"
@@ -17,10 +21,9 @@ if git -C "$tmp" fetch --depth=1 origin gh-pages; then
 else
   git -C "$tmp" checkout -q --orphan gh-pages
 fi
-find "$tmp" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-cp -R target/temple-run/dist/. "$tmp/"
-touch "$tmp/.nojekyll"
-printf '{"sourceCommit":"%s","builtAt":"%s"}\n' "$source_commit" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$tmp/deployment.json"
+./node_modules/.bin/esbuild tools/stage-pages-release.ts --bundle --platform=node --format=esm --outfile="$tmp-stage.mjs" >/dev/null
+node "$tmp-stage.mjs" target/temple-run/dist "$tmp" "$source_commit"
+rm -f "$tmp-stage.mjs"
 git -C "$tmp" add -A
 git -C "$tmp" -c user.name='temple-run deploy' -c user.email='deploy@localhost' \
   commit -q -m "deploy: temple-run static build $(date -u +%Y-%m-%dT%H:%M:%SZ)"

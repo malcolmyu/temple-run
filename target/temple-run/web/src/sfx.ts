@@ -67,7 +67,7 @@ function fadeMusic(el:HTMLAudioElement, to:number, seconds:number, done?:()=>voi
   }, 50);
 }
 
-export function startMusic(name: any = 'theme', volume: any = musicVolume) {
+export function startMusic(name = 'theme', volume = musicVolume) {
   if (music.current === name && music.el && !music.el.paused) return;
   stopMusic(0.6);
   const el = new Audio(BASE + (MUSIC[name] || MUSIC.theme));
@@ -91,7 +91,7 @@ export function musicInfo() {
   return music.el ? { current: music.current, paused: music.el.paused, volume: +music.el.volume.toFixed(2), time: +music.el.currentTime.toFixed(1), duration: +(music.el.duration || 0).toFixed(1) } : { current: null };
 }
 
-export function stopMusic(fade: any = 1.2) {
+export function stopMusic(fade = 1.2) {
   const el = music.el;
   music.el = null;
   music.current = null;
@@ -200,7 +200,7 @@ export function startLoop(name:string, opts:SoundOptions = {}) {
   return handle;
 }
 
-export function setLoopRate(name: any, rate: any) {
+export function setLoopRate(name:string, rate:number) {
   const h = loops.get(name);
   if (h && ctx) h.source.playbackRate.setValueAtTime(Math.max(0.55, Math.min(1.7, rate)), ctx.currentTime);
 }
@@ -222,7 +222,7 @@ function getNoise() {
   }
   return noiseBuffer;
 }
-export function setAmbience(kind: any, level: any = 0.5) {
+export function setAmbience(kind:string|null, level = 0.5) {
   if (!ctx) return;
   if (amb && amb.kind === kind) {
     amb.gain.gain.linearRampToValueAtTime(level, ctx.currentTime + 0.4);
@@ -257,7 +257,7 @@ export function setAmbience(kind: any, level: any = 0.5) {
   src.start();
   amb = { kind, src, gain, lfo };nodeStats.amb++;
 }
-export function stopAmbience(fade: any = 0.4) {
+export function stopAmbience(fade = 0.4) {
   if (!amb || !ctx) return;
   const a = amb;
   amb = null;
@@ -319,7 +319,7 @@ export function activeLoops() {
   return [...loops.keys()];
 }
 
-export function stopLoop(name: any, fade: any = 0.12) {
+export function stopLoop(name:string, fade = 0.12) {
   const handle = loops.get(name);
   if (!handle || !ctx) return;
   loops.delete(name);
@@ -339,7 +339,7 @@ export function stopAllLoops() {
 
 // Synthesised landing "thud": a short low sine drop, layered under the vocal land grunt.
 // Cheap, consistent across devices and avoids shipping another sample.
-export function thud(gain: any = 0.5) {
+export function thud(gain = 0.5) {
   if (!ctx || muted || !master) return;
   const t = ctx.currentTime;
   const osc = ctx.createOscillator();
@@ -358,7 +358,7 @@ export function thud(gain: any = 0.5) {
 
 // Continuous slide friction: filtered noise loop that fades in/out with the slide.
 let friction:{src:AudioBufferSourceNode;gain:GainNode}|null = null;
-export function startFriction(gain: any = 0.22) {
+export function startFriction(gain = 0.22) {
   if (!ctx || !master || muted) return;
   if (friction) { friction.gain.gain.setTargetAtTime(gain, ctx.currentTime, 0.06); return; }
   const len = ctx.sampleRate * 1.2;
@@ -384,7 +384,7 @@ export function stopFriction() {
 
 // --- Synthesised waterfall ambience (no dedicated asset in the APK) -----------
 let fallNode:AudioBufferSourceNode|null = null, fallGain:GainNode|null = null;
-export function startWaterfall(level: any = 0.35) {
+export function startWaterfall(level = 0.35) {
   if (!ctx || isMuted()) return;
   if (!fallNode) {
     const len = ctx.sampleRate * 2;
@@ -409,7 +409,7 @@ export function startWaterfall(level: any = 0.35) {
 }
 // --- Synthesised canyon wind (band-passed noise with slow gusts) ------------
 let windNode:(AudioBufferSourceNode&{_gust?:OscillatorNode;_swell?:OscillatorNode})|null = null, windGain:GainNode|null = null;
-export function startWind(level: any = 0.2) {
+export function startWind(level = 0.2) {
   if (!ctx || isMuted()) return;
   if (!windNode) {
     const len = ctx.sampleRate * 3;

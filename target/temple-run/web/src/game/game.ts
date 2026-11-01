@@ -114,8 +114,8 @@ import type { ObstacleAction, ObstacleDef, ObstaclePlan } from './obstacles/type
 import { pickObstacle, defForKind, ORIGINAL_SPAWNER_CONFIG } from './obstacles/spawner';
 import { collisionWouldHit, laneIsBlocked } from './obstacles/collision';
 import { SeededRandom } from './obstacles/rng';
-import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById } from './skins';
-import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.ts';
+import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById, type SkinDef } from './skins';
+import { loadRigData, loadRunnerRig, normalizeRigHeight } from '../runnerRig.ts';
 import * as sfx from '../sfx.ts';
 
 export const SKIN_IDS = SKIN_CATALOG.map((skin) => skin.id);
@@ -242,8 +242,12 @@ export class Game {
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
     this.canvas = canvas;
-    this.bundle = await createWorld(canvas);
-    if (this.disposed) { this.bundle.renderer.dispose(); return; }
+    const initialSkin=skinById(isOwned(progress.equipped)?progress.equipped:'jhony');
+    for(const url of [`${BASE}assets/characters/rig-${initialSkin.rig}.json`,DEFAULT_SKIN_URL,`${BASE}assets/characters/rig-enemy.json`])void loadRigData(url).catch(()=>{});
+    const initialRig=this.loadSkinRig(initialSkin);
+    void initialRig.catch(()=>{}); // consumed below; avoid an early unhandled rejection.
+    try {this.bundle=await createWorld(canvas);}catch(error){void initialRig.then(r=>r.dispose()).catch(()=>{});throw error;}
+    if(this.disposed){this.bundle.renderer.dispose();void initialRig.then(r=>r.dispose()).catch(()=>{});return;}
     this.maxPixelRatio = this.bundle.renderer.getPixelRatio();
     this.bundle.scene.add(this.runnerGroup);
     this.bundle.scene.add(this.chaserGroup);
@@ -258,7 +262,7 @@ export class Game {
     },()=>this.viewportBlocked());
     this.resize();
     window.addEventListener('resize', this.resize);
-    await this.setSkin(isOwned(progress.equipped) ? progress.equipped : 'jhony');
+    await this.setSkin(initialSkin.id,false,initialRig);
     try {
       this.chaserRigs = await Promise.all(Array.from({length:8},(_,i)=>i).map(async (i) => {
         const rig = await loadRunnerRig(`${BASE}assets/characters/rig-enemy.json`, `${BASE}assets/apk/texture-53-enemyTexture.webp`, { scale: .2, yOffset: 0, authoredSkeleton: true });
@@ -305,7 +309,8 @@ export class Game {
         if(!appendAhead)group.remove(old);group.add(tree);this.renderOnce();return{at,variant:typeof variant==='number'?variant+1:variant};
       },
       sceneryResources:()=>Object.entries(this.bundle.assets.sceneryTemplates??{}).map(([resource,object])=>({resource,loaded:Boolean(object)})),
-      previewScenery:(resource:string,side=10,ahead=22)=>{
+      previewScenery:async(resource:string,side=10,ahead=22)=>{
+        await this.bundle.assets.loadScenery?.(resource);
         const old=this.bundle.scene.getObjectByName('native-scenery-preview');if(old)this.bundle.scene.remove(old);
         const object=buildNativeScenery(this.bundle.assets,resource);if(!object)return null;
         const point=this.path.at(this.distance+ahead);
@@ -821,18 +826,8 @@ export class Game {
     this.showEntranceCamera();
   }
 
-  async setSkin(id: string, force = false): Promise<void> {
-    const skin = skinById(id);
-    if (!force && !isOwned(id)) return;
-    setSkin(id);
-    if(progress.equipped!==id){
-      progress.equipped = id;
-      saveProgress();
-    }
-    const token = ++this.rigToken;
-    mutateUi.runnerLoadStatus='loading';
-    try {
-      const rig = await loadRunnerRig(
+  private loadSkinRig(skin:SkinDef):ReturnType<typeof loadRunnerRig> {
+    return loadRunnerRig(
         `${BASE}assets/characters/rig-${skin.rig}.json`,
         `${BASE}assets/characters/${skin.texture}`,
         {
@@ -844,6 +839,20 @@ export class Game {
           clipFallbackUrl: DEFAULT_SKIN_URL,
         },
       );
+  }
+
+  async setSkin(id: string, force = false, prepared?:ReturnType<typeof loadRunnerRig>): Promise<void> {
+    const skin = skinById(id);
+    if (!force && !isOwned(id)) return;
+    setSkin(id);
+    if(progress.equipped!==id){
+      progress.equipped = id;
+      saveProgress();
+    }
+    const token = ++this.rigToken;
+    mutateUi.runnerLoadStatus='loading';
+    try {
+      const rig = await (prepared??this.loadSkinRig(skin));
       if (token !== this.rigToken || this.disposed) { rig.dispose(); return; }
       if (skin.id !== 'jhony') normalizeRigHeight(rig, 1.85);
       this.releaseRunnerRig();

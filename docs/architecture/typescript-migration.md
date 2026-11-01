@@ -16,3 +16,7 @@
 当前唯一JS豁免及SHA256见javascript-exemptions.json，`npm run temple:check:source`纳入总typecheck和CI；新增受跟踪JS会失败。构建产物不提交。Three.js第三方包模块后缀.js不改写。`npm run temple:browser:compile -- 输入.ts /tmp/输出.js`通过esbuild生成临时脚本，兼容CI的Node20；直接Node运行TS仅适用于支持类型擦除的较新Node。
 
 第二批验证：应用strict、工具全集typecheck、25组核心、骨骼滑铲动画测试、生产构建与8项实际音频/死亡/重开检查通过。
+
+第三批性能实现同样为TS；总检查已加源码白名单与衍生资源验证，核心套件扩至27组。根目录旧小羊入口也已通过生产构建。唯一legacy生产入口在真实浏览器加载无error。保留的JS文件完整路径与原因、SHA256由javascript-exemptions.json管理；原始证据JSON/Markdown中的历史代码文字与生成审计HTML不改写。
+
+审计页原本写在Python模板里的交互JS也抽为tools/game-audit-client.ts，生成HTML仅内嵌其esbuild产物；与entrance-search的内联模块一起纳入清单和typecheck。

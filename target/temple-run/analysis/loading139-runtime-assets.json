@@ -1,0 +1,3805 @@
+{
+  "pipelineVersion": 2,
+  "textures": [
+    {
+      "source": "assets/apk/leafTexture.webp",
+      "sourceSha256": "8d3e4d815a3ff2224cb174ca514fc8ed50682a524d07f6819f883af3e5f2ae2e",
+      "runtime": "assets/runtime/leafTexture.c025a1c999cb.webp",
+      "sourceBytes": 79752,
+      "runtimeBytes": 364552,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/apk/lightMapTexture.webp",
+      "sourceSha256": "5a2a6763a846805336857fbe2539b0963d39105ebe22b7cf25f24798757ae78d",
+      "runtime": "assets/runtime/lightMapTexture.8eec9335abe5.webp",
+      "sourceBytes": 1240568,
+      "runtimeBytes": 521092,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": false,
+      "rgbaRms": [
+        2.4809118160518886,
+        1.6693786808431785,
+        3.3038839891955196,
+        116.341901778327
+      ]
+    },
+    {
+      "source": "assets/apk/playerGlowTexture.webp",
+      "sourceSha256": "b1512af8ec50d21c6ce53de510d88be94a9e2195d751a305c463fc84d6005274",
+      "runtime": "assets/runtime/playerGlowTexture.2005e5936679.webp",
+      "sourceBytes": 71544,
+      "runtimeBytes": 71514,
+      "sourceSize": [
+        256,
+        256
+      ],
+      "runtimeSize": [
+        256,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/apk/terrainTexture.webp",
+      "sourceSha256": "a6ba6e3dac25ab3b9d77e71ab9e562eded07e31f21e27d0bc1b57d6e9152d3d5",
+      "runtime": "assets/runtime/terrainTexture.30e0712271d6.webp",
+      "sourceBytes": 36650,
+      "runtimeBytes": 36314,
+      "sourceSize": [
+        256,
+        256
+      ],
+      "runtimeSize": [
+        256,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/apk/texture-53-enemyTexture.webp",
+      "sourceSha256": "ba57ba802f272de0e4aaf6001c6f951ef71582fdfbd1cde7d257390fb0ad0261",
+      "runtime": "assets/runtime/texture-53-enemyTexture.5b49e2224074.webp",
+      "sourceBytes": 22700,
+      "runtimeBytes": 75868,
+      "sourceSize": [
+        256,
+        256
+      ],
+      "runtimeSize": [
+        256,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/apk/treeTexture.webp",
+      "sourceSha256": "de0c9f1704c34244015cc147a8cd342d1321ef206d23369c96e84b8b99c77932",
+      "runtime": "assets/runtime/treeTexture.751fe7ed381e.webp",
+      "sourceBytes": 456400,
+      "runtimeBytes": 145764,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": false,
+      "rgbaRms": [
+        2.915071614401582,
+        2.0988788700128285,
+        5.159395865034846,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/apk/wallTexture.webp",
+      "sourceSha256": "64bbc4bb9d1ca8f7210068e7b0eb76354acb3f6461f0613209cd1b673e6fb0e6",
+      "runtime": "assets/runtime/wallTexture.e330b1b8c10a.webp",
+      "sourceBytes": 478208,
+      "runtimeBytes": 156706,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": false,
+      "rgbaRms": [
+        3.8637808543231817,
+        2.4563977223788114,
+        6.313502166058873,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Frost_Pirate.png",
+      "sourceSha256": "1276bb60469571799a324377d915f9fdc64a6580b6c590ef0331f5dd692d0c4c",
+      "runtime": "assets/runtime/tex-Frost_Pirate.fe5f0a44ed55.webp",
+      "sourceBytes": 1120870,
+      "runtimeBytes": 634572,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Halloween_Werewolf.png",
+      "sourceSha256": "09b14446e975ee53bcf4429512cadbae7e4abf598af1ff8b0c1ede144b706ce5",
+      "runtime": "assets/runtime/tex-Halloween_Werewolf.724cc925f3e1.webp",
+      "sourceBytes": 837928,
+      "runtimeBytes": 497188,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Joker_Clown_Girl_Export01.png",
+      "sourceSha256": "f9c31b82532f436faf8c79f2881b2ba83faf5d07dc8b9a2e531c7daaf8eb9289",
+      "runtime": "assets/runtime/tex-Joker_Clown_Girl_Export01.bb0427e6e237.webp",
+      "sourceBytes": 766628,
+      "runtimeBytes": 419252,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-MysticMonk_Export01.png",
+      "sourceSha256": "ef53f15b53df907ea5399cd65890dd91948b449ddf8e22b4d8848c2064500a53",
+      "runtime": "assets/runtime/tex-MysticMonk_Export01.c186ed57be15.webp",
+      "sourceBytes": 616840,
+      "runtimeBytes": 363860,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Queen_astrid.png",
+      "sourceSha256": "6bc22a6a25eed6853cff9c625d8085150a8f58bc7f8ac7c9924913788d1b7dce",
+      "runtime": "assets/runtime/tex-Queen_astrid.315aa5fd3e7a.webp",
+      "sourceBytes": 1091888,
+      "runtimeBytes": 705242,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Scarecrow_Export01_-_Default.png",
+      "sourceSha256": "141b76376d20a3fdbe71ebc72fd44f1c103953204dd45022e28387efa49d6cf5",
+      "runtime": "assets/runtime/tex-Scarecrow_Export01_-_Default.00fc850cee77.webp",
+      "sourceBytes": 538289,
+      "runtimeBytes": 319550,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Sigur_Chronous_Timebeard.png",
+      "sourceSha256": "40d31a2b046771f56392d037bc1774678c53707e0478c470f02deb67c09c1e01",
+      "runtime": "assets/runtime/tex-Sigur_Chronous_Timebeard.198ea5b2a7fa.webp",
+      "sourceBytes": 2907678,
+      "runtimeBytes": 1596044,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "runtimeSize": [
+        2048,
+        2048
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Simone_Davies_Commodore_Export01.png",
+      "sourceSha256": "5789216bb236c52dcc4078e8291123eb385f578b407c7a03111430b07daca501",
+      "runtime": "assets/runtime/tex-Simone_Davies_Commodore_Export01.0775b748b1db.webp",
+      "sourceBytes": 663001,
+      "runtimeBytes": 378052,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-Wally_Nut.png",
+      "sourceSha256": "06f587e830d1026e204cba51029ec31c01222cb72d17058e40e49700a9676174",
+      "runtime": "assets/runtime/tex-Wally_Nut.77b027475374.webp",
+      "sourceBytes": 1241184,
+      "runtimeBytes": 679170,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "runtimeSize": [
+        2048,
+        2048
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-bb_Export1-01_-_Default.png",
+      "sourceSha256": "f2f9e0ba88ba6c1ccf11deaeb39038468f78d1f5634af364378af42206e05f9a",
+      "runtime": "assets/runtime/tex-bb_Export1-01_-_Default.6429f90c5a4a.webp",
+      "sourceBytes": 219834,
+      "runtimeBytes": 117592,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-china_Export1-01_-_Default.png",
+      "sourceSha256": "5c19a0d1c8d9dc7b85bebb93d2c8738837e9defc4516842616679bbe56a62722",
+      "runtime": "assets/runtime/tex-china_Export1-01_-_Default.766f2654945b.webp",
+      "sourceBytes": 201010,
+      "runtimeBytes": 118020,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-conquis_Export1-09_-_Default.png",
+      "sourceSha256": "4e0184eedb98b4eb8669a2026e007d93ac06b0d821f6932a10222dd067841170",
+      "runtime": "assets/runtime/tex-conquis_Export1-09_-_Default.6e2b61c1e58e.webp",
+      "sourceBytes": 288529,
+      "runtimeBytes": 146470,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-football_Export1-02_-_Default.png",
+      "sourceSha256": "02c26ac727843b51cfc1338b913c61df4a25285401a1a3165584060cfc03d82b",
+      "runtime": "assets/runtime/tex-football_Export1-02_-_Default.7677a8dba8a4.webp",
+      "sourceBytes": 265557,
+      "runtimeBytes": 145630,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-girl_Export1-01_-_Default.png",
+      "sourceSha256": "a6a44ec2bd44222447d099959f6fcfe7c5c67aa42ff1d3eb957c168ae56aad9d",
+      "runtime": "assets/runtime/tex-girl_Export1-01_-_Default.4a6093a5c7fb.webp",
+      "sourceBytes": 206080,
+      "runtimeBytes": 110916,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-indi_Export1-01_-_Default.png",
+      "sourceSha256": "3f7a26f41276b62fcf6c5276fc058b55570d05bb1addb6db6c4a37c25bebfad2",
+      "runtime": "assets/runtime/tex-indi_Export1-01_-_Default.a8d43da5aafc.webp",
+      "sourceBytes": 247390,
+      "runtimeBytes": 131134,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-orig_02___Default.png",
+      "sourceSha256": "bfe4e84543a393be30300ee162bd5685cbf07e4e65ffc10b408a77731669a0d6",
+      "runtime": "assets/runtime/tex-orig_02___Default.583b3d32272e.webp",
+      "sourceBytes": 86556,
+      "runtimeBytes": 46616,
+      "sourceSize": [
+        256,
+        256
+      ],
+      "runtimeSize": [
+        256,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-orig_default.png",
+      "sourceSha256": "48c5cdd2c39a0b78238bc24b6f22bfb2fee01811daf72399506d9ac570662c90",
+      "runtime": "assets/runtime/tex-orig_default.58c0756e7f2f.webp",
+      "sourceBytes": 74086,
+      "runtimeBytes": 43344,
+      "sourceSize": [
+        256,
+        256
+      ],
+      "runtimeSize": [
+        256,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-selene_astronaut.png",
+      "sourceSha256": "feb98bf555a3e5ae8bbb9b729e7de901f5202fe67b5b72bd8ef5f8fe9baeed97",
+      "runtime": "assets/runtime/tex-selene_astronaut.0912868bb689.webp",
+      "sourceBytes": 429445,
+      "runtimeBytes": 242418,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-werewolf.png",
+      "sourceSha256": "09b14446e975ee53bcf4429512cadbae7e4abf598af1ff8b0c1ede144b706ce5",
+      "runtime": "assets/runtime/tex-werewolf.724cc925f3e1.webp",
+      "sourceBytes": 837928,
+      "runtimeBytes": 497188,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/characters/tex-xixuegui.png",
+      "sourceSha256": "1a3a90c2a75cb24812ad8c062638c25a27d4de8314e784eb93ed715b3879dfdc",
+      "runtime": "assets/runtime/tex-xixuegui.9a16f6477a19.webp",
+      "sourceBytes": 528706,
+      "runtimeBytes": 294704,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/CharacterPortraits_spritesheet.png",
+      "sourceSha256": "393b78e217766f5c04bef10056c605bce94a86bd7ee133e6af6350ddf658da61",
+      "runtime": "assets/runtime/CharacterPortraits_spritesheet.d6845feb971d.webp",
+      "sourceBytes": 169165,
+      "runtimeBytes": 117182,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/EffectsTexture2x.png",
+      "sourceSha256": "a6b313130abab9e345eafd4ea064b613e3ce9edd453e36169c1006f71c7c3aa2",
+      "runtime": "assets/runtime/EffectsTexture2x.5ec33aa9127f.webp",
+      "sourceBytes": 976797,
+      "runtimeBytes": 391644,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": false,
+      "rgbaRms": [
+        2.6636470347660315,
+        1.4009179648016525,
+        2.665999527767337,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/EndGameButtons_new.png",
+      "sourceSha256": "cc594b6e8ced169d7836659b3c4ede801a7ef7b4d32b7e3fb6ecac7b0b4f5755",
+      "runtime": "assets/runtime/EndGameButtons_new.b2dcfff2f23c.webp",
+      "sourceBytes": 135015,
+      "runtimeBytes": 120810,
+      "sourceSize": [
+        512,
+        512
+      ],
+      "runtimeSize": [
+        512,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/FontAtlas2x.png",
+      "sourceSha256": "18a185fce8a42531f7c4160ad9b97f61270f861c29f583551c9a8384400e7807",
+      "runtime": "assets/runtime/FontAtlas2x.6e3b7006fbf5.webp",
+      "sourceBytes": 196641,
+      "runtimeBytes": 118228,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/GC_Atlas.png",
+      "sourceSha256": "fc45b4d000a2cc1dbd792ca026231ec409a860cd1e00b8a0317fbd0f411b30e1",
+      "runtime": "assets/runtime/GC_Atlas.671722378090.webp",
+      "sourceBytes": 344266,
+      "runtimeBytes": 225870,
+      "sourceSize": [
+        1024,
+        512
+      ],
+      "runtimeSize": [
+        1024,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/Idol_Localized.png",
+      "sourceSha256": "04f46ed10fbda613c73e3f74ac807337d670c238fa805a21945b63d234b5cb69",
+      "runtime": "assets/runtime/Idol_Localized.a0762a22a600.webp",
+      "sourceBytes": 698797,
+      "runtimeBytes": 449742,
+      "sourceSize": [
+        1024,
+        2048
+      ],
+      "runtimeSize": [
+        1024,
+        2048
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/InterfaceTexture2x.png",
+      "sourceSha256": "b4c593aeeb8548932b354e4e849b7504d2db2b4e327abb828a94dcfa2904ac15",
+      "runtime": "assets/runtime/InterfaceTexture2x.1b603972e23e.webp",
+      "sourceBytes": 804280,
+      "runtimeBytes": 582752,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/New_UI.png",
+      "sourceSha256": "61fef48d63fed3a1a2e8ad57f8064926453507e07a84b68827defa608c75af87",
+      "runtime": "assets/runtime/New_UI.c5c3573ecdd5.webp",
+      "sourceBytes": 340239,
+      "runtimeBytes": 247450,
+      "sourceSize": [
+        1024,
+        512
+      ],
+      "runtimeSize": [
+        1024,
+        512
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/Tutorial.png",
+      "sourceSha256": "fa49c0eb2588866461043d708bd56f851884778f865d62ee06eb051b29074a59",
+      "runtime": "assets/runtime/Tutorial.9a6540c69abb.webp",
+      "sourceBytes": 212145,
+      "runtimeBytes": 95204,
+      "sourceSize": [
+        1024,
+        1024
+      ],
+      "runtimeSize": [
+        1024,
+        1024
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/arrow-down.png",
+      "sourceSha256": "a076e276c92aa32024ecd6fb251da8f5e1e5d4430e91c33dd9e20c0d7307aff7",
+      "runtime": "assets/runtime/arrow-down.ed4e1c60fce3.webp",
+      "sourceBytes": 10236,
+      "runtimeBytes": 7566,
+      "sourceSize": [
+        113,
+        310
+      ],
+      "runtimeSize": [
+        113,
+        310
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/arrow-left.png",
+      "sourceSha256": "f8d1fb7c93fd9663743d77d7eb71c554f112bb0458298f91213eb01fa049348a",
+      "runtime": "assets/runtime/arrow-left.e12f51407f27.webp",
+      "sourceBytes": 3389,
+      "runtimeBytes": 2394,
+      "sourceSize": [
+        286,
+        70
+      ],
+      "runtimeSize": [
+        286,
+        70
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/arrow-right.png",
+      "sourceSha256": "8d6696fb57c2754aa528ef2d370b9c0396856cf7fb3bcab77354a610c5daa13f",
+      "runtime": "assets/runtime/arrow-right.e6df13274ab4.webp",
+      "sourceBytes": 2685,
+      "runtimeBytes": 1836,
+      "sourceSize": [
+        294,
+        66
+      ],
+      "runtimeSize": [
+        294,
+        66
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/arrow-up.png",
+      "sourceSha256": "3116a0e98abaac775e9169c66f56286aa9a0a3aac0b6d77fa1072ce1f3d66b53",
+      "runtime": "assets/runtime/arrow-up.02d362d0615d.webp",
+      "sourceBytes": 4152,
+      "runtimeBytes": 3934,
+      "sourceSize": [
+        89,
+        267
+      ],
+      "runtimeSize": [
+        89,
+        267
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-barry.png",
+      "sourceSha256": "3e68e6f41a58f20b37553dbba03d3ec54c18d0d45fd25ee1abc03b8770710f2f",
+      "runtime": "assets/runtime/avatar-barry.37bbed0612fd.webp",
+      "sourceBytes": 17074,
+      "runtimeBytes": 13044,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-conquistador.png",
+      "sourceSha256": "151c139f3e079aea6eff43368ac3718e98c546268c91a7cc973320982db6fd57",
+      "runtime": "assets/runtime/avatar-conquistador.29696d1fe0a3.webp",
+      "sourceBytes": 16907,
+      "runtimeBytes": 14676,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-ghost.png",
+      "sourceSha256": "3af41807388f3bae5bb190cc6670f0db12a81b9dabec17cdb6834158f76512f1",
+      "runtime": "assets/runtime/avatar-ghost.e447a031c76c.webp",
+      "sourceBytes": 16643,
+      "runtimeBytes": 13778,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-jhony.png",
+      "sourceSha256": "d4dece86a08b15c4142beb82e21beea4a1ea38bb56e14cf6b576c1e4de2da6d9",
+      "runtime": "assets/runtime/avatar-jhony.ca9f55d52f1a.webp",
+      "sourceBytes": 17323,
+      "runtimeBytes": 13060,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-karma.png",
+      "sourceSha256": "25659fa6dd574deb3c09ea34e61a5ec885fa62df1a90f642b212460d28cc631f",
+      "runtime": "assets/runtime/avatar-karma.ec4f62947a97.webp",
+      "sourceBytes": 16501,
+      "runtimeBytes": 13218,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-scarlett.png",
+      "sourceSha256": "2f1da0787b5d7f39f4b976c43888f8d9d61759f9d1073367c8d81b9ca44ccca2",
+      "runtime": "assets/runtime/avatar-scarlett.867568c8f1c5.webp",
+      "sourceBytes": 16198,
+      "runtimeBytes": 14314,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-selene.png",
+      "sourceSha256": "0305cfb7498b1b329b44fee679ccf5fd15862c1dc8e5ad8b1dc98241d9f129a1",
+      "runtime": "assets/runtime/avatar-selene.8bc859b4760e.webp",
+      "sourceBytes": 21314,
+      "runtimeBytes": 14782,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-skeleton.png",
+      "sourceSha256": "7c80777669aaf94ba493727507bc7894a01217ee935142e8b7551142c163cc48",
+      "runtime": "assets/runtime/avatar-skeleton.ff224124429d.webp",
+      "sourceBytes": 23874,
+      "runtimeBytes": 18712,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/avatar-werewolf.png",
+      "sourceSha256": "1f94dc59fe06be453150cb472a2c124564d1d5f66984ce3350e61aa1cd5d49e0",
+      "runtime": "assets/runtime/avatar-werewolf.f9cce8f9376c.webp",
+      "sourceBytes": 17293,
+      "runtimeBytes": 12874,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/bag.png",
+      "sourceSha256": "25db3568d79abebe2375d13490370cdb5c2ad503c9a757b01d55a6ab8a614708",
+      "runtime": "assets/runtime/bag.4c9aceb1921d.webp",
+      "sourceBytes": 81438,
+      "runtimeBytes": 60940,
+      "sourceSize": [
+        188,
+        278
+      ],
+      "runtimeSize": [
+        188,
+        278
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/bar-gold.png",
+      "sourceSha256": "37e0b51f15994038d0d3206fcb9166458b7f1ff84907b572623fe9361fb6a3de",
+      "runtime": "assets/runtime/bar-gold.783df52e8172.webp",
+      "sourceBytes": 22706,
+      "runtimeBytes": 16802,
+      "sourceSize": [
+        361,
+        31
+      ],
+      "runtimeSize": [
+        361,
+        31
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/bar-track.png",
+      "sourceSha256": "171dd4df837400940197451a208851646ceb26a42cd465a12a07d004a3dc474b",
+      "runtime": "assets/runtime/bar-track.21d8479fcb16.webp",
+      "sourceBytes": 3147,
+      "runtimeBytes": 2662,
+      "sourceSize": [
+        388,
+        50
+      ],
+      "runtimeSize": [
+        388,
+        50
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/coin-face.png",
+      "sourceSha256": "8c599c292bdeed29cb279e9c81e5f04d8da41fb3c39ff7de6242ab4821f1a402",
+      "runtime": "assets/runtime/coin-face.a6e321e78e1d.webp",
+      "sourceBytes": 78167,
+      "runtimeBytes": 56306,
+      "sourceSize": [
+        256,
+        256
+      ],
+      "runtimeSize": [
+        256,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/coin.png",
+      "sourceSha256": "10cfd3246b88cc957e7d952266d5985e6a704499f208a70c6037b5f355b19681",
+      "runtime": "assets/runtime/coin.994e21b02545.webp",
+      "sourceBytes": 6729,
+      "runtimeBytes": 5290,
+      "sourceSize": [
+        56,
+        56
+      ],
+      "runtimeSize": [
+        56,
+        56
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationBurnt@2x.png",
+      "sourceSha256": "5b9692a4c05539e5a67ab807d9b8f048a575f13199abc9b97f19e37b1081209e",
+      "runtime": "assets/runtime/deathIllustrationBurnt@2x.6f295548ee92.webp",
+      "sourceBytes": 86992,
+      "runtimeBytes": 54002,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationChinaFall@2x.png",
+      "sourceSha256": "32105b0121dc5b4908525ee75354052ec9e217a0996ec377e4b6ead9a07c70d5",
+      "runtime": "assets/runtime/deathIllustrationChinaFall@2x.cf088d2e318b.webp",
+      "sourceBytes": 81811,
+      "runtimeBytes": 50726,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationChinaSlide@2x.png",
+      "sourceSha256": "71ee9b6e4c918a353a96a242a86f55cf727beefe4f81891155fa410076b5be95",
+      "runtime": "assets/runtime/deathIllustrationChinaSlide@2x.bdedae132527.webp",
+      "sourceBytes": 64330,
+      "runtimeBytes": 40690,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationChinaTreeB@2x.png",
+      "sourceSha256": "9d17bf5a28bee545e301275a6f286f81b0bcf9d9f05fe739b8b5e277ae26788e",
+      "runtime": "assets/runtime/deathIllustrationChinaTreeB@2x.cc390ad965ec.webp",
+      "sourceBytes": 52281,
+      "runtimeBytes": 34072,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationChinaWater@2x.png",
+      "sourceSha256": "f9acaba0a7c5482c0b7ab17ed18e6d788952ed881827783b72d84de2385c7dae",
+      "runtime": "assets/runtime/deathIllustrationChinaWater@2x.cd079eb5fd5d.webp",
+      "sourceBytes": 74163,
+      "runtimeBytes": 46666,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationConqBurnt@2x.png",
+      "sourceSha256": "fc38780d934363b9464a385d1e668e492b13d7979d5c880a5131870a6f89baae",
+      "runtime": "assets/runtime/deathIllustrationConqBurnt@2x.93a047b58e4d.webp",
+      "sourceBytes": 72641,
+      "runtimeBytes": 47670,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationConqEaten@2x.png",
+      "sourceSha256": "a504d365ea6502144ea84c0d9dc4cb04e3191a859ad21fcc22c27cb504861284",
+      "runtime": "assets/runtime/deathIllustrationConqEaten@2x.bdb928c21501.webp",
+      "sourceBytes": 72246,
+      "runtimeBytes": 44388,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationConqFallB@2x.png",
+      "sourceSha256": "b3237e55085e0de87b4df264f0212f5cdad4b34a6a3c3a5173363279c502b269",
+      "runtime": "assets/runtime/deathIllustrationConqFallB@2x.40cbf4f4796b.webp",
+      "sourceBytes": 69889,
+      "runtimeBytes": 46548,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationConqSlide@2x.png",
+      "sourceSha256": "29a4fd428a6952815a8b6441a217830fe329da73d3eacda25e3215d6edf5cb1b",
+      "runtime": "assets/runtime/deathIllustrationConqSlide@2x.7ff09d88bc43.webp",
+      "sourceBytes": 63248,
+      "runtimeBytes": 41976,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationEaten@2x.png",
+      "sourceSha256": "e9a996f4760af5fefaa4a2713ecf47035b385bc57e7a4a7f98f8885fdaf3d9c2",
+      "runtime": "assets/runtime/deathIllustrationEaten@2x.9df255cb8e5c.webp",
+      "sourceBytes": 103544,
+      "runtimeBytes": 61256,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationEatenB@2x.png",
+      "sourceSha256": "3951354364dd10b9eb73e5b4ba0c5e0c357a456f660aebed244b263c6a287105",
+      "runtime": "assets/runtime/deathIllustrationEatenB@2x.0ac7510bd3bf.webp",
+      "sourceBytes": 73386,
+      "runtimeBytes": 46018,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationFallA@2x.png",
+      "sourceSha256": "a356d9a8f372b71ca05fe5440854b0f4ce1c0a762f3d90a9d23ea89b39cd4493",
+      "runtime": "assets/runtime/deathIllustrationFallA@2x.a767bf19f61d.webp",
+      "sourceBytes": 75918,
+      "runtimeBytes": 43642,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationGirlBurnt@2x.png",
+      "sourceSha256": "5d52f00ac8b6c474dddc0f9c209f26ac8674ebec2c4fc60ee2234e966c97612c",
+      "runtime": "assets/runtime/deathIllustrationGirlBurnt@2x.21c2e2204aaa.webp",
+      "sourceBytes": 87154,
+      "runtimeBytes": 58918,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationGirlFallB@2x.png",
+      "sourceSha256": "c502e011c6cde7ecd936f5cdc5c8a255fab12776532c49c0736bc485bf2560b1",
+      "runtime": "assets/runtime/deathIllustrationGirlFallB@2x.b12ebbef26a7.webp",
+      "sourceBytes": 57963,
+      "runtimeBytes": 34738,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationGirlSlide@2x.png",
+      "sourceSha256": "358a7870651b8370c30c3916ea255e194bf427ae6402c227ccff053529ecd42a",
+      "runtime": "assets/runtime/deathIllustrationGirlSlide@2x.b49ec5178a8b.webp",
+      "sourceBytes": 58533,
+      "runtimeBytes": 36382,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationGirlTree@2x.png",
+      "sourceSha256": "6f0814c78941c989b0610c861a7b5411d6ce055de8a516a1c5eb1afee2621b10",
+      "runtime": "assets/runtime/deathIllustrationGirlTree@2x.3258a41e9932.webp",
+      "sourceBytes": 106804,
+      "runtimeBytes": 67694,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationGirlWater@2x.png",
+      "sourceSha256": "d08de87f3de96944a3d6b4b6001d7ca36aa2d13f46eddcd8e4dbc0fc9c0fbf16",
+      "runtime": "assets/runtime/deathIllustrationGirlWater@2x.c3e22ad8e235.webp",
+      "sourceBytes": 91612,
+      "runtimeBytes": 58932,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationIndiEaten@2x.png",
+      "sourceSha256": "fbfb074e8fca207d943dbb5f8446818268a58d9e3895bdef59920dc73adce84b",
+      "runtime": "assets/runtime/deathIllustrationIndiEaten@2x.3d90566b5b19.webp",
+      "sourceBytes": 80835,
+      "runtimeBytes": 50184,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationIndiFall@2x.png",
+      "sourceSha256": "451ce13320b686ca4d314497e876a9c05222021418563116ee36533078a7fbf9",
+      "runtime": "assets/runtime/deathIllustrationIndiFall@2x.b7d9b6c5cfa6.webp",
+      "sourceBytes": 58038,
+      "runtimeBytes": 36612,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationIndiSlide@2x.png",
+      "sourceSha256": "2b19b9599007195feeb61823f9289f7add082dedce55a9a119f7d20d7598233d",
+      "runtime": "assets/runtime/deathIllustrationIndiSlide@2x.9851ac33292b.webp",
+      "sourceBytes": 65375,
+      "runtimeBytes": 43150,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationIndiTree@2x.png",
+      "sourceSha256": "77caff595ed9c5b58141d7398370d5877593004e3f4fbe65373a60d2c8d4e113",
+      "runtime": "assets/runtime/deathIllustrationIndiTree@2x.81d8f3751d26.webp",
+      "sourceBytes": 53870,
+      "runtimeBytes": 35676,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationIndiWater@2x.png",
+      "sourceSha256": "ea87accf987919ac74da7e1e3cc3a30637a790399ee1da4ea63b81c982f2054d",
+      "runtime": "assets/runtime/deathIllustrationIndiWater@2x.e138afb67e78.webp",
+      "sourceBytes": 88876,
+      "runtimeBytes": 58798,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationSlide@2x.png",
+      "sourceSha256": "2f0e420e56c9e1174fd2a5a6aee225bead84b7a6ff30ab65409268ecd40ea8d7",
+      "runtime": "assets/runtime/deathIllustrationSlide@2x.bb6099e75ff2.webp",
+      "sourceBytes": 87614,
+      "runtimeBytes": 56738,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationTree@2x.png",
+      "sourceSha256": "90c39d9cc566f41e74328a39fbb206d417f503640c8d39e26e92bd90181da8dc",
+      "runtime": "assets/runtime/deathIllustrationTree@2x.914b03066fca.webp",
+      "sourceBytes": 75766,
+      "runtimeBytes": 51228,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationWater@2x.png",
+      "sourceSha256": "c6c468a478a372ac57321b9839706365934dd4367df93bfcc3a963b8f39d8ba2",
+      "runtime": "assets/runtime/deathIllustrationWater@2x.c01a3f9438c3.webp",
+      "sourceBytes": 129885,
+      "runtimeBytes": 82392,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/deathIllustrationWaterB@2x.png",
+      "sourceSha256": "c95f19f2f5d8bb2495f3cd57006e97c71a456e90c3d06ee21efd75c1d62a6360",
+      "runtime": "assets/runtime/deathIllustrationWaterB@2x.e6cbed11a5fc.webp",
+      "sourceBytes": 57410,
+      "runtimeBytes": 36376,
+      "sourceSize": [
+        512,
+        256
+      ],
+      "runtimeSize": [
+        512,
+        256
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/egUI_Buttons2x.png",
+      "sourceSha256": "5014cad2f261f8bf758064bfedd9bc46c8d21a7b64af161ab8010411cdd6f1d8",
+      "runtime": "assets/runtime/egUI_Buttons2x.598e650c56e5.webp",
+      "sourceBytes": 3596640,
+      "runtimeBytes": 2531556,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "runtimeSize": [
+        2048,
+        2048
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/egUI_Buttons2x_previous.png",
+      "sourceSha256": "0025d89268e0b74b536d3a8bb9674373cb57f871ff3fd531e59fe2f54b77281a",
+      "runtime": "assets/runtime/egUI_Buttons2x_previous.ef97d5c96921.webp",
+      "sourceBytes": 2341627,
+      "runtimeBytes": 1453482,
+      "sourceSize": [
+        2048,
+        2048
+      ],
+      "runtimeSize": [
+        2048,
+        2048
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/fx-dust.png",
+      "sourceSha256": "75181e867ce500ce2334391276bc6aa183acac4966d50b6e0c6a88fe15e836e0",
+      "runtime": "assets/runtime/fx-dust.119ade4d9d31.webp",
+      "sourceBytes": 3850,
+      "runtimeBytes": 3082,
+      "sourceSize": [
+        45,
+        47
+      ],
+      "runtimeSize": [
+        45,
+        47
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/fx-ember.png",
+      "sourceSha256": "20ec3ff2269328eff27afbb8a59f0bc849fba36b506bba0aa8be4883b6351d80",
+      "runtime": "assets/runtime/fx-ember.6697391b6f36.webp",
+      "sourceBytes": 3800,
+      "runtimeBytes": 3008,
+      "sourceSize": [
+        56,
+        52
+      ],
+      "runtimeSize": [
+        56,
+        52
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/fx-flame.png",
+      "sourceSha256": "1659a96b8d1590541be5b6abe7bc4574657a5d78de7928cbafa052dc5e51f523",
+      "runtime": "assets/runtime/fx-flame.8139c1306189.webp",
+      "sourceBytes": 11757,
+      "runtimeBytes": 9288,
+      "sourceSize": [
+        130,
+        63
+      ],
+      "runtimeSize": [
+        130,
+        63
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/fx-spark.png",
+      "sourceSha256": "b793f2f202e1de289b2edb664ed30ec4084d94cfbc4da575f3c00e9076dea933",
+      "runtime": "assets/runtime/fx-spark.ed97237b1f5c.webp",
+      "sourceBytes": 2307,
+      "runtimeBytes": 1644,
+      "sourceSize": [
+        53,
+        53
+      ],
+      "runtimeSize": [
+        53,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/fx-sparkle.png",
+      "sourceSha256": "7e188e8f3dc43dbacbcefab39603df481e0b83348248ec62ba9e02d5046d5685",
+      "runtime": "assets/runtime/fx-sparkle.6a410779bbcc.webp",
+      "sourceBytes": 2429,
+      "runtimeBytes": 1860,
+      "sourceSize": [
+        53,
+        53
+      ],
+      "runtimeSize": [
+        53,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/fx-wings.png",
+      "sourceSha256": "eee9d838ed4fa2ffd09746470b5a27aeb0fb3f7d8528539e63bca465bfe51f85",
+      "runtime": "assets/runtime/fx-wings.e26da99c8882.webp",
+      "sourceBytes": 12308,
+      "runtimeBytes": 8262,
+      "sourceSize": [
+        133,
+        67
+      ],
+      "runtimeSize": [
+        133,
+        67
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/gem.png",
+      "sourceSha256": "80820ece75f20a8e950c8ef011bbe89d993777c9f6ff15a9fe0ef8c02d8653b4",
+      "runtime": "assets/runtime/gem.44352ba9b1ed.webp",
+      "sourceBytes": 2920,
+      "runtimeBytes": 1828,
+      "sourceSize": [
+        46,
+        46
+      ],
+      "runtimeSize": [
+        46,
+        46
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/highscore.png",
+      "sourceSha256": "5232561449d9eec7c0a8f994f6125217e15e722159499c9d42a4d5b840135759",
+      "runtime": "assets/runtime/highscore.e1c97629cce4.webp",
+      "sourceBytes": 6943,
+      "runtimeBytes": 3538,
+      "sourceSize": [
+        291,
+        53
+      ],
+      "runtimeSize": [
+        291,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/hud-coin.png",
+      "sourceSha256": "6ccfd6c518004f7ca9a8bc64d6abacf9722f2272bc95cdda6bfce4dee5ccef0e",
+      "runtime": "assets/runtime/hud-coin.e896abdb9624.webp",
+      "sourceBytes": 4059,
+      "runtimeBytes": 2904,
+      "sourceSize": [
+        55,
+        61
+      ],
+      "runtimeSize": [
+        55,
+        61
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/hud-left.png",
+      "sourceSha256": "4c5216416efbb16c756f556adf2df459f0a87f9ab1dbcec8481df40c3fef4a01",
+      "runtime": "assets/runtime/hud-left.1a6e5c604145.webp",
+      "sourceBytes": 159367,
+      "runtimeBytes": 118202,
+      "sourceSize": [
+        193,
+        662
+      ],
+      "runtimeSize": [
+        193,
+        662
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/hud-milestone.png",
+      "sourceSha256": "ecb2bdf817e01292ba129e958c25aaaab61a460aec20e0bd21a47b4be9a86bff",
+      "runtime": "assets/runtime/hud-milestone.f90123491196.webp",
+      "sourceBytes": 98369,
+      "runtimeBytes": 72814,
+      "sourceSize": [
+        297,
+        280
+      ],
+      "runtimeSize": [
+        297,
+        280
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/hud-pause.png",
+      "sourceSha256": "3046607139d0d6be63c3100235b17b0ebb6ccc373f6d6aa356dec9b5bc675f72",
+      "runtime": "assets/runtime/hud-pause.53d913e62ee9.webp",
+      "sourceBytes": 523,
+      "runtimeBytes": 346,
+      "sourceSize": [
+        40,
+        44
+      ],
+      "runtimeSize": [
+        40,
+        44
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/hud-right.png",
+      "sourceSha256": "a02be9cfe17fb0b0cd9e803d1da8e4b07065343f1efbbb491ccadce0be57d5d0",
+      "runtime": "assets/runtime/hud-right.2cf7b2fb567d.webp",
+      "sourceBytes": 64763,
+      "runtimeBytes": 47378,
+      "sourceSize": [
+        129,
+        328
+      ],
+      "runtimeSize": [
+        129,
+        328
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/hud-score.png",
+      "sourceSha256": "ebc0304411873609cd1d5d560fc5f736b89a584e63aca1f378d2e3aba4f145f6",
+      "runtime": "assets/runtime/hud-score.80e570d84c1a.webp",
+      "sourceBytes": 33910,
+      "runtimeBytes": 27944,
+      "sourceSize": [
+        271,
+        67
+      ],
+      "runtimeSize": [
+        271,
+        67
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/hud-vines.png",
+      "sourceSha256": "d70c7696f29b63b0d96eed1cdfb941102f4ec3b2cfc5ad4ff9af35e01d07d3a3",
+      "runtime": "assets/runtime/hud-vines.4716ce0ba52d.webp",
+      "sourceBytes": 114658,
+      "runtimeBytes": 82762,
+      "sourceSize": [
+        673,
+        227
+      ],
+      "runtimeSize": [
+        673,
+        227
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/logo.png",
+      "sourceSha256": "9987ae8dd0130d00fcef14e77b9ab889f7787a69ef7e488d932525242b7f8bb8",
+      "runtime": "assets/runtime/logo.6743c011ae25.webp",
+      "sourceBytes": 210861,
+      "runtimeBytes": 158104,
+      "sourceSize": [
+        634,
+        220
+      ],
+      "runtimeSize": [
+        634,
+        220
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/mult-pill.png",
+      "sourceSha256": "5f2a5f8c376612855122bbf48203169a8190c0a5d3b06aa249963190026007cf",
+      "runtime": "assets/runtime/mult-pill.7803fe028b51.webp",
+      "sourceBytes": 9007,
+      "runtimeBytes": 7246,
+      "sourceSize": [
+        228,
+        87
+      ],
+      "runtimeSize": [
+        228,
+        87
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/native-flame-preview.png",
+      "sourceSha256": "44af3fc0454620162a90c637748df5f409bc1ff769517da16d9cb4bb7f90a43d",
+      "runtime": "assets/runtime/native-flame-preview.40f454659c26.webp",
+      "sourceBytes": 12862,
+      "runtimeBytes": 9684,
+      "sourceSize": [
+        128,
+        67
+      ],
+      "runtimeSize": [
+        128,
+        67
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/native-pickup-bonus.png",
+      "sourceSha256": "f6a316ff648bde9efef12fd67fb6f2a4c79165c6fbd91b835eb4ad236dd7417b",
+      "runtime": "assets/runtime/native-pickup-bonus.6cb1259e6bed.webp",
+      "sourceBytes": 18015,
+      "runtimeBytes": 11824,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/native-pickup-boost.png",
+      "sourceSha256": "e46e77f684f53a6ee69256feaddf862f2a090fc079fb2363a99581ee2b82d4f3",
+      "runtime": "assets/runtime/native-pickup-boost.becd8e67efae.webp",
+      "sourceBytes": 16638,
+      "runtimeBytes": 11448,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/native-pickup-magnet.png",
+      "sourceSha256": "4e03a70bb03df02a53701911f1e833ae9266434c810a039d463dcb61bc4ae37a",
+      "runtime": "assets/runtime/native-pickup-magnet.e9866653fb9f.webp",
+      "sourceBytes": 14674,
+      "runtimeBytes": 9332,
+      "sourceSize": [
+        160,
+        160
+      ],
+      "runtimeSize": [
+        160,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/native-pickup-shield.png",
+      "sourceSha256": "89bbb425e07e89c5546bd1a5196dc946bcaca1ce625d38035200ca0c4f3d5d5a",
+      "runtime": "assets/runtime/native-pickup-shield.65bbce97187f.webp",
+      "sourceBytes": 9916,
+      "runtimeBytes": 6134,
+      "sourceSize": [
+        154,
+        160
+      ],
+      "runtimeSize": [
+        154,
+        160
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/nicejob.png",
+      "sourceSha256": "00485224a25e83b7a5d4ae5a7e88c7b2374f1320c1de3f89590d59e692c58eaf",
+      "runtime": "assets/runtime/nicejob.1e88d8826f7c.webp",
+      "sourceBytes": 5506,
+      "runtimeBytes": 2938,
+      "sourceSize": [
+        239,
+        58
+      ],
+      "runtimeSize": [
+        239,
+        58
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/paused.png",
+      "sourceSha256": "0f02a3db1d28cd993496336f665462165f8d0eda77379a252a9912cbd5a1e73a",
+      "runtime": "assets/runtime/paused.bb7d9b454d8a.webp",
+      "sourceBytes": 28364,
+      "runtimeBytes": 22510,
+      "sourceSize": [
+        295,
+        80
+      ],
+      "runtimeSize": [
+        295,
+        80
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/play-btn.png",
+      "sourceSha256": "71ef8d587f1c2184eb08d354df67410367e066e614e075598a5b423b8dbeab09",
+      "runtime": "assets/runtime/play-btn.4eeb0538bbe0.webp",
+      "sourceBytes": 16100,
+      "runtimeBytes": 6848,
+      "sourceSize": [
+        199,
+        92
+      ],
+      "runtimeSize": [
+        199,
+        92
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/play.png",
+      "sourceSha256": "4cf86e0be3e85f97cd5f1e8355f042a0336e91a7138ca7010f74e70576ddc049",
+      "runtime": "assets/runtime/play.a357c9557bc3.webp",
+      "sourceBytes": 24550,
+      "runtimeBytes": 10702,
+      "sourceSize": [
+        240,
+        135
+      ],
+      "runtimeSize": [
+        240,
+        135
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/pw-bonus.png",
+      "sourceSha256": "de73c338177967ccbafa73369c0b22810e1d8a6baa49baf1ec56bbb65067b200",
+      "runtime": "assets/runtime/pw-bonus.24fb396e7a50.webp",
+      "sourceBytes": 23304,
+      "runtimeBytes": 18344,
+      "sourceSize": [
+        136,
+        120
+      ],
+      "runtimeSize": [
+        136,
+        120
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/pw-boost.png",
+      "sourceSha256": "fefad073595fdd03b22a049cc78f63f55f376ea4f3d454845a53f19b41bac302",
+      "runtime": "assets/runtime/pw-boost.08c4d8aabecf.webp",
+      "sourceBytes": 5787,
+      "runtimeBytes": 2408,
+      "sourceSize": [
+        120,
+        94
+      ],
+      "runtimeSize": [
+        120,
+        94
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/pw-wings.png",
+      "sourceSha256": "0a129df47554474fc086bc3a452417f4c053378b76dc27029d3ddfffdb7de282",
+      "runtime": "assets/runtime/pw-wings.e72a9784b137.webp",
+      "sourceBytes": 5821,
+      "runtimeBytes": 4872,
+      "sourceSize": [
+        106,
+        78
+      ],
+      "runtimeSize": [
+        106,
+        78
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/qr-lan.png",
+      "sourceSha256": "4da2b203d096d523ee2105ef74ee003268cc624234df2217d3c9c403f682d1f2",
+      "runtime": "assets/runtime/qr-lan.0c0e0d7d93b4.webp",
+      "sourceBytes": 2172,
+      "runtimeBytes": 252,
+      "sourceSize": [
+        464,
+        464
+      ],
+      "runtimeSize": [
+        464,
+        464
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-0.png",
+      "sourceSha256": "1f701c8a22ce17df71c883175f1fd9842f4b0d9d99fef9cb73f9f94190236f14",
+      "runtime": "assets/runtime/result-0.bf907d1aaaa8.webp",
+      "sourceBytes": 876,
+      "runtimeBytes": 466,
+      "sourceSize": [
+        33,
+        43
+      ],
+      "runtimeSize": [
+        33,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-1.png",
+      "sourceSha256": "467860371a3d662d8d2cc1f93363d125912e10c203a1ba26c3d2aa27a8745b13",
+      "runtime": "assets/runtime/result-1.35315f3d44bd.webp",
+      "sourceBytes": 399,
+      "runtimeBytes": 254,
+      "sourceSize": [
+        21,
+        43
+      ],
+      "runtimeSize": [
+        21,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-2.png",
+      "sourceSha256": "1cea84b9313852712365d8f20b8834004b25157fba52eba97fc3571240330bfd",
+      "runtime": "assets/runtime/result-2.1a5857170620.webp",
+      "sourceBytes": 846,
+      "runtimeBytes": 450,
+      "sourceSize": [
+        26,
+        43
+      ],
+      "runtimeSize": [
+        26,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-3.png",
+      "sourceSha256": "10ac732302569fb1921eeecd4a3c6f66255f16027de3659cc4b22473c5b77324",
+      "runtime": "assets/runtime/result-3.62b18ba12ef1.webp",
+      "sourceBytes": 892,
+      "runtimeBytes": 460,
+      "sourceSize": [
+        27,
+        43
+      ],
+      "runtimeSize": [
+        27,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-4.png",
+      "sourceSha256": "b9ec60fe44710729e48ed2be678642f58cb91951f3bcd7ab37abc010df2ec1a1",
+      "runtime": "assets/runtime/result-4.e5c24626ff07.webp",
+      "sourceBytes": 795,
+      "runtimeBytes": 410,
+      "sourceSize": [
+        30,
+        42
+      ],
+      "runtimeSize": [
+        30,
+        42
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-5.png",
+      "sourceSha256": "1376be0d9122e1f7a96ea172f18e57a06452cf838eda528dc30759215aa67b77",
+      "runtime": "assets/runtime/result-5.8ecc6a441fc0.webp",
+      "sourceBytes": 876,
+      "runtimeBytes": 458,
+      "sourceSize": [
+        29,
+        44
+      ],
+      "runtimeSize": [
+        29,
+        44
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-6.png",
+      "sourceSha256": "5a9a6b9b34427cdf5a558e1ad240aabfef9d1194fcbf2598a9c7e2f726956273",
+      "runtime": "assets/runtime/result-6.8932ff469a70.webp",
+      "sourceBytes": 962,
+      "runtimeBytes": 494,
+      "sourceSize": [
+        31,
+        43
+      ],
+      "runtimeSize": [
+        31,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-7.png",
+      "sourceSha256": "f4cd373711aa7cd33b44cd6a3bd1604b124162e4b9030a446267eb531f5a29af",
+      "runtime": "assets/runtime/result-7.54806a27212c.webp",
+      "sourceBytes": 674,
+      "runtimeBytes": 354,
+      "sourceSize": [
+        26,
+        43
+      ],
+      "runtimeSize": [
+        26,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-8.png",
+      "sourceSha256": "65d49d42fc7778ea980b52707b967be2b0079aa9a016f35b397aca2cf2ab18e8",
+      "runtime": "assets/runtime/result-8.eabd6c62f9bc.webp",
+      "sourceBytes": 901,
+      "runtimeBytes": 482,
+      "sourceSize": [
+        28,
+        43
+      ],
+      "runtimeSize": [
+        28,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-9.png",
+      "sourceSha256": "85a1f77a8c3296d0a5a11335fcab5a7ead5960cb49bb77a939fd570da361e17c",
+      "runtime": "assets/runtime/result-9.70784e646620.webp",
+      "sourceBytes": 966,
+      "runtimeBytes": 492,
+      "sourceSize": [
+        31,
+        43
+      ],
+      "runtimeSize": [
+        31,
+        43
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-comma.png",
+      "sourceSha256": "5a41a058c774df65365513300209bd8882a4ab29e9c47fec758394919a22124b",
+      "runtime": "assets/runtime/result-comma.27db67aabd0e.webp",
+      "sourceBytes": 260,
+      "runtimeBytes": 136,
+      "sourceSize": [
+        10,
+        16
+      ],
+      "runtimeSize": [
+        10,
+        16
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-header-left.png",
+      "sourceSha256": "1fd388b77bfc2d9834338c89f01c6556a1c4713e58a9a9fb681fc2ae32d3c7b1",
+      "runtime": "assets/runtime/result-header-left.056d460a3dc0.webp",
+      "sourceBytes": 13890,
+      "runtimeBytes": 9646,
+      "sourceSize": [
+        120,
+        135
+      ],
+      "runtimeSize": [
+        120,
+        135
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-header-right.png",
+      "sourceSha256": "d716f1bf6df35d4b631be32f960a6e4fb0bd32d8762198c76bbda576f5cb839c",
+      "runtime": "assets/runtime/result-header-right.a75dfc4025b2.webp",
+      "sourceBytes": 14013,
+      "runtimeBytes": 9710,
+      "sourceSize": [
+        120,
+        135
+      ],
+      "runtimeSize": [
+        120,
+        135
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-paper-bottom.png",
+      "sourceSha256": "0e70561ec508a6fbe0c9ba50af093ec597e52ff6b9eece020950136d59810c37",
+      "runtime": "assets/runtime/result-paper-bottom.af8bf48788d5.webp",
+      "sourceBytes": 478310,
+      "runtimeBytes": 323510,
+      "sourceSize": [
+        490,
+        534
+      ],
+      "runtimeSize": [
+        490,
+        534
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-paper-tile.png",
+      "sourceSha256": "0c884b565b67c9b5b0ecde8cff40a188f98d4cdd616a1a6db3cf4a89902f5670",
+      "runtime": "assets/runtime/result-paper-tile.f1cc43df787d.webp",
+      "sourceBytes": 362022,
+      "runtimeBytes": 250010,
+      "sourceSize": [
+        490,
+        400
+      ],
+      "runtimeSize": [
+        490,
+        400
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/result-ribbon-wide.png",
+      "sourceSha256": "ec19a3a702776e56207a896cfcd16b5511cd353cc43d378ccba3d1ca1b447647",
+      "runtime": "assets/runtime/result-ribbon-wide.f13f7d6fc353.webp",
+      "sourceBytes": 47059,
+      "runtimeBytes": 29880,
+      "sourceSize": [
+        535,
+        118
+      ],
+      "runtimeSize": [
+        535,
+        118
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-0.png",
+      "sourceSha256": "71f27e4c107062be451f7675563dbf4bad4b38b8041484a8343c51d88fb39652",
+      "runtime": "assets/runtime/score-0.cff4b5df94f9.webp",
+      "sourceBytes": 3716,
+      "runtimeBytes": 3926,
+      "sourceSize": [
+        37,
+        48
+      ],
+      "runtimeSize": [
+        37,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-1.png",
+      "sourceSha256": "48535e49950ae13b497c7e1b8f59308ce2b84330c9513d27486b7950e1c96b95",
+      "runtime": "assets/runtime/score-1.bbb6abfcb279.webp",
+      "sourceBytes": 1624,
+      "runtimeBytes": 1356,
+      "sourceSize": [
+        25,
+        48
+      ],
+      "runtimeSize": [
+        25,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-2.png",
+      "sourceSha256": "38406819d39fd43dbaf7e2e2eec8f658144e0595d9daa0459547896b60a5c236",
+      "runtime": "assets/runtime/score-2.69699133233e.webp",
+      "sourceBytes": 4010,
+      "runtimeBytes": 3872,
+      "sourceSize": [
+        36,
+        48
+      ],
+      "runtimeSize": [
+        36,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-3.png",
+      "sourceSha256": "74df94bdaf1f55732c41cbf5e6ef0d17b5897656921c4df2a5881daf3cd267d1",
+      "runtime": "assets/runtime/score-3.03a59153d813.webp",
+      "sourceBytes": 3688,
+      "runtimeBytes": 3594,
+      "sourceSize": [
+        32,
+        48
+      ],
+      "runtimeSize": [
+        32,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-4.png",
+      "sourceSha256": "ef8cc9497c5647ca2b29bde869e29ec759959c144af606c011aa248f16918bf1",
+      "runtime": "assets/runtime/score-4.6be10946051b.webp",
+      "sourceBytes": 4000,
+      "runtimeBytes": 4122,
+      "sourceSize": [
+        43,
+        48
+      ],
+      "runtimeSize": [
+        43,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-5.png",
+      "sourceSha256": "b67ff17f57e3402417bcd7ba5ddf7a87c5f0e22ba0be5e97e304ea543106338a",
+      "runtime": "assets/runtime/score-5.28306f2e8895.webp",
+      "sourceBytes": 3502,
+      "runtimeBytes": 3508,
+      "sourceSize": [
+        31,
+        48
+      ],
+      "runtimeSize": [
+        31,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-6.png",
+      "sourceSha256": "6f1e126324c3a2533114f101f614f641ae7282090b9471594eb869fa9ab6227a",
+      "runtime": "assets/runtime/score-6.e20e12182ffa.webp",
+      "sourceBytes": 3899,
+      "runtimeBytes": 3888,
+      "sourceSize": [
+        34,
+        48
+      ],
+      "runtimeSize": [
+        34,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-7.png",
+      "sourceSha256": "e2c31b7049bae30d5bca094f806eb5b1ea78d3dc1ba31af3e15ff0d5f8a28d86",
+      "runtime": "assets/runtime/score-7.2aaae1275ad3.webp",
+      "sourceBytes": 3450,
+      "runtimeBytes": 2548,
+      "sourceSize": [
+        36,
+        48
+      ],
+      "runtimeSize": [
+        36,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-8.png",
+      "sourceSha256": "dc31f47dc0575fdfcce16280d76976553c39b23b7aaeb54cd42b856215facad6",
+      "runtime": "assets/runtime/score-8.0d79e3285b31.webp",
+      "sourceBytes": 3791,
+      "runtimeBytes": 3684,
+      "sourceSize": [
+        31,
+        48
+      ],
+      "runtimeSize": [
+        31,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-9.png",
+      "sourceSha256": "46136d53fbde49cfcdad74d38e09f6942c51d694c68f772e175075dffdd1abde",
+      "runtime": "assets/runtime/score-9.91f34d657abb.webp",
+      "sourceBytes": 3924,
+      "runtimeBytes": 3888,
+      "sourceSize": [
+        34,
+        48
+      ],
+      "runtimeSize": [
+        34,
+        48
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-0.png",
+      "sourceSha256": "a49c0da31f6e0e4f6e0e7fc63c4c8e3fca27de1a41c35457c6f2f355c4f85cf8",
+      "runtime": "assets/runtime/score-arty-0.846de876eecb.webp",
+      "sourceBytes": 3316,
+      "runtimeBytes": 3166,
+      "sourceSize": [
+        43,
+        53
+      ],
+      "runtimeSize": [
+        43,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-1.png",
+      "sourceSha256": "900c8425eccdc6a66612ddbfff79f665a703bbfc75ce437d820c3151f3f0da0d",
+      "runtime": "assets/runtime/score-arty-1.a1862324dec1.webp",
+      "sourceBytes": 1641,
+      "runtimeBytes": 1274,
+      "sourceSize": [
+        31,
+        53
+      ],
+      "runtimeSize": [
+        31,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-2.png",
+      "sourceSha256": "778d4a2dd42d32f49ef2f32ad58a1473598ee07a97cab5b72406c8f0ab609a4b",
+      "runtime": "assets/runtime/score-arty-2.9f09f845aae0.webp",
+      "sourceBytes": 3150,
+      "runtimeBytes": 2934,
+      "sourceSize": [
+        36,
+        53
+      ],
+      "runtimeSize": [
+        36,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-3.png",
+      "sourceSha256": "2f0a5fddac4fdc5a5974bac15ed9fb19ee764118cdccf2eec27f3864166cc48e",
+      "runtime": "assets/runtime/score-arty-3.891d238171ad.webp",
+      "sourceBytes": 3237,
+      "runtimeBytes": 3028,
+      "sourceSize": [
+        37,
+        53
+      ],
+      "runtimeSize": [
+        37,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-4.png",
+      "sourceSha256": "95da60c1f8f8611917f976cb747c8ae54134e22efc3aa941cb1126b7c9218b04",
+      "runtime": "assets/runtime/score-arty-4.45ccd30dcc3c.webp",
+      "sourceBytes": 2858,
+      "runtimeBytes": 2712,
+      "sourceSize": [
+        40,
+        52
+      ],
+      "runtimeSize": [
+        40,
+        52
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-5.png",
+      "sourceSha256": "1df7ed5da4f9122758aab4e3a4da0dae32474ecf3830dc39cad5512646e05038",
+      "runtime": "assets/runtime/score-arty-5.4400dc3c36cb.webp",
+      "sourceBytes": 3283,
+      "runtimeBytes": 3084,
+      "sourceSize": [
+        39,
+        54
+      ],
+      "runtimeSize": [
+        39,
+        54
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-6.png",
+      "sourceSha256": "214f1b32fe232f794765b19a35f6f8a33e46c882c4f13fc224974fd80bd332d9",
+      "runtime": "assets/runtime/score-arty-6.912747d2985c.webp",
+      "sourceBytes": 3478,
+      "runtimeBytes": 3202,
+      "sourceSize": [
+        41,
+        53
+      ],
+      "runtimeSize": [
+        41,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-7.png",
+      "sourceSha256": "05f4854987d3f04d327560ad809cc8985eda5350f86bbd917b69dfb83d657f29",
+      "runtime": "assets/runtime/score-arty-7.2f03659bd6dc.webp",
+      "sourceBytes": 2559,
+      "runtimeBytes": 2340,
+      "sourceSize": [
+        36,
+        53
+      ],
+      "runtimeSize": [
+        36,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-8.png",
+      "sourceSha256": "61873afe2b3f1a38452c85d970f28f38083a1fd986dc074a7e7a83f21d036e58",
+      "runtime": "assets/runtime/score-arty-8.988946e6f0f4.webp",
+      "sourceBytes": 3359,
+      "runtimeBytes": 3110,
+      "sourceSize": [
+        38,
+        53
+      ],
+      "runtimeSize": [
+        38,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-arty-9.png",
+      "sourceSha256": "7158160ecceffb43b494f584ed6c575405ecf9549d973f6f961267573861ec6f",
+      "runtime": "assets/runtime/score-arty-9.096ef421273e.webp",
+      "sourceBytes": 3465,
+      "runtimeBytes": 3236,
+      "sourceSize": [
+        41,
+        53
+      ],
+      "runtimeSize": [
+        41,
+        53
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/score-word.png",
+      "sourceSha256": "f9838eeddfd6099dbdd9c2bf70b093c392a4a6814b35bc270e9b902b042c8cfe",
+      "runtime": "assets/runtime/score-word.6274ed2e7fab.webp",
+      "sourceBytes": 37272,
+      "runtimeBytes": 29660,
+      "sourceSize": [
+        344,
+        90
+      ],
+      "runtimeSize": [
+        344,
+        90
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/scroll-objectives.png",
+      "sourceSha256": "931d763ac2315412d194d80c5a68f80a599365c01086c75eb27760b6ea5513c4",
+      "runtime": "assets/runtime/scroll-objectives.d1dbccd1b388.webp",
+      "sourceBytes": 103482,
+      "runtimeBytes": 68962,
+      "sourceSize": [
+        241,
+        294
+      ],
+      "runtimeSize": [
+        241,
+        294
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/scroll-store.png",
+      "sourceSha256": "e3e6a5d0c105a25621b8652dee016dec6668b4d3ff97d6ff560d17944c3d3e01",
+      "runtime": "assets/runtime/scroll-store.87af2b9aecf0.webp",
+      "sourceBytes": 95415,
+      "runtimeBytes": 63806,
+      "sourceSize": [
+        243,
+        294
+      ],
+      "runtimeSize": [
+        243,
+        294
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/tryagain.png",
+      "sourceSha256": "755b9709bf86207d3f940d5c1409b0c32e0ecc733c2555ffd2a6f60baa1a1a91",
+      "runtime": "assets/runtime/tryagain.44ed56c928a7.webp",
+      "sourceBytes": 7250,
+      "runtimeBytes": 3956,
+      "sourceSize": [
+        294,
+        57
+      ],
+      "runtimeSize": [
+        294,
+        57
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/tut-jump.png",
+      "sourceSha256": "ea9d5fd3e2e99b621437dfae17e502b94c71816da9abcf3b49fd7c1edfa60c02",
+      "runtime": "assets/runtime/tut-jump.51985c075925.webp",
+      "sourceBytes": 28852,
+      "runtimeBytes": 15906,
+      "sourceSize": [
+        300,
+        363
+      ],
+      "runtimeSize": [
+        300,
+        363
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/tut-meter.png",
+      "sourceSha256": "9b552f994b040530a9fe008e3af79d207f5d4c107d1392ec932c70e31bf94dbd",
+      "runtime": "assets/runtime/tut-meter.6ea3fe4f269e.webp",
+      "sourceBytes": 21989,
+      "runtimeBytes": 12116,
+      "sourceSize": [
+        387,
+        205
+      ],
+      "runtimeSize": [
+        387,
+        205
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/tut-ready.png",
+      "sourceSha256": "0e323f2aa85522713c12d11e017ebc769b47eb16ef3716d14fda7de756632458",
+      "runtime": "assets/runtime/tut-ready.7dac681b8990.webp",
+      "sourceBytes": 19424,
+      "runtimeBytes": 8282,
+      "sourceSize": [
+        377,
+        255
+      ],
+      "runtimeSize": [
+        377,
+        255
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/tut-slide.png",
+      "sourceSha256": "0f1272c226c80824147349346fb3d83a78aae362ad1f12431ecee1c322b187ce",
+      "runtime": "assets/runtime/tut-slide.94174b03c7c2.webp",
+      "sourceBytes": 17865,
+      "runtimeBytes": 9968,
+      "sourceSize": [
+        295,
+        418
+      ],
+      "runtimeSize": [
+        295,
+        418
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/tut-turn.png",
+      "sourceSha256": "f77c5e50a21d2b61a8e3d52ab7564534ce394d9c817bf0750caabe4fa287b787",
+      "runtime": "assets/runtime/tut-turn.eb27413d04c6.webp",
+      "sourceBytes": 25019,
+      "runtimeBytes": 12920,
+      "sourceSize": [
+        460,
+        255
+      ],
+      "runtimeSize": [
+        460,
+        255
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/warning_icon.png",
+      "sourceSha256": "2974929cb011591367fa2f5f6b4d9508f6143bcd9601d547bea605033758bc35",
+      "runtime": "assets/runtime/warning_icon.467ddb7deecc.webp",
+      "sourceBytes": 2176,
+      "runtimeBytes": 1552,
+      "sourceSize": [
+        64,
+        64
+      ],
+      "runtimeSize": [
+        64,
+        64
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/wings.png",
+      "sourceSha256": "0a1b42853867a4662d85c063d7d8ed1eb3b174feb6292329f6a22ceb2f356338",
+      "runtime": "assets/runtime/wings.d36d3c7e4daf.webp",
+      "sourceBytes": 11496,
+      "runtimeBytes": 7890,
+      "sourceSize": [
+        143,
+        75
+      ],
+      "runtimeSize": [
+        143,
+        75
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/word-objectives.png",
+      "sourceSha256": "06c09f7ee577fe84a04a8bbccb48ca47da1c26377867f42defe493218d7845aa",
+      "runtime": "assets/runtime/word-objectives.d700eae2030f.webp",
+      "sourceBytes": 42177,
+      "runtimeBytes": 32920,
+      "sourceSize": [
+        390,
+        68
+      ],
+      "runtimeSize": [
+        390,
+        68
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/word-options.png",
+      "sourceSha256": "c6715a9e99dd324cea6651a85ad1a708ee5feda560caac97d82f43335a12762b",
+      "runtime": "assets/runtime/word-options.a3d51f55f303.webp",
+      "sourceBytes": 31965,
+      "runtimeBytes": 25736,
+      "sourceSize": [
+        361,
+        74
+      ],
+      "runtimeSize": [
+        361,
+        74
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/word-shop.png",
+      "sourceSha256": "7d0c801b3f39f032d19fdfe45556f909f36a1bd915384a716242de22f9879386",
+      "runtime": "assets/runtime/word-shop.f261709e683c.webp",
+      "sourceBytes": 55271,
+      "runtimeBytes": 37330,
+      "sourceSize": [
+        279,
+        130
+      ],
+      "runtimeSize": [
+        279,
+        130
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/word-stats.png",
+      "sourceSha256": "3ee0b4732c3e6d1351ca749d6a4c984da66133a678fc96c5924edb4542f6dc12",
+      "runtime": "assets/runtime/word-stats.0f20f81db7ff.webp",
+      "sourceBytes": 23291,
+      "runtimeBytes": 18456,
+      "sourceSize": [
+        270,
+        68
+      ],
+      "runtimeSize": [
+        270,
+        68
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/word-store.png",
+      "sourceSha256": "35e48e28894f708839542c85cc753f88db489fd11db0342b067375b95b33ed24",
+      "runtime": "assets/runtime/word-store.7383a582f204.webp",
+      "sourceBytes": 32060,
+      "runtimeBytes": 24792,
+      "sourceSize": [
+        391,
+        72
+      ],
+      "runtimeSize": [
+        391,
+        72
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/word-upgrades.png",
+      "sourceSha256": "a84aba26281522c82c7d94b230ac2c38f5ecc542a7e8f15324201d617535d7e5",
+      "runtime": "assets/runtime/word-upgrades.1759e67fe18e.webp",
+      "sourceBytes": 79235,
+      "runtimeBytes": 54062,
+      "sourceSize": [
+        459,
+        98
+      ],
+      "runtimeSize": [
+        459,
+        98
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "source": "assets/ui/x2.png",
+      "sourceSha256": "76e45420d517199e3a3544c18659a8983920d43581ecd41e1f47a569b512a976",
+      "runtime": "assets/runtime/x2.96b4b137bcc8.webp",
+      "sourceBytes": 11697,
+      "runtimeBytes": 9176,
+      "sourceSize": [
+        98,
+        88
+      ],
+      "runtimeSize": [
+        98,
+        88
+      ],
+      "lossless": true,
+      "rgbaRms": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "rigs": [
+    {
+      "source": "assets/characters/rig-Dragon_Queen_mesh.json",
+      "runtime": "assets/runtime/rig-Dragon_Queen_mesh.0ce0d171de98.json",
+      "sourceSha256": "0ce0d171de9828820c4bb402d7d5639c56d73d5c8f030bc0bf54f63a92bac3ea",
+      "sourceBytes": 263449,
+      "runtimeBytes": 263449
+    },
+    {
+      "source": "assets/characters/rig-Halloween_Runner_Hat_mesh.json",
+      "runtime": "assets/runtime/rig-Halloween_Runner_Hat_mesh.ec34cc24bfa8.json",
+      "sourceSha256": "ec34cc24bfa8885f7990909aa0e5c600be1adf66c606a08feeac07cab95f4720",
+      "sourceBytes": 42707,
+      "runtimeBytes": 42707
+    },
+    {
+      "source": "assets/characters/rig-Halloween_Runner_mesh.json",
+      "runtime": "assets/runtime/rig-Halloween_Runner_mesh.caefc2542300.json",
+      "sourceSha256": "caefc254230018ab6f6cd82836b824425a54bc9e1fe6086e325b44edfe30eca1",
+      "sourceBytes": 277079,
+      "runtimeBytes": 277079
+    },
+    {
+      "source": "assets/characters/rig-Jean_Benitez_Captian_mesh.json",
+      "runtime": "assets/runtime/rig-Jean_Benitez_Captian_mesh.576e61ffbb70.json",
+      "sourceSha256": "576e61ffbb705abdc7d27b640388b9d00f857eda277e45ea35b7745c0d985089",
+      "sourceBytes": 217578,
+      "runtimeBytes": 217578
+    },
+    {
+      "source": "assets/characters/rig-Mystic_Monk_Skin_Dragon_Flame_mesh.json",
+      "runtime": "assets/runtime/rig-Mystic_Monk_Skin_Dragon_Flame_mesh.51007af4789c.json",
+      "sourceSha256": "51007af4789c1200491668aa6ea6c2a936247ab0af6ef1a7eaf35cc39f15eb91",
+      "sourceBytes": 290539,
+      "runtimeBytes": 290539
+    },
+    {
+      "source": "assets/characters/rig-Nutcracker_mesh.json",
+      "runtime": "assets/runtime/rig-Nutcracker_mesh.45af9e84aacc.json",
+      "sourceSha256": "45af9e84aacc9fcc44191ef22a94c5239bae9993f024eeee432a531e4d639e5d",
+      "sourceBytes": 235353,
+      "runtimeBytes": 235353
+    },
+    {
+      "source": "assets/characters/rig-Scarecrow_mesh.json",
+      "runtime": "assets/runtime/rig-Scarecrow_mesh.badcfe00f90b.json",
+      "sourceSha256": "badcfe00f90bc138ed2a183574d0480973787a6ef2be696bd6228c83469210f1",
+      "sourceBytes": 226356,
+      "runtimeBytes": 226356
+    },
+    {
+      "source": "assets/characters/rig-Simone_Davies_Commodore_menu.json",
+      "runtime": "assets/runtime/rig-Simone_Davies_Commodore_menu.0ef52482ef0c.json",
+      "sourceSha256": "0ef52482ef0cb17eb091376455e46bb3b60169293ad696222273585e8f7b858b",
+      "sourceBytes": 198624,
+      "runtimeBytes": 198624
+    },
+    {
+      "source": "assets/characters/rig-Viking_Baldur_Skin_Chronos_mesh.json",
+      "runtime": "assets/runtime/rig-Viking_Baldur_Skin_Chronos_mesh.350cad1c22ac.json",
+      "sourceSha256": "350cad1c22ac0be78ac42e3ce2ead4d3ab215721a3ae935f2b356c24d8a95b7d",
+      "sourceBytes": 429799,
+      "runtimeBytes": 429799
+    },
+    {
+      "source": "assets/characters/rig-bb_Export1-01_-_Default.json",
+      "runtime": "assets/runtime/rig-bb_Export1-01_-_Default.23cce5ff3fab.json",
+      "sourceSha256": "23cce5ff3fabe2a4b89b16a592a8f35d63ae0e2aaaa967bcc3fa4069964d13b6",
+      "sourceBytes": 225308,
+      "runtimeBytes": 225308
+    },
+    {
+      "source": "assets/characters/rig-china_Export1-01_-_Default.json",
+      "runtime": "assets/runtime/rig-china_Export1-01_-_Default.33118293be89.json",
+      "sourceSha256": "33118293be890b02f51fa374151d9e748e5069bcd84d2b3264a6a2dc7e3f4886",
+      "sourceBytes": 241710,
+      "runtimeBytes": 241710
+    },
+    {
+      "source": "assets/characters/rig-conquis_Export1-09_-_Default.json",
+      "runtime": "assets/runtime/rig-conquis_Export1-09_-_Default.ede7cd9b2822.json",
+      "sourceSha256": "ede7cd9b2822dd0ba2b6df0ce66587d0a36b4a2dbc3056f16e5c80563a1584aa",
+      "sourceBytes": 229746,
+      "runtimeBytes": 229746
+    },
+    {
+      "source": "assets/characters/rig-enemy.json",
+      "runtime": "assets/runtime/rig-enemy.fb5330459fbf.json",
+      "sourceSha256": "ff29e05f910d5f8d91968abb19417e3ffcd846c7cd366d2c07fa147626489530",
+      "sourceBytes": 216447,
+      "runtimeBytes": 216446
+    },
+    {
+      "source": "assets/characters/rig-football_Export1-02_-_Default.json",
+      "runtime": "assets/runtime/rig-football_Export1-02_-_Default.db5dd1cf55b3.json",
+      "sourceSha256": "db5dd1cf55b3227660afb086fc71c2492da097b8069daf80b67ba7e0d8f44c43",
+      "sourceBytes": 210078,
+      "runtimeBytes": 210078
+    },
+    {
+      "source": "assets/characters/rig-girl_Export1-01_-_Default.json",
+      "runtime": "assets/runtime/rig-girl_Export1-01_-_Default.e9b6b2514a9c.json",
+      "sourceSha256": "e9b6b2514a9c2312fa3d621c9acb25f98d89ccf6784ed59c54ed78e0eed70f83",
+      "sourceBytes": 236503,
+      "runtimeBytes": 236503
+    },
+    {
+      "source": "assets/characters/rig-indi_Export1-01_-_Default.json",
+      "runtime": "assets/runtime/rig-indi_Export1-01_-_Default.0e6941f88973.json",
+      "sourceSha256": "0e6941f8897364c21aa7a51039b826abaf42b8dac5671f080576eabbcb30e9a2",
+      "sourceBytes": 232572,
+      "runtimeBytes": 232572
+    },
+    {
+      "source": "assets/characters/rig-orig_02___Default.json",
+      "runtime": "assets/runtime/rig-orig_02___Default.06841ea9ba6a.json",
+      "sourceSha256": "ebf2e2de236f22f9d7cb4eef39c7892be4df6ddb38a815bee3b65ebc9af3f4b1",
+      "sourceBytes": 865900,
+      "runtimeBytes": 865899
+    },
+    {
+      "source": "assets/characters/rig-selene_astronaut.json",
+      "runtime": "assets/runtime/rig-selene_astronaut.a18118806c7d.json",
+      "sourceSha256": "a18118806c7d1052cdb936527d862502cafc8508e896b05c902122a300d1c8d9",
+      "sourceBytes": 278536,
+      "runtimeBytes": 278536
+    },
+    {
+      "source": "assets/characters/rig-werewolf.json",
+      "runtime": "assets/runtime/rig-werewolf.fa7aea739d98.json",
+      "sourceSha256": "fa7aea739d987ef128083321624bb4af7132d0a7dfc5c0a5383d247f590b7a86",
+      "sourceBytes": 259517,
+      "runtimeBytes": 259517
+    },
+    {
+      "source": "assets/characters/rig-xixuegui.json",
+      "runtime": "assets/runtime/rig-xixuegui.a2bc9832ac6f.json",
+      "sourceSha256": "a2bc9832ac6f54935fd02f360ee6d112aa01bb6679b276a3dbac7f544ce89fd0",
+      "sourceBytes": 257431,
+      "runtimeBytes": 257431
+    }
+  ],
+  "models": {
+    "count": 69,
+    "bytes": 6062543,
+    "gzipBytes": 1256744,
+    "path": "assets/runtime/world.ebbc00530c9d.json"
+  }
+}

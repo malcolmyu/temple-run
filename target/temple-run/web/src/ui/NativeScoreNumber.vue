@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {optimizedAsset} from '../game/runtimeAssets';
 import { computed } from 'vue';
 import font from '../game/nativeScoreFont.json';
 
@@ -7,7 +8,7 @@ const digits = computed(() => String(Number.isFinite(props.value)
   ? Math.min(Number.MAX_SAFE_INTEGER, Math.max(0, Math.floor(props.value))) : 0));
 const scale = computed(() => Math.min(0.5, 180 / (digits.value.length * 36)));
 const glyph = (digit: string) => font.glyphs[digit as keyof typeof font.glyphs];
-const asset = (digit: string) => `${import.meta.env.BASE_URL}assets/ui/score-arty-${digit}.png`;
+const asset = (digit: string) => optimizedAsset(`${import.meta.env.BASE_URL}assets/ui/score-arty-${digit}.png`);
 </script>
 
 <template>

@@ -1,0 +1,48 @@
+
+> sheep-summit@1.0.0 temple:build
+> npm run temple:assets:verify && vite build --config target/temple-run/vite.config.ts
+
+
+> sheep-summit@1.0.0 temple:assets:verify
+> esbuild tools/verify-runtime-assets.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-verify-assets.mjs >/dev/null && node /tmp/temple-verify-assets.mjs
+
+
+  ../../../../tmp/temple-verify-assets.mjs  1.9kb
+
+⚡ Done in 1ms
+Runtime assets: 166 source hashes and delivery hashes, 69 exact OBJ/UV pairs pass.
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 199 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/index.html                               0.91 kB │ gzip:   0.55 kB
+../dist/.vite/manifest.json                      4.01 kB │ gzip:   0.74 kB
+../dist/legacy.html                              9.56 kB │ gzip:   3.38 kB
+../dist/assets/StoreOverlay-Bi_kHWzl.css         0.12 kB │ gzip:   0.12 kB
+../dist/assets/ObjectivesOverlay-DE_H8eOM.css    0.21 kB │ gzip:   0.17 kB
+../dist/assets/HelpOverlay-l2QED4tn.css          1.06 kB │ gzip:   0.46 kB
+../dist/assets/main-BDYmuFhS.css                21.42 kB │ gzip:   5.76 kB
+../dist/assets/legacy-BY8Fp4ul.css              40.35 kB │ gzip:   9.80 kB
+../dist/assets/megaStart-Lb3qgy6F.js             0.15 kB │ gzip:   0.15 kB
+../dist/assets/objNormals-BhrWZ4sO.js            1.23 kB │ gzip:   0.62 kB
+../dist/assets/StatsOverlay-D-EyUvC-.js          1.73 kB │ gzip:   0.82 kB
+../dist/assets/UpgradesOverlay-Cw4mRlkn.js       1.77 kB │ gzip:   0.99 kB
+../dist/assets/upgrades-TBmSwTsF.js              2.02 kB │ gzip:   1.10 kB
+../dist/assets/ObjectivesOverlay-CHrHuCvW.js     2.70 kB │ gzip:   1.50 kB
+../dist/assets/HelpOverlay-CVfFfaoO.js           4.72 kB │ gzip:   2.60 kB
+../dist/assets/StoreOverlay-DTv4gVFY.js          7.31 kB │ gzip:   3.50 kB
+../dist/assets/objectives-DFAwXMlY.js            8.27 kB │ gzip:   2.39 kB
+../dist/assets/runnerRig-CmFByZou.js            12.44 kB │ gzip:   5.06 kB
+../dist/assets/sfx-BvBWk5S0.js                  27.54 kB │ gzip:   7.88 kB
+../dist/assets/main-B0kKCqTh.js                 43.27 kB │ gzip:  16.08 kB
+../dist/assets/vue-yA5kcq01.js                  66.83 kB │ gzip:  26.49 kB
+../dist/assets/legacy-BLoMSC0m.js              109.73 kB │ gzip:  39.40 kB
+../dist/assets/game-CeSBvDyg.js                210.57 kB │ gzip:  66.33 kB
+../dist/assets/three-65SRy6Mp.js               534.75 kB │ gzip: 135.03 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.27s

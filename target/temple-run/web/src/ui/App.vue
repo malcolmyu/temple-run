@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
 import { bootGame, getGame } from '../game/boot';
 import { mutableUi as ui } from '../game/state';
 import Hud from './Hud.vue';
 import MenuOverlay from './MenuOverlay.vue';
 import PauseOverlay from './PauseOverlay.vue';
 import GameOverOverlay from './GameOverOverlay.vue';
-import StoreOverlay from './StoreOverlay.vue';
+const StoreOverlay=defineAsyncComponent(()=>import('./StoreOverlay.vue'));
 import SettingsOverlay from './SettingsOverlay.vue';
-import StatsOverlay from './StatsOverlay.vue';
-import ObjectivesOverlay from './ObjectivesOverlay.vue';
-import UpgradesOverlay from './UpgradesOverlay.vue';
-import HelpOverlay from './HelpOverlay.vue';
+const StatsOverlay=defineAsyncComponent(()=>import('./StatsOverlay.vue'));
+const ObjectivesOverlay=defineAsyncComponent(()=>import('./ObjectivesOverlay.vue'));
+const UpgradesOverlay=defineAsyncComponent(()=>import('./UpgradesOverlay.vue'));
+const HelpOverlay=defineAsyncComponent(()=>import('./HelpOverlay.vue'));
 import TutorialOverlay from './TutorialOverlay.vue';
 
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -38,6 +38,7 @@ onMounted(async () => {
     console.error(err);
   } finally {
     loading.value = false;
+    if(!error.value)performance.mark('temple-ready');
   }
 });
 
@@ -47,6 +48,8 @@ onBeforeUnmount(() => {
 
 /** First run shows the swipe/keyboard primer, like the original's "You're ready" screen. */
 function startRun(): void {
+  // A lazy panel may still be downloading; its modal input block applies immediately.
+  if(showStore.value||showSettings.value||showStats.value||showObjectives.value||showUpgrades.value||showTutorial.value||showHelp.value||loading.value||error.value)return;
   if (!localStorage.getItem('temple.v2.tutorial')) {
     showTutorial.value = true;
     return;

@@ -1,3 +1,4 @@
+import {optimizedAsset,packedModel,preloadWorldModels,releaseWorldModelText} from './runtimeAssets';
 import {CLIFF_MESH_Y} from './nativeCliff';
 import {NATIVE_SCENERY_RESOURCES} from './nativeSceneryGrid';
 import { nativeCoinMaterial } from './nativeCoinMaterial';
@@ -30,7 +31,6 @@ export interface Assets {
     tree: THREE.Texture;
     leaf: THREE.Texture;
     flame: THREE.Texture;
-    spark: THREE.Texture;
     coinFace: THREE.Texture;
     wings: THREE.Texture | null;
     glow?: THREE.Texture;
@@ -61,6 +61,7 @@ export interface Assets {
   tree: THREE.Group | null;
   standaloneTrees?: ReadonlyArray<THREE.Group | null>;
   sceneryTemplates?: Readonly<Record<string,THREE.Group|null>>;
+  loadScenery?:(resource:string)=>Promise<THREE.Group|null>;
   gate: THREE.Group | null;
   towerGate?: THREE.Group | null;
   enemy: THREE.Group | null;
@@ -77,10 +78,12 @@ export interface SceneBundle {
   material: Record<string, THREE.Material>;
 }
 
-const loadTexture = (url: string): Promise<THREE.Texture> =>
-  new Promise((resolve, reject) => {
+const textureRequests=new Map<string,Promise<THREE.Texture>>();
+const loadTexture = (url: string): Promise<THREE.Texture> => {
+ const pending=textureRequests.get(url);if(pending)return pending;
+ const request=new Promise<THREE.Texture>((resolve, reject) => {
     new THREE.TextureLoader().load(
-      url,
+      optimizedAsset(url),
       (texture: THREE.Texture) => {
         texture.colorSpace = THREE.SRGBColorSpace;
         resolve(texture);
@@ -89,24 +92,29 @@ const loadTexture = (url: string): Promise<THREE.Texture> =>
       reject,
     );
   });
+ textureRequests.set(url,request);return request;
+};
 
 const lightmappedMeshes = new Set(['decor-tree-native-1','decor-tree-native-2','decor-tree-native-3','decor-tree-native-4','stone-plank-cap-a','stone-plank-cap-b','stone-turn-a', 'stone-turn-b', 'temple-road-tile', 'plank-road-tile', 'plank-corner', 'track-wall-corner-a', 'decor-tree-a', 'track-gate-a', 'track-wall-straight-a', 'temple-entrance', 'entrance-surroundings', 'temple-t-junction', 'plank-t-junction']);
 const loadObj = async (url: string): Promise<THREE.Group | null> => {
   try {
-    const response=await fetch(url);
-    if(!response.ok)return null;
-    const obj=new OBJLoader().parse(await response.text());
+    const packed=await packedModel(url);
+    let text=packed?.obj;
+    if(!text){const response=await fetch(url);if(!response.ok)return null;text=await response.text();}
+    const obj=new OBJLoader().parse(text);
     const name=url.split('/').pop()?.replace(/\.obj$/, '') ?? '';
     if(name==='cliff-tree-slide' || name.startsWith('cliff-cap-') || name.startsWith('cliff-t-') || name.startsWith('cliff-turn-') || name==='cliff-road-tile' || name.startsWith('decor-scenery-') || lightmappedMeshes.has(name) || (url.includes('/assets/obstacles/') && name !== 'stone-pedestal')) {
-      const uv=await fetch(url.replace(/\.obj$/, '.uv1.json'));
-      if(!uv.ok)throw new Error('Missing native lightmap UV: '+name);
-      attachNativeLightmapUV(obj, await uv.json());
+      let coordinates=packed?.uv;
+      if(!coordinates){const uv=await fetch(url.replace(/\.obj$/, '.uv1.json'));if(!uv.ok)throw new Error('Missing native lightmap UV: '+name);coordinates=await uv.json();}
+      attachNativeLightmapUV(obj,coordinates!);
     }
     return obj;
   } catch(error) { console.warn('Unable to load OBJ', url, error); return null; }
 };
 
 export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundle> {
+  void preloadWorldModels().catch(()=>{});
+  for(const url of [asset('terrainTexture.webp'),asset('wallTexture.webp'),asset('treeTexture.webp'),asset('leafTexture.webp'),asset('playerGlowTexture.webp'),asset('lightMapTexture.webp'),`${BASE}assets/ui/fx-flame.png`,`${BASE}assets/ui/coin-face.png`,`${BASE}assets/ui/wings.png`,`${BASE}assets/ui/EffectsTexture2x.png`])void loadTexture(url).catch(()=>{});
   // Mobile GPUs are fill-rate bound: lower the render resolution and skip the shadow pass.
   // Desktop keeps the full-quality path. The game loop can lower the ratio further if FPS dips.
   const mobile = window.matchMedia('(pointer: coarse)').matches || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -191,12 +199,11 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   water.position.y = NATIVE_WATER_HEIGHT;
   scene.add(water);
 
-  const [wall, tree, leaf, flame, spark, coinFace, wingsTexture, glowTexture, safetyNetAtlas] = await Promise.all([
+  const [wall, tree, leaf, flame, coinFace, wingsTexture, glowTexture, safetyNetAtlas] = await Promise.all([
     loadTexture(asset('wallTexture.webp')),
     loadTexture(asset('treeTexture.webp')),
     loadTexture(asset('leafTexture.webp')),
     loadTexture(`${BASE}assets/ui/fx-flame.png`),
-    loadTexture(`${BASE}assets/ui/fx-spark.png`),
     loadTexture(`${BASE}assets/ui/coin-face.png`),
     loadTexture(`${BASE}assets/ui/wings.png`).catch(() => null),
     loadTexture(asset('playerGlowTexture.webp')),
@@ -237,7 +244,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
   };
 
   const sceneryPaths=Object.entries(NATIVE_SCENERY_RESOURCES).filter(([group])=>group!=='tree').flatMap(([,paths])=>paths);
-  const sceneryLoad=Promise.all(sceneryPaths.map(path=>loadObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`)));
+
   const [roadTile, wallTemplate, treeTemplate, gateTemplate, enemyMesh, enemyTexture, entranceMesh, cornerMesh, coinMesh, plankMesh, plankCorner, redCoin, blueCoin, tJunction, plankTJunction, stoneCornerLeft, stoneCornerRight, transitionA, transitionB, tree2, tree3, tree4, cliffTile, cliffCornerLeft, cliffCornerRight, cliffTJunction, cliffCapA, cliffCapB, cliffSlide] = await Promise.all([
     loadObj(`${BASE}assets/track/temple-road-tile.obj`),
     loadObj(`${BASE}assets/track/track-wall-straight-a.obj`),
@@ -365,8 +372,15 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
 
   const standaloneTrees=[treeTemplate,tree2,tree3,tree4].map(obj=>paint(obj,nativeTreeMaterial,false));
   const sceneryTemplates:Record<string,THREE.Group|null>=Object.fromEntries(NATIVE_SCENERY_RESOURCES.tree.map((path,i)=>[path,standaloneTrees[i]]));
-  const sceneryObjects=await sceneryLoad;
-  sceneryPaths.forEach((path,i)=>{sceneryTemplates[path]=paint(sceneryObjects[i],path==='Trees/templeHead'||path==='Trees/groundPatchTemple'?nativeRoadMaterial:nativeTreeMaterial,false);});
+  sceneryPaths.forEach(path=>{sceneryTemplates[path]=null;});
+  const loadScenery=async(path:string):Promise<THREE.Group|null>=>{
+    if(sceneryTemplates[path])return sceneryTemplates[path];
+    if(!sceneryPaths.includes(path))return null;
+    const object=await loadObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`);
+    return sceneryTemplates[path]=paint(object,path==='Trees/templeHead'||path==='Trees/groundPatchTemple'?nativeRoadMaterial:nativeTreeMaterial,false);
+  };
+  // Parsed scene geometry owns its buffers; free the transport OBJ/UV text.
+  releaseWorldModelText();
   return {
     renderer,
     scene,
@@ -375,7 +389,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
     sky,
     material,
     assets: {
-      texture: { wall, tree, leaf, flame, spark, coinFace, wings: wingsTexture, glow: glowTexture, safetyNet: safetyNetAtlas },
+      texture: { wall, tree, leaf, flame, coinFace, wings: wingsTexture, glow: glowTexture, safetyNet: safetyNetAtlas },
       material,
       roadTile: paint(roadTile, nativeRoadMaterial, false),
       cliffTile: paint(cliffTile,nativeTreeMaterial,false),
@@ -401,6 +415,7 @@ export async function createWorld(canvas: HTMLCanvasElement): Promise<SceneBundl
       tree: standaloneTrees[0],
       standaloneTrees,
       sceneryTemplates,
+      loadScenery,
       gate: extractNativeGate(paint(gateTemplate, nativeRoadMaterial, false)),
       towerGate: extractNativeGate(obstacles['tower-arch'], 'tower'),
       enemy: enemyMesh,

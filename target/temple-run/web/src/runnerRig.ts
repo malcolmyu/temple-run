@@ -1,3 +1,4 @@
+import {optimizedAsset} from './game/runtimeAssets';
 import { nativeUnlitMaterial } from './nativeUnlit.ts';
 import * as THREE from 'three';
 import { sampleCurveComponent, type NativeCurve } from './nativeAnimationCurve.ts';
@@ -12,7 +13,7 @@ function trackFor(clip: any, boneName: any) {
   return clip.tracks[boneName] || null;
 }
 
-function sampleRotation(curve: any, time: any, out: any) {
+function sampleRotation(curve:NativeCurve, time:number, out:THREE.Quaternion) {
   const { times, values } = curve;
   const n = times.length;
   if (n === 0) return out.set(0, 0, 0, 1);
@@ -27,7 +28,7 @@ function sampleRotation(curve: any, time: any, out: any) {
   return out.copy(q0).slerp(q1, alpha);
 }
 
-function samplePosition(curve: any, time: any, out: any) {
+function samplePosition(curve:NativeCurve, time:number, out:THREE.Vector3) {
   const { times, values } = curve;
   const n = times.length;
   if (n === 0) return out.set(0, 0, 0);
@@ -37,7 +38,7 @@ function samplePosition(curve: any, time: any, out: any) {
   while (i < n && times[i] < time) i++;
   const t0 = times[i - 1], t1 = times[i];
   const alpha = (time - t0) / (t1 - t0 || 1);
-  out.set(...[0, 1, 2].map((axis: any) => sampleCurveComponent(curve, i - 1, i, alpha, axis)));
+  out.fromArray([0, 1, 2].map((axis: any) => sampleCurveComponent(curve, i - 1, i, alpha, axis)));
   return out;
 }
 
@@ -407,7 +408,7 @@ export function buildRunnerRig(data: any, options: RigOptions = {}) {
   let clipTime = 0;
   let clipLoops = true;
 
-  function setClip(name: any, restart: any = false) {
+  function setClip(name:string, restart = false) {
     if (!clipData[name]) return;
     if (name === clipName && !restart) return;
     clipName = name;
@@ -415,7 +416,7 @@ export function buildRunnerRig(data: any, options: RigOptions = {}) {
     clipLoops = name === 'run' || name === 'slideLoop';
   }
 
-  function applyPose(time: any) {
+  function applyPose(time:number) {
     const clip = clipData[clipName];
     for (let i = 0; i < boneCount; i++) {
       const node = nodes[i];
@@ -460,7 +461,7 @@ export function buildRunnerRig(data: any, options: RigOptions = {}) {
     geometry.computeVertexNormals();
   }
 
-  function update(dt: any, timeScale: any = 1, scaleAllClips: any = false) {
+  function update(dt:number, timeScale = 1, scaleAllClips = false) {
     const clip = clipData[clipName];
     if (!clip) return;
     clipTime += dt * (scaleAllClips || clipName === 'run' ? timeScale : 1);
@@ -493,7 +494,7 @@ export function buildRunnerRig(data: any, options: RigOptions = {}) {
     material,
     /** @param {boolean} active @param {THREE.Texture|null} [texture]
      * @param {number} [dt] @param {number} [remaining] */
-    setInvincibility(active: any, texture: any = null, dt: any = 0, remaining: any = Infinity) {
+    setInvincibility(active:boolean, texture:THREE.Texture|null = null, dt = 0, remaining = Infinity) {
       if (active) {
         if (!glowMaterial) {
           const map = texture?.clone() || null;
@@ -553,16 +554,20 @@ export function buildRunnerRig(data: any, options: RigOptions = {}) {
   };
 }
 
+const rigDataRequests=new Map<string,Promise<any>>();
+export function loadRigData(url:string):Promise<any>{
+ url=optimizedAsset(url);
+ let pending=rigDataRequests.get(url);
+ if(!pending){pending=fetch(url).then(r=>{if(!r.ok)throw Error(`runner rig ${url}: ${r.status}`);return r.json()}).catch(error=>{rigDataRequests.delete(url);throw error;});rigDataRequests.set(url,pending);}
+ return pending;
+}
 export async function loadRunnerRig(url: string, textureUrl: string|null, options: RigOptions = {}) {
   let failed = false, ownedTexture:THREE.Texture|null = null;
   const [data, texture] = await Promise.all([
-    fetch(url).then((r: any) => {
-      if (!r.ok) throw new Error(`runner rig ${url}: ${r.status}`);
-      return r.json();
-    }),
+    loadRigData(url),
     textureUrl
       ? new Promise<THREE.Texture>((resolve, reject) => {
-          new THREE.TextureLoader().load(textureUrl, (tex: any) => {
+          new THREE.TextureLoader().load(optimizedAsset(textureUrl), (tex: any) => {
             ownedTexture = tex;
             if (failed) tex.dispose();
             tex.colorSpace = THREE.SRGBColorSpace;
@@ -579,7 +584,7 @@ export async function loadRunnerRig(url: string, textureUrl: string|null, option
   let fallbackClips = options.fallbackClips || null, fallbackRig = options.fallbackRig || null;
   if ((!fallbackClips || !fallbackRig) && options.clipFallbackUrl) {
     try {
-      const fb = await fetch(options.clipFallbackUrl).then((r: any) => r.json());
+      const fb = await loadRigData(options.clipFallbackUrl);
       fallbackRig = fb; fallbackClips = fb.clips || null;
     } catch {}
   }
