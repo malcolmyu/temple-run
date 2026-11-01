@@ -1,0 +1,20 @@
+
+> sheep-summit@1.0.0 temple:typecheck
+> npm run temple:check:source && npm run temple:typecheck:app && npm run temple:typecheck:tools
+
+
+> sheep-summit@1.0.0 temple:check:source
+> esbuild tools/check-source-js.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-check-source.mjs >/dev/null && node /tmp/temple-check-source.mjs
+
+
+  ../../../../tmp/temple-check-source.mjs  1.3kb
+
+⚡ Done in 1ms
+Source policy: 1 explicit hash-locked legacy exception; all active JavaScript migrated.
+
+> sheep-summit@1.0.0 temple:typecheck:app
+> vue-tsc --noEmit -p target/temple-run/web/tsconfig.json
+
+
+> sheep-summit@1.0.0 temple:typecheck:tools
+> tsc --noEmit -p tsconfig.tools.json

@@ -70,3 +70,6 @@ npm run temple:browser:compile -- tools/test-temple-input-router.browser.ts /tmp
 ```
 
 `temple:typecheck`包含源码JS白名单/哈希检查、现行游戏strict检查和工具全集检查。需要重新生成交付纹理/模型时运行`npm run temple:assets`（Python+Pillow）；原图不覆盖，常规构建只校验已提交的衍生资源。Pages部署保留上一代哈希资源，避免缓存旧HTML引用失效，600秒窗口过期后清理旧文件。
+
+- [完整视频271帧参考](https://malcolmyu.github.io/temple-run/screenshots/BV1ypuKzPErT/) · [半边路纹理对照](https://malcolmyu.github.io/temple-run/screenshots/texture141/)
+- [原版拓扑证据](docs/original-topology-evidence.md) · [地图/纹理/难度治理报告](docs/architecture/map-texture-pacing-141.md)

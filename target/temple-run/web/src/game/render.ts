@@ -20,7 +20,6 @@ import type { TrackPath } from './path';
 import type { NarrowSection, TerrainKind } from './terrain';
 import type { ObstacleDef } from './obstacles/types';
 import type { SurfaceKind } from './surface';
-import { branchSurfaceOffsets } from './sidePath';
 
 const BASE = import.meta.env.BASE_URL;
 const asset = (name: string): string => `${BASE}assets/apk/${name}`;
@@ -685,27 +684,9 @@ export function buildNarrowOverlay(assets: Assets, group: THREE.Group, side: 'le
 
 /** Broken centre of a left/right fork: both outer lanes survive, middle falls. */
 export function buildSidePathOverlay(assets: Assets, group: THREE.Group, first: boolean, last = false, activeLateral = 0, surface: SurfaceKind = 'stone'): void {
-  // Render the non-active branch too. The opposite branch is a real TrackPath clone
-  // with its own lateral offset; without this its surface disappears from the scene.
-  const offsets = branchSurfaceOffsets(activeLateral);
-  for (const offset of offsets) {
-    if (Math.abs(offset) < 0.01) continue;
-    const branchSurface = new THREE.Mesh(
-      new THREE.PlaneGeometry(2.7, TILE + 0.02),
-      surface === 'wood' ? plankMaterial(assets) : assets.material.stone,
-    );
-    branchSurface.rotation.x = -Math.PI / 2;
-    branchSurface.position.set(offset, 0.064, 0);
-    group.add(branchSurface);
-    for (const z of [-4.8, 4.8]) {
-      const post = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 1.0, 6), assets.material.wood);
-      post.position.set(offset + (offset > 0 ? -1.5 : 1.5), 0.5, z);
-      group.add(post);
-    }
-  }
-  // Once a graph branch is chosen, this tile is the complete active road.
-  // Its centre must stay supported; the opposite branch was added above.
-  if(Math.abs(activeLateral)>.001)return;
+  // Web design: a shared native causeway with a cut-out centre.
+  // The native4m causeway supplies both surviving strips. Do not add broad
+  // planes outside its parapets or change its geometry after a lane is chosen.
   // The common surface cutter owns the real centre opening and connected aprons.
   // Do not paint a water rectangle over supported entry/merge floor.
   for (const side of [-1, 1] as const) {
@@ -1008,17 +989,45 @@ function contactShadow(group: THREE.Group, radius: number): void {
 /** Native Region2D is the support contract. The exported narrow mesh omits
  * small supported rim/edge triangles; draw that same polygon at road height.
  * Original prefab walls/UVs remain untouched. This is a web visual adapter. */
-export function buildNativeNarrowFloor(def:ObstacleDef,material:THREE.Material):THREE.Mesh {
+export function buildNativeNarrowFloor(def:ObstacleDef,material:THREE.Material,source?:THREE.Object3D):THREE.Mesh {
   const points=(def.groundSupportRegion??[]).map(([x,z])=>new THREE.Vector2(x,z));
-  const faces=THREE.ShapeUtils.triangulateShape(points,[]),positions:number[]=[],uvs:number[]=[];
-  for(const face of faces){
-    const [a,b,c]=face.map(i=>points[i]);
+  const faces=THREE.ShapeUtils.triangulateShape(points,[]),positions:number[]=[],uvs:number[]=[],baked:number[]=[];
+  const triangles:{tri:THREE.Triangle;uv:THREE.Vector2[];uv1:THREE.Vector2[]}[]=[];
+  source?.updateMatrixWorld(true);
+  source?.traverse(object=>{
+    const mesh=object as THREE.Mesh;if(!mesh.isMesh)return;
+    const geo=mesh.geometry,pos=geo.getAttribute('position'),uv=geo.getAttribute('uv'),uv1=geo.getAttribute('uv1');
+    if(!uv||!uv1)return;
+    for(let i=0;i<(geo.index?.count??pos.count);i+=3){
+      const ids=[0,1,2].map(k=>geo.index?geo.index.getX(i+k):i+k);
+      const vertices=ids.map(j=>new THREE.Vector3().fromBufferAttribute(pos,j).applyMatrix4(mesh.matrixWorld));
+      if(vertices.some(p=>Math.abs(p.y)>.08))continue;
+      const tri=new THREE.Triangle(...vertices as [THREE.Vector3,THREE.Vector3,THREE.Vector3]);
+      if(tri.getArea()<1e-8)continue;
+      triangles.push({tri,uv:ids.map(j=>new THREE.Vector2(uv.getX(j),uv.getY(j))),uv1:ids.map(j=>new THREE.Vector2(uv1.getX(j),uv1.getY(j)))});
+      if(!Array.isArray(mesh.material))material=mesh.material;
+    }
+  });
+  const sample=(p:THREE.Vector2)=>{
+    const point=new THREE.Vector3(p.x,0,p.y),closest=new THREE.Vector3();let best=Infinity,selected=triangles[0];
+    for(const row of triangles){row.tri.closestPointToPoint(point,closest);const d=closest.distanceToSquared(point);if(d<best){best=d;selected=row;}}
+    if(!selected)return {uv:new THREE.Vector2(p.x/4+.5,p.y/12+.5),uv1:new THREE.Vector2()};
+    const w=selected.tri.getBarycoord(point,new THREE.Vector3())!;
+    const mix=(values:THREE.Vector2[])=>values[0].clone().multiplyScalar(w.x).addScaledVector(values[1],w.y).addScaledVector(values[2],w.z);
+    return {uv:mix(selected.uv),uv1:mix(selected.uv1)};
+  };
+  const emit=(a:THREE.Vector2,b:THREE.Vector2,c:THREE.Vector2,depth=0)=>{
+    if(depth<5&&Math.max(a.distanceTo(b),b.distanceTo(c),c.distanceTo(a))>1){
+      const ab=a.clone().add(b).multiplyScalar(.5),bc=b.clone().add(c).multiplyScalar(.5),ca=c.clone().add(a).multiplyScalar(.5);
+      emit(a,ab,ca,depth+1);emit(ab,b,bc,depth+1);emit(ca,bc,c,depth+1);emit(ab,bc,ca,depth+1);return;
+    }
     const ordered=(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x)>0?[a,c,b]:[a,b,c];
-    for(const p of ordered){positions.push(p.x,.025,p.y);uvs.push(p.x/4+.5,p.y/12+.5);}
-  }
+    for(const p of ordered){const uv=sample(p);positions.push(p.x,.025,p.y);uvs.push(uv.uv.x,uv.uv.y);baked.push(uv.uv1.x,uv.uv1.y);}
+  };
+  for(const f of faces)emit(points[f[0]],points[f[1]],points[f[2]]);
   const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));geometry.computeVertexNormals();
-  const floor=new THREE.Mesh(geometry,material);floor.name='native-narrow-support-floor';floor.userData.walkableSurface=true;return floor;
+  geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));geometry.setAttribute('uv1',new THREE.Float32BufferAttribute(baked,2));geometry.computeVertexNormals();
+  const floor=new THREE.Mesh(geometry,material);floor.name='native-narrow-support-floor';floor.userData.walkableSurface=true;floor.userData.nativeUVProjection=triangles.length;return floor;
 }
 
 export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: string): THREE.Group {
@@ -1057,7 +1066,7 @@ export function buildObstacle(assets: Assets, def: ObstacleDef, prefabName: stri
   if (prefab) {
     const clone = prefab.clone(true);if(cliffSource)clone.position.y=CLIFF_MESH_Y;
     group.add(clone);
-    if(def.id.startsWith('narrow')&&def.groundSupportRegion)group.add(buildNativeNarrowFloor(def,assets.material.stone));
+    if(def.id.startsWith('narrow')&&def.groundSupportRegion)group.add(buildNativeNarrowFloor(def,assets.material.stone,clone));
     if (def.id === 'flameTower' && assets.texture.safetyNet) {
       group.add(buildNativeFlame(assets.texture.safetyNet));
     }
