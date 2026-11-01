@@ -1,6 +1,6 @@
 import {SeededRandom} from './obstacles/rng';
 import type {NativePathLevel} from './nativeThemePacing';
-export const COURSE_RULE_VERSION='beats-v9';
+export const COURSE_RULE_VERSION='beats-v10';
 /** Project pacing policy; weights/cooldowns are not recovered native values. */
 const THEMES:Record<NativePathLevel,readonly string[]>={
  1:['plankPit','plankBeam'],
@@ -13,7 +13,7 @@ export class CourseDirector {
  private seen=new Map<string,number>();
  private recent:string[]=[];
  private pressure=0;
- constructor(seed:number){this.rng=new SeededRandom(seed^0x62656174);}
+ constructor(seed:number,private readonly pacing:'baseline'|'raised'='raised'){this.rng=new SeededRandom(seed^0x62656174);}
  record(kind:string):void {
   if(['recovery','transition','fastTurn','cliffStraight'].includes(kind)){this.pressure=0;return;}
   this.pressure++;this.seen.set(kind,(this.seen.get(kind)??0)+1);
@@ -21,7 +21,7 @@ export class CourseDirector {
  }
  hasPractised(kind:string):boolean{return (this.seen.get(kind)??0)>0;}
  choose(level:NativePathLevel,progress:number,at:number):BeatDecision {
-  if(this.pressure>=3)return {kind:'recovery',intent:'recovery',allowCombination:false};
+  if(this.pressure>=(this.pacing==='raised'&&progress>=1000?4:3))return {kind:'recovery',intent:'recovery',allowCombination:false};
   const eligible=THEMES[level].filter(k=>{
    if(progress<1000&&k==='fireWall')return false;
    if(progress<500&&['treeSlide','flameTower'].includes(k))return false;

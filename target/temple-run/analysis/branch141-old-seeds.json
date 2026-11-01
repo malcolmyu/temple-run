@@ -1,0 +1,5039 @@
+{
+  "cases": [
+    {
+      "after": {
+        "activeBranch": null,
+        "airborne": false,
+        "angelWings": {
+          "cooldown": 0,
+          "pendingRevive": false,
+          "permanentStock": 0,
+          "remaining": 0,
+          "stock": 0
+        },
+        "autoTurnQueued": false,
+        "boost": {
+          "active": false,
+          "left": 0,
+          "speedBefore": 0
+        },
+        "boostHandover": {
+          "deferred": 0,
+          "reasons": []
+        },
+        "chaseGap": 11.5,
+        "coinMeter": {
+          "count": 48,
+          "level": 1,
+          "maxLevel": 0
+        },
+        "coinSpawnLevel": 0,
+        "coins": 48,
+        "course": {
+          "branches": [
+            {
+              "from": 882,
+              "to": 918
+            }
+          ],
+          "coinStart": 0,
+          "extent": 1497,
+          "features": [
+            {
+              "beatIntent": "recovery",
+              "fastTurn": false,
+              "from": 513,
+              "generatedAtProgress": 87.10126404163589,
+              "kind": "recovery",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 681
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 681,
+              "generatedAtProgress": 187.44637879432213,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 825
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 825,
+              "generatedAtProgress": 277.83815414084097,
+              "kind": "branch",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1017
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 1017,
+              "generatedAtProgress": 404.8035989499134,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1161
+            },
+            {
+              "fastTurn": false,
+              "from": 1161,
+              "generatedAtProgress": 503.8644254828985,
+              "kind": "transition",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 3,
+              "surface": "stone",
+              "themeRequestedAtProgress": 503.8644254828985,
+              "to": 1329
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 1329,
+              "generatedAtProgress": 625.5308523403362,
+              "kind": "cliffGap",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 3,
+              "surface": "stone",
+              "to": 1497
+            }
+          ],
+          "layoutRejections": [],
+          "longGapDecisions": [],
+          "longGapFallbacks": [],
+          "narrows": [
+            {
+              "from": 1086,
+              "side": "left",
+              "to": 1098
+            }
+          ],
+          "opening": "generated",
+          "retainedFrom": 789.1197220611571,
+          "rulesVersion": "beats-v10",
+          "surfaces": [
+            {
+              "from": 0,
+              "kind": "stone",
+              "level": 2,
+              "to": 1248
+            },
+            {
+              "from": 1248,
+              "kind": "stone",
+              "level": 3,
+              "to": null
+            }
+          ],
+          "turnOffset": 3,
+          "turns": [
+            {
+              "direction": -1,
+              "distance": 681,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 825,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 1017,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 1161,
+              "junction": "tee"
+            },
+            {
+              "direction": -1,
+              "distance": 1329,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 1497,
+              "junction": "corner"
+            }
+          ]
+        },
+        "distance": 1029,
+        "distanceExact": 1029.119722061157,
+        "enemyGap": 15,
+        "equipped": "jhony",
+        "falling": false,
+        "fastTurn": {
+          "active": false,
+          "elapsed": 666.1566162109375
+        },
+        "fps": 60,
+        "gems": 0,
+        "generation": {
+          "bonuses": [],
+          "enabled": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "lastBonus": 0,
+          "nextBonusCheck": 1092,
+          "seed": 144966157
+        },
+        "generationPacing": {
+          "doubleObstaclePercent": 0.05,
+          "from": 500,
+          "known": true,
+          "minCoinRunSpaces": 9,
+          "minObstacleSpaces": 4,
+          "minTurnSpaces": 8
+        },
+        "groundY": 0,
+        "headStart": null,
+        "headStartReady": false,
+        "headStartStock": {
+          "mega": 0,
+          "normal": 0
+        },
+        "jumpVelocity": 0,
+        "jumpY": 0,
+        "lane": 1,
+        "nextJunction": "tee",
+        "nextTurn": 1161,
+        "obstacles": [
+          {
+            "action": "jump",
+            "ahead": 63,
+            "defId": "narrowBeamRight",
+            "full": true,
+            "kind": "gap",
+            "lane": 1
+          }
+        ],
+        "phase": "playing",
+        "pickups": [
+          {
+            "ahead": 3,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 5,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 8,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 10,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 12,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 15,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 17,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 20,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 22,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 24,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 27,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 29,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 32,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 34,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 36,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 39,
+            "kind": "coin",
+            "lane": 1,
+            "value": 1
+          },
+          {
+            "ahead": 41,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": 44,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": 46,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": 48,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": 51,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": 53,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": 56,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          }
+        ],
+        "position": [
+          -540,
+          0,
+          -173.88027793884294
+        ],
+        "power": null,
+        "powerPickups": {
+          "bonus": 0,
+          "boost": 0,
+          "magnet": 0,
+          "shield": 0
+        },
+        "powerRemaining": 0,
+        "powers": [],
+        "progressDistance": 669.4899473259974,
+        "queuedForwardForce": 0.1,
+        "recoveringFromStumble": false,
+        "reviveProtectionRemaining": 0,
+        "rig": "ready",
+        "rigLoadStatus": "ready",
+        "runChallenges": {
+          "firstCoinDistance": 108.54429003724398,
+          "powerFreeScore": 19998,
+          "stumbled": false,
+          "summary": {
+            "cleanDistance": 669.4899473259974,
+            "coinFreeStart": 108.54429003724398,
+            "powerFreeScore": 19998
+          },
+          "usedPower": false
+        },
+        "runElapsed": 34.6748161315918,
+        "runUpgrades": {
+          "availability": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "boostProgress": 250,
+          "coinBonusReward": 50,
+          "coinMultiplier": 1,
+          "levels": {
+            "bonus": 0,
+            "boost": 0,
+            "coin": 0,
+            "coinSpawn": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "magnetDuration": 15,
+          "magnetMultiplier": 1,
+          "shieldDuration": 15
+        },
+        "score": 19998,
+        "scoreMultiplier": 22,
+        "session": {
+          "committed": false,
+          "deaths": 0,
+          "gemReviveUsed": false,
+          "gemRevives": 0,
+          "lastCommittedRunId": "aed0466e-86fd-4704-9efb-69c003607ee5",
+          "phase": "playing",
+          "runId": "9e99569e-7d18-4c0f-8b8e-9a08134b6b0c",
+          "wingRevives": 0
+        },
+        "side": -6.728221507525365e-17,
+        "simulation": {
+          "lastStepSeconds": 0.025,
+          "steps": 1387
+        },
+        "slideDuration": 0,
+        "sliding": 0,
+        "speed": 35.72885437011719,
+        "stumbleAge": 40.674999999998725,
+        "stumbleRemaining": 0,
+        "swipeStumbleDelay": null,
+        "themePacing": {
+          "changes": [
+            {
+              "level": 3,
+              "progress": 503.8644254828985
+            }
+          ],
+          "elapsed": 165.62545776367188,
+          "level": 3
+        },
+        "turnCount": 6,
+        "turnDirection": 0,
+        "turnIntent": null,
+        "turnQueued": false,
+        "worldY": 0
+      },
+      "branch": {
+        "from": 882,
+        "to": 918
+      },
+      "corner": {
+        "distance": 1029,
+        "ground": 0,
+        "point": {
+          "heading": 3.141592653589793,
+          "x": -540,
+          "z": -174
+        },
+        "segments": [
+          {
+            "end": 681,
+            "heading": 1.5707963267948966,
+            "start": 513,
+            "x": -180,
+            "z": -330
+          },
+          {
+            "end": 825,
+            "heading": 3.141592653589793,
+            "start": 681,
+            "x": -348,
+            "z": -330
+          },
+          {
+            "end": 1017,
+            "heading": 1.5707963267948966,
+            "start": 825,
+            "x": -348,
+            "z": -186
+          },
+          {
+            "end": null,
+            "heading": 3.141592653589793,
+            "start": 1017,
+            "x": -540,
+            "z": -186
+          }
+        ],
+        "side": 0,
+        "supported": true,
+        "visibleFloor": [
+          {
+            "name": "Object81-Pivot_0",
+            "y": -0.0005628150898946416
+          },
+          {
+            "name": "",
+            "y": -0.0005628151120617986
+          }
+        ]
+      },
+      "probes": [
+        [
+          {
+            "distance": 881,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -404,
+              "z": -184.7
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005638954727302803
+              }
+            ]
+          },
+          {
+            "distance": 881,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -404,
+              "z": -186
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005638954727080758
+              }
+            ]
+          },
+          {
+            "distance": 881,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -404,
+              "z": -187.3
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005638954726872036
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 884,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -407,
+              "z": -184.7
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005626801972482554
+              }
+            ]
+          },
+          {
+            "distance": 884,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -407,
+              "z": -186
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005626801972025142
+              }
+            ]
+          },
+          {
+            "distance": 884,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -407,
+              "z": -187.3
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005626801457920827
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 890,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -413,
+              "z": -184.7
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005634905483722363
+              }
+            ]
+          },
+          {
+            "distance": 890,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -413,
+              "z": -186
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 0,
+            "supported": false,
+            "visibleFloor": []
+          },
+          {
+            "distance": 890,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -413,
+              "z": -187.3
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005634905484037667
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 900,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -423,
+              "z": -184.7
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005632202759273675
+              }
+            ]
+          },
+          {
+            "distance": 900,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -423,
+              "z": -186
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 0,
+            "supported": false,
+            "visibleFloor": []
+          },
+          {
+            "distance": 900,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -423,
+              "z": -187.3
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005632202705028178
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 916,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -439,
+              "z": -184.7
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005637604979447097
+              }
+            ]
+          },
+          {
+            "distance": 916,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -439,
+              "z": -186
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005637604979189526
+              }
+            ]
+          },
+          {
+            "distance": 916,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -439,
+              "z": -187.3
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005637604978980804
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 919,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -442,
+              "z": -184.7
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005625453045703388
+              }
+            ]
+          },
+          {
+            "distance": 919,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -442,
+              "z": -186
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.000562545265025971
+              }
+            ]
+          },
+          {
+            "distance": 919,
+            "ground": 0,
+            "point": {
+              "heading": 1.5707963267948966,
+              "x": -442,
+              "z": -187.3
+            },
+            "segments": [
+              {
+                "end": 513,
+                "heading": 0,
+                "start": 357,
+                "x": -180,
+                "z": -174
+              },
+              {
+                "end": 681,
+                "heading": 1.5707963267948966,
+                "start": 513,
+                "x": -180,
+                "z": -330
+              },
+              {
+                "end": 825,
+                "heading": 3.141592653589793,
+                "start": 681,
+                "x": -348,
+                "z": -330
+              },
+              {
+                "end": null,
+                "heading": 1.5707963267948966,
+                "start": 825,
+                "x": -348,
+                "z": -186
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005625452136159836
+              }
+            ]
+          }
+        ]
+      ],
+      "seed": 144966157
+    },
+    {
+      "death": {
+        "cause": "water",
+        "delay": 0.5,
+        "elapsed": 0.5000000596046448,
+        "kind": "water",
+        "reason": "掉进了水里"
+      },
+      "seed": 144966157,
+      "state": {
+        "activeBranch": null,
+        "airborne": false,
+        "angelWings": {
+          "cooldown": 0,
+          "pendingRevive": false,
+          "permanentStock": 0,
+          "remaining": 0,
+          "stock": 0
+        },
+        "autoTurnQueued": false,
+        "boost": {
+          "active": false,
+          "left": 0,
+          "speedBefore": 0
+        },
+        "boostHandover": {
+          "deferred": 0,
+          "reasons": []
+        },
+        "chaseGap": 11.5,
+        "coinMeter": {
+          "count": 41,
+          "level": 1,
+          "maxLevel": 0
+        },
+        "coinSpawnLevel": 0,
+        "coins": 41,
+        "course": {
+          "branches": [
+            {
+              "from": 882,
+              "to": 918
+            }
+          ],
+          "coinStart": 0,
+          "extent": 1329,
+          "features": [
+            {
+              "from": 357,
+              "generatedAtProgress": 0,
+              "kind": "pit",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": false,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 513
+            },
+            {
+              "beatIntent": "recovery",
+              "fastTurn": false,
+              "from": 513,
+              "generatedAtProgress": 87.10126404163589,
+              "kind": "recovery",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 681
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 681,
+              "generatedAtProgress": 187.44637879432213,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 825
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 825,
+              "generatedAtProgress": 277.83815414084097,
+              "kind": "branch",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1017
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 1017,
+              "generatedAtProgress": 404.8035989499134,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1161
+            },
+            {
+              "fastTurn": false,
+              "from": 1161,
+              "generatedAtProgress": 503.8644254828985,
+              "kind": "transition",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 3,
+              "surface": "stone",
+              "themeRequestedAtProgress": 503.8644254828985,
+              "to": 1329
+            }
+          ],
+          "layoutRejections": [],
+          "longGapDecisions": [],
+          "longGapFallbacks": [],
+          "narrows": [
+            {
+              "from": 1086,
+              "side": "left",
+              "to": 1098
+            }
+          ],
+          "opening": "generated",
+          "retainedFrom": 664.8733805847162,
+          "rulesVersion": "beats-v10",
+          "surfaces": [
+            {
+              "from": 0,
+              "kind": "stone",
+              "level": 2,
+              "to": 1248
+            },
+            {
+              "from": 1248,
+              "kind": "stone",
+              "level": 3,
+              "to": null
+            }
+          ],
+          "turnOffset": 2,
+          "turns": [
+            {
+              "direction": -1,
+              "distance": 513,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 681,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 825,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 1017,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 1161,
+              "junction": "tee"
+            },
+            {
+              "direction": -1,
+              "distance": 1329,
+              "junction": "corner"
+            }
+          ]
+        },
+        "distance": 905,
+        "distanceExact": 905.7414730834956,
+        "enemyGap": 15,
+        "equipped": "jhony",
+        "falling": true,
+        "fastTurn": {
+          "active": false,
+          "elapsed": 575.5967407226562
+        },
+        "fps": 60,
+        "gems": 0,
+        "generation": {
+          "bonuses": [],
+          "enabled": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "lastBonus": 0,
+          "nextBonusCheck": 972,
+          "seed": 144966157
+        },
+        "generationPacing": {
+          "doubleObstaclePercent": 0.05,
+          "from": 500,
+          "known": true,
+          "minCoinRunSpaces": 9,
+          "minObstacleSpaces": 4,
+          "minTurnSpaces": 8
+        },
+        "groundY": 0,
+        "headStart": null,
+        "headStartReady": false,
+        "headStartStock": {
+          "mega": 0,
+          "normal": 0
+        },
+        "jumpVelocity": -26.25,
+        "jumpY": -7.21875,
+        "lane": 1,
+        "nextJunction": "corner",
+        "nextTurn": 1017,
+        "obstacles": [],
+        "phase": "ended",
+        "pickups": [
+          {
+            "ahead": -10,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": -8,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": -6,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": -4,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": -2,
+            "kind": "coin",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": -10,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -9,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -8,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -7,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -6,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -5,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -4,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -3,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -2,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          }
+        ],
+        "position": [
+          -428.7414730834955,
+          -7.21875,
+          -185.99999771399524
+        ],
+        "power": null,
+        "powerPickups": {
+          "bonus": 0,
+          "boost": 0,
+          "magnet": 0,
+          "shield": 0
+        },
+        "powerRemaining": 0,
+        "powers": [],
+        "progressDistance": 578.930186630024,
+        "queuedForwardForce": 0,
+        "recoveringFromStumble": false,
+        "reviveProtectionRemaining": 0,
+        "rig": "ready",
+        "rigLoadStatus": "ready",
+        "runChallenges": {
+          "firstCoinDistance": 108.54429003724398,
+          "powerFreeScore": 17226,
+          "stumbled": false,
+          "summary": {
+            "cleanDistance": 578.930186630024,
+            "coinFreeStart": 108.54429003724398,
+            "powerFreeScore": 17226
+          },
+          "usedPower": false
+        },
+        "runElapsed": 31.17466735839844,
+        "runUpgrades": {
+          "availability": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "boostProgress": 250,
+          "coinBonusReward": 50,
+          "coinMultiplier": 1,
+          "levels": {
+            "bonus": 0,
+            "boost": 0,
+            "coin": 0,
+            "coinSpawn": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "magnetDuration": 15,
+          "magnetMultiplier": 1,
+          "shieldDuration": 15
+        },
+        "score": 17226,
+        "scoreMultiplier": 22,
+        "session": {
+          "committed": false,
+          "deaths": 1,
+          "gemReviveUsed": false,
+          "gemRevives": 0,
+          "lastCommittedRunId": "aed0466e-86fd-4704-9efb-69c003607ee5",
+          "phase": "ended",
+          "runId": "aec0272b-1d05-460e-b913-56d88a4c315d",
+          "wingRevives": 0
+        },
+        "side": -0.0000022860047460071196,
+        "simulation": {
+          "lastStepSeconds": 0.025,
+          "steps": 1247
+        },
+        "slideDuration": 0,
+        "sliding": 0,
+        "speed": 34.723699951171874,
+        "stumbleAge": 37.149999999998926,
+        "stumbleRemaining": 0,
+        "swipeStumbleDelay": null,
+        "themePacing": {
+          "changes": [
+            {
+              "level": 3,
+              "progress": 503.8644254828985
+            }
+          ],
+          "elapsed": 75.06575775146484,
+          "level": 3
+        },
+        "turnCount": 5,
+        "turnDirection": 0,
+        "turnIntent": null,
+        "turnQueued": false,
+        "worldY": -7.21875
+      },
+      "wrongBranch": {
+        "from": 882,
+        "to": 918
+      }
+    },
+    {
+      "narrow": {
+        "from": 1086,
+        "side": "left",
+        "to": 1098
+      },
+      "probes": [
+        {
+          "distance": 1086.5,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -538.7,
+            "z": -116.5
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.025000000372529252
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00018487821525758896
+            }
+          ]
+        },
+        {
+          "distance": 1086.5,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -540,
+            "z": -116.5
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00045745508464012374
+            }
+          ]
+        },
+        {
+          "distance": 1086.5,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -541.3,
+            "z": -116.5
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            }
+          ]
+        },
+        {
+          "distance": 1089,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -538.7,
+            "z": -114
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00016031093841761823
+            }
+          ]
+        },
+        {
+          "distance": 1089,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -540,
+            "z": -114
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            }
+          ]
+        },
+        {
+          "distance": 1089,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -541.3,
+            "z": -114
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 1.3,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 1092,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -538.7,
+            "z": -111
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00018107507371123432
+            }
+          ]
+        },
+        {
+          "distance": 1092,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -540,
+            "z": -111
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 0,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 1092,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -541.3,
+            "z": -111
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 1.3,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 1095,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -538.7,
+            "z": -108
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00021429009445550484
+            }
+          ]
+        },
+        {
+          "distance": 1095,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -540,
+            "z": -108
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            }
+          ]
+        },
+        {
+          "distance": 1095,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -541.3,
+            "z": -108
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 1.3,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 1097.5,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -538.7,
+            "z": -105.5
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.0002687050114713596
+            }
+          ]
+        },
+        {
+          "distance": 1097.5,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -540,
+            "z": -105.5
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.025000000372529252
+            }
+          ]
+        },
+        {
+          "distance": 1097.5,
+          "ground": 0,
+          "point": {
+            "heading": 3.141592653589793,
+            "x": -541.3,
+            "z": -105.5
+          },
+          "segments": [
+            {
+              "end": 681,
+              "heading": 1.5707963267948966,
+              "start": 513,
+              "x": -180,
+              "z": -330
+            },
+            {
+              "end": 825,
+              "heading": 3.141592653589793,
+              "start": 681,
+              "x": -348,
+              "z": -330
+            },
+            {
+              "end": 1017,
+              "heading": 1.5707963267948966,
+              "start": 825,
+              "x": -348,
+              "z": -186
+            },
+            {
+              "end": null,
+              "heading": 3.141592653589793,
+              "start": 1017,
+              "x": -540,
+              "z": -186
+            }
+          ],
+          "side": 1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.025000000372528808
+            }
+          ]
+        }
+      ],
+      "seed": 144966157
+    },
+    {
+      "after": {
+        "activeBranch": null,
+        "airborne": false,
+        "angelWings": {
+          "cooldown": 0,
+          "pendingRevive": false,
+          "permanentStock": 0,
+          "remaining": 0,
+          "stock": 0
+        },
+        "autoTurnQueued": false,
+        "boost": {
+          "active": false,
+          "left": 0,
+          "speedBefore": 0
+        },
+        "boostHandover": {
+          "deferred": 0,
+          "reasons": []
+        },
+        "chaseGap": 11.5,
+        "coinMeter": {
+          "count": 78,
+          "level": 1,
+          "maxLevel": 0
+        },
+        "coinSpawnLevel": 0,
+        "coins": 78,
+        "course": {
+          "branches": [
+            {
+              "from": 1098,
+              "to": 1134
+            }
+          ],
+          "coinStart": 0,
+          "extent": 1713,
+          "features": [
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 693,
+              "generatedAtProgress": 195.12385593501904,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 885
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 885,
+              "generatedAtProgress": 316.6357814367999,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1053
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 1053,
+              "generatedAtProgress": 428.7907490388493,
+              "kind": "branch",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1233
+            },
+            {
+              "fastTurn": false,
+              "from": 1233,
+              "generatedAtProgress": 555.6351340229266,
+              "kind": "transition",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 1,
+              "surface": "wood",
+              "themeRequestedAtProgress": 503.44677611392814,
+              "to": 1401
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 1401,
+              "generatedAtProgress": 678.976796281818,
+              "kind": "plankPit",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 1,
+              "surface": "wood",
+              "to": 1545
+            },
+            {
+              "fastTurn": false,
+              "from": 1545,
+              "generatedAtProgress": 787.6656277323776,
+              "kind": "transition",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "themeRequestedAtProgress": 703.7077391891391,
+              "to": 1713
+            }
+          ],
+          "layoutRejections": [],
+          "longGapDecisions": [],
+          "longGapFallbacks": [],
+          "narrows": [],
+          "opening": "generated",
+          "retainedFrom": 1005.0298630523688,
+          "rulesVersion": "beats-v10",
+          "surfaces": [
+            {
+              "from": 0,
+              "kind": "stone",
+              "level": 2,
+              "to": 1320
+            },
+            {
+              "from": 1320,
+              "kind": "wood",
+              "level": 1,
+              "to": 1632
+            },
+            {
+              "from": 1632,
+              "kind": "stone",
+              "level": 2,
+              "to": null
+            }
+          ],
+          "turnOffset": 4,
+          "turns": [
+            {
+              "direction": 1,
+              "distance": 885,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 1053,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 1233,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 1401,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 1545,
+              "junction": "tee"
+            },
+            {
+              "direction": 1,
+              "distance": 1713,
+              "junction": "corner"
+            }
+          ]
+        },
+        "distance": 1245,
+        "distanceExact": 1245.029863052369,
+        "enemyGap": 15,
+        "equipped": "jhony",
+        "falling": false,
+        "fastTurn": {
+          "active": false,
+          "elapsed": 829.4799194335938
+        },
+        "fps": 60,
+        "gems": 1,
+        "generation": {
+          "bonuses": [],
+          "enabled": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "lastBonus": 0,
+          "nextBonusCheck": 1308,
+          "seed": 145073850
+        },
+        "generationPacing": {
+          "doubleObstaclePercent": 0.05,
+          "from": 500,
+          "known": true,
+          "minCoinRunSpaces": 9,
+          "minObstacleSpaces": 4,
+          "minTurnSpaces": 8
+        },
+        "groundY": 0,
+        "headStart": null,
+        "headStartReady": false,
+        "headStartStock": {
+          "mega": 0,
+          "normal": 0
+        },
+        "jumpVelocity": 0,
+        "jumpY": 0,
+        "lane": 1,
+        "nextJunction": "corner",
+        "nextTurn": 1401,
+        "obstacles": [],
+        "phase": "playing",
+        "pickups": [],
+        "position": [
+          -228.0298630523689,
+          0,
+          18.00000000000006
+        ],
+        "power": null,
+        "powerPickups": {
+          "bonus": 0,
+          "boost": 0,
+          "magnet": 0,
+          "shield": 0
+        },
+        "powerRemaining": 0,
+        "powers": [],
+        "progressDistance": 832.8132414182555,
+        "queuedForwardForce": 0.1,
+        "recoveringFromStumble": false,
+        "reviveProtectionRemaining": 0,
+        "rig": "ready",
+        "rigLoadStatus": "ready",
+        "runChallenges": {
+          "firstCoinDistance": 106.87235834054052,
+          "powerFreeScore": 26984,
+          "stumbled": false,
+          "summary": {
+            "cleanDistance": 832.8132414182555,
+            "coinFreeStart": 106.87235834054052,
+            "powerFreeScore": 26984
+          },
+          "usedPower": false
+        },
+        "runElapsed": 40.6751823425293,
+        "runUpgrades": {
+          "availability": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "boostProgress": 250,
+          "coinBonusReward": 50,
+          "coinMultiplier": 1,
+          "levels": {
+            "bonus": 0,
+            "boost": 0,
+            "coin": 0,
+            "coinSpawn": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "magnetDuration": 15,
+          "magnetMultiplier": 1,
+          "shieldDuration": 15
+        },
+        "score": 26984,
+        "scoreMultiplier": 22,
+        "session": {
+          "committed": false,
+          "deaths": 0,
+          "gemReviveUsed": false,
+          "gemRevives": 0,
+          "lastCommittedRunId": "aec0272b-1d05-460e-b913-56d88a4c315d",
+          "phase": "playing",
+          "runId": "04c75651-1134-49e9-8ed0-9f45a174fcc8",
+          "wingRevives": 0
+        },
+        "side": -1.6548754550913734e-16,
+        "simulation": {
+          "lastStepSeconds": 0.025,
+          "steps": 1627
+        },
+        "slideDuration": 0,
+        "sliding": 0,
+        "speed": 36.32870788574219,
+        "stumbleAge": 46.674999999998384,
+        "stumbleRemaining": 0,
+        "swipeStumbleDelay": null,
+        "themePacing": {
+          "changes": [
+            {
+              "level": 1,
+              "progress": 503.44677611392814
+            },
+            {
+              "level": 2,
+              "progress": 703.7077391891391
+            }
+          ],
+          "elapsed": 129.10549926757812,
+          "level": 2
+        },
+        "turnCount": 7,
+        "turnDirection": 0,
+        "turnIntent": null,
+        "turnQueued": false,
+        "worldY": 0
+      },
+      "branch": {
+        "from": 1098,
+        "to": 1134
+      },
+      "corner": {
+        "distance": 1245,
+        "ground": 0,
+        "point": {
+          "heading": -4.71238898038469,
+          "x": -228,
+          "z": 18.00000000000006
+        },
+        "segments": [
+          {
+            "end": 885,
+            "heading": -3.141592653589793,
+            "start": 693,
+            "x": -47.99999999999997,
+            "z": 6.0000000000000355
+          },
+          {
+            "end": 1053,
+            "heading": -4.71238898038469,
+            "start": 885,
+            "x": -47.99999999999995,
+            "z": 198.00000000000003
+          },
+          {
+            "end": 1233,
+            "heading": -6.283185307179586,
+            "start": 1053,
+            "x": -215.99999999999991,
+            "z": 198.00000000000009
+          },
+          {
+            "end": null,
+            "heading": -4.71238898038469,
+            "start": 1233,
+            "x": -216,
+            "z": 18.000000000000057
+          }
+        ],
+        "side": 0,
+        "supported": true,
+        "visibleFloor": [
+          {
+            "name": "Object81-Pivot_0",
+            "y": -0.0005628150898946416
+          },
+          {
+            "name": "",
+            "y": -0.0005628151120617986
+          }
+        ]
+      },
+      "probes": [
+        [
+          {
+            "distance": 1097,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -217.29999999999995,
+              "z": 154.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005638954727302803
+              }
+            ]
+          },
+          {
+            "distance": 1097,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -215.99999999999991,
+              "z": 154.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005638954727080758
+              }
+            ]
+          },
+          {
+            "distance": 1097,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -214.69999999999993,
+              "z": 154.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005638954726872036
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 1100,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -217.29999999999995,
+              "z": 151.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005626801972482554
+              }
+            ]
+          },
+          {
+            "distance": 1100,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -215.99999999999991,
+              "z": 151.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005626801972025142
+              }
+            ]
+          },
+          {
+            "distance": 1100,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -214.69999999999993,
+              "z": 151.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005626801457920827
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 1106,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -217.29999999999995,
+              "z": 145.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005634905483722363
+              }
+            ]
+          },
+          {
+            "distance": 1106,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -215.99999999999991,
+              "z": 145.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 0,
+            "supported": false,
+            "visibleFloor": []
+          },
+          {
+            "distance": 1106,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -214.69999999999993,
+              "z": 145.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005634905484037667
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 1116,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -217.3,
+              "z": 135.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005632202759273675
+              }
+            ]
+          },
+          {
+            "distance": 1116,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -215.99999999999997,
+              "z": 135.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 0,
+            "supported": false,
+            "visibleFloor": []
+          },
+          {
+            "distance": 1116,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -214.69999999999996,
+              "z": 135.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005632202705028178
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 1132,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -217.3,
+              "z": 119.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005637604979447097
+              }
+            ]
+          },
+          {
+            "distance": 1132,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -215.99999999999997,
+              "z": 119.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005637604979189526
+              }
+            ]
+          },
+          {
+            "distance": 1132,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -214.69999999999996,
+              "z": 119.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005637604978980804
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "distance": 1135,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -217.3,
+              "z": 116.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": -1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005625453045703388
+              }
+            ]
+          },
+          {
+            "distance": 1135,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -215.99999999999997,
+              "z": 116.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 0,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.000562545265025971
+              }
+            ]
+          },
+          {
+            "distance": 1135,
+            "ground": 0,
+            "point": {
+              "heading": -6.283185307179586,
+              "x": -214.69999999999996,
+              "z": 116.00000000000006
+            },
+            "segments": [
+              {
+                "end": 693,
+                "heading": -4.71238898038469,
+                "start": 501,
+                "x": 144.00000000000003,
+                "z": 6
+              },
+              {
+                "end": 885,
+                "heading": -3.141592653589793,
+                "start": 693,
+                "x": -47.99999999999997,
+                "z": 6.0000000000000355
+              },
+              {
+                "end": 1053,
+                "heading": -4.71238898038469,
+                "start": 885,
+                "x": -47.99999999999995,
+                "z": 198.00000000000003
+              },
+              {
+                "end": null,
+                "heading": -6.283185307179586,
+                "start": 1053,
+                "x": -215.99999999999991,
+                "z": 198.00000000000009
+              }
+            ],
+            "side": 1.3,
+            "supported": true,
+            "visibleFloor": [
+              {
+                "name": "Object81-Pivot_0",
+                "y": -0.0005625452136159836
+              }
+            ]
+          }
+        ]
+      ],
+      "seed": 145073850
+    },
+    {
+      "death": {
+        "cause": "water",
+        "delay": 0.5,
+        "elapsed": 0.5000000596046448,
+        "kind": "water",
+        "reason": "掉进了水里"
+      },
+      "seed": 145073850,
+      "state": {
+        "activeBranch": null,
+        "airborne": false,
+        "angelWings": {
+          "cooldown": 0,
+          "pendingRevive": false,
+          "permanentStock": 0,
+          "remaining": 0,
+          "stock": 0
+        },
+        "autoTurnQueued": false,
+        "boost": {
+          "active": false,
+          "left": 0,
+          "speedBefore": 0
+        },
+        "boostHandover": {
+          "deferred": 0,
+          "reasons": []
+        },
+        "chaseGap": 11.5,
+        "coinMeter": {
+          "count": 78,
+          "level": 1,
+          "maxLevel": 0
+        },
+        "coinSpawnLevel": 0,
+        "coins": 78,
+        "course": {
+          "branches": [
+            {
+              "from": 1098,
+              "to": 1134
+            }
+          ],
+          "coinStart": 0,
+          "extent": 1545,
+          "features": [
+            {
+              "beatIntent": "recovery",
+              "fastTurn": false,
+              "from": 501,
+              "generatedAtProgress": 79.81080127267832,
+              "kind": "recovery",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 693
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 693,
+              "generatedAtProgress": 195.12385593501904,
+              "kind": "stonePedestal",
+              "minTurnSpaces": 12,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 885
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 885,
+              "generatedAtProgress": 316.6357814367999,
+              "kind": "narrowSmall",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1053
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 1053,
+              "generatedAtProgress": 428.7907490388493,
+              "kind": "branch",
+              "minTurnSpaces": 10,
+              "nativeStageKnown": true,
+              "pathLevel": 2,
+              "surface": "stone",
+              "to": 1233
+            },
+            {
+              "fastTurn": false,
+              "from": 1233,
+              "generatedAtProgress": 555.6351340229266,
+              "kind": "transition",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 1,
+              "surface": "wood",
+              "themeRequestedAtProgress": 503.44677611392814,
+              "to": 1401
+            },
+            {
+              "beatIntent": "single",
+              "fastTurn": false,
+              "from": 1401,
+              "generatedAtProgress": 678.976796281818,
+              "kind": "plankPit",
+              "minTurnSpaces": 8,
+              "nativeStageKnown": true,
+              "pathLevel": 1,
+              "surface": "wood",
+              "to": 1545
+            }
+          ],
+          "layoutRejections": [],
+          "longGapDecisions": [],
+          "longGapFallbacks": [],
+          "narrows": [
+            {
+              "from": 966,
+              "side": "left",
+              "to": 978
+            }
+          ],
+          "opening": "generated",
+          "retainedFrom": 881.186146392823,
+          "rulesVersion": "beats-v10",
+          "surfaces": [
+            {
+              "from": 0,
+              "kind": "stone",
+              "level": 2,
+              "to": 1320
+            },
+            {
+              "from": 1320,
+              "kind": "wood",
+              "level": 1,
+              "to": null
+            }
+          ],
+          "turnOffset": 3,
+          "turns": [
+            {
+              "direction": -1,
+              "distance": 693,
+              "junction": "tee"
+            },
+            {
+              "direction": 1,
+              "distance": 885,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 1053,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 1233,
+              "junction": "corner"
+            },
+            {
+              "direction": -1,
+              "distance": 1401,
+              "junction": "corner"
+            },
+            {
+              "direction": 1,
+              "distance": 1545,
+              "junction": "tee"
+            }
+          ]
+        },
+        "distance": 1122,
+        "distanceExact": 1122.085866165162,
+        "enemyGap": 15,
+        "equipped": "jhony",
+        "falling": true,
+        "fastTurn": {
+          "active": false,
+          "elapsed": 736.4302978515625
+        },
+        "fps": 60,
+        "gems": 0,
+        "generation": {
+          "bonuses": [],
+          "enabled": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "lastBonus": 0,
+          "nextBonusCheck": 1188,
+          "seed": 145073850
+        },
+        "generationPacing": {
+          "doubleObstaclePercent": 0.05,
+          "from": 500,
+          "known": true,
+          "minCoinRunSpaces": 9,
+          "minObstacleSpaces": 4,
+          "minTurnSpaces": 8
+        },
+        "groundY": 0,
+        "headStart": null,
+        "headStartReady": false,
+        "headStartStock": {
+          "mega": 0,
+          "normal": 0
+        },
+        "jumpVelocity": -26.25,
+        "jumpY": -7.21875,
+        "lane": 1,
+        "nextJunction": "corner",
+        "nextTurn": 1233,
+        "obstacles": [],
+        "phase": "ended",
+        "pickups": [
+          {
+            "ahead": -6,
+            "kind": "gem",
+            "lane": 0,
+            "value": 1
+          },
+          {
+            "ahead": -10,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -8,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -6,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -4,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          },
+          {
+            "ahead": -2,
+            "kind": "coin",
+            "lane": 2,
+            "value": 1
+          }
+        ],
+        "position": [
+          -216.00000408901636,
+          -7.21875,
+          128.9141338348382
+        ],
+        "power": null,
+        "powerPickups": {
+          "bonus": 0,
+          "boost": 0,
+          "magnet": 0,
+          "shield": 0
+        },
+        "powerRemaining": 0,
+        "powers": [],
+        "progressDistance": 739.763489731187,
+        "queuedForwardForce": 0,
+        "recoveringFromStumble": false,
+        "reviveProtectionRemaining": 0,
+        "rig": "ready",
+        "rigLoadStatus": "ready",
+        "runChallenges": {
+          "firstCoinDistance": 106.87235834054052,
+          "powerFreeScore": 24838,
+          "stumbled": false,
+          "summary": {
+            "cleanDistance": 739.763489731187,
+            "coinFreeStart": 106.87235834054052,
+            "powerFreeScore": 24838
+          },
+          "usedPower": false
+        },
+        "runElapsed": 37.27497482299805,
+        "runUpgrades": {
+          "availability": {
+            "bonus": 0,
+            "boost": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "boostProgress": 250,
+          "coinBonusReward": 50,
+          "coinMultiplier": 1,
+          "levels": {
+            "bonus": 0,
+            "boost": 0,
+            "coin": 0,
+            "coinSpawn": 0,
+            "magnet": 0,
+            "shield": 0
+          },
+          "magnetDuration": 15,
+          "magnetMultiplier": 1,
+          "shieldDuration": 15
+        },
+        "score": 24838,
+        "scoreMultiplier": 22,
+        "session": {
+          "committed": false,
+          "deaths": 1,
+          "gemReviveUsed": false,
+          "gemRevives": 0,
+          "lastCommittedRunId": "aec0272b-1d05-460e-b913-56d88a4c315d",
+          "phase": "ended",
+          "runId": "20c0133e-8255-4bf3-ab14-dfab59267499",
+          "wingRevives": 0
+        },
+        "side": -0.000004089016387775921,
+        "simulation": {
+          "lastStepSeconds": 0.025,
+          "steps": 1491
+        },
+        "slideDuration": 0,
+        "sliding": 0,
+        "speed": 35.988790893554686,
+        "stumbleAge": 43.24999999999858,
+        "stumbleRemaining": 0,
+        "swipeStumbleDelay": null,
+        "themePacing": {
+          "changes": [
+            {
+              "level": 1,
+              "progress": 503.44677611392814
+            },
+            {
+              "level": 2,
+              "progress": 703.4685969553606
+            }
+          ],
+          "elapsed": 36.294891357421875,
+          "level": 2
+        },
+        "turnCount": 6,
+        "turnDirection": 0,
+        "turnIntent": null,
+        "turnQueued": false,
+        "worldY": -7.21875
+      },
+      "wrongBranch": {
+        "from": 1098,
+        "to": 1134
+      }
+    },
+    {
+      "narrow": {
+        "from": 966,
+        "side": "left",
+        "to": 978
+      },
+      "probes": [
+        {
+          "distance": 966.5,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -129.49999999999994,
+            "z": 199.30000000000007
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.025000000372529252
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00018487821525758896
+            }
+          ]
+        },
+        {
+          "distance": 966.5,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -129.49999999999994,
+            "z": 198.00000000000009
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00045745508464012374
+            }
+          ]
+        },
+        {
+          "distance": 966.5,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -129.49999999999994,
+            "z": 196.70000000000005
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            }
+          ]
+        },
+        {
+          "distance": 969,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -131.99999999999994,
+            "z": 199.30000000000007
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00016031093841761823
+            }
+          ]
+        },
+        {
+          "distance": 969,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -131.99999999999994,
+            "z": 198.00000000000009
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            }
+          ]
+        },
+        {
+          "distance": 969,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -131.99999999999994,
+            "z": 196.70000000000005
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 1.3,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 972,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -134.99999999999994,
+            "z": 199.30000000000007
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00018107507371079024
+            }
+          ]
+        },
+        {
+          "distance": 972,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -134.99999999999994,
+            "z": 198.00000000000009
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 0,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 972,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -134.99999999999994,
+            "z": 196.70000000000005
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 1.3,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 975,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -137.99999999999994,
+            "z": 199.30000000000007
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.00021429009445550484
+            }
+          ]
+        },
+        {
+          "distance": 975,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -137.99999999999994,
+            "z": 198.00000000000009
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            }
+          ]
+        },
+        {
+          "distance": 975,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -137.99999999999994,
+            "z": 196.70000000000005
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 1.3,
+          "supported": false,
+          "visibleFloor": []
+        },
+        {
+          "distance": 977.5,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -140.49999999999994,
+            "z": 199.30000000000007
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": -1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.02500000037252903
+            },
+            {
+              "name": "Object56-Pivot_0",
+              "y": 0.0002687050114713596
+            }
+          ]
+        },
+        {
+          "distance": 977.5,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -140.49999999999994,
+            "z": 198.00000000000009
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 0,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.025000000372529252
+            }
+          ]
+        },
+        {
+          "distance": 977.5,
+          "ground": 0,
+          "point": {
+            "heading": -4.71238898038469,
+            "x": -140.49999999999994,
+            "z": 196.70000000000005
+          },
+          "segments": [
+            {
+              "end": 693,
+              "heading": -4.71238898038469,
+              "start": 501,
+              "x": 144.00000000000003,
+              "z": 6
+            },
+            {
+              "end": 885,
+              "heading": -3.141592653589793,
+              "start": 693,
+              "x": -47.99999999999997,
+              "z": 6.0000000000000355
+            },
+            {
+              "end": null,
+              "heading": -4.71238898038469,
+              "start": 885,
+              "x": -47.99999999999995,
+              "z": 198.00000000000003
+            }
+          ],
+          "side": 1.3,
+          "supported": true,
+          "visibleFloor": [
+            {
+              "name": "native-narrow-support-floor",
+              "y": 0.025000000372528808
+            }
+          ]
+        }
+      ],
+      "seed": 145073850
+    }
+  ],
+  "checks": [
+    {
+      "name": "144966157:natural branch approach",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 881/-1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 881/0",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 881/1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 884/-1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 884/0",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 884/1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 890/-1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 890/0",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 890/1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 900/-1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 900/0",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 900/1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 916/-1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 916/0",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 916/1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 919/-1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 919/0",
+      "passed": true
+    },
+    {
+      "name": "144966157:branch visible floor matches support 919/1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:survives merge",
+      "passed": true
+    },
+    {
+      "name": "144966157:merge to turn >=96m",
+      "passed": true
+    },
+    {
+      "name": "144966157:visible path retains upcoming turn",
+      "passed": true
+    },
+    {
+      "name": "144966157:normal-mode turn cue visible",
+      "passed": true
+    },
+    {
+      "name": "144966157:corner after merge playable",
+      "passed": true
+    },
+    {
+      "name": "144966157:centre gap remains a real water failure",
+      "passed": true
+    },
+    {
+      "name": "144966157:natural short half-road approach",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "144966157:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:natural branch approach",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1097/-1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1097/0",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1097/1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1100/-1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1100/0",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1100/1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1106/-1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1106/0",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1106/1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1116/-1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1116/0",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1116/1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1132/-1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1132/0",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1132/1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1135/-1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1135/0",
+      "passed": true
+    },
+    {
+      "name": "145073850:branch visible floor matches support 1135/1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:survives merge",
+      "passed": true
+    },
+    {
+      "name": "145073850:merge to turn >=96m",
+      "passed": true
+    },
+    {
+      "name": "145073850:visible path retains upcoming turn",
+      "passed": true
+    },
+    {
+      "name": "145073850:normal-mode turn cue visible",
+      "passed": true
+    },
+    {
+      "name": "145073850:corner after merge playable",
+      "passed": true
+    },
+    {
+      "name": "145073850:centre gap remains a real water failure",
+      "passed": true
+    },
+    {
+      "name": "145073850:natural short half-road approach",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support -1.3",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 0",
+      "passed": true
+    },
+    {
+      "name": "145073850:narrow visible floor matches support 1.3",
+      "passed": true
+    }
+  ]
+}

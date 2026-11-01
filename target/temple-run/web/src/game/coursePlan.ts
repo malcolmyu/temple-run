@@ -24,7 +24,7 @@ const STONE_FEATURES=['treeJump','treeTrip','treeSlide','flameTower','stonePedes
  * Jitter, weights/recovery beats and the120m grouped-geometry floor are web assumptions.
  */
 export class CoursePlan {
- readonly rulesVersion=COURSE_RULE_VERSION;
+ get rulesVersion(){return COURSE_RULE_VERSION+(this.pacing==='baseline'?'-baseline':'');}
  turnOffset=0;
  surfaceOffset=0;
  retainedFrom=0;
@@ -66,8 +66,8 @@ export class CoursePlan {
  }
  extent=0;
  readonly coinStart:number;
- constructor(readonly seed:number,initialExtent=6000,readonly opening:'generated'|'fixture'='generated'){
-  this.director=new CourseDirector(seed);
+ constructor(readonly seed:number,initialExtent=6000,readonly opening:'generated'|'fixture'='generated',readonly pacing:'baseline'|'raised'='raised'){
+  this.director=new CourseDirector(seed,pacing);
   this.rng=new SeededRandom(seed^0x636f7572);this.pairRng=new SeededRandom(seed^0x70616972);this.narrowRng=new SeededRandom(seed^0x6e617272);
   this.coinStart=opening==='generated'?0:489;
   const plan=opening==='generated'?generateCourseOpening(seed):historicalCourseFixture();
@@ -103,7 +103,7 @@ export class CoursePlan {
    const mode=new NativeFastTurnState();mode.active=fast;
    const pacing=progress===undefined?null:mode.apply(nativePathPacing(progress));
    //48m fast floor and obstacle-free groups are web safety adapters, not native length weights.
-   const minimum=pacing?Math.max(fast?48:COURSE_GROUP_MIN_LENGTH,pacing.minTurnSpaces*12):144;
+   const minimum=pacing?Math.max(fast?48:this.opening==='generated'&&this.pacing==='raised'&&(progress??2000)>=1000?108:COURSE_GROUP_MIN_LENGTH,pacing.minTurnSpaces*12):144;
    const from=this.extent,length=minimum+this.rng.int(3)*(fast?12:24);
    let to=from+length;
    let mid=12*Math.round((from+length/2)/12);

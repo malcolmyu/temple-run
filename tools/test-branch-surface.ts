@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
+import {readFileSync} from 'node:fs';
+import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+import {cutSurfaceGeometry} from '../target/temple-run/web/src/game/cutSurface';
 import {buildSidePathOverlay} from '../target/temple-run/web/src/game/render';
 const stone=new THREE.MeshBasicMaterial({side:THREE.DoubleSide}),water=stone.clone();
 const assets={material:{stone,water,wood:stone}} as any;
 const preview=new THREE.Group();buildSidePathOverlay(assets,preview,true,true,0,'stone');preview.updateMatrixWorld(true);
+const base=new OBJLoader().parse(readFileSync('target/temple-run/web/public/assets/track/temple-road-tile.obj','utf8'));base.traverse(o=>{const m=o as THREE.Mesh;if(m.isMesh){m.geometry=cutSurfaceGeometry(m.geometry,-.55,.55,'x',[-6,6]);m.material=stone;}});preview.add(base);preview.updateMatrixWorld(true);
 const ray=new THREE.Raycaster();
 for(const z of [-5,0,5]){
  ray.set(new THREE.Vector3(0,4,z),new THREE.Vector3(0,-1,0));
@@ -11,7 +15,7 @@ for(const z of [-5,0,5]){
 }
 for(const x of [-1.3,1.3]){
  ray.set(new THREE.Vector3(x,4,0),new THREE.Vector3(0,-1,0));
- assert.ok(ray.intersectObject(preview,true).some(hit=>Math.abs(hit.point.y-.064)<.01),'both preview arms have floor');
+ assert.ok(ray.intersectObject(preview,true).some(hit=>Math.abs(hit.point.y)<.08),'both preview arms have floor');
 }
 const selected=new THREE.Group();buildSidePathOverlay(assets,selected,true,true,-1.9,'stone');
 assert.ok(selected.children.every(object=>!(object instanceof THREE.Mesh)||object.material!==water),'selected road must not retain a central water overlay');

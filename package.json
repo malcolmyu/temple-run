@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
-    "build": "npm run temple:assets:verify && vite build --config target/temple-run/vite.config.ts",
+    "build": "npm run temple:assets:verify && npm run temple:reference:verify && vite build --config target/temple-run/vite.config.ts",
     "temple:dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
-    "temple:build": "npm run temple:assets:verify && vite build --config target/temple-run/vite.config.ts",
+    "temple:build": "npm run temple:assets:verify && npm run temple:reference:verify && vite build --config target/temple-run/vite.config.ts",
     "temple:typecheck": "npm run temple:check:source && npm run temple:typecheck:app && npm run temple:typecheck:tools",
     "temple:test:lightmap": "esbuild tools/test-native-lightmap.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-lightmap-test.mjs >/dev/null && node /tmp/temple-lightmap-test.mjs",
     "temple:test:t-junction": "esbuild tools/test-native-t-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-t-junction-test.mjs >/dev/null && node /tmp/temple-t-junction-test.mjs",
@@ -31,7 +31,7 @@
     "temple:test:junction": "esbuild tools/test-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-junction-test.mjs >/dev/null && node /tmp/temple-junction-test.mjs",
     "temple:test:chase": "esbuild tools/test-chase-presentation.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-chase-test.mjs >/dev/null && node /tmp/temple-chase-test.mjs",
     "temple:test:slide": "esbuild tools/test-runner-slide.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-slide-test.mjs >/dev/null && node /tmp/temple-slide-test.mjs",
-    "temple:test:pacing": "esbuild tools/test-opening-pacing.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pacing-test.mjs >/dev/null && node /tmp/temple-pacing-test.mjs",
+    "temple:test:pacing": "esbuild tools/test-pacing-delta.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pacing-delta.mjs >/dev/null && node /tmp/temple-pacing-delta.mjs",
     "temple:test:plank": "esbuild tools/test-native-plank.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-plank-test.mjs >/dev/null && node /tmp/temple-plank-test.mjs",
     "temple:test:coins": "esbuild tools/test-coin-values.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-coins-test.mjs >/dev/null && node /tmp/temple-coins-test.mjs",
     "temple:test:invincibility": "esbuild tools/test-invincibility-material.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-invincibility-test.mjs >/dev/null && node /tmp/temple-invincibility-test.mjs",
@@ -107,7 +107,7 @@
     "temple:test:course-compaction": "esbuild tools/test-course-compaction.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-course-compaction.mjs >/dev/null && node /tmp/temple-course-compaction.mjs",
     "summit:dev": "vite --host 0.0.0.0",
     "summit:build": "vite build",
-    "temple:test:core": "npm run temple:test:input-router && npm run temple:test:modal-input && npm run temple:test:game-session && npm run temple:test:encounter-safety && npm run temple:test:action-safety && npm run temple:test:lateral-safety && npm run temple:test:boost-handover && npm run temple:test:upgrade-purchase && npm run temple:test:course-director && npm run temple:test:mixed-encounters && npm run temple:test:course-compaction && npm run temple:test:path-compaction && npm run temple:test:fire-wall && npm run temple:test:branch-rewards && npm run temple:test:native-coin-values && npm run temple:test:run-upgrades && npm run temple:test:seed-contract && npm run temple:test:run-trace && npm run temple:test:long-narrow && npm run temple:test:narrow-coins && npm run temple:test:death-presentation && npm run temple:test:progress-load && npm run temple:test:gesture-input && npm run temple:test:run-diagnostics && npm run temple:test:lane-blocker && npm run temple:test:rig-cache && npm run temple:test:pages-cache && npm run temple:test:merge-road && npm run temple:test:narrow",
+    "temple:test:core": "npm run temple:test:input-router && npm run temple:test:modal-input && npm run temple:test:game-session && npm run temple:test:encounter-safety && npm run temple:test:action-safety && npm run temple:test:lateral-safety && npm run temple:test:boost-handover && npm run temple:test:upgrade-purchase && npm run temple:test:course-director && npm run temple:test:mixed-encounters && npm run temple:test:course-compaction && npm run temple:test:path-compaction && npm run temple:test:fire-wall && npm run temple:test:branch-rewards && npm run temple:test:native-coin-values && npm run temple:test:run-upgrades && npm run temple:test:seed-contract && npm run temple:test:run-trace && npm run temple:test:long-narrow && npm run temple:test:narrow-coins && npm run temple:test:death-presentation && npm run temple:test:progress-load && npm run temple:test:gesture-input && npm run temple:test:run-diagnostics && npm run temple:test:lane-blocker && npm run temple:test:rig-cache && npm run temple:test:pages-cache && npm run temple:test:merge-road && npm run temple:test:narrow && npm run temple:test:pacing && npm run temple:test:branch-surface",
     "temple:test:run-upgrades": "esbuild tools/test-run-upgrades.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-run-upgrades.mjs >/dev/null && node /tmp/temple-run-upgrades.mjs",
     "temple:test:seed-contract": "esbuild tools/test-seed-contract.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-seed-contract.mjs >/dev/null && node /tmp/temple-seed-contract.mjs",
     "temple:test:run-trace": "esbuild tools/test-run-trace.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-run-trace.mjs >/dev/null && node /tmp/temple-run-trace.mjs",
@@ -126,7 +126,9 @@
     "temple:assets:verify": "esbuild tools/verify-runtime-assets.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-verify-assets.mjs >/dev/null && node /tmp/temple-verify-assets.mjs",
     "temple:test:rig-cache": "esbuild tools/test-rig-request-cache.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-rig-cache.mjs >/dev/null && node /tmp/temple-rig-cache.mjs",
     "temple:test:pages-cache": "esbuild tools/test-pages-retention.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pages-cache.mjs >/dev/null && node /tmp/temple-pages-cache.mjs",
-    "temple:test:merge-road": "esbuild tools/test-merge-road.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-merge-road.mjs >/dev/null && node /tmp/temple-merge-road.mjs"
+    "temple:test:merge-road": "esbuild tools/test-merge-road.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-merge-road.mjs >/dev/null && node /tmp/temple-merge-road.mjs",
+    "temple:reference:build": "python3 tools/publish-video-reference.py",
+    "temple:reference:verify": "esbuild tools/verify-video-reference.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-reference-verify.mjs >/dev/null && node /tmp/temple-reference-verify.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

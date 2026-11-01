@@ -1,0 +1,773 @@
+{
+  "after": {
+    "activeBranch": null,
+    "airborne": false,
+    "angelWings": {
+      "cooldown": 0,
+      "pendingRevive": false,
+      "permanentStock": 0,
+      "remaining": 0,
+      "stock": 0
+    },
+    "autoTurnQueued": false,
+    "boost": {
+      "active": true,
+      "left": 157.8477958198998,
+      "mega": false,
+      "speedBefore": 29.515145786373612
+    },
+    "boostHandover": {
+      "deferred": 0,
+      "reasons": []
+    },
+    "chaseGap": 11.5,
+    "coinMeter": {
+      "count": 0,
+      "level": 1,
+      "maxLevel": 0
+    },
+    "coinSpawnLevel": 0,
+    "coins": 41,
+    "course": {
+      "branches": [
+        {
+          "from": 882,
+          "to": 918
+        }
+      ],
+      "coinStart": 0,
+      "extent": 1329,
+      "features": [
+        {
+          "beatIntent": "recovery",
+          "fastTurn": false,
+          "from": 513,
+          "generatedAtProgress": 87.10126404163589,
+          "kind": "recovery",
+          "minTurnSpaces": 12,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 681
+        },
+        {
+          "beatIntent": "single",
+          "fastTurn": false,
+          "from": 681,
+          "generatedAtProgress": 187.44637879432213,
+          "kind": "stonePedestal",
+          "minTurnSpaces": 12,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 825
+        },
+        {
+          "beatIntent": "single",
+          "fastTurn": false,
+          "from": 825,
+          "generatedAtProgress": 277.83815414084097,
+          "kind": "branch",
+          "minTurnSpaces": 10,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 1017
+        },
+        {
+          "beatIntent": "single",
+          "fastTurn": false,
+          "from": 1017,
+          "generatedAtProgress": 404.8035989499134,
+          "kind": "narrowSmall",
+          "minTurnSpaces": 10,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 1161
+        },
+        {
+          "fastTurn": false,
+          "from": 1161,
+          "generatedAtProgress": 503.8644254828985,
+          "kind": "transition",
+          "minTurnSpaces": 8,
+          "nativeStageKnown": true,
+          "pathLevel": 3,
+          "surface": "stone",
+          "themeRequestedAtProgress": 503.8644254828985,
+          "to": 1329
+        }
+      ],
+      "layoutRejections": [],
+      "longGapDecisions": [],
+      "longGapFallbacks": [],
+      "narrows": [
+        {
+          "from": 1086,
+          "side": "left",
+          "to": 1098
+        }
+      ],
+      "opening": "generated",
+      "retainedFrom": 709.8816197967527,
+      "rulesVersion": "beats-v10",
+      "surfaces": [
+        {
+          "from": 0,
+          "kind": "stone",
+          "level": 2,
+          "to": 1248
+        },
+        {
+          "from": 1248,
+          "kind": "stone",
+          "level": 3,
+          "to": null
+        }
+      ],
+      "turnOffset": 3,
+      "turns": [
+        {
+          "direction": -1,
+          "distance": 681,
+          "junction": "corner"
+        },
+        {
+          "direction": 1,
+          "distance": 825,
+          "junction": "corner"
+        },
+        {
+          "direction": -1,
+          "distance": 1017,
+          "junction": "corner"
+        },
+        {
+          "direction": 1,
+          "distance": 1161,
+          "junction": "tee"
+        },
+        {
+          "direction": -1,
+          "distance": 1329,
+          "junction": "corner"
+        }
+      ]
+    },
+    "distance": 949,
+    "distanceExact": 949.8816197967528,
+    "enemyGap": 15,
+    "equipped": "jhony",
+    "falling": false,
+    "fastTurn": {
+      "active": false,
+      "elapsed": 617.7489624023438
+    },
+    "fps": 60,
+    "gems": 0,
+    "generation": {
+      "bonuses": [],
+      "enabled": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "lastBonus": 0,
+      "nextBonusCheck": 1020,
+      "seed": 144966157
+    },
+    "generationPacing": {
+      "doubleObstaclePercent": 0.05,
+      "from": 500,
+      "known": true,
+      "minCoinRunSpaces": 9,
+      "minObstacleSpaces": 4,
+      "minTurnSpaces": 8
+    },
+    "groundY": 0,
+    "headStart": null,
+    "headStartReady": false,
+    "headStartStock": {
+      "mega": 0,
+      "normal": 0
+    },
+    "jumpVelocity": 0,
+    "jumpY": 0,
+    "lane": 0,
+    "nextJunction": "corner",
+    "nextTurn": 1017,
+    "obstacles": [],
+    "phase": "playing",
+    "pickups": [
+      {
+        "ahead": 77,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 80,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 82,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 85,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      },
+      {
+        "ahead": 87,
+        "kind": "coin",
+        "lane": 1,
+        "value": 1
+      }
+    ],
+    "position": [
+      -472.8816197967527,
+      0,
+      -184.7
+    ],
+    "power": "boost",
+    "powerPickups": {
+      "bonus": 0,
+      "boost": 0,
+      "magnet": 0,
+      "shield": 0
+    },
+    "powerRemaining": 107.8477958198998,
+    "powers": [
+      {
+        "kind": "shield",
+        "remaining": 4,
+        "unit": "s"
+      },
+      {
+        "kind": "boost",
+        "remaining": 107.8477958198998,
+        "slowing": false,
+        "unit": "progress"
+      }
+    ],
+    "progressDistance": 621.0823908101243,
+    "queuedForwardForce": 30,
+    "recoveringFromStumble": false,
+    "reviveProtectionRemaining": 2.000000000000057,
+    "rig": "ready",
+    "rigLoadStatus": "ready",
+    "runChallenges": {
+      "firstCoinDistance": 108.54429003724398,
+      "powerFreeScore": 17226,
+      "stumbled": false,
+      "summary": {
+        "cleanDistance": 621.0823908101243,
+        "coinFreeStart": 108.54429003724398,
+        "powerFreeScore": 17226
+      },
+      "usedPower": true
+    },
+    "runElapsed": 32.17466354370117,
+    "runUpgrades": {
+      "availability": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "boostProgress": 250,
+      "coinBonusReward": 50,
+      "coinMultiplier": 1,
+      "levels": {
+        "bonus": 0,
+        "boost": 0,
+        "coin": 0,
+        "coinSpawn": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "magnetDuration": 15,
+      "magnetMultiplier": 1,
+      "shieldDuration": 15
+    },
+    "score": 18172,
+    "scoreMultiplier": 22,
+    "session": {
+      "committed": false,
+      "deaths": 1,
+      "gemReviveUsed": true,
+      "gemRevives": 1,
+      "lastCommittedRunId": null,
+      "phase": "playing",
+      "runId": "4e5990e4-e08a-483d-abc2-6862d89060e4",
+      "wingRevives": 0
+    },
+    "side": -1.3,
+    "simulation": {
+      "lastStepSeconds": 0.025,
+      "steps": 1287
+    },
+    "slideDuration": 0,
+    "sliding": 0,
+    "speed": 58.765148925781254,
+    "stumbleAge": 20.999999999999943,
+    "stumbleRemaining": 0,
+    "swipeStumbleDelay": null,
+    "themePacing": {
+      "changes": [
+        {
+          "level": 3,
+          "progress": 503.8644254828985
+        }
+      ],
+      "elapsed": 117.21795654296876,
+      "level": 3
+    },
+    "turnCount": 5,
+    "turnDirection": -1,
+    "turnIntent": null,
+    "turnQueued": false,
+    "worldY": 0
+  },
+  "branch": {
+    "from": 882,
+    "to": 918
+  },
+  "checks": [
+    {
+      "name": "natural short split approach",
+      "passed": true
+    },
+    {
+      "name": "centre gap reaches water results",
+      "passed": true
+    },
+    {
+      "name": "revive stands on supported outer lane",
+      "passed": true
+    },
+    {
+      "name": "charges exactly two gems",
+      "passed": true
+    },
+    {
+      "name": "leaves split without another fall",
+      "passed": true
+    }
+  ],
+  "revived": {
+    "activeBranch": "left",
+    "airborne": false,
+    "angelWings": {
+      "cooldown": 0,
+      "pendingRevive": false,
+      "permanentStock": 0,
+      "remaining": 0,
+      "stock": 0
+    },
+    "autoTurnQueued": false,
+    "boost": {
+      "active": true,
+      "left": 200,
+      "mega": false,
+      "speedBefore": 29.515145786373612
+    },
+    "boostHandover": {
+      "deferred": 0,
+      "reasons": []
+    },
+    "chaseGap": 11.5,
+    "coinMeter": {
+      "count": 0,
+      "level": 1,
+      "maxLevel": 0
+    },
+    "coinSpawnLevel": 0,
+    "coins": 41,
+    "course": {
+      "branches": [
+        {
+          "from": 882,
+          "to": 918
+        }
+      ],
+      "coinStart": 0,
+      "extent": 1329,
+      "features": [
+        {
+          "from": 357,
+          "generatedAtProgress": 0,
+          "kind": "pit",
+          "minTurnSpaces": 12,
+          "nativeStageKnown": false,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 513
+        },
+        {
+          "beatIntent": "recovery",
+          "fastTurn": false,
+          "from": 513,
+          "generatedAtProgress": 87.10126404163589,
+          "kind": "recovery",
+          "minTurnSpaces": 12,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 681
+        },
+        {
+          "beatIntent": "single",
+          "fastTurn": false,
+          "from": 681,
+          "generatedAtProgress": 187.44637879432213,
+          "kind": "stonePedestal",
+          "minTurnSpaces": 12,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 825
+        },
+        {
+          "beatIntent": "single",
+          "fastTurn": false,
+          "from": 825,
+          "generatedAtProgress": 277.83815414084097,
+          "kind": "branch",
+          "minTurnSpaces": 10,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 1017
+        },
+        {
+          "beatIntent": "single",
+          "fastTurn": false,
+          "from": 1017,
+          "generatedAtProgress": 404.8035989499134,
+          "kind": "narrowSmall",
+          "minTurnSpaces": 10,
+          "nativeStageKnown": true,
+          "pathLevel": 2,
+          "surface": "stone",
+          "to": 1161
+        },
+        {
+          "fastTurn": false,
+          "from": 1161,
+          "generatedAtProgress": 503.8644254828985,
+          "kind": "transition",
+          "minTurnSpaces": 8,
+          "nativeStageKnown": true,
+          "pathLevel": 3,
+          "surface": "stone",
+          "themeRequestedAtProgress": 503.8644254828985,
+          "to": 1329
+        }
+      ],
+      "layoutRejections": [],
+      "longGapDecisions": [],
+      "longGapFallbacks": [],
+      "narrows": [
+        {
+          "from": 1086,
+          "side": "left",
+          "to": 1098
+        }
+      ],
+      "opening": "generated",
+      "retainedFrom": 664.8733805847162,
+      "rulesVersion": "beats-v10",
+      "surfaces": [
+        {
+          "from": 0,
+          "kind": "stone",
+          "level": 2,
+          "to": 1248
+        },
+        {
+          "from": 1248,
+          "kind": "stone",
+          "level": 3,
+          "to": null
+        }
+      ],
+      "turnOffset": 2,
+      "turns": [
+        {
+          "direction": -1,
+          "distance": 513,
+          "junction": "corner"
+        },
+        {
+          "direction": -1,
+          "distance": 681,
+          "junction": "corner"
+        },
+        {
+          "direction": 1,
+          "distance": 825,
+          "junction": "corner"
+        },
+        {
+          "direction": -1,
+          "distance": 1017,
+          "junction": "corner"
+        },
+        {
+          "direction": 1,
+          "distance": 1161,
+          "junction": "tee"
+        },
+        {
+          "direction": -1,
+          "distance": 1329,
+          "junction": "corner"
+        }
+      ]
+    },
+    "distance": 905,
+    "distanceExact": 905.7414730834956,
+    "enemyGap": 15,
+    "equipped": "jhony",
+    "falling": false,
+    "fastTurn": {
+      "active": false,
+      "elapsed": 575.5967407226562
+    },
+    "fps": 60,
+    "gems": 0,
+    "generation": {
+      "bonuses": [],
+      "enabled": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "lastBonus": 0,
+      "nextBonusCheck": 972,
+      "seed": 144966157
+    },
+    "generationPacing": {
+      "doubleObstaclePercent": 0.05,
+      "from": 500,
+      "known": true,
+      "minCoinRunSpaces": 9,
+      "minObstacleSpaces": 4,
+      "minTurnSpaces": 8
+    },
+    "groundY": 0,
+    "headStart": null,
+    "headStartReady": false,
+    "headStartStock": {
+      "mega": 0,
+      "normal": 0
+    },
+    "jumpVelocity": 0,
+    "jumpY": 0,
+    "lane": 0,
+    "nextJunction": "corner",
+    "nextTurn": 1017,
+    "obstacles": [],
+    "phase": "playing",
+    "pickups": [
+      {
+        "ahead": -10,
+        "kind": "coin",
+        "lane": 0,
+        "value": 1
+      },
+      {
+        "ahead": -8,
+        "kind": "coin",
+        "lane": 0,
+        "value": 1
+      },
+      {
+        "ahead": -6,
+        "kind": "coin",
+        "lane": 0,
+        "value": 1
+      },
+      {
+        "ahead": -4,
+        "kind": "coin",
+        "lane": 0,
+        "value": 1
+      },
+      {
+        "ahead": -2,
+        "kind": "coin",
+        "lane": 0,
+        "value": 1
+      },
+      {
+        "ahead": -10,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -9,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -8,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -7,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -6,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -5,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -4,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -3,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      },
+      {
+        "ahead": -2,
+        "kind": "coin",
+        "lane": 2,
+        "value": 1
+      }
+    ],
+    "position": [
+      -428.7414730834955,
+      -7.21875,
+      -185.99999771399524
+    ],
+    "power": "boost",
+    "powerPickups": {
+      "bonus": 0,
+      "boost": 0,
+      "magnet": 0,
+      "shield": 0
+    },
+    "powerRemaining": 150,
+    "powers": [
+      {
+        "kind": "shield",
+        "remaining": 4.0000000000000036,
+        "unit": "s"
+      },
+      {
+        "kind": "boost",
+        "remaining": 150,
+        "slowing": false,
+        "unit": "progress"
+      }
+    ],
+    "progressDistance": 578.930186630024,
+    "queuedForwardForce": 0,
+    "recoveringFromStumble": false,
+    "reviveProtectionRemaining": 3.0000000000000036,
+    "rig": "ready",
+    "rigLoadStatus": "ready",
+    "runChallenges": {
+      "firstCoinDistance": 108.54429003724398,
+      "powerFreeScore": 17226,
+      "stumbled": false,
+      "summary": {
+        "cleanDistance": 578.930186630024,
+        "coinFreeStart": 108.54429003724398,
+        "powerFreeScore": 17226
+      },
+      "usedPower": true
+    },
+    "runElapsed": 31.17466735839844,
+    "runUpgrades": {
+      "availability": {
+        "bonus": 0,
+        "boost": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "boostProgress": 250,
+      "coinBonusReward": 50,
+      "coinMultiplier": 1,
+      "levels": {
+        "bonus": 0,
+        "boost": 0,
+        "coin": 0,
+        "coinSpawn": 0,
+        "magnet": 0,
+        "shield": 0
+      },
+      "magnetDuration": 15,
+      "magnetMultiplier": 1,
+      "shieldDuration": 15
+    },
+    "score": 17226,
+    "scoreMultiplier": 22,
+    "session": {
+      "committed": false,
+      "deaths": 1,
+      "gemReviveUsed": true,
+      "gemRevives": 1,
+      "lastCommittedRunId": null,
+      "phase": "playing",
+      "runId": "4e5990e4-e08a-483d-abc2-6862d89060e4",
+      "wingRevives": 0
+    },
+    "side": -1.3,
+    "simulation": {
+      "lastStepSeconds": 0.025,
+      "steps": 1247
+    },
+    "slideDuration": 0,
+    "sliding": 0,
+    "speed": 29.515145786373612,
+    "stumbleAge": 20,
+    "stumbleRemaining": 0,
+    "swipeStumbleDelay": null,
+    "themePacing": {
+      "changes": [
+        {
+          "level": 3,
+          "progress": 503.8644254828985
+        }
+      ],
+      "elapsed": 75.06575775146484,
+      "level": 3
+    },
+    "turnCount": 5,
+    "turnDirection": 0,
+    "turnIntent": null,
+    "turnQueued": false,
+    "worldY": 0
+  }
+}

@@ -6,7 +6,7 @@
  const prep=()=>{g.restart();g.freeze();g.advance(1600);};
  const initial=bank();prep();g.planAhead(6000,3000);const branch=g.state().course.branches[0];g.jumpTo(branch.from-8);g.advance(8000);
  check('branch centre failure reaches results',g.state().phase==='ended'&&g.death().kind==='water');
- g.revive();const revived=g.state();check('revive selects a supported road',revived.phase==='playing'&&revived.activeBranch==='left'&&g.groundSupport()[1]);
+ g.revive();const revived=g.state();check('revive selects a supported road',revived.phase==='playing'&&revived.activeBranch==='left'&&revived.lane===0&&g.groundSupport()[0]);
  g.advance(25);const first=g.state();
  check('revive immediately moves instead of replaying intro hold',first.distanceExact>revived.distanceExact);
  check('revive does not grant opening displacement progress',first.progressDistance-revived.progressDistance<1);

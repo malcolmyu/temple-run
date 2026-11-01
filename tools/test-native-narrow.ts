@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
+import {attachNativeLightmapUV} from '../target/temple-run/web/src/game/nativeLightmap';
 import {buildNativeNarrowFloor} from '../target/temple-run/web/src/game/render';
 import {DEFS} from '../target/temple-run/web/src/game/obstacles/catalog';
 import {collisionWouldHit,insideGroundSupport} from '../target/temple-run/web/src/game/obstacles/collision';
@@ -42,3 +43,14 @@ for(const def of Object.values(DEFS).filter(d=>d.id.startsWith('narrow'))){
  }
 }
 console.log(`Narrow floor adapter: ${sampled} ground points match native support including entry/exit rims.`);
+
+for(const def of [DEFS.narrowBeamLeft,DEFS.narrowBeamRight]){
+ const source=new OBJLoader().parse(readFileSync(`target/temple-run/web/public/assets/obstacles/${def.prefabs[0]}.obj`,'utf8'));
+ attachNativeLightmapUV(source,JSON.parse(readFileSync(`target/temple-run/web/public/assets/obstacles/${def.prefabs[0]}.uv1.json`,'utf8')));
+ const mat=new THREE.ShaderMaterial();source.traverse(o=>{if((o as THREE.Mesh).isMesh)(o as THREE.Mesh).material=mat;});
+ const floor=buildNativeNarrowFloor(def,floorMaterial,source);
+ assert.equal(floor.material,mat,'supplement uses the source native shader');
+ assert.ok(floor.userData.nativeUVProjection>0);assert.equal(floor.geometry.getAttribute('uv1').count,floor.geometry.getAttribute('position').count);
+ assert.ok(Array.from(floor.geometry.getAttribute('uv1').array).every(Number.isFinite));
+}
+console.log('Narrow UV: native source shader and projected UV0/UV1 replace generic full-atlas mapping.');

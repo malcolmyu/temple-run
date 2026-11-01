@@ -698,7 +698,7 @@ export class Game {
     this.rewardRng=new SeededRandom(this.runSeed^0x72657764);
     this.bonusDirector=new BonusSpawnDirector(new SeededRandom(this.runSeed^0x706f7765),this.difficulty.name==='classic'&&!this.referenceReplay?this.runUpgrades.availability:WEB_BONUS_AVAILABILITY);
     this.generatedBonuses=[];
-    setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,0):null);
+    setActiveCourse(this.difficulty.name==='classic'&&!this.referenceReplay?new CoursePlan(this.runSeed,0,'generated',new URLSearchParams(location.search).get('pacing')==='baseline'?'baseline':'raised'):null);
     this.courseCoinIndex=0;this.courseCoins=new CourseCoinDirector(activeCourse()?.coinStart??489);this.longGapFallbacks=[];this.longGapDecisions=[];
     if(activeCourse())this.nextSpawn=Infinity;
     this.deathTimer = 0;this.deathElapsed=0;
@@ -750,8 +750,8 @@ export class Game {
     const entrance = this.bundle.scene.getObjectByName('reference-entrance');
     if (entrance) entrance.visible = true;
     this.session.start();
-    this.journal.start({runId:this.session.snapshot().runId,seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',runtimeRulesVersion:'playability-v3',inputRulesVersion:TURN_INTENT_RULE_VERSION,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades});
-    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({runtimeRulesVersion:'playability-v3',inputRulesVersion:TURN_INTENT_RULE_VERSION,startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
+    this.journal.start({runId:this.session.snapshot().runId,seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',runtimeRulesVersion:'playability-v4',inputRulesVersion:TURN_INTENT_RULE_VERSION,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades});
+    if(this.traceArmed){this.traceArmed=false;this.activeTrace=new RunTrace({runtimeRulesVersion:'playability-v4',inputRulesVersion:TURN_INTENT_RULE_VERSION,startVia:this.traceDispatch?'input':'external',seed:this.runSeed,rulesVersion:activeCourse()?.rulesVersion??'reference',reference:this.referenceReplay,difficulty:this.difficulty.name,skin:progress.equipped,upgrades:this.runUpgrades,scoreMultiplier:this.runScoreMultiplier,worldElapsed:this.world.elapsed,inventory:{coins:progress.coins,gems:progress.gems,wings:progress.wings,permaWings:progress.permaWings,headStarts:progress.headStarts,megaStarts:progress.megaStarts}});}
     if(this.viewportBlocked())this.session.pause();
     mutateUi.speed = RUN_SPEED;
     this.publishSession();
@@ -1406,18 +1406,19 @@ export class Game {
     }
     const side = this.sidePathAt(trackPos.distance, this.path);
     if (side && !this.sideFork && Math.abs(lane.x)>.65) {
-      // Enter a real lateral branch: both branches are parallel paths with their own
-      // active distance; the player's lane chooses which one drives camera/obstacles.
+      // Web split causeway: keep the common centreline; the outer lane chooses
+      // rewards/hazards without moving the road or camera coordinate frame.
       this.basePath = this.path.clone();
-      this.sideFork = this.graph.forkLateral(side.from, 1.9,side.to);
+      this.sideFork = this.graph.forkLateral(side.from, 0,side.to);
       this.sideBranch = lane.x<0 ? 'left' : 'right';
       this.graph.choose(this.sideFork, this.sideBranch);
-      lane.index=1; // Once on the chosen road, its centre is a normal safe lane.
+      // Keep the current outer lane on the common centreline: no sideways teleport.
       sfx.play('branchChime');
       this.journal.event(this.runElapsed,'branch-selected',{from:side.from,to:side.to,choice:this.sideBranch,sound:'branchChime'});
       this.rebuildBranchTiles(side.from,side.to);
     }
     if (side) {
+      if(this.sideFork&&Math.abs(lane.x)>.65){this.sideBranch=lane.x<0?'left':'right';this.sideFork.chosen=this.sideBranch;}
       if (!this.sideWarned) {
         this.sideWarned = true;
         setHint(this.sideBranch?`已选择${this.sideBranch==='left'?'左':'右'}侧分路`:this.branchChoiceHint(side));
@@ -1432,7 +1433,7 @@ export class Game {
         this.sideFork = null;
         this.sideBranch = null;
         if (this.basePath) this.graph.merge(this.basePath);
-        setHint('分路已合流');
+        setHint('前方恢复完整路面');
         this.journal.event(this.runElapsed,'branch-merged',{distance:trackPos.distance,nextTurn:this.world.require(this.runnerEntity,Turn).next,pathTurnStarts:this.path.segments.slice(1).map(s=>s.start)});
         this.basePath = null;
         this.rebuildTilesAhead();
@@ -2121,7 +2122,7 @@ export class Game {
       if (obstacle.object) {
         if(def.id==='flameTower'||def.id==='fireWall')updateNativeFlame(obstacle.object,this.world.elapsed);
         const x = def.lanes === 'one' ? LANES[obstacle.lane] : 0;
-        const point = obstacle.branch?(this.basePath??this.path).at(obstacle.distance,obstacle.branch==='left'?-1.9:1.9):this.path.at(obstacle.distance, x);
+        const point = obstacle.branch?(this.basePath??this.path).at(obstacle.distance,obstacle.branch==='left'?-1.3:1.3):this.path.at(obstacle.distance, x);
         obstacle.object.position.set(point.x, this.meshY(obstacle.distance), point.z);
         obstacle.object.rotation.y = point.heading;
         if (def.placement !== 'narrow' && (def.kind === 'gap' || def.kind === 'gapLong') && !obstacle.warned && ahead > 3.5 && ahead < 12) {
@@ -2140,8 +2141,8 @@ export class Game {
             prevDistance: previous,
             distance,
             laneIndex: lane.index,
-            side: lane.x,
-            prevSide: this.lastObstacleSide,
+            side: lane.x-(obstacle.branch?(obstacle.branch==='left'?-1.3:1.3):0),
+            prevSide: this.lastObstacleSide-(obstacle.branch?(obstacle.branch==='left'?-1.3:1.3):0),
             jumpY: jump.y+this.groundY()-this.groundY(obstacle.distance),
             jumpV: jump.v,
             slideRemaining: slide.remaining,
@@ -2669,11 +2670,11 @@ export class Game {
     // A centre-gap death must revive on a real branch, not above the hole.
     const side=this.sidePathAt(this.distance,this.path);
     if(side&&!this.sideFork){
-      this.basePath=this.path.clone();this.sideFork=this.graph.forkLateral(side.from,1.9,side.to);
+      this.basePath=this.path.clone();this.sideFork=this.graph.forkLateral(side.from,0,side.to);
       this.sideBranch='left';this.graph.choose(this.sideFork,'left');
-      const lane=this.world.require(this.runnerEntity,Lane);lane.index=1;lane.x=0;
       this.rebuildBranchTiles(side.from,side.to);this.ensureTiles();
     }
+    if(side){const lane=this.world.require(this.runnerEntity,Lane);lane.index=this.sideBranch==='right'?2:0;lane.x=laneX(lane.index);}
     // Falling in a collapsed-lane section: put the runner back on the surviving lane.
     const narrow = this.narrowAt(this.distance, this.path);
     if (narrow) {
