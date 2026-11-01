@@ -5,7 +5,7 @@
  for(const seed of [1,2]){
   const url=new URL(location.href);url.searchParams.set('seed',String(seed));url.searchParams.delete('route');history.replaceState(null,'',url);
   g.restart();g.freeze();g.advance(1600);g.press('left');
-  const seen=new Set(),branches=new Set(),longJumps=[];let merges=0,lastBranch=null,ticks=0;
+  const seen=new Set<string>(),branches=new Set(),longJumps=[];let merges=0,lastBranch=null,ticks=0;
   while(g.state().phase==='playing'&&g.state().distanceExact<7500&&ticks++<12000){
    const s=g.state(),remaining=s.nextTurn-s.distanceExact;
    for(const o of s.obstacles)seen.add(o.defId);

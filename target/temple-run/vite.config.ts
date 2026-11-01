@@ -51,8 +51,13 @@ export default defineConfig({
   build: {
     outDir: path.join(here, 'dist'),
     emptyOutDir: true,
+    manifest:true,
     rollupOptions: {
       // New TypeScript/Vue build is index.html; the legacy game stays at legacy.html.
+      output:{manualChunks(id:string){
+        if(id.includes('/node_modules/three/'))return 'three';
+        if(id.includes('/node_modules/@vue/')||id.includes('/node_modules/vue/'))return 'vue';
+      }},
       input: {
         main: path.join(here, 'web', 'index.html'),
         legacy: path.join(here, 'web', 'legacy.html'),

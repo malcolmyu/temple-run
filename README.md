@@ -57,4 +57,16 @@ npm run build
 
 根目录`src/`另有旧的小羊游戏，使用`npm run summit:dev`或`npm run summit:build`运行/构建；它不再是本项目默认入口。旧神庙逃亡说明见[target README](target/temple-run/README.md)，其中历史状态不替代当前设计。
 
-历史在线入口：[v2](https://malcolmyu.github.io/temple-run/)、[legacy](https://malcolmyu.github.io/temple-run/legacy.html)。本轮本地改动尚未部署到这些地址。既有发布工具为`tools/deploy-pages.sh`；本次没有发布或推送。
+在线入口：[v2](https://malcolmyu.github.io/temple-run/)、[legacy](https://malcolmyu.github.io/temple-run/legacy.html)。发布工具为`tools/deploy-pages.sh`；线上实际源码提交以`deployment.json`核对。
+
+## TypeScript 与加载治理
+
+[迁移清单与唯一JS豁免](docs/architecture/typescript-migration.md) · [性能前后数据与限制](docs/architecture/loading-performance.md) · [375像素画质对照](docs/architecture/loading-quality.html)。
+
+浏览器回归源码现在为TS，先生成临时可求值脚本再通过浏览器开发接口执行：
+
+```bash
+npm run temple:browser:compile -- tools/test-temple-input-router.browser.ts /tmp/temple-input.js
+```
+
+`temple:typecheck`包含源码JS白名单/哈希检查、现行游戏strict检查和工具全集检查。需要重新生成交付纹理/模型时运行`npm run temple:assets`（Python+Pillow）；原图不覆盖，常规构建只校验已提交的衍生资源。Pages部署保留上一代哈希资源，避免缓存旧HTML引用失效，下一代再清理更旧文件。

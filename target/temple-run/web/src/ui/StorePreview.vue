@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import * as THREE from 'three';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.js';
+import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.ts';
 import { DEFAULT_RIG_URL, skinById } from '../game/skins';
 
 const props = defineProps<{ skinId: string }>();

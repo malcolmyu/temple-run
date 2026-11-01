@@ -2,7 +2,7 @@
 // Real RAF measurement, not diagnostic advance(). Desktop browser result only.
 (async()=>{
  const g=window.__templeGame,url=new URL(location.href);url.searchParams.set('seed','1');url.searchParams.delete('route');history.replaceState(null,'',url);g.restart();
- const narrows=new Map(),samples=[];let nextSample=0;const intervals=[],hitches=[],themes={},start=performance.now();let last=null,observer;
+ const narrows=new Map(),samples=[];let nextSample=0;const intervals=[],hitches=[],themes:Record<string,{frames:number;intervals:number[];firstDistance:number;lastDistance:number}>={},start=performance.now();let last=null,observer;
  try{observer=new PerformanceObserver(list=>hitches.push(...list.getEntries().map(e=>({start:e.startTime,duration:e.duration}))));observer.observe({type:'longtask',buffered:false});}catch{}
  const canvas=document.querySelector('canvas'),bufferStart={width:canvas.width,height:canvas.height};
  return await new Promise(resolve=>{

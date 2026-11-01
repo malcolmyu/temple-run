@@ -18,10 +18,16 @@
       "ES2022",
       "DOM",
       "DOM.Iterable"
-    ]
+    ],
+    "allowJs": false
   },
   "include": [
     "tools/**/*.ts",
-    "target/temple-run/vite.config.ts"
+    "target/temple-run/vite.config.ts",
+    "target/temple-run/web/src/*-preview.ts",
+    "target/temple-run/web/obstacle-tools/**/*.ts",
+    "target/temple-run/web/track-tools/**/*.ts",
+    "src/**/*.ts",
+    "target/temple-run/web/src/entrance-search.ts"
   ]
 }

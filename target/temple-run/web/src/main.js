@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { repairObjNormals } from './objNormals.ts';
-import { loadRunnerRig } from './runnerRig.js';
-import * as sfx from './sfx.js';
+import { loadRunnerRig } from './runnerRig.ts';
+import * as sfx from './sfx.ts';
 import './style.css';
 
 const $ = (id) => document.getElementById(id);
@@ -1123,7 +1123,7 @@ for(const side of [-1,1]){
   limbs.push({arm,leg,side});
 }
 // The original Temple Run character: real skinned mesh + baked run/jump/slide clips,
-// CPU-skinned each frame (see runnerRig.js). Falls back to the static OBJ if anything fails.
+// CPU-skinned each frame (see runnerRig.ts). Falls back to the static OBJ if anything fails.
 // ---- characters / coin bank (original STORE) ----
 const charStoreKey='atb_temple_run_chars';
 // Each runner uses its own ORIGINAL skinned mesh + atlas from the APK where available:

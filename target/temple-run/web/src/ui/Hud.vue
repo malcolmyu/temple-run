@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import {optimizedAsset} from '../game/runtimeAssets';
 import { progress } from '../game/progress';
 import { computed } from 'vue';
 import SpriteNumber from './SpriteNumber.vue';
@@ -9,7 +10,7 @@ import { getGame } from '../game/boot';
 const assist = new URLSearchParams(window.location.search).get('assist') === '1';
 const emit = defineEmits<{ pause: [] }>();
 defineProps<{ disabled?: boolean }>();
-const uiAsset = (file: string): string => `${import.meta.env.BASE_URL}assets/ui/${file}`;
+const uiAsset = (file: string): string => optimizedAsset(`${import.meta.env.BASE_URL}assets/ui/${file}`);
 
 const turnLabel = computed(() => (ui.turnDirection < 0 ? '前方左转' : ui.turnDirection > 0 ? '前方右转' : ''));
 const reviveProtected = computed(() => (ui.phase==='playing'||ui.phase==='paused') && ui.reviveProtectionRemaining>0);

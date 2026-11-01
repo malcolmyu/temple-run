@@ -1,0 +1,568 @@
+{
+  "baseline": "ee26be79d5c8da73f091c2292b80355a7edb0210",
+  "trackedJs": 107,
+  "trackedBuildOutputs": 0,
+  "items": [
+    {
+      "original": "src/main.js",
+      "kind": "source-to-migrate",
+      "target": "src/main.ts"
+    },
+    {
+      "original": "target/temple-run/vite.config.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/vite.config.ts"
+    },
+    {
+      "original": "target/temple-run/web/obstacle-tools/obj-sheet.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/obstacle-tools/obj-sheet.ts"
+    },
+    {
+      "original": "target/temple-run/web/obstacle-tools/sheet.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/obstacle-tools/sheet.ts"
+    },
+    {
+      "original": "target/temple-run/web/obstacle-tools/view.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/obstacle-tools/view.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/main.js",
+      "kind": "archived-legacy-exemption",
+      "target": "target/temple-run/web/src/main.js"
+    },
+    {
+      "original": "target/temple-run/web/src/model-preview.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/model-preview.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/nativeAnimationCurve.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/nativeAnimationCurve.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/nativeUnlit.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/nativeUnlit.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/objNormals.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/objNormals.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/obstacle-preview.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/obstacle-preview.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/rig-preview.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/rig-preview.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/runnerRig.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/runnerRig.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/sfx.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/sfx.ts"
+    },
+    {
+      "original": "target/temple-run/web/src/track-preview.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/src/track-preview.ts"
+    },
+    {
+      "original": "target/temple-run/web/track-tools/detail.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/track-tools/detail.ts"
+    },
+    {
+      "original": "target/temple-run/web/track-tools/preview.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/track-tools/preview.ts"
+    },
+    {
+      "original": "target/temple-run/web/track-tools/sheet.js",
+      "kind": "source-to-migrate",
+      "target": "target/temple-run/web/track-tools/sheet.ts"
+    },
+    {
+      "original": "tools/browser-capture-pose-regression.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-capture-pose-regression.ts"
+    },
+    {
+      "original": "tools/browser-final-stone-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-final-stone-replay.ts"
+    },
+    {
+      "original": "tools/browser-height-full-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-height-full-replay.ts"
+    },
+    {
+      "original": "tools/browser-height-prefix-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-height-prefix-replay.ts"
+    },
+    {
+      "original": "tools/browser-later-stone-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-later-stone-replay.ts"
+    },
+    {
+      "original": "tools/browser-native-action-gates.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-native-action-gates.ts"
+    },
+    {
+      "original": "tools/browser-native-camera-shake.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-native-camera-shake.ts"
+    },
+    {
+      "original": "tools/browser-native-force-order.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-native-force-order.ts"
+    },
+    {
+      "original": "tools/browser-native-rejected-turn.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-native-rejected-turn.ts"
+    },
+    {
+      "original": "tools/browser-native-water-vs-ledge.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-native-water-vs-ledge.ts"
+    },
+    {
+      "original": "tools/browser-opening-source-actions.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-opening-source-actions.ts"
+    },
+    {
+      "original": "tools/browser-opening-time-alignment.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-opening-time-alignment.ts"
+    },
+    {
+      "original": "tools/browser-reference-rejected-swipe-experiment.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-reference-rejected-swipe-experiment.ts"
+    },
+    {
+      "original": "tools/browser-reference-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-reference-replay.ts"
+    },
+    {
+      "original": "tools/browser-reference-slide-compact-experiment.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-reference-slide-compact-experiment.ts"
+    },
+    {
+      "original": "tools/browser-reference-slide-phase-experiment.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-reference-slide-phase-experiment.ts"
+    },
+    {
+      "original": "tools/browser-reference-slide-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-reference-slide-replay.ts"
+    },
+    {
+      "original": "tools/browser-reference-slide-second-shield.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-reference-slide-second-shield.ts"
+    },
+    {
+      "original": "tools/browser-second-shield-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-second-shield-replay.ts"
+    },
+    {
+      "original": "tools/browser-second-wood-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-second-wood-replay.ts"
+    },
+    {
+      "original": "tools/browser-stone-210-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-stone-210-replay.ts"
+    },
+    {
+      "original": "tools/browser-stone-replay.js",
+      "kind": "source-to-migrate",
+      "target": "tools/browser-stone-replay.ts"
+    },
+    {
+      "original": "tools/test-temple-boost.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-boost.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-challenge-failures.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-challenge-failures.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-characters.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-characters.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-chase.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-chase.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-clean-run.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-clean-run.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-cliff-caps-natural.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-cliff-caps-natural.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-cliff-caps.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-cliff-caps.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-cliff-corners.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-cliff-corners.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-cliff-plank.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-cliff-plank.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-cliff-pool.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-cliff-pool.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-cliff-t.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-cliff-t.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-coin-meter.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-coin-meter.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-coin-runs.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-coin-runs.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-coin-upgrades.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-coin-upgrades.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-corner-coins-view.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-corner-coins-view.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-corner-coins.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-corner-coins.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-course-failures.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-course-failures.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-course.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-course.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-current-chase.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-current-chase.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-endurance.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-endurance.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-fast-turn.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-fast-turn.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-feedback.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-feedback.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-first-boost-purchase.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-first-boost-purchase.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-flame-coins-view.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-flame-coins-view.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-flame-coins.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-flame-coins.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-fps-stall.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-fps-stall.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-generated-powers.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-generated-powers.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-ground-rise.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-ground-rise.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-high-coins.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-high-coins.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-input-router.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-input-router.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-live-frames.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-live-frames.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-live-themes.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-live-themes.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-live-v7.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-live-v7.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-long-narrow.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-long-narrow.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-magnet-expiry.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-magnet-expiry.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-magnet-motion.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-magnet-motion.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-modal-focus.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-modal-focus.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-narrow-coins.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-narrow-coins.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-narrow-cue.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-narrow-cue.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-obstacle-actions.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-obstacle-actions.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-ordinary-wings.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-ordinary-wings.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-paid-head-start.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-paid-head-start.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-paired-obstacles.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-paired-obstacles.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-perma-wings.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-perma-wings.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-playability.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-playability.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-power-counts.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-power-counts.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-power-pickup-fixture.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-power-pickup-fixture.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-powers.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-powers.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-resurrection.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-resurrection.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-road-revive.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-road-revive.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-score-growth.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-score-growth.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-session-coins-revive.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-session-coins-revive.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-side-coins-view.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-side-coins-view.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-side-coins.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-side-coins.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-slant-coins-view.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-slant-coins-view.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-slant-coins.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-slant-coins.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-stacking.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-stacking.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-step-matrix.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-step-matrix.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-support-handover.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-support-handover.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-tee-exclusion-view.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-tee-exclusion-view.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-theme-pacing.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-theme-pacing.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-tree-coins-view.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-tree-coins-view.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-tree-coins.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-tree-coins.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-turn-intent.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-turn-intent.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-upgrade-unlock.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-upgrade-unlock.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-upgraded-boost.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-upgraded-boost.browser.ts"
+    },
+    {
+      "original": "tools/test-temple-wings-expiry.browser.js",
+      "kind": "source-to-migrate",
+      "target": "tools/test-temple-wings-expiry.browser.ts"
+    }
+  ],
+  "migratedCount": 106,
+  "exemptCount": 1,
+  "ignoredBuildRoots": [
+    "dist/**",
+    "target/temple-run/dist/**",
+    "node_modules/**"
+  ],
+  "buildJsObserved": [
+    "dist/assets/index-EfncdwpQ.js",
+    "target/temple-run/dist/assets/HelpOverlay-CiQGHn3l.js",
+    "target/temple-run/dist/assets/ObjectivesOverlay-Dpm47qZW.js",
+    "target/temple-run/dist/assets/StatsOverlay-BirKeGRl.js",
+    "target/temple-run/dist/assets/StoreOverlay-DPwys3Dy.js",
+    "target/temple-run/dist/assets/UpgradesOverlay-DbgjD5Se.js",
+    "target/temple-run/dist/assets/game-S4XpLiCq.js",
+    "target/temple-run/dist/assets/legacy-hT3FtDXO.js",
+    "target/temple-run/dist/assets/main-CTwf_lMU.js",
+    "target/temple-run/dist/assets/megaStart-WG9ne2yB.js",
+    "target/temple-run/dist/assets/objNormals-BhrWZ4sO.js",
+    "target/temple-run/dist/assets/objectives-CBtCdKF4.js",
+    "target/temple-run/dist/assets/runnerRig-DSvytqxl.js",
+    "target/temple-run/dist/assets/sfx-BlTTtKge.js",
+    "target/temple-run/dist/assets/three-65SRy6Mp.js",
+    "target/temple-run/dist/assets/upgrades-EzozjAh6.js",
+    "target/temple-run/dist/assets/vue-yA5kcq01.js"
+  ]
+}

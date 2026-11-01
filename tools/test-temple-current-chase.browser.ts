@@ -1,6 +1,6 @@
 // Normal-mode chase verification. No seek/spawn/forced powers. Needs >=2 banked gems for UI follow-up.
 (()=>{
- const g=window.__templeGame,original=location.href,url=new URL(original),checks=[],records={};
+ const g=window.__templeGame,original=location.href,url=new URL(original),checks=[],records:Record<string,unknown>={};
  url.searchParams.set('seed','1');url.searchParams.delete('route');history.replaceState(null,'',url);
  const check=(name,ok)=>{checks.push({name,passed:!!ok});if(!ok)throw Error(name);};
  function prep(){g.restart();g.freeze();g.advance(1600);g.press('left');}

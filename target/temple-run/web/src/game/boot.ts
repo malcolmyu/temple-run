@@ -1,8 +1,9 @@
-import { Game } from './game';
+import type { Game } from './game';
 
 let game: Game | null = null;
 
 export async function bootGame(canvas: HTMLCanvasElement): Promise<Game> {
+  const {Game}=await import('./game');
   game = new Game();
   await game.init(canvas);
   return game;

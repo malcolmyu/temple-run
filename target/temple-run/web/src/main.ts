@@ -3,3 +3,5 @@ import App from './ui/App.vue';
 import './ui/ui.css';
 
 createApp(App).mount('#app');
+
+import './ui/runtime-assets.generated.css';

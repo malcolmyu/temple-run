@@ -38,7 +38,7 @@
   }
   const end=g.state();
   check('physical pickup counts match generated collected records',['magnet','shield','boost','bonus'].every(kind=>end.powerPickups[kind]===end.generation.bonuses.filter(p=>p.kind===kind&&p.collected).length));
-  check('at least one5-pickup objective naturally reached',Object.values(end.powerPickups).some(count=>count>=5));
+  check('at least one5-pickup objective naturally reached',Object.values(end.powerPickups).some(count=>Number(count)>=5));
   check('normal generated run reaches30000m',end.phase==='playing'&&end.distanceExact>=30000);
   check('live scene remains bounded during long run',samples.every(s=>s.scene.tiles<=24&&s.scene.obstacles<=20&&s.scene.pickups<=100));
   const finalGpu=g.gpu();g.advance(60000);check('long run can still fail to results',g.state().phase==='ended');g.restart();g.freeze();

@@ -8,7 +8,11 @@
  g.toMenu();g.freeze();await flush();
  for(const name of ['STORE','目标','升级','STATS','OPTIONS','玩法说明']){
   const entry=Array.from(document.querySelectorAll<HTMLElement>('.menu-row button')).find(b=>b.textContent.trim()===name);
-  entry.focus();entry.click();await flush();
+  entry.focus();entry.click();
+  document.querySelector<HTMLElement>('.overlay:not([role="dialog"]) .primary').click();
+  await flush();
+  check(`${name}: pending panel blocks background start`,g.state().phase==='menu'&&!document.querySelector('.tutorial-overlay'));
+  for(let wait=0;wait<600&&!document.querySelector('[role="dialog"]');wait++)await flush();
   const root=document.querySelector<HTMLElement>('[role="dialog"]');
   check(`${name}: focus enters panel`,root&&root.contains(document.activeElement));
   const first=document.activeElement;
@@ -27,6 +31,7 @@
   localStorage.removeItem('temple.v2.tutorial');
   const entry=document.querySelector<HTMLElement>('.overlay:not([role="dialog"]) .primary');
   entry.focus();entry.click();await flush();
+  for(let wait=0;wait<600&&!document.querySelector('[role="dialog"]');wait++)await flush();
   const root=document.querySelector<HTMLElement>('.tutorial-overlay');
   check('tutorial: focus enters primer',root&&root.contains(document.activeElement));
   const first=document.activeElement;

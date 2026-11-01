@@ -10,5 +10,5 @@ const net=makeSafetyNet(new THREE.Texture());const clone=net.clone();
 setSafetyNetIntensity(net,.5);
 assert.equal((clone.material as THREE.MeshBasicMaterial).opacity,.5);
 assert.equal((clone.material as THREE.MeshBasicMaterial).color.r,.5);
-assert.equal(net.geometry.parameters.width,4);assert.equal(net.geometry.parameters.height,12);
+assert.equal((net.geometry as THREE.PlaneGeometry).parameters.width,4);assert.equal((net.geometry as THREE.PlaneGeometry).parameters.height,12);
 console.log('Native Safety Net: 2.5s threshold, float32 decay, <=0 wrap, shared RGBA and dimensions pass');

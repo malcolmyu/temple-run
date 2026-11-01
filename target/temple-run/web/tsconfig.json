@@ -7,8 +7,7 @@
     "jsx": "preserve",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "allowJs": true,
-    "checkJs": false,
+    "allowJs": false,
     "skipLibCheck": true,
     "noEmit": true,
     "types": [
@@ -25,5 +24,9 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.vue"
+  ],
+  "exclude": [
+    "src/*-preview.ts",
+    "src/entrance-search.ts"
   ]
 }

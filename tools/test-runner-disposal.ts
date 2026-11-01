@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
-import {buildRunnerRig} from '../target/temple-run/web/src/runnerRig.js';
+import {buildRunnerRig} from '../target/temple-run/web/src/runnerRig.ts';
 const data=JSON.parse(readFileSync('target/temple-run/web/public/assets/characters/rig-orig_02___Default.json','utf8'));
 const texture=new THREE.Texture(),sharedGlow=new THREE.Texture();
 const rig=buildRunnerRig(data,{texture,ownsTexture:true});

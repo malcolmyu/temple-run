@@ -8,7 +8,7 @@
 
 <https://malcolmyu.github.io/temple-run/>（v2；旧版 <https://malcolmyu.github.io/temple-run/legacy.html>）
 
-发布：`tools/deploy-pages.sh` 构建并 force-push `gh-pages`，GitHub Pages 从该分支部署。
+发布：`tools/deploy-pages.sh` 构建并普通推送 `gh-pages`，保留上一版内容哈希资源兼容缓存中的旧页面，GitHub Pages 从该分支部署。
 
 **地图场景**：原版 135 个 prefab 根节点按主题/轨道片段/障碍归类；半边路、长坑 A/B、火塔、塔门、周年神庙与 APK 障碍 OBJ 已接入。清单见 [../../docs/original-map-catalog.md](../../docs/original-map-catalog.md)。
 
