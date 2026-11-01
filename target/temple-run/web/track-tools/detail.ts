@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 const q = new URLSearchParams(location.search);
-const NAMES = (q.get('names') || 'Object81-Pivot').split(',').map(s => s.trim()).filter(Boolean);
+const NAMES = (q.get('names') || 'Object81-Pivot').split(',').map((s: any) => s.trim()).filter(Boolean);
 const VW = +(q.get('w') || 1920), VH = +(q.get('h') || 1080);
 const perPiece = 4;
 const MODE = q.get('mode') || 'tex';
@@ -18,13 +18,13 @@ const tl = new THREE.TextureLoader();
 const texWall = tl.load('/assets/apk/wallTexture.webp');
 const texTree = tl.load('/assets/apk/treeTexture.webp');
 for (const t of [texWall, texTree]) { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; }
-const data = await fetch('/track-tools/mesh-data.json').then(r => r.json());
-const byName = new Map(data.map(d => [d.name, d]));
+const data = await fetch('/track-tools/mesh-data.json').then((r: any) => r.json());
+const byName = new Map<string,any>(data.map((d: any) => [d.name, d]));
 
 renderer.setScissorTest(true);
 const labels = [];
 const rowH = VH / NAMES.length;
-NAMES.forEach((name, ri) => {
+NAMES.forEach((name: any, ri: any) => {
   const d = byName.get(name);
   if (!d) { console.warn('missing', name); return; }
   const geo = new THREE.BufferGeometry();
@@ -60,12 +60,12 @@ NAMES.forEach((name, ri) => {
     { t: 'top (+Y)', pos: [0, R * 3, 0], up: [0, 0, -1], w: sz.x, h: sz.z },
     { t: 'iso', pos: [R * 1.8, R * 1.5, R * 2.4] },
   ];
-  views.forEach((v, vi) => {
+  views.forEach((v: any, vi: any) => {
     const aspect = cw / ch;
     const half = v.w ? Math.max(v.h / 2, (v.w / 2) / aspect) * 1.14 : R * 1.02;
     const cam = new THREE.OrthographicCamera(-half * aspect, half * aspect, half, -half, 0.01, R * 40);
-    cam.position.set(...v.pos);
-    if (v.up) cam.up.set(...v.up);
+    cam.position.fromArray(v.pos);
+    if (v.up) cam.up.fromArray(v.up);
     cam.lookAt(0, 0, 0);
     const x = vi * cw, y = VH - (ri + 1) * ch;
     renderer.setViewport(x, y, cw, ch);

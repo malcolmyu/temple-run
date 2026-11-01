@@ -1,6 +1,6 @@
 import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
-import {buildRunnerRig,normalizeRigHeight} from '../target/temple-run/web/src/runnerRig.js';
+import {buildRunnerRig,normalizeRigHeight} from '../target/temple-run/web/src/runnerRig.ts';
 const data=JSON.parse(readFileSync('target/temple-run/web/public/assets/characters/rig-enemy.json','utf8'));
 for(const native of [false,true]){
 const rig=buildRunnerRig(data,{scale:.2,yOffset:0,authoredSkeleton:native});

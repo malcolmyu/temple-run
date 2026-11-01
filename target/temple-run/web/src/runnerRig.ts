@@ -1,17 +1,18 @@
 import { nativeUnlitMaterial } from './nativeUnlit.ts';
 import * as THREE from 'three';
-import { sampleCurveComponent } from './nativeAnimationCurve.ts';
+import { sampleCurveComponent, type NativeCurve } from './nativeAnimationCurve.ts';
+export interface RigOptions { scale?:number; yOffset?:number; flipWinding?:boolean; lockRootPosition?:boolean; authoredSkeleton?:boolean; texture?:THREE.Texture|null; ownsTexture?:boolean; forceFallbackClips?:boolean; fallbackClips?:Record<string,any>|null; fallbackRig?:any; clipFallbackUrl?:string; }
 
 // CPU-skinned runner built from the original Unity SkinnedMeshRenderer data.
 // The JSON stores Unity-space data (bone local TRS raw, mesh positions with x negated
 // by the exporter). We skin in Unity space, then convert to Three.js space at the end
 // with the same x-negation the static OBJ export used, so placement matches.
 
-function trackFor(clip, boneName) {
+function trackFor(clip: any, boneName: any) {
   return clip.tracks[boneName] || null;
 }
 
-function sampleRotation(curve, time, out) {
+function sampleRotation(curve: any, time: any, out: any) {
   const { times, values } = curve;
   const n = times.length;
   if (n === 0) return out.set(0, 0, 0, 1);
@@ -26,7 +27,7 @@ function sampleRotation(curve, time, out) {
   return out.copy(q0).slerp(q1, alpha);
 }
 
-function samplePosition(curve, time, out) {
+function samplePosition(curve: any, time: any, out: any) {
   const { times, values } = curve;
   const n = times.length;
   if (n === 0) return out.set(0, 0, 0);
@@ -36,19 +37,19 @@ function samplePosition(curve, time, out) {
   while (i < n && times[i] < time) i++;
   const t0 = times[i - 1], t1 = times[i];
   const alpha = (time - t0) / (t1 - t0 || 1);
-  out.set(...[0, 1, 2].map((axis) => sampleCurveComponent(curve, i - 1, i, alpha, axis)));
+  out.set(...[0, 1, 2].map((axis: any) => sampleCurveComponent(curve, i - 1, i, alpha, axis)));
   return out;
 }
 
-const normBoneName = (n) => String(n || '').toLowerCase().replace(/bip01|bone|skin|_|\.|\s/g, '');
+const normBoneName = (n: any) => String(n || '').toLowerCase().replace(/bip01|bone|skin|_|\.|\s/g, '');
 
 
 // Rest pose of a rig = its mesh bind pose (scene transforms are snapshot, not bind pose).
-function computeBindRest(data){
-  const bindMatrices=(data.bindposes||[]).map((rows)=>{const m=new THREE.Matrix4();
+function computeBindRest(data: any){
+  const bindMatrices=(data.bindposes||[]).map((rows: any)=>{const m=new THREE.Matrix4();
     m.set(rows[0][0],rows[0][1],rows[0][2],rows[0][3],rows[1][0],rows[1][1],rows[1][2],rows[1][3],
           rows[2][0],rows[2][1],rows[2][2],rows[2][3],rows[3][0],rows[3][1],rows[3][2],rows[3][3]);return m;});
-  return data.bones.map((bone,i)=>{
+  return data.bones.map((bone: any,i: any)=>{
     const inv=new THREE.Matrix4().copy(bindMatrices[i]).invert();
     const local=(bone.parent<0||!bindMatrices[bone.parent])?inv:new THREE.Matrix4().copy(bindMatrices[bone.parent]).multiply(inv);
     const p=new THREE.Vector3(),q=new THREE.Quaternion(),sc=new THREE.Vector3();local.decompose(p,q,sc);return {position:p,quaternion:q,scale:sc};
@@ -56,9 +57,9 @@ function computeBindRest(data){
 }
 
 // Rest-pose world rotations for a bone hierarchy (bind pose, expressed as quaternions).
-function restWorldQuats(rest, bones) {
+function restWorldQuats(rest: any, bones: any) {
   const out = new Array(bones.length);
-  const solve = (i) => {
+  const solve = (i: any) => {
     if (out[i]) return out[i];
     const parent = bones[i].parent;
     out[i] = parent >= 0 ? solve(parent).clone().multiply(rest[i].quaternion) : rest[i].quaternion.clone();
@@ -68,9 +69,9 @@ function restWorldQuats(rest, bones) {
   return out;
 }
 
-function restWorldMatrices(data, rest) {
+function restWorldMatrices(data: any, rest: any) {
   const world = new Array(data.bones.length);
-  const solve = (i) => {
+  const solve = (i: any) => {
     if (world[i]) return world[i];
     const m = new THREE.Matrix4().compose(rest[i].position, rest[i].quaternion, rest[i].scale);
     const parent = data.bones[i].parent;
@@ -83,10 +84,10 @@ function restWorldMatrices(data, rest) {
 
 // Which child should a bone aim at? Limbs aim at the next segment, spines aim up the spine,
 // hips aim at the spine (never at a thigh, even though thighs are longer).
-function pickAimChild(bones, name, children) {
+function pickAimChild(bones: any, name: any, children: any) {
   if (!children.length) return -1;
   const n = name.toLowerCase();
-  const childNames = children.map((ci) => String(bones[ci].name || '').toLowerCase());
+  const childNames = children.map((ci: any) => String(bones[ci].name || '').toLowerCase());
   const prefer = [];
   if (/pelvis|hips|root/.test(n)) prefer.push('spine', 'spine1', 'chest');
   if (/spine|chest|neck/.test(n)) prefer.push('spine1', 'spine2', 'chest', 'neck', 'head');
@@ -97,19 +98,19 @@ function pickAimChild(bones, name, children) {
   if (/thigh/.test(n)) prefer.push('calf');
   if (/calf/.test(n)) prefer.push('foot');
   for (const want of prefer) {
-    const idx = childNames.findIndex((c) => c.replace(/[^a-z0-9]/g, '').includes(want));
+    const idx = childNames.findIndex((c: any) => c.replace(/[^a-z0-9]/g, '').includes(want));
     if (idx >= 0) return children[idx];
   }
   return children[0];
 }
 
 // Bone -> aim child, plus that aim direction and length in the rig's rest pose.
-function buildAimTable(data, rest) {
+function buildAimTable(data: any, rest: any) {
   const world = restWorldMatrices(data, rest);
   const children = data.bones.map(() => []);
-  data.bones.forEach((b, i) => { if (b.parent >= 0) children[b.parent].push(i); });
-  const pos = world.map((m) => new THREE.Vector3().setFromMatrixPosition(m));
-  return data.bones.map((b, i) => {
+  data.bones.forEach((b: any, i: any) => { if (b.parent >= 0) children[b.parent].push(i); });
+  const pos = world.map((m: any) => new THREE.Vector3().setFromMatrixPosition(m));
+  return data.bones.map((b: any, i: any) => {
     const child = pickAimChild(data.bones, b.name, children[i]);
     const dir = child >= 0 ? pos[child].clone().sub(pos[i]) : null;
     return { child, pos: pos[i], dir: dir && dir.lengthSq() > 1e-10 ? dir.clone().normalize() : null, dirRaw: dir };
@@ -120,7 +121,7 @@ function buildAimTable(data, rest) {
 // bone's animated direction. This is the only retarget that survives skeletons whose bind
 // pose, bone lengths or local axes differ from the authoring rig (the APK's shop skins are
 // exactly that): matching world rotations twists those limbs, matching joint directions does not.
-function retargetClipWorld(srcRig, tgtBones, tgtRest, clipName) {
+function retargetClipWorld(srcRig: any, tgtBones: any, tgtRest: any, clipName: any) {
   const clip = (srcRig.clips || {})[clipName];
   if (!clip || !clip.tracks) return null;
   const srcBones = srcRig.bones || [];
@@ -128,9 +129,9 @@ function retargetClipWorld(srcRig, tgtBones, tgtRest, clipName) {
   const srcAim = buildAimTable(srcRig, srcRest);
   const tgtAim = buildAimTable({ bones: tgtBones }, tgtRest);
   const tgtRestWorldQ = restWorldQuats(tgtRest, tgtBones);
-  const srcIndex = new Map(srcBones.map((b, i) => [normBoneName(b.name), i]));
+  const srcIndex = new Map(srcBones.map((b: any, i: any) => [normBoneName(b.name), i]));
   const srcCurves = new Map();
-  for (const [boneName, kinds] of Object.entries(clip.tracks)) {
+  for (const [boneName, kinds] of Object.entries<any>(clip.tracks)) {
     if (kinds && kinds.rotation && kinds.rotation.times && kinds.rotation.values) {
       srcCurves.set(normBoneName(boneName), kinds.rotation);
     }
@@ -139,19 +140,19 @@ function retargetClipWorld(srcRig, tgtBones, tgtRest, clipName) {
 
   const timeSet = new Set();
   for (const curve of srcCurves.values()) for (const t of curve.times) timeSet.add(Math.round(t * 1000));
-  const times = [...timeSet].sort((a, b) => a - b).map((t) => t / 1000);
+  const times = [...timeSet].sort((a: any, b: any) => a - b).map((t: any) => t / 1000);
   if (times.length < 2) return null;
 
-  const mapping = tgtBones.map((b) => {
+  const mapping = tgtBones.map((b: any) => {
     const si = srcIndex.get(normBoneName(b.name));
     return si !== undefined ? si : -1;
   });
-  if (!mapping.some((si) => si >= 0)) return null;
+  if (!mapping.some((si: any) => si >= 0)) return null;
 
   const srcLocal = new Array(srcBones.length);
   const srcWorldQ = new Array(srcBones.length);
-  const srcWorldP = srcAim.map((a) => a.pos.clone());
-  const solveSrc = (i) => {
+  const srcWorldP = srcAim.map((a: any) => a.pos.clone());
+  const solveSrc = (i: any) => {
     if (srcWorldQ[i]) return;
     const parent = srcBones[i].parent;
     if (parent >= 0) solveSrc(parent);
@@ -171,8 +172,8 @@ function retargetClipWorld(srcRig, tgtBones, tgtRest, clipName) {
     for (let i = 0; i < srcBones.length; i++) solveSrc(i);
 
     const tgtWorldQ = new Array(tgtBones.length);
-    const tgtWorldP = tgtBones.map((_, i) => tgtAim[i].pos.clone());
-    const solveTgt = (i) => {
+    const tgtWorldP = tgtBones.map((_: any, i: any) => tgtAim[i].pos.clone());
+    const solveTgt = (i: any) => {
       if (tgtWorldQ[i]) return;
       const parent = tgtBones[i].parent;
       if (parent >= 0) solveTgt(parent);
@@ -206,7 +207,7 @@ function retargetClipWorld(srcRig, tgtBones, tgtRest, clipName) {
   return tracks.size ? { duration: Math.max(clip.duration || 0, 0.001), tracks } : null;
 }
 
-export function buildRunnerRig(data, options = {}) {
+export function buildRunnerRig(data: any, options: RigOptions = {}) {
   const scale = options.scale ?? 0.27;
   const yOffset = options.yOffset ?? 1.46;
   const flipWinding = options.flipWinding !== false;
@@ -216,7 +217,7 @@ export function buildRunnerRig(data, options = {}) {
   const lockRootPosition = options.lockRootPosition === true;
 
   const boneCount = data.bones.length;
-  const nodes = data.bones.map((bone) => {
+  const nodes = data.bones.map((bone: any) => {
     const o = new THREE.Object3D();
     o.name = bone.name;
     o.position.fromArray(bone.position);
@@ -225,14 +226,14 @@ export function buildRunnerRig(data, options = {}) {
     return o;
   });
   const root = new THREE.Group();
-  data.bones.forEach((bone, i) => {
+  data.bones.forEach((bone: any, i: any) => {
     if (bone.parent >= 0 && bone.parent < boneCount) nodes[bone.parent].add(nodes[i]);
     else root.add(nodes[i]);
   });
 
-  const boneIndexByName = new Map(data.bones.map((b, i) => [b.name, i]));
-  const clipData = {};
-  for (const [name, clip] of Object.entries(data.clips || {})) {
+  const boneIndexByName = new Map(data.bones.map((b: any, i: any) => [b.name, i]));
+  const clipData:Record<string,{duration:number;tracks:Map<number,any>}> = {};
+  for (const [name, clip] of Object.entries<any>(data.clips || {})) {
     const tracks = new Map();
     for (const [boneName, kinds] of Object.entries(clip.tracks || {})) {
       const idx = boneIndexByName.get(boneName);
@@ -248,7 +249,7 @@ export function buildRunnerRig(data, options = {}) {
   // The mesh's own bind poses (row-major) map mesh space -> bone space.
   // The scene transform values are NOT the bind pose, so they must not be inverted here.
   root.updateMatrixWorld(true);
-  const bindMatrices = (data.bindposes || []).map((rows) => {
+  const bindMatrices = (data.bindposes || []).map((rows: any) => {
     const m = new THREE.Matrix4();
     m.set(rows[0][0], rows[0][1], rows[0][2], rows[0][3],
           rows[1][0], rows[1][1], rows[1][2], rows[1][3],
@@ -259,7 +260,7 @@ export function buildRunnerRig(data, options = {}) {
   // The default actor has its original skeleton and complete absolute-local clips.
   // Its native SetupCharacter supplies the model offset; do not rebase root motion.
   const authoredSkeleton = options.authoredSkeleton === true;
-  const rest = authoredSkeleton ? data.bones.map((bone) => ({
+  const rest = authoredSkeleton ? data.bones.map((bone: any) => ({
     position: new THREE.Vector3().fromArray(bone.position),
     quaternion: new THREE.Quaternion().fromArray(bone.rotation),
     scale: new THREE.Vector3().fromArray(bone.scale ?? [1, 1, 1]),
@@ -287,16 +288,16 @@ export function buildRunnerRig(data, options = {}) {
   // axes converted into each bone's local frame (axis conventions stay correct).
   {
     const byNorm = new Map();
-    data.bones.forEach((b, i) => { const k = normBoneName(b.name); if (!byNorm.has(k)) byNorm.set(k, i); });
-    const has = (k) => byNorm.has(k);
-    const restQ = (i) => rest[i].quaternion;
-    const localAxis = (i, ax, ay, az) => new THREE.Vector3(ax, ay, az).applyQuaternion(restQ(i).clone().invert()).normalize();
-    const swing = (i, ax, ay, az, ang) => restQ(i).clone().multiply(new THREE.Quaternion().setFromAxisAngle(localAxis(i, ax, ay, az), ang));
-    const synthCycle = (kind) => {
+    data.bones.forEach((b: any, i: any) => { const k = normBoneName(b.name); if (!byNorm.has(k)) byNorm.set(k, i); });
+    const has = (k: any) => byNorm.has(k);
+    const restQ = (i: any) => rest[i].quaternion;
+    const localAxis = (i: any, ax: any, ay: any, az: any) => new THREE.Vector3(ax, ay, az).applyQuaternion(restQ(i).clone().invert()).normalize();
+    const swing = (i: any, ax: any, ay: any, az: any, ang: any) => restQ(i).clone().multiply(new THREE.Quaternion().setFromAxisAngle(localAxis(i, ax, ay, az), ang));
+    const synthCycle = (kind: any) => {
       const dur = kind === 'jump' ? .55 : kind === 'slide' ? .45 : .5;
       const steps = kind === 'run' ? 10 : 5;
       const tracks = new Map();
-      const setBone = (names, fn) => {
+      const setBone = (names: any, fn: any) => {
         for (const n of names) {
           const i = byNorm.get(n);
           if (i === undefined) continue;
@@ -305,28 +306,28 @@ export function buildRunnerRig(data, options = {}) {
             const t = (k / steps) * dur;
             vals.push(fn(t / dur, i).toArray());
           }
-          tracks.set(i, { rotation: { times: Array.from({ length: steps + 1 }, (_, k) => (k / steps) * dur), values: vals } });
+          tracks.set(i, { rotation: { times: Array.from({ length: steps + 1 }, (_: any, k: any) => (k / steps) * dur), values: vals } });
         }
       };
       if (kind === 'run') {
-        setBone(['lthigh'], (u, i) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2) * .62));
-        setBone(['rthigh'], (u, i) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2 + Math.PI) * .62));
-        setBone(['lcalf'], (u, i) => swing(i, 1, 0, 0, Math.max(0, -Math.sin(u * Math.PI * 2)) * .85 + .12));
-        setBone(['rcalf'], (u, i) => swing(i, 1, 0, 0, Math.max(0, -Math.sin(u * Math.PI * 2 + Math.PI)) * .85 + .12));
-        setBone(['lupperarm'], (u, i) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2 + Math.PI) * .5));
-        setBone(['rupperarm'], (u, i) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2) * .5));
-        setBone(['lforearm', 'rforearm'], (u, i) => swing(i, 1, 0, 0, .35 + Math.sin(u * Math.PI * 2) * .18));
-        setBone(['spine', 'spine1'], (u, i) => swing(i, 0, 0, 1, Math.sin(u * Math.PI * 2) * .07));
+        setBone(['lthigh'], (u: any, i: any) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2) * .62));
+        setBone(['rthigh'], (u: any, i: any) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2 + Math.PI) * .62));
+        setBone(['lcalf'], (u: any, i: any) => swing(i, 1, 0, 0, Math.max(0, -Math.sin(u * Math.PI * 2)) * .85 + .12));
+        setBone(['rcalf'], (u: any, i: any) => swing(i, 1, 0, 0, Math.max(0, -Math.sin(u * Math.PI * 2 + Math.PI)) * .85 + .12));
+        setBone(['lupperarm'], (u: any, i: any) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2 + Math.PI) * .5));
+        setBone(['rupperarm'], (u: any, i: any) => swing(i, 1, 0, 0, Math.sin(u * Math.PI * 2) * .5));
+        setBone(['lforearm', 'rforearm'], (u: any, i: any) => swing(i, 1, 0, 0, .35 + Math.sin(u * Math.PI * 2) * .18));
+        setBone(['spine', 'spine1'], (u: any, i: any) => swing(i, 0, 0, 1, Math.sin(u * Math.PI * 2) * .07));
       } else if (kind === 'jump') {
-        setBone(['lthigh', 'rthigh'], (u, i) => swing(i, 1, 0, 0, -.5 - u * .25));
-        setBone(['lcalf', 'rcalf'], (u, i) => swing(i, 1, 0, 0, .9));
-        setBone(['lupperarm', 'rupperarm'], (u, i) => swing(i, 1, 0, 0, -.9));
-        setBone(['lforearm', 'rforearm'], (u, i) => swing(i, 1, 0, 0, .6));
+        setBone(['lthigh', 'rthigh'], (u: any, i: any) => swing(i, 1, 0, 0, -.5 - u * .25));
+        setBone(['lcalf', 'rcalf'], (u: any, i: any) => swing(i, 1, 0, 0, .9));
+        setBone(['lupperarm', 'rupperarm'], (u: any, i: any) => swing(i, 1, 0, 0, -.9));
+        setBone(['lforearm', 'rforearm'], (u: any, i: any) => swing(i, 1, 0, 0, .6));
       } else {
-        setBone(['lthigh', 'rthigh'], (u, i) => swing(i, 1, 0, 0, -1.0));
-        setBone(['lcalf', 'rcalf'], (u, i) => swing(i, 1, 0, 0, .35));
-        setBone(['lupperarm', 'rupperarm'], (u, i) => swing(i, 1, 0, 0, -.5));
-        setBone(['spine', 'spine1'], (u, i) => swing(i, 1, 0, 0, -.35));
+        setBone(['lthigh', 'rthigh'], (u: any, i: any) => swing(i, 1, 0, 0, -1.0));
+        setBone(['lcalf', 'rcalf'], (u: any, i: any) => swing(i, 1, 0, 0, .35));
+        setBone(['lupperarm', 'rupperarm'], (u: any, i: any) => swing(i, 1, 0, 0, -.5));
+        setBone(['spine', 'spine1'], (u: any, i: any) => swing(i, 1, 0, 0, -.35));
       }
       return tracks;
     };
@@ -344,7 +345,7 @@ export function buildRunnerRig(data, options = {}) {
   const rootPositionOffset = new Map();
   if (!lockRootPosition && !authoredSkeleton) {
     const baseClip = clipData.run || Object.values(clipData)[0];
-    data.bones.forEach((bone, i) => {
+    data.bones.forEach((bone: any, i: any) => {
       if (bone.parent >= 0) return;
       const track = baseClip && baseClip.tracks.get(i);
       if (!track || !track.position || !track.position.values.length) return;
@@ -366,7 +367,7 @@ export function buildRunnerRig(data, options = {}) {
   const boneWeights = data.boneWeights;
   const indexArray = flipWinding
     ? data.indices
-    : data.indices.map((v, i, arr) => (i % 3 === 1 ? arr[i + 1] : i % 3 === 2 ? arr[i - 1] : v));
+    : data.indices.map((v: any, i: any, arr: any) => (i % 3 === 1 ? arr[i + 1] : i % 3 === 2 ? arr[i - 1] : v));
 
   const geometry = new THREE.BufferGeometry();
   const positions = new Float32Array(vertexCount * 3);
@@ -401,12 +402,12 @@ export function buildRunnerRig(data, options = {}) {
   const vertex = new THREE.Vector3();
   const out = new THREE.Vector3();
 
-  let glowMaterial = null;
+  let glowMaterial:THREE.MeshBasicMaterial|null = null;
   let clipName = 'run';
   let clipTime = 0;
   let clipLoops = true;
 
-  function setClip(name, restart = false) {
+  function setClip(name: any, restart: any = false) {
     if (!clipData[name]) return;
     if (name === clipName && !restart) return;
     clipName = name;
@@ -414,7 +415,7 @@ export function buildRunnerRig(data, options = {}) {
     clipLoops = name === 'run' || name === 'slideLoop';
   }
 
-  function applyPose(time) {
+  function applyPose(time: any) {
     const clip = clipData[clipName];
     for (let i = 0; i < boneCount; i++) {
       const node = nodes[i];
@@ -459,7 +460,7 @@ export function buildRunnerRig(data, options = {}) {
     geometry.computeVertexNormals();
   }
 
-  function update(dt, timeScale = 1, scaleAllClips = false) {
+  function update(dt: any, timeScale: any = 1, scaleAllClips: any = false) {
     const clip = clipData[clipName];
     if (!clip) return;
     clipTime += dt * (scaleAllClips || clipName === 'run' ? timeScale : 1);
@@ -492,7 +493,7 @@ export function buildRunnerRig(data, options = {}) {
     material,
     /** @param {boolean} active @param {THREE.Texture|null} [texture]
      * @param {number} [dt] @param {number} [remaining] */
-    setInvincibility(active, texture = null, dt = 0, remaining = Infinity) {
+    setInvincibility(active: any, texture: any = null, dt: any = 0, remaining: any = Infinity) {
       if (active) {
         if (!glowMaterial) {
           const map = texture?.clone() || null;
@@ -524,8 +525,8 @@ export function buildRunnerRig(data, options = {}) {
     setClip,
     update,
     getClip: () => clipName,
-    clipDuration: (name) => clipData[name]?.duration || 0,
-    setTime(t, loop = false) {
+    clipDuration: (name: any) => clipData[name]?.duration || 0,
+    setTime(t: any, loop: any = false) {
       clipLoops = loop;
       clipTime = t;
       applyPose(t);
@@ -537,12 +538,12 @@ export function buildRunnerRig(data, options = {}) {
     // Debug helper: posed joint origins in the same space the skinned mesh is rendered in
     // (holder transform applied, x mirrored like the skinned vertices).
     joints() {
-      const out = {};
+      const out:Record<string,number[]> = {};
       for (let i = 0; i < boneCount; i++) {
         const v = new THREE.Vector3().setFromMatrixPosition(nodes[i].matrixWorld);
         v.x = -v.x;
         v.applyMatrix4(holder.matrixWorld);
-        out[data.bones[i].name] = v.toArray().map((n) => +n.toFixed(3));
+        out[data.bones[i].name] = v.toArray().map((n: any) => +n.toFixed(3));
       }
       return out;
     },
@@ -552,16 +553,16 @@ export function buildRunnerRig(data, options = {}) {
   };
 }
 
-export async function loadRunnerRig(url, textureUrl, options = {}) {
-  let failed = false, ownedTexture = null;
+export async function loadRunnerRig(url: string, textureUrl: string|null, options: RigOptions = {}) {
+  let failed = false, ownedTexture:THREE.Texture|null = null;
   const [data, texture] = await Promise.all([
-    fetch(url).then((r) => {
+    fetch(url).then((r: any) => {
       if (!r.ok) throw new Error(`runner rig ${url}: ${r.status}`);
       return r.json();
     }),
     textureUrl
-      ? new Promise((resolve, reject) => {
-          new THREE.TextureLoader().load(textureUrl, (tex) => {
+      ? new Promise<THREE.Texture>((resolve, reject) => {
+          new THREE.TextureLoader().load(textureUrl, (tex: any) => {
             ownedTexture = tex;
             if (failed) tex.dispose();
             tex.colorSpace = THREE.SRGBColorSpace;
@@ -570,7 +571,7 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
           }, undefined, reject);
         })
       : Promise.resolve(null),
-  ]).catch(error => {
+  ]).catch((error: any) => {
     failed = true;
     ownedTexture?.dispose();
     throw error;
@@ -578,7 +579,7 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
   let fallbackClips = options.fallbackClips || null, fallbackRig = options.fallbackRig || null;
   if ((!fallbackClips || !fallbackRig) && options.clipFallbackUrl) {
     try {
-      const fb = await fetch(options.clipFallbackUrl).then((r) => r.json());
+      const fb = await fetch(options.clipFallbackUrl).then((r: any) => r.json());
       fallbackRig = fb; fallbackClips = fb.clips || null;
     } catch {}
   }
@@ -587,7 +588,7 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
   // and the rig does not even share the Bip01 naming family, drop its baked tracks.
   let forceFallbackClips = options.forceFallbackClips === true;
   if (!forceFallbackClips && fallbackClips && Array.isArray(data.bones)) {
-    const bip01 = data.bones.some((b) => /^bip0?1/i.test(String(b.name || '')));
+    const bip01 = data.bones.some((b: any) => /^bip0?1/i.test(String(b.name || '')));
     if (!bip01) forceFallbackClips = true;
   }
   try {
@@ -602,7 +603,7 @@ export async function loadRunnerRig(url, textureUrl, options = {}) {
 // Different APK prefabs were authored at very different unit scales (raw rest heights range
 // 1.2-10.8). Normalise a freshly built rig to the same on-screen height and drop its feet
 // onto y = 0 so swapping skins never changes the apparent size. Shared by both entries.
-export function normalizeRigHeight(rig, targetH = 2.55, options = {}) {
+export function normalizeRigHeight<T extends {object:THREE.Object3D;update?:(dt:number,timeScale:number)=>void}>(rig:T, targetH = 2.55, options:{autoOrient?:boolean} = {}) {
   try {
     if (rig.update) rig.update(0, 0);
     const o = rig.object;

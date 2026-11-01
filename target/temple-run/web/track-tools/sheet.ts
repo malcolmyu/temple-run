@@ -36,13 +36,13 @@ texTree.premultiplyAlpha = false;
 const matWall = new THREE.MeshLambertMaterial({ map: texWall, side: THREE.DoubleSide });
 const matTree = new THREE.MeshLambertMaterial({ map: texTree, side: THREE.DoubleSide, alphaTest: 0.35 });
 
-const data = await fetch('/track-tools/mesh-data.json').then(r => r.json());
-const num = s => { const m = /(\d+)/.exec(s); return m ? +m[1] : 0; };
+const data = await fetch('/track-tools/mesh-data.json').then((r: any) => r.json());
+const num = (s: any) => { const m = /(\d+)/.exec(s); return m ? +m[1] : 0; };
 
-let items = data.filter(d => d.verts > 0 && (d.tex === 'wallTexture' || d.tex === 'treeTexture'));
-if (FILTER === 'wall') items = items.filter(d => d.tex === 'wallTexture');
-if (FILTER === 'tree') items = items.filter(d => d.tex === 'treeTexture');
-items.sort((a, b) => num(a.name) - num(b.name) || a.name.localeCompare(b.name));
+let items = data.filter((d: any) => d.verts > 0 && (d.tex === 'wallTexture' || d.tex === 'treeTexture'));
+if (FILTER === 'wall') items = items.filter((d: any) => d.tex === 'wallTexture');
+if (FILTER === 'tree') items = items.filter((d: any) => d.tex === 'treeTexture');
+items.sort((a: any, b: any) => num(a.name) - num(b.name) || a.name.localeCompare(b.name));
 
 if (LAYOUT) {
   // true temple layout, viewed from above (X right, Z down mapped through Y-rotation)
@@ -76,7 +76,7 @@ if (LAYOUT) {
   scene.add(cam);
 
   const labels = [];
-  page.forEach((d, i) => {
+  page.forEach((d: any, i: any) => {
     const col = i % COLS, row = Math.floor(i / COLS);
     const cx = (col - (COLS - 1) / 2) * CELL;
     const cy = ((ROWS - 1) / 2 - row) * CELL;
@@ -139,6 +139,6 @@ if (LAYOUT) {
   hdr.style.cssText = 'position:absolute;left:10px;top:8px;color:#8fa6b8;font:10px ui-monospace,Menlo,monospace';
   hdr.textContent = `sheet ${SHEET} · ${items.length} temple meshes · ${page.length} shown · dims = world W×H×D (units, Y up) · texture: ${FILTER} · view: ${VIEW}`;
   document.body.appendChild(hdr);
-  window.__INFO__ = { sheet: SHEET, total: items.length, shown: page.length, names: page.map(d => d.name) };
+  window.__INFO__ = { sheet: SHEET, total: items.length, shown: page.length, names: page.map((d: any) => d.name) };
   window.__READY__ = true;
 }

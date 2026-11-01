@@ -115,8 +115,8 @@ import { pickObstacle, defForKind, ORIGINAL_SPAWNER_CONFIG } from './obstacles/s
 import { collisionWouldHit, laneIsBlocked } from './obstacles/collision';
 import { SeededRandom } from './obstacles/rng';
 import { DEFAULT_RIG_URL, SKINS as SKIN_CATALOG, skinById } from './skins';
-import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.js';
-import * as sfx from '../sfx.js';
+import { loadRunnerRig, normalizeRigHeight } from '../runnerRig.ts';
+import * as sfx from '../sfx.ts';
 
 export const SKIN_IDS = SKIN_CATALOG.map((skin) => skin.id);
 export const DEFAULT_SKIN_URL = DEFAULT_RIG_URL;

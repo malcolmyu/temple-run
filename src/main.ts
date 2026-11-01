@@ -31,7 +31,7 @@ sunlight.shadow.camera.top=18;sunlight.shadow.camera.bottom=-18;
 sunlight.shadow.normalBias=.035;
 scene.add(sunlight);scene.add(sunlight.target);
 
-const mat=(color,opts={})=>new THREE.MeshStandardMaterial({color,roughness:.86,...opts});
+const mat=(color: any,opts: any={})=>new THREE.MeshStandardMaterial({color,roughness:.86,...opts});
 const stone=mat(0xdadbd4,{roughness:.76});
 const stoneTop=mat(0xf9f7ec,{roughness:.57});
 const stoneRiser=mat(0xbfc3bd,{roughness:.84});
@@ -42,11 +42,11 @@ const bark=mat(0x655c4a),gold=mat(0xe8b343,{metalness:.7,roughness:.23});
 const goldInset=mat(0xffe699,{metalness:.4,roughness:.3,emissive:0x6b4305,emissiveIntensity:.27});
 const bombBlack=mat(0x2c3030,{roughness:.42}),bombFace=mat(0xfaf4df,{emissive:0x555044,emissiveIntensity:.2});
 const geo={sphere:new THREE.SphereGeometry(1,18,14),sphereLow:new THREE.SphereGeometry(1,10,8),cone:new THREE.ConeGeometry(1,1,7),cyl:new THREE.CylinderGeometry(1,1,1,16),box:new THREE.BoxGeometry(1,1,1),coin:new THREE.CylinderGeometry(.23,.23,.055,28),ring:new THREE.TorusGeometry(.17,.035,7,22)};
-function add(g,m,parent,x=0,y=0,z=0,sx=1,sy=1,sz=1){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);parent.add(o);return o}
-function rand(n){const v=Math.sin(n*78.233+42.17)*43758.5453;return v-Math.floor(v)}
+function add(g: any,m: any,parent: any,x: any=0,y: any=0,z: any=0,sx: any=1,sy: any=1,sz: any=1){const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);parent.add(o);return o}
+function rand(n: any){const v=Math.sin(n*78.233+42.17)*43758.5453;return v-Math.floor(v)}
 const loader=new GLTFLoader();
 const textureLoader=new THREE.TextureLoader();
-function surface(path,srgb=false){const t=textureLoader.load(path,render);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(1.2,1.2);t.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);if(srgb)t.colorSpace=THREE.SRGBColorSpace;return t}
+function surface(path: any,srgb: any=false){const t=textureLoader.load(path,render);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(1.2,1.2);t.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);if(srgb)t.colorSpace=THREE.SRGBColorSpace;return t}
 const grassColor=surface('/assets/grass/diffuse.webp',true);
 const grassNormal=surface('/assets/grass/nor_gl.webp');
 const grassRough=surface('/assets/grass/rough.webp');
@@ -58,7 +58,7 @@ sky.position.z=-70;scene.add(sky);
 const mountainLayers=new THREE.Group();mountainLayers.position.z=-39;scene.add(mountainLayers);
 const distantMountain=mat(0x9eb3af,{flatShading:true,side:THREE.DoubleSide});
 const mountainShadow=mat(0x879f9c,{flatShading:true,side:THREE.DoubleSide});
-function mountain(x,y,w,h,seed){
+function mountain(x: any,y: any,w: any,h: any,seed: any){
   const shape=new THREE.Shape();shape.moveTo(-w/2,0);shape.lineTo(-w*.34,h*.41);shape.lineTo(-w*.13,h*.72);shape.lineTo(w*.03,h);shape.lineTo(w*.20,h*.69);shape.lineTo(w*.34,h*.34);shape.lineTo(w/2,0);shape.closePath();
   add(new THREE.ShapeGeometry(shape),distantMountain,mountainLayers,x,y,0);
   const facet=new THREE.Shape();facet.moveTo(w*.03,h);facet.lineTo(w*.34,h*.34);facet.lineTo(w*.1,0);facet.closePath();add(new THREE.ShapeGeometry(facet),mountainShadow,mountainLayers,x,y,.02);
@@ -75,7 +75,7 @@ for(let i=0;i<34;i++){
 const world=new THREE.Group();scene.add(world);
 const STAIR_COUNT=37;
 const STEP_DX=.39,STEP_RISE=.66,STEP_DEPTH=.22;
-const stepAt=i=>({x:-2.7+i*STEP_DX,y:-3.6+i*STEP_RISE,z:1.2-i*STEP_DEPTH});
+const stepAt=(i: any) =>({x:-2.7+i*STEP_DX,y:-3.6+i*STEP_RISE,z:1.2-i*STEP_DEPTH});
 const steps=[];
 const coinItems=[];
 const bombs=[];
@@ -106,10 +106,10 @@ const hillside=add(terrainGeometry,grassMat,world);hillside.receiveShadow=true;
 
 const pineInstances={trunk:[],branch:[],dark:[],mid:[],light:[]};
 const pineTrunkGeometry=new THREE.CylinderGeometry(.05,.13,1.8,7);
-function pineMatrix(x,y,z,sx,sy,sz,rz=0){
+function pineMatrix(x: any,y: any,z: any,sx: any,sy: any,sz: any,rz: any=0){
   return new THREE.Matrix4().compose(new THREE.Vector3(x,y,z),new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,0,1),rz),new THREE.Vector3(sx,sy,sz));
 }
-function pineTree(parent,x,y,z,s=1){
+function pineTree(parent: any,x: any,y: any,z: any,s: any=1){
   pineInstances.trunk.push(pineMatrix(x,y+.87*s,z,s,s,s));
   for(let i=0;i<5;i++){
     const level=y+(.65+i*.26)*s,spread=(.63-i*.085)*s;
@@ -127,11 +127,11 @@ function flushPines(){
   const geometries={trunk:pineTrunkGeometry,branch:geo.cyl,dark:geo.sphereLow,mid:geo.sphereLow,light:geo.sphereLow};
   for(const key of Object.keys(pineInstances)){
     const matrices=pineInstances[key],instanced=new THREE.InstancedMesh(geometries[key],materials[key],matrices.length);
-    matrices.forEach((matrix,index)=>instanced.setMatrixAt(index,matrix));
+    matrices.forEach((matrix: any,index: any)=>instanced.setMatrixAt(index,matrix));
     instanced.instanceMatrix.needsUpdate=true;instanced.castShadow=true;world.add(instanced);
   }
 }
-function roundTree(parent,x,y,z,s=1){
+function roundTree(parent: any,x: any,y: any,z: any,s: any=1){
   const trunk=add(new THREE.CylinderGeometry(.11,.18,2.1,8),bark,parent,x,y+1.02*s,z,s,s,s);trunk.castShadow=true;
   for(let i=0;i<11;i++){
     const a=i*2.4,r=.6+rand(i+103)*.32;
@@ -178,8 +178,8 @@ add(geo.cyl,bark,flag,0,.78,0,.04,1.6,.04);
 const flagShape=new THREE.Shape();flagShape.moveTo(0,1.55);flagShape.lineTo(.8,1.35);flagShape.lineTo(0,1.15);flagShape.closePath();add(new THREE.ShapeGeometry(flagShape),mat(0xe3aa55,{side:THREE.DoubleSide}),flag,0,0,.05);
 
 // Local CC0 glTF assets make the foreground distinct from the distant painted mountain layers.
-loader.load('/assets/rocks/rock_moss_set_01_1k.gltf',gltf=>{
-  const templates=gltf.scene.children.filter(o=>o.isMesh);
+loader.load('/assets/rocks/rock_moss_set_01_1k.gltf',(gltf: any) =>{
+  const templates=gltf.scene.children.filter((o: any) =>o.isMesh);
   if(!templates.length)return;
   rockMat.map=templates[0].material.map;rockMat.normalMap=templates[0].material.normalMap;rockMat.normalScale.set(.4,.4);rockMat.needsUpdate=true;
   for(let i=2;i<STAIR_COUNT;i+=3){
@@ -188,7 +188,7 @@ loader.load('/assets/rocks/rock_moss_set_01_1k.gltf',gltf=>{
     stoneMesh.rotation.y=rand(i+50)*Math.PI*2;stoneMesh.castShadow=true;stoneMesh.receiveShadow=true;world.add(stoneMesh);
   }
   render();
-},undefined,e=>console.warn('Rock model failed:',e));
+},undefined,(e: any) =>console.warn('Rock model failed:',e));
 
 // A round, expressive game character built as real lit geometry. Feet are at local y=0.
 const sheep=new THREE.Group();world.add(sheep);
@@ -245,13 +245,13 @@ add(geo.sphere,fleece,character,-.45,.73,-.14,.17,.17,.17);
 
 const state={mode:'menu',index:0,jump:null,seconds:30,coins:0,elapsed:0,highest:0,cameraTarget:new THREE.Vector3(),playerPosition:new THREE.Vector3(),messageTimer:0};
 let soundOn=false,audioCtx=null,externalClock=false;
-function beep(freq=600,duration=.08,type='sine'){
+function beep(freq: any=600,duration: any=.08,type: any='sine'){
   if(!soundOn)return;
   try{audioCtx??=new (window.AudioContext||window.webkitAudioContext)();const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,audioCtx.currentTime);gain.gain.setValueAtTime(.05,audioCtx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);osc.connect(gain).connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+duration)}catch{}
 }
-function showMessage(value){message.textContent=value;message.classList.remove('hidden');state.messageTimer=1.1}
-function setPlayerAt(p,arc=0){state.playerPosition.set(p.x-.43,p.y+.45+arc,p.z+.74);sheep.position.copy(state.playerPosition)}
-function setCamera(instant=false,dt=1/60){
+function showMessage(value: any){message.textContent=value;message.classList.remove('hidden');state.messageTimer=1.1}
+function setPlayerAt(p: any,arc: any=0){state.playerPosition.set(p.x-.43,p.y+.45+arc,p.z+.74);sheep.position.copy(state.playerPosition)}
+function setCamera(instant: any=false,dt: any=1/60){
   const p=state.playerPosition;
   const target=new THREE.Vector3(p.x+1.3,p.y+2.12,p.z-1.7);
   if(instant)state.cameraTarget.copy(target);else state.cameraTarget.lerp(target,1-Math.exp(-3.1*dt));
@@ -265,12 +265,12 @@ function setCamera(instant=false,dt=1/60){
 }
 function reset(){
   state.mode='playing';state.index=0;state.jump=null;state.seconds=30;state.coins=0;state.elapsed=0;state.highest=0;
-  coinItems.forEach(o=>{o.taken=false;o.group.visible=true});
+  coinItems.forEach((o: any) =>{o.taken=false;o.group.visible=true});
   heightValue.textContent='0';coinValue.textContent='0';timeValue.textContent='30';
   message.classList.add('hidden');startOverlay.classList.add('hidden');endOverlay.classList.add('hidden');
   setPlayerAt(stepAt(0));setCamera(true);render();
 }
-function finish(won=false){
+function finish(won: any=false){
   if(state.mode!=='playing')return;
   state.mode=won?'won':'gameover';
   document.querySelector('#end-height').textContent=`${state.highest} m`;
@@ -288,7 +288,7 @@ function jump(){
   if(state.index>=STAIR_COUNT-1)return;
   state.jump={from:state.index,to:state.index+1,t:0,duration:.44,boosted:false};beep(520,.07);
 }
-function update(dt){
+function update(dt: any){
   state.elapsed+=dt;
   if(state.messageTimer>0){state.messageTimer-=dt;if(state.messageTimer<=0)message.classList.add('hidden')}
   if(state.mode==='playing'){
@@ -308,7 +308,7 @@ function update(dt){
       if(j.t>=1){
         state.index=j.to;state.jump=null;sheep.rotation.z=0;setPlayerAt(b);
         state.highest=state.index*2;heightValue.textContent=String(state.highest);
-        const c=coinItems.find(o=>o.index===state.index&&!o.taken);
+        const c=coinItems.find((o: any) =>o.index===state.index&&!o.taken);
         if(c){c.taken=true;c.group.visible=false;state.coins++;coinValue.textContent=String(state.coins);showMessage('✦ 金铃铛 +1');beep(880,.1,'triangle')}
         if(bombIndexes.has(state.index)){showMessage('碰到炸弹！');finish(false)}
         else if(state.index===STAIR_COUNT-1)finish(true);
@@ -320,22 +320,22 @@ function update(dt){
       arms[1].rotation.z=-Math.sin(state.elapsed*3)*.035;
     }
   }else if(state.mode==='menu')sheep.position.y=stepAt(0).y+.45+Math.sin(state.elapsed*2)*.025;
-  coinItems.forEach(c=>{if(!c.taken){c.group.rotation.y=state.elapsed*1.8+c.index;c.group.position.y=stepAt(c.index).y+.82+Math.sin(state.elapsed*2.8+c.index)*.06}});
-  bombs.forEach(b=>{b.group.rotation.y=Math.sin(state.elapsed*2+b.index)*.12});
+  coinItems.forEach((c: any) =>{if(!c.taken){c.group.rotation.y=state.elapsed*1.8+c.index;c.group.position.y=stepAt(c.index).y+.82+Math.sin(state.elapsed*2.8+c.index)*.06}});
+  bombs.forEach((b: any) =>{b.group.rotation.y=Math.sin(state.elapsed*2+b.index)*.12});
   setCamera(false,dt);
 }
 function render(){renderer.render(scene,camera)}
 function resize(){const w=game.clientWidth,h=game.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();render()}
 new ResizeObserver(resize).observe(game);
 let previous=0;
-function frame(t){if(!previous)previous=t;let dt=Math.min((t-previous)/1000,.05);previous=t;if(!externalClock)while(dt>0){const step=Math.min(dt,1/60);update(step);dt-=step}render();requestAnimationFrame(frame)}
+function frame(t: any){if(!previous)previous=t;let dt=Math.min((t-previous)/1000,.05);previous=t;if(!externalClock)while(dt>0){const step=Math.min(dt,1/60);update(step);dt-=step}render();requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
-window.advanceTime=ms=>{externalClock=true;for(let i=0,n=Math.max(1,Math.round(ms/(1000/60)));i<n;i++)update(1/60);render()};
-window.render_game_to_text=()=>JSON.stringify({coordinateSystem:'3D world: x right, y up, z toward camera; stairs ascend toward upper right and recede in z',mode:state.mode,step:state.index,stepsTotal:STAIR_COUNT,heightMeters:state.highest,secondsRemaining:+state.seconds.toFixed(1),coins:state.coins,jump:state.jump&&{from:state.jump.from,to:state.jump.to,progress:+state.jump.t.toFixed(2),boosted:state.jump.boosted},nextBomb:[...bombIndexes].find(n=>n>state.index)??null,player:{x:+sheep.position.x.toFixed(2),y:+sheep.position.y.toFixed(2),z:+sheep.position.z.toFixed(2)},visibleSteps:steps.filter(s=>Math.abs(s.index-state.index)<14).map(s=>({index:s.index,x:s.x,y:s.y,z:s.z,bomb:bombIndexes.has(s.index),coin:coinIndexes.has(s.index)}))});
+window.advanceTime=(ms: any) =>{externalClock=true;for(let i=0,n=Math.max(1,Math.round(ms/(1000/60)));i<n;i++)update(1/60);render()};
+window.render_game_to_text=()=>JSON.stringify({coordinateSystem:'3D world: x right, y up, z toward camera; stairs ascend toward upper right and recede in z',mode:state.mode,step:state.index,stepsTotal:STAIR_COUNT,heightMeters:state.highest,secondsRemaining:+state.seconds.toFixed(1),coins:state.coins,jump:state.jump&&{from:state.jump.from,to:state.jump.to,progress:+state.jump.t.toFixed(2),boosted:state.jump.boosted},nextBomb:[...bombIndexes].find((n: any) =>n>state.index)??null,player:{x:+sheep.position.x.toFixed(2),y:+sheep.position.y.toFixed(2),z:+sheep.position.z.toFixed(2)},visibleSteps:steps.filter((s: any) =>Math.abs(s.index-state.index)<14).map((s: any) =>({index:s.index,x:s.x,y:s.y,z:s.z,bomb:bombIndexes.has(s.index),coin:coinIndexes.has(s.index)}))});
 document.querySelector('#start-btn').addEventListener('click',reset);
 document.querySelector('#restart-btn').addEventListener('click',reset);
-document.querySelector('#jump-btn').addEventListener('pointerdown',e=>{e.preventDefault();jump()});
+document.querySelector('#jump-btn').addEventListener('pointerdown',(e: any) =>{e.preventDefault();jump()});
 canvas.addEventListener('pointerdown',()=>{if(state.mode==='playing')jump()});
-document.querySelector('#sound-btn').addEventListener('click',e=>{soundOn=!soundOn;e.currentTarget.classList.toggle('active',soundOn);e.currentTarget.setAttribute('aria-label',soundOn?'关闭声音':'开启声音');beep()});
-window.addEventListener('keydown',e=>{if(['Space','ArrowUp','KeyW'].includes(e.code)){e.preventDefault();if(!e.repeat)jump()}if(e.code==='Enter'&&state.mode!=='playing')reset();if(e.code==='KeyF'){if(!document.fullscreenElement)game.requestFullscreen?.();else document.exitFullscreen?.()}});
+document.querySelector('#sound-btn').addEventListener('click',(e: any) =>{soundOn=!soundOn;e.currentTarget.classList.toggle('active',soundOn);e.currentTarget.setAttribute('aria-label',soundOn?'关闭声音':'开启声音');beep()});
+window.addEventListener('keydown',(e: any) =>{if(['Space','ArrowUp','KeyW'].includes(e.code)){e.preventDefault();if(!e.repeat)jump()}if(e.code==='Enter'&&state.mode!=='playing')reset();if(e.code==='KeyF'){if(!document.fullscreenElement)game.requestFullscreen?.();else document.exitFullscreen?.()}});
 setPlayerAt(stepAt(0));setCamera(true);resize();render();

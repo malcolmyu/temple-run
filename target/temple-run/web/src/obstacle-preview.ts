@@ -19,7 +19,7 @@ const tex = new THREE.TextureLoader().load('/assets/apk/wallTexture.webp'); tex.
 const mat = new THREE.MeshStandardMaterial({ map: tex, roughness: .95, side: THREE.DoubleSide });
 const loader = new OBJLoader();
 const stats = {};
-function label(text, x, y, z) {
+function label(text: any, x: any, y: any, z: any) {
   const c = document.createElement('canvas'); c.width = 256; c.height = 64;
   const g = c.getContext('2d'); g.fillStyle = '#e8dcc0'; g.font = 'bold 28px sans-serif'; g.textAlign = 'center';
   g.fillText(text, 128, 40);
@@ -28,9 +28,9 @@ function label(text, x, y, z) {
   sp.position.set(x, y, z); sp.scale.set(9, 2.25, 1); scene.add(sp);
 }
 const COLS = 5, STEP = 14, ROW = 16;
-FILES.forEach((name, i) => {
-  loader.load(`/assets/obstacles/${name}.obj`, (obj) => {
-    obj.traverse((p) => { if (p.isMesh) p.material = mat; });
+FILES.forEach((name: any, i: any) => {
+  loader.load(`/assets/obstacles/${name}.obj`, (obj: any) => {
+    obj.traverse((p: any) => { if (p.isMesh) p.material = mat; });
     const box = new THREE.Box3().setFromObject(obj);
     const size = box.getSize(new THREE.Vector3());
     const ctr = box.getCenter(new THREE.Vector3());
@@ -43,9 +43,9 @@ FILES.forEach((name, i) => {
     obj.position.x += x; obj.position.z += z;
     scene.add(obj);
     label(`${name} ${size.x.toFixed(0)}x${size.y.toFixed(0)}x${size.z.toFixed(0)}`, x, 8.4, z);
-    stats[name] = { size: size.toArray().map(v => +v.toFixed(1)), scale: +(s).toFixed(2) };
+    stats[name] = { size: size.toArray().map((v: any) => +v.toFixed(1)), scale: +(s).toFixed(2) };
     window.__stats = stats;
   });
 });
 renderer.setAnimationLoop(() => renderer.render(scene, camera));
-window.__cam = (x, y, z, tx, ty, tz) => { camera.position.set(x, y, z); camera.lookAt(tx ?? 0, ty ?? 2, tz ?? -10); };
+window.__cam = (x: any, y: any, z: any, tx: any, ty: any, tz: any) => { camera.position.set(x, y, z); camera.lookAt(tx ?? 0, ty ?? 2, tz ?? -10); };

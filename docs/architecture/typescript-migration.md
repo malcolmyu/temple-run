@@ -10,3 +10,9 @@
 浏览器历史夹具的原始动态状态通过声明的调试窗口属性读取，独立tools配置暂不启用strict；并非关闭类型检查，也不使用ts-nocheck。生产游戏保留strict。对已有TS工具纳入检查时暴露的几何子类型、DOM焦点元素和历史字典类型已补充标注。
 
 唯一计划豁免：target/temple-run/web/src/main.js，是legacy.html使用的历史2942行旧游戏对照入口；不由现行Vue/ECS应用导入。为保留可运行对照，不在本次重写旧引擎。迁移依赖后仅更新其模块后缀引用，最终豁免校验锁定文件哈希；若需改变行为，必须迁移或明确更新审计理由。
+
+第二批已迁移：音频与骨骼实现、全部预览/取证页脚本、根目录src/main.ts，并将entrance-search.html中的内联模块提取为TS。音频WebAudio节点、播放句柄、选项和骨骼加载选项有显式接口；导入的历史rig JSON/诊断快照内部仍有显式any，尚未完成所有原始资产schema的严格建模。预览与旧夹具由tools配置进行非strict检查，现行游戏与运行时模块为strict；不使用ts-nocheck或忽略整个文件。
+
+当前唯一JS豁免及SHA256见javascript-exemptions.json，`npm run temple:check:source`纳入总typecheck和CI；新增受跟踪JS会失败。构建产物不提交。Three.js第三方包模块后缀.js不改写。`npm run temple:browser:compile -- 输入.ts /tmp/输出.js`通过esbuild生成临时脚本，兼容CI的Node20；直接Node运行TS仅适用于支持类型擦除的较新Node。
+
+第二批验证：应用strict、工具全集typecheck、25组核心、骨骼滑铲动画测试、生产构建与8项实际音频/死亡/重开检查通过。

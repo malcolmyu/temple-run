@@ -40,9 +40,9 @@ const matTree = new THREE.MeshBasicMaterial({ map: texTree, side: THREE.DoubleSi
 const matTile = new THREE.MeshBasicMaterial({ map: texWall, side: THREE.DoubleSide, transparent: true, opacity: 0.22, depthWrite: false });
 const matWire = new THREE.MeshBasicMaterial({ color: 0x8fd6ff, wireframe: true });
 
-const data = await fetch('/obstacle-tools/data.json').then(r => r.json());
+const data = await fetch('/obstacle-tools/data.json').then((r: any) => r.json());
 let items = data.entries;
-if (ONLY) items = items.filter(e => new RegExp(ONLY, 'i').test(e.prefab));
+if (ONLY) items = items.filter((e: any) => new RegExp(ONLY, 'i').test(e.prefab));
 const perSheet = COLS * ROWS;
 const page = items.slice(SHEET * perSheet, (SHEET + 1) * perSheet);
 
@@ -52,7 +52,7 @@ scene.add(cam);
 
 function gridGroup() {
   const g = new THREE.Group();
-  const mk = (x1, z1, x2, z2, color, y = 0.02) => {
+  const mk = (x1: any, z1: any, x2: any, z2: any, color: any, y: any = 0.02) => {
     const geo = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(x1, y, z1), new THREE.Vector3(x2, y, z2)]);
     g.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color })));
@@ -70,7 +70,7 @@ function gridGroup() {
 }
 
 const labels = [];
-page.forEach((e, i) => {
+page.forEach((e: any, i: any) => {
   const col = i % COLS, row = Math.floor(i / COLS);
   const cx = (col - (COLS - 1) / 2) * CELL;
   const cy = ((ROWS - 1) / 2 - row) * CELL;
@@ -97,11 +97,11 @@ page.forEach((e, i) => {
   }
   content.add(gridGroup());
   if (BOX) {
-    const edge = (pts, color) => {
-      const g2 = new THREE.BufferGeometry().setFromPoints(pts.map(p => new THREE.Vector3(p[0], p[1], p[2])));
+    const edge = (pts: any, color: any) => {
+      const g2 = new THREE.BufferGeometry().setFromPoints(pts.map((p: any) => new THREE.Vector3(p[0], p[1], p[2])));
       return new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1,1,1).translate(0,0,0)), new THREE.LineBasicMaterial({ color }));
     };
-    const addBox = (sx, sy, sz, y0, color) => {
+    const addBox = (sx: any, sy: any, sz: any, y0: any, color: any) => {
       const g2 = new THREE.BoxGeometry(sx, sy, sz);
       g2.translate(0, y0 + sy/2, 0);
       content.add(new THREE.LineSegments(new THREE.EdgesGeometry(g2), new THREE.LineBasicMaterial({ color })));
@@ -138,7 +138,7 @@ renderer.render(scene, cam);
 const ov = document.createElement('div');
 ov.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;font-family:ui-monospace,Menlo,monospace';
 document.body.appendChild(ov);
-const proj = (x, y) => {
+const proj = (x: any, y: any) => {
   const p = new THREE.Vector3(x, y, 0).project(cam);
   return [(p.x * 0.5 + 0.5) * VW, (-p.y * 0.5 + 0.5) * VH];
 };
@@ -159,7 +159,7 @@ for (const L of labels) {
   const cellW = VW / COLS, cellH = VH / ROWS;
   const d = document.createElement('div');
   d.style.cssText = `position:absolute;left:${px - cellW / 2 + 10}px;top:${py - cellH / 2 + (SHEET === 0 && Math.abs(py - cellH / 2) < 5 ? 26 : 16)}px;width:${cellW - 20}px;color:#dfe9f2;font-size:15px;line-height:1.35;text-shadow:0 1px 3px #000`;
-  const rows = L.meshes.map(m => {
+  const rows = L.meshes.map((m: any) => {
     const b = m.bbox, dz = m.dims;
     const ln = m.lanes ? ` · y(-10/0/+10)=${JSON.stringify([m.lanes['-10'], m.lanes['0'], m.lanes['10']])}` : '';
     return `<div style="color:#9fb4c6;font-size:11px">${m.mesh} ${m.tex} ${dz[0].toFixed(1)}×${dz[1].toFixed(1)}×${dz[2].toFixed(1)}u ymin ${b.min[1].toFixed(1)}${ln}</div>`;
@@ -171,5 +171,5 @@ const hdr = document.createElement('div');
 hdr.style.cssText = 'position:absolute;left:10px;top:6px;color:#8fa6b8;font:10px ui-monospace,Menlo,monospace';
 hdr.textContent = `obstacle prefabs · sheet ${SHEET} · ${page.length}/${items.length} · view ${VIEW} · corridor frame (ground y=0, +Z running, X across) · green lines = lane centres x=±10/0`;
 document.body.appendChild(hdr);
-window.__INFO__ = { sheet: SHEET, total: items.length, shown: page.length, names: page.map(e => e.prefab), view: VIEW };
+window.__INFO__ = { sheet: SHEET, total: items.length, shown: page.length, names: page.map((e: any) => e.prefab), view: VIEW };
 window.__READY__ = true;

@@ -5,8 +5,8 @@ const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,180);camer
 const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(innerWidth,innerHeight);document.body.append(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0x6d604c,3));const sun=new THREE.DirectionalLight(0xffe2a7,3);sun.position.set(-12,20,8);scene.add(sun);
 const texture=window.texture=new THREE.TextureLoader().load('/assets/apk/wallTexture.webp');texture.colorSpace=THREE.SRGBColorSpace;
-new OBJLoader().load('/assets/apk/temple-straight-vert.obj',mesh=>{
- mesh.traverse(p=>{if(p.isMesh)p.material=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})});
+new OBJLoader().load('/assets/apk/temple-straight-vert.obj',(mesh: any) =>{
+ mesh.traverse((p: any) =>{if(p.isMesh)p.material=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide})});
  mesh.position.set(-559.952209,-1335.349731,30);
  const trans=new THREE.Group();trans.position.y=-15.000059;trans.quaternion.set(-5.5536e-8,-.7071068287,-.7071068287,5.5536e-8);trans.add(mesh);
  const root=new THREE.Group();root.scale.setScalar(.2);root.add(trans);scene.add(root);

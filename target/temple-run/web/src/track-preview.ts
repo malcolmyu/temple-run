@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { repairObjNormals } from './objNormals.ts';
-import { loadRunnerRig } from './runnerRig.js';
+import { loadRunnerRig } from './runnerRig.ts';
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x5a7264);
 scene.fog = new THREE.Fog(0x5a7264, 26, 90);
@@ -17,26 +17,26 @@ scene.add(new THREE.GridHelper(60, 30, 0x6b8f74, 0x35503f));
 const texture = new THREE.TextureLoader().load('/assets/apk/wallTexture.webp');
 texture.colorSpace = THREE.SRGBColorSpace;
 const mat = new THREE.MeshStandardMaterial({ map: texture, roughness: .95, metalness: 0, side: THREE.DoubleSide });
-new OBJLoader().load('/assets/track/temple-road-tile.obj', (obj) => {
-  obj.traverse((p) => { if (p.isMesh) { p.material = mat; p.receiveShadow = true; } });
+new OBJLoader().load('/assets/track/temple-road-tile.obj', (obj: any) => {
+  obj.traverse((p: any) => { if (p.isMesh) { p.material = mat; p.receiveShadow = true; } });
   repairObjNormals(obj);
   obj.position.y = -0.02;
   // three tiles along -Z like the game
   for (let i = 0; i < 3; i++) { const c = obj.clone(true); c.position.z = -i * 12 + 4; scene.add(c); }
-  window.__tileBounds = new THREE.Box3().setFromObject(obj).getSize(new THREE.Vector3()).toArray().map(v => +v.toFixed(2));
+  window.__tileBounds = new THREE.Box3().setFromObject(obj).getSize(new THREE.Vector3()).toArray().map((v: any) => +v.toFixed(2));
 });
-loadRunnerRig('/assets/apk/runner-rig.json', '/assets/apk/texture-63-playerTexture.png', { scale: 0.27, yOffset: 0 }).then((rig) => {
+loadRunnerRig('/assets/apk/runner-rig.json', '/assets/apk/texture-63-playerTexture.png', { scale: 0.27, yOffset: 0 }).then((rig: any) => {
   rig.object.position.set(0, 0, 6); rig.object.rotation.y = Math.PI; scene.add(rig.object); window.__rig = rig;
 });
-new OBJLoader().load('/assets/track/track-gate-a.obj', (gate) => {
-  gate.traverse((p) => { if (p.isMesh) { p.material = mat; p.castShadow = true; } });
+new OBJLoader().load('/assets/track/track-gate-a.obj', (gate: any) => {
+  gate.traverse((p: any) => { if (p.isMesh) { p.material = mat; p.castShadow = true; } });
   gate.scale.setScalar(0.2); gate.position.set(0, 0, -14); scene.add(gate);
-  window.__gateBounds = new THREE.Box3().setFromObject(gate).getSize(new THREE.Vector3()).toArray().map(v => +v.toFixed(2));
+  window.__gateBounds = new THREE.Box3().setFromObject(gate).getSize(new THREE.Vector3()).toArray().map((v: any) => +v.toFixed(2));
 });
-new OBJLoader().load('/assets/track/track-wall-corner-a.obj', (corner) => {
-  corner.traverse((p) => { if (p.isMesh) { p.material = mat; p.castShadow = true; } });
+new OBJLoader().load('/assets/track/track-wall-corner-a.obj', (corner: any) => {
+  corner.traverse((p: any) => { if (p.isMesh) { p.material = mat; p.castShadow = true; } });
   corner.scale.setScalar(0.2); corner.position.set(10, 0, -26); scene.add(corner);
 });
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => { const dt = Math.min(clock.getDelta(), .05); if (window.__rig) window.__rig.update(dt); renderer.render(scene, camera); });
-window.__cam = (x, y, z, tx, ty, tz) => { camera.position.set(x, y, z); camera.lookAt(tx ?? 0, ty ?? 1.2, tz ?? -10); };
+window.__cam = (x: any, y: any, z: any, tx: any, ty: any, tz: any) => { camera.position.set(x, y, z); camera.lookAt(tx ?? 0, ty ?? 1.2, tz ?? -10); };

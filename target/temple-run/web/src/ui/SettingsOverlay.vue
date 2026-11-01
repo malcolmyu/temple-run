@@ -3,7 +3,7 @@ import { useModalDialog } from './useModalDialog';
 import { ref } from 'vue';
 import { mutableUi as ui, setAudioSettings } from '../game/state';
 import { progress } from '../game/progress';
-import * as sfx from '../sfx.js';
+import * as sfx from '../sfx.ts';
 import { getGame } from '../game/boot';
 import { getDifficulty, setDifficulty, type DifficultyName } from '../game/difficulty';
 

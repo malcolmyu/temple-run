@@ -29,7 +29,7 @@ const grid = new THREE.GridHelper(60, 30, 0x2a3a46, 0x1c2830);
 grid.position.y = 0.01;
 scene.add(grid);
 
-function box(w, h, d, color, y0 = 0) {
+function box(w: any, h: any, d: any, color: any, y0: any = 0) {
   const g = new THREE.EdgesGeometry(new THREE.BoxGeometry(w, h, d));
   const l = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color }));
   l.position.y = y0 + h / 2;
@@ -56,13 +56,13 @@ const cells = new Array(FILES.length).fill(null);
 const group = new THREE.Group();
 scene.add(group);
 let done = 0;
-FILES.forEach((f, i) => {
+FILES.forEach((f: any, i: any) => {
   const col = i % COLS, row = Math.floor(i / COLS);
   const cx = -W / 2 + (col + 0.5) * (W / COLS);
   const cy = H / 2 - (row + 0.5) * (H / ROWS);
-  objLoader.load('/assets/obstacles/' + f, (obj) => {
+  objLoader.load('/assets/obstacles/' + f, (obj: any) => {
     const isTree = f.startsWith('tree-');
-    obj.traverse(o => {
+    obj.traverse((o: any) => {
       if (!o.isMesh) return;
       o.material = new THREE.MeshBasicMaterial({
         map: isTree ? texTree : texWall, side: THREE.DoubleSide,
@@ -100,7 +100,7 @@ FILES.forEach((f, i) => {
     }
     done++;
     if (done === FILES.length) window.__READY__ = cells.filter(Boolean).length;
-  }, undefined, (e) => { console.error('OBJ FAILED', f, e); done++; });
+  }, undefined, (e: any) => { console.error('OBJ FAILED', f, e); done++; });
 });
 
 const ov = document.getElementById('ov') || document.createElement('div');
@@ -110,7 +110,7 @@ document.body.appendChild(ov);
 
 function frame() {
   renderer.setScissorTest(true);
-  cells.filter(Boolean).forEach(({ cam, holder, label, size, minY, idx }) => {
+  cells.filter(Boolean).forEach(({ cam, holder, label, size, minY, idx }: any) => {
     const i = idx;
     const col = i % COLS, row = Math.floor(i / COLS);
     const x = col * (W / COLS), y = H - (row + 1) * (H / ROWS);
@@ -135,7 +135,7 @@ requestAnimationFrame(frame);
 function drawOverlay() {
   const cw = W / COLS, ch = H / ROWS;
   ov.innerHTML = '';
-  cells.filter(Boolean).forEach(({ label, size, minY, idx }) => {
+  cells.filter(Boolean).forEach(({ label, size, minY, idx }: any) => {
     const i = idx;
     const col = i % COLS, row = Math.floor(i / COLS);
     const d = document.createElement('div');

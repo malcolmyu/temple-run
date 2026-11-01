@@ -1,3 +1,5 @@
+export interface SoundOptions {gain?:number;rate?:number;when?:number;loop?:boolean;detune?:number;onended?:((event:Event)=>void)|null;}
+interface SoundHandle {source:AudioBufferSourceNode;gainNode:GainNode;__verb?:boolean;}
 // Sample-based sound effects from the original Temple Run AudioClips.
 // Files live in public/assets/audio/ (16-bit PCM WAVs extracted from the APK).
 // Some clips are authored very quiet (slide/footsteps ≈ -38 dBFS) so they carry
@@ -5,7 +7,7 @@
 
 const BASE = `${import.meta.env.BASE_URL}assets/audio/`;
 
-const CLIPS = {
+const CLIPS:Record<string,{file:string;gain:number;loop?:boolean}> = {
   coin: { file: 'coin.mp3', gain: 1.15 },
   coinCascade: { file: 'cashRegister.wav', gain: 0.7 },
   // Original voice lines exist in male and female variants ("…Female" suffix). The runner picks
@@ -46,11 +48,11 @@ const CLIPS = {
 };
 
 /* ---- original background music (looping, streamed via <audio>) ---- */
-const MUSIC = { theme: 'BackgroundMusic.mp3', night: 'nightMusic.mp3' };
-const music = { el: null, current: null, timer: null };
+const MUSIC:Record<string,string> = { theme: 'BackgroundMusic.mp3', night: 'nightMusic.mp3' };
+const music:{el:HTMLAudioElement|null;current:string|null;timer:ReturnType<typeof setInterval>|undefined} = { el: null, current: null, timer: undefined };
 let musicVolume = 0.32;
 
-function fadeMusic(el, to, seconds, done) {
+function fadeMusic(el:HTMLAudioElement, to:number, seconds:number, done?:()=>void) {
   clearInterval(music.timer);
   const steps = Math.max(1, Math.round(seconds * 20));
   const from = el.volume;
@@ -65,7 +67,7 @@ function fadeMusic(el, to, seconds, done) {
   }, 50);
 }
 
-export function startMusic(name = 'theme', volume = musicVolume) {
+export function startMusic(name: any = 'theme', volume: any = musicVolume) {
   if (music.current === name && music.el && !music.el.paused) return;
   stopMusic(0.6);
   const el = new Audio(BASE + (MUSIC[name] || MUSIC.theme));
@@ -89,7 +91,7 @@ export function musicInfo() {
   return music.el ? { current: music.current, paused: music.el.paused, volume: +music.el.volume.toFixed(2), time: +music.el.currentTime.toFixed(1), duration: +(music.el.duration || 0).toFixed(1) } : { current: null };
 }
 
-export function stopMusic(fade = 1.2) {
+export function stopMusic(fade: any = 1.2) {
   const el = music.el;
   music.el = null;
   music.current = null;
@@ -98,17 +100,17 @@ export function stopMusic(fade = 1.2) {
   fadeMusic(el, 0, fade, () => { try { el.pause(); } catch {} });
 }
 
-let ctx = null;
-let master = null;
+let ctx:AudioContext|null = null;
+let master:GainNode|null = null;
 let muted = false;
-const buffers = new Map();
-let preloadPromise = null;
-const loops = new Map();
+const buffers = new Map<string,AudioBuffer>();
+let preloadPromise:Promise<boolean>|null = null;
+const loops = new Map<string,SoundHandle>();
 
 function ensureContext() {
   if (ctx) return ctx;
   try {
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    ctx = new (window.AudioContext || (window as Window & {webkitAudioContext?:typeof AudioContext}).webkitAudioContext)();
     master = ctx.createGain();
     master.gain.value = muted ? 0 : 0.85;
     master.connect(ctx.destination);
@@ -122,7 +124,7 @@ export function isMuted() {
   return muted;
 }
 
-export function setMuted(value) {
+export function setMuted(value:boolean) {
   muted = !!value;
   if (master) master.gain.value = muted ? 0 : 0.85;
   // Music has its own toggle (settings.music); the SFX mute must not silence it.
@@ -138,14 +140,14 @@ export function unlockAudio() {
 export function preload() {
   if (!ctx) return Promise.resolve(false);
   if (preloadPromise) return preloadPromise;
-  const unique = [...new Set(Object.values(CLIPS).map((c) => c.file))];
+  const unique = [...new Set(Object.values(CLIPS).map((c: any) => c.file))];
   preloadPromise = Promise.all(
-    unique.map(async (file) => {
+    unique.map(async (file: any) => {
       try {
         const res = await fetch(BASE + file);
         if (!res.ok) throw new Error(`${res.status} ${file}`);
         const data = await res.arrayBuffer();
-        const buffer = await ctx.decodeAudioData(data);
+        const buffer = await ctx!.decodeAudioData(data);
         buffers.set(file, buffer);
       } catch (err) {
         console.warn('sfx load failed', file, err);
@@ -157,7 +159,7 @@ export function preload() {
 
 const nodeStats={created:0,ended:0,loops:0,amb:0,friction:0,fall:0,wind:0,music:0};
 export function stats(){return {...nodeStats,active:nodeStats.created-nodeStats.ended,played:{...playedCounts},loopsOpen:loops.size,ambOn:!!amb,frictionOn:!!friction,fallOn:!!fallNode,windOn:!!windNode}}
-function playBuffer(file, { gain = 1, rate = 1, when = 0, loop = false, detune = 0 } = {}) {
+function playBuffer(file:string, { gain = 1, rate = 1, when = 0, loop = false, detune = 0 }:SoundOptions = {}):SoundHandle|null {
   if (!ctx || muted) return null;
   const buffer = buffers.get(file);
   if (!buffer) return null;
@@ -169,13 +171,13 @@ function playBuffer(file, { gain = 1, rate = 1, when = 0, loop = false, detune =
   source.detune.value = detune;
   const gainNode = ctx.createGain();
   gainNode.gain.value = gain;
-  source.connect(gainNode).connect(master);
+  source.connect(gainNode).connect(master!);
   source.start(ctx.currentTime + when);
   return { source, gainNode };
 }
 
-export const playedCounts = {};
-export function play(name, opts = {}) {
+export const playedCounts:Record<string,number> = {};
+export function play(name:string, opts:SoundOptions = {}) {
   const clip = CLIPS[name];
   if (!clip || !ctx) return null;
   playedCounts[name] = (playedCounts[name] || 0) + 1;
@@ -184,7 +186,7 @@ export function play(name, opts = {}) {
   return out;
 }
 
-export function startLoop(name, opts = {}) {
+export function startLoop(name:string, opts:SoundOptions = {}) {
   const clip = CLIPS[name];
   if (!clip || !ctx) return null;
   if (loops.has(name)) return loops.get(name);
@@ -198,15 +200,15 @@ export function startLoop(name, opts = {}) {
   return handle;
 }
 
-export function setLoopRate(name, rate) {
+export function setLoopRate(name: any, rate: any) {
   const h = loops.get(name);
   if (h && ctx) h.source.playbackRate.setValueAtTime(Math.max(0.55, Math.min(1.7, rate)), ctx.currentTime);
 }
 
 
 /* ---- synthesized biome ambience (river water / clifftop wind) ---- */
-let amb = null;
-let noiseBuffer = null;
+let amb:{kind:string;src:AudioBufferSourceNode;gain:GainNode;lfo:OscillatorNode}|null = null;
+let noiseBuffer:AudioBuffer|null = null;
 function getNoise() {
   if (noiseBuffer || !ctx) return noiseBuffer;
   const len = Math.floor(ctx.sampleRate * 2.4);
@@ -220,7 +222,7 @@ function getNoise() {
   }
   return noiseBuffer;
 }
-export function setAmbience(kind, level = 0.5) {
+export function setAmbience(kind: any, level: any = 0.5) {
   if (!ctx) return;
   if (amb && amb.kind === kind) {
     amb.gain.gain.linearRampToValueAtTime(level, ctx.currentTime + 0.4);
@@ -251,11 +253,11 @@ export function setAmbience(kind, level = 0.5) {
   lfoGain.gain.value = level * 0.35;
   lfo.connect(lfoGain).connect(gain.gain);
   lfo.start();
-  src.connect(filter).connect(gain).connect(master);
+  src.connect(filter).connect(gain).connect(master!);
   src.start();
   amb = { kind, src, gain, lfo };nodeStats.amb++;
 }
-export function stopAmbience(fade = 0.4) {
+export function stopAmbience(fade: any = 0.4) {
   if (!amb || !ctx) return;
   const a = amb;
   amb = null;
@@ -274,11 +276,11 @@ export function ambienceInfo() {
 
 
 /* ---- hall reverb: a short synthesised impulse response for the colonnade ---- */
-const hall = { convolver: null, wet: null, on: false, connected: new Set() };
+const hall:{convolver:ConvolverNode|null;wet:GainNode|null;on:boolean;connected:Set<string>} = { convolver: null, wet: null, on: false, connected: new Set() };
 function makeHallIR() {
   const dur = 1.7;
-  const len = Math.floor(ctx.sampleRate * dur);
-  const ir = ctx.createBuffer(2, len, ctx.sampleRate);
+  const len = Math.floor(ctx!.sampleRate * dur);
+  const ir = ctx!.createBuffer(2, len, ctx!.sampleRate);
   for (let ch = 0; ch < 2; ch++) {
     const d = ir.getChannelData(ch);
     for (let i = 0; i < len; i++) {
@@ -288,15 +290,15 @@ function makeHallIR() {
   }
   return ir;
 }
-export function setHallReverb(on) {
+export function setHallReverb(on:boolean) {
   hall.on = !!on;
   if (!ctx) return;
   if (!hall.convolver) {
     hall.convolver = ctx.createConvolver();
     hall.convolver.buffer = makeHallIR();
     hall.wet = ctx.createGain();
-    hall.wet.gain.value = 0;
-    hall.convolver.connect(hall.wet).connect(master);
+    hall.wet!.gain.value = 0;
+    hall.convolver.connect(hall.wet).connect(master!);
   }
   // Route every active footstep loop into the reverb (once per loop).
   for (const [name, h] of loops) {
@@ -305,19 +307,19 @@ export function setHallReverb(on) {
   }
   const target = hall.on ? 0.5 : 0;
   const t = ctx.currentTime;
-  hall.wet.gain.cancelScheduledValues(t);
-  hall.wet.gain.setValueAtTime(hall.wet.gain.value, t);
-  hall.wet.gain.linearRampToValueAtTime(target, t + 0.45);
+  hall.wet!.gain.cancelScheduledValues(t);
+  hall.wet!.gain.setValueAtTime(hall.wet!.gain.value, t);
+  hall.wet!.gain.linearRampToValueAtTime(target, t + 0.45);
 }
 export function reverbInfo() {
-  return { on: hall.on, wet: hall.wet ? +hall.wet.gain.value.toFixed(3) : 0, loops: [...hall.connected] };
+  return { on: hall.on, wet: hall.wet ? +hall.wet!.gain.value.toFixed(3) : 0, loops: [...hall.connected] };
 }
 
 export function activeLoops() {
   return [...loops.keys()];
 }
 
-export function stopLoop(name, fade = 0.12) {
+export function stopLoop(name: any, fade: any = 0.12) {
   const handle = loops.get(name);
   if (!handle || !ctx) return;
   loops.delete(name);
@@ -337,7 +339,7 @@ export function stopAllLoops() {
 
 // Synthesised landing "thud": a short low sine drop, layered under the vocal land grunt.
 // Cheap, consistent across devices and avoids shipping another sample.
-export function thud(gain = 0.5) {
+export function thud(gain: any = 0.5) {
   if (!ctx || muted || !master) return;
   const t = ctx.currentTime;
   const osc = ctx.createOscillator();
@@ -348,15 +350,15 @@ export function thud(gain = 0.5) {
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(Math.max(0.0002, gain), t + 0.012);
   g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
-  osc.connect(g).connect(master);
+  osc.connect(g).connect(master!);
   osc.start(t);
   osc.stop(t + 0.24);
   playedCounts.thud = (playedCounts.thud || 0) + 1;
 }
 
 // Continuous slide friction: filtered noise loop that fades in/out with the slide.
-let friction = null;
-export function startFriction(gain = 0.22) {
+let friction:{src:AudioBufferSourceNode;gain:GainNode}|null = null;
+export function startFriction(gain: any = 0.22) {
   if (!ctx || !master || muted) return;
   if (friction) { friction.gain.gain.setTargetAtTime(gain, ctx.currentTime, 0.06); return; }
   const len = ctx.sampleRate * 1.2;
@@ -368,7 +370,7 @@ export function startFriction(gain = 0.22) {
   const filter = ctx.createBiquadFilter();
   filter.type = 'bandpass'; filter.frequency.value = 950; filter.Q.value = 0.7;
   const g = ctx.createGain(); g.gain.value = 0.0001;
-  src.connect(filter).connect(g).connect(master);
+  src.connect(filter).connect(g).connect(master!);
   src.start();
   g.gain.setTargetAtTime(gain, ctx.currentTime, 0.08);
   friction = { src, gain: g };nodeStats.friction++;
@@ -381,8 +383,8 @@ export function stopFriction() {
 }
 
 // --- Synthesised waterfall ambience (no dedicated asset in the APK) -----------
-let fallNode = null, fallGain = null;
-export function startWaterfall(level = 0.35) {
+let fallNode:AudioBufferSourceNode|null = null, fallGain:GainNode|null = null;
+export function startWaterfall(level: any = 0.35) {
   if (!ctx || isMuted()) return;
   if (!fallNode) {
     const len = ctx.sampleRate * 2;
@@ -393,21 +395,21 @@ export function startWaterfall(level = 0.35) {
     const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
     const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 950; lp.Q.value = .4;
     const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 140;
-    fallGain = ctx.createGain(); fallGain.gain.value = 0;
-    src.connect(hp); hp.connect(lp); lp.connect(fallGain); fallGain.connect(master);
+    fallGain = ctx.createGain(); fallGain!.gain.value = 0;
+    src.connect(hp); hp.connect(lp); lp.connect(fallGain); fallGain.connect(master!);
     src.start();
     fallNode = src;nodeStats.fall++;
     fallLfo = ctx.createOscillator(); fallLfo.frequency.value = .2;
     const lfoGain = ctx.createGain(); lfoGain.gain.value = .06;
-    fallLfo.connect(lfoGain); lfoGain.connect(fallGain.gain); fallLfo.start();
+    fallLfo.connect(lfoGain); lfoGain.connect(fallGain!.gain); fallLfo.start();
   }
   const t = ctx.currentTime;
-  fallGain.gain.cancelScheduledValues(t);
-  fallGain.gain.setTargetAtTime(Math.max(0, Math.min(.5, level)), t, .5);
+  fallGain!.gain.cancelScheduledValues(t);
+  fallGain!.gain.setTargetAtTime(Math.max(0, Math.min(.5, level)), t, .5);
 }
 // --- Synthesised canyon wind (band-passed noise with slow gusts) ------------
-let windNode = null, windGain = null;
-export function startWind(level = 0.2) {
+let windNode:(AudioBufferSourceNode&{_gust?:OscillatorNode;_swell?:OscillatorNode})|null = null, windGain:GainNode|null = null;
+export function startWind(level: any = 0.2) {
   if (!ctx || isMuted()) return;
   if (!windNode) {
     const len = ctx.sampleRate * 3;
@@ -418,33 +420,33 @@ export function startWind(level = 0.2) {
     const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
     const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 620; bp.Q.value = 1.6;
     const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400;
-    windGain = ctx.createGain(); windGain.gain.value = 0;
-    src.connect(bp); bp.connect(lp); lp.connect(windGain); windGain.connect(master);
+    windGain = ctx.createGain(); windGain!.gain.value = 0;
+    src.connect(bp); bp.connect(lp); lp.connect(windGain); windGain.connect(master!);
     src.start();
     windNode = src; nodeStats.wind++;
     const gust = ctx.createOscillator(); gust.frequency.value = .14;
     const gGain = ctx.createGain(); gGain.gain.value = 260;
-    gust.connect(gGain); gGain.connect(bp.frequency); gust.start(); windNode._gust = gust;
+    gust.connect(gGain); gGain.connect(bp.frequency); gust.start(); windNode!._gust = gust;
     const swell = ctx.createOscillator(); swell.frequency.value = .09;
     const sGain = ctx.createGain(); sGain.gain.value = .05;
-    swell.connect(sGain); sGain.connect(windGain.gain); swell.start(); windNode._swell = swell;
+    swell.connect(sGain); sGain.connect(windGain!.gain); swell.start(); windNode!._swell = swell;
   }
   const t = ctx.currentTime;
-  windGain.gain.cancelScheduledValues(t);
-  windGain.gain.setTargetAtTime(Math.max(0, Math.min(.4, level)), t, .8);
+  windGain!.gain.cancelScheduledValues(t);
+  windGain!.gain.setTargetAtTime(Math.max(0, Math.min(.4, level)), t, .8);
 }
-export function windInfo() { return { gain: windGain ? +windGain.gain.value.toFixed(3) : 0 }; }
+export function windInfo() { return { gain: windGain ? +windGain!.gain.value.toFixed(3) : 0 }; }
 export function stopWind() {
   if (!ctx || !windGain) return;
   const t = ctx.currentTime;
-  windGain.gain.cancelScheduledValues(t);
-  windGain.gain.setTargetAtTime(0.0001, t, .7);
+  windGain!.gain.cancelScheduledValues(t);
+  windGain!.gain.setTargetAtTime(0.0001, t, .7);
 }
-export function waterfallInfo() { return { gain: fallGain ? +fallGain.gain.value.toFixed(3) : 0 }; }
+export function waterfallInfo() { return { gain: fallGain ? +fallGain!.gain.value.toFixed(3) : 0 }; }
 export function stopWaterfall() {
   if (!ctx || !fallGain) return;
   const t = ctx.currentTime;
-  fallGain.gain.cancelScheduledValues(t);
-  fallGain.gain.setTargetAtTime(0, t, .45);
+  fallGain!.gain.cancelScheduledValues(t);
+  fallGain!.gain.setTargetAtTime(0, t, .45);
 }
-let fallLfo = null;
+let fallLfo:OscillatorNode|null = null;

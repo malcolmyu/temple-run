@@ -1,7 +1,7 @@
 // Independent original-bone TRS skinning audit. Does not tune production sizing.
 import {readFileSync,writeFileSync} from 'node:fs';
 import * as T from 'three';
-import {buildRunnerRig,normalizeRigHeight} from '../target/temple-run/web/src/runnerRig.js';
+import {buildRunnerRig,normalizeRigHeight} from '../target/temple-run/web/src/runnerRig.ts';
 const enemy=process.argv.includes('--enemy'),modelY=enemy?0:.2;
 const data=JSON.parse(readFileSync(`target/temple-run/web/public/assets/characters/rig-${enemy?'enemy':'orig_02___Default'}.json`,'utf8'));
 const bind=data.bindposes.map((rows:number[][])=>new T.Matrix4().set(...rows.flat() as [number,number,number,number,number,number,number,number,number,number,number,number,number,number,number,number]));

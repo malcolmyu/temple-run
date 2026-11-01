@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { buildRunnerRig } from '../target/temple-run/web/src/runnerRig.js';
+import { buildRunnerRig } from '../target/temple-run/web/src/runnerRig.ts';
 const read=(name:string)=>JSON.parse(readFileSync(`target/temple-run/web/public/assets/characters/rig-${name}.json`,'utf8'));
 const enemy=read('enemy');
 assert.equal(enemy.animationSource.clipPathID,129);

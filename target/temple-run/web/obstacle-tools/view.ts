@@ -24,7 +24,7 @@ const texTree = new THREE.TextureLoader().load('/assets/apk/treeTexture.webp');
 texTree.colorSpace = THREE.SRGBColorSpace;
 texWall.colorSpace = THREE.SRGBColorSpace;
 const matCache = new Map();
-function matFor(tex) {
+function matFor(tex: any) {
   if (matCache.has(tex)) return matCache.get(tex);
   const m = new THREE.MeshBasicMaterial({ map: tex === 'treeTexture' ? texTree : texWall, side: THREE.DoubleSide, alphaTest: tex === 'treeTexture' ? 0.35 : 0 });
   matCache.set(tex, m);
@@ -42,7 +42,7 @@ if (GRID) {
   }
 }
 if (BOX) {
-  const addBox = (sx, sy, sz, color) => {
+  const addBox = (sx: any, sy: any, sz: any, color: any) => {
     const g = new THREE.BoxGeometry(sx, sy, sz);
     g.translate(0, sy / 2, 0);
     gridGroup.add(new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({ color })));
@@ -56,7 +56,7 @@ const content = new THREE.Group();
 scene.add(content);
 
 const data = await (await fetch('/obstacle-tools/data.json')).json();
-const entries = data.entries.filter(e => !ONLY || new RegExp(ONLY, 'i').test(e.prefab));
+const entries = data.entries.filter((e: any) => !ONLY || new RegExp(ONLY, 'i').test(e.prefab));
 for (const e of entries) {
   for (const m of e.meshes) {
     const g = new THREE.BufferGeometry();
@@ -66,7 +66,7 @@ for (const e of entries) {
     g.computeVertexNormals();
     content.add(new THREE.Mesh(g, matFor(m.tex)));
   }
-  info.push(`${e.prefab} | ${e.role} | ` + e.meshes.map(m => `${m.mesh} ${m.tex} ${m.dims.map(v => v.toFixed(1)).join('x')}`).join(' + '));
+  info.push(`${e.prefab} | ${e.role} | ` + e.meshes.map((m: any) => `${m.mesh} ${m.tex} ${m.dims.map((v: any) => v.toFixed(1)).join('x')}`).join(' + '));
 }
 
 // lights not needed (basic materials), but faint edges help reading the shape
@@ -105,7 +105,7 @@ if (CAM === 'player') {
 const hdr = document.createElement('div');
 hdr.style.cssText = 'position:fixed;left:12px;top:10px;color:#dfe9f2;font:13px/1.45 ui-monospace,Menlo,monospace;text-shadow:0 1px 3px #000;max-width:96vw';
 hdr.innerHTML = `<b>${CAM}</b> · corridor frame: ground y=0, +Z running, X across · yellow=corridor 30×36.8×60, red=player 30×11×60<br>` +
-  info.map(s => `<span style="color:#9fb4c6">${s}</span>`).join('<br>');
+  info.map((s: any) => `<span style="color:#9fb4c6">${s}</span>`).join('<br>');
 document.body.appendChild(hdr);
 
 let t0 = performance.now();

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { loadRunnerRig } from './runnerRig.js';
+import { loadRunnerRig } from './runnerRig.ts';
 
 const q = new URLSearchParams(location.search);
 const rigUrl = q.get('rig') || '/assets/apk/runner-rig.json';
@@ -24,7 +24,7 @@ const grid = new THREE.GridHelper(8, 16, 0x4d7a5c, 0x2c4636); grid.position.y = 
 
 window.__rigError = null;
 window.rigReady = loadRunnerRig(rigUrl, texUrl, { clipFallbackUrl: '/assets/characters/rig-orig_02___Default.json', forceFallbackClips: forceFb })
-  .then((rig) => {
+  .then((rig: any) => {
     scene.add(rig.object);
     rig.setClip(clip);
     if (tParam) rig.update(parseFloat(tParam));
@@ -42,7 +42,7 @@ window.rigReady = loadRunnerRig(rigUrl, texUrl, { clipFallbackUrl: '/assets/char
     console.log(JSON.stringify({ rig: rigUrl, tex: texUrl, verts: rig.vertexCount, bones: rig.boneCount, size: [size.x.toFixed(2), size.y.toFixed(2), size.z.toFixed(2)] }));
     return rig;
   })
-  .catch((err) => { window.__rigError = String(err); console.error('rig error', err); });
+  .catch((err: any) => { window.__rigError = String(err); console.error('rig error', err); });
 
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {

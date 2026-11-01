@@ -59,9 +59,9 @@ const matTree = new THREE.MeshLambertMaterial({ map: treeTex, side: THREE.Double
 
 const loader = new OBJLoader();
 
-function place(file, mat, pos, rotY = 0, scale = 1) {
-  return new Promise((res, rej) => {
-    loader.load(ASSET + file, (obj) => {
+function place(file: any, mat: any, pos: any, rotY: any = 0, scale: any = 1) {
+  return new Promise<any>((res: any, rej: any) => {
+    loader.load(ASSET + file, (obj: any) => {
       const g = obj.children[0] || obj;
       g.material = mat;
       const holder = new THREE.Group();
@@ -97,13 +97,13 @@ const asyncMain = async () => {
   await place('decor-tree-a.obj', matTree, [HALF + 55, 0, 105], 0);
 
   hud.innerHTML = `<b>track pieces preview</b> — 6 OBJ from /assets/track/, corridor half width ${HALF}<br>` +
-    report.map(r => `${r[0]}: x ${r[1][0].toFixed(1)}..${r[2][0].toFixed(1)}  y ${r[1][1].toFixed(1)}..${r[2][1].toFixed(1)}  z ${r[1][2].toFixed(1)}..${r[2][2].toFixed(1)}`).join('<br>');
+    report.map((r: any) => `${r[0]}: x ${r[1][0].toFixed(1)}..${r[2][0].toFixed(1)}  y ${r[1][1].toFixed(1)}..${r[2][1].toFixed(1)}  z ${r[1][2].toFixed(1)}..${r[2][2].toFixed(1)}`).join('<br>');
 
   window.__INFO__ = { cam: CAM, half: HALF, pieces: 8, loaded: true };
   window.__READY__ = true;
 };
 
-asyncMain().catch((e) => {
+asyncMain().catch((e: any) => {
   errBox.textContent = String(e && e.stack || e);
   window.__READY__ = true;
   window.__INFO__ = { error: String(e) };
