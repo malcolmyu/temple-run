@@ -1,0 +1,172 @@
+{
+  "_megaStart-Lb3qgy6F.js": {
+    "file": "assets/megaStart-Lb3qgy6F.js",
+    "name": "megaStart",
+    "imports": [
+      "index.html"
+    ]
+  },
+  "_objNormals-BhrWZ4sO.js": {
+    "file": "assets/objNormals-BhrWZ4sO.js",
+    "name": "objNormals",
+    "imports": [
+      "_three-65SRy6Mp.js"
+    ]
+  },
+  "_objectives-DFAwXMlY.js": {
+    "file": "assets/objectives-DFAwXMlY.js",
+    "name": "objectives",
+    "imports": [
+      "index.html"
+    ]
+  },
+  "_runnerRig-CmFByZou.js": {
+    "file": "assets/runnerRig-CmFByZou.js",
+    "name": "runnerRig",
+    "imports": [
+      "_sfx-BvBWk5S0.js",
+      "_three-65SRy6Mp.js"
+    ]
+  },
+  "_sfx-BvBWk5S0.js": {
+    "file": "assets/sfx-BvBWk5S0.js",
+    "name": "sfx"
+  },
+  "_three-65SRy6Mp.js": {
+    "file": "assets/three-65SRy6Mp.js",
+    "name": "three"
+  },
+  "_upgrades-TBmSwTsF.js": {
+    "file": "assets/upgrades-TBmSwTsF.js",
+    "name": "upgrades",
+    "imports": [
+      "index.html"
+    ]
+  },
+  "_vue-yA5kcq01.js": {
+    "file": "assets/vue-yA5kcq01.js",
+    "name": "vue"
+  },
+  "index.html": {
+    "file": "assets/main-B0kKCqTh.js",
+    "name": "main",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_sfx-BvBWk5S0.js",
+      "_vue-yA5kcq01.js"
+    ],
+    "dynamicImports": [
+      "src/game/game.ts",
+      "src/ui/StoreOverlay.vue",
+      "src/ui/StatsOverlay.vue",
+      "src/ui/ObjectivesOverlay.vue",
+      "src/ui/UpgradesOverlay.vue",
+      "src/ui/HelpOverlay.vue"
+    ],
+    "css": [
+      "assets/main-BDYmuFhS.css"
+    ]
+  },
+  "legacy.html": {
+    "file": "assets/legacy-BLoMSC0m.js",
+    "name": "legacy",
+    "src": "legacy.html",
+    "isEntry": true,
+    "imports": [
+      "_sfx-BvBWk5S0.js",
+      "_three-65SRy6Mp.js",
+      "_objNormals-BhrWZ4sO.js",
+      "_runnerRig-CmFByZou.js"
+    ],
+    "css": [
+      "assets/legacy-BY8Fp4ul.css"
+    ]
+  },
+  "src/game/game.ts": {
+    "file": "assets/game-CeSBvDyg.js",
+    "name": "game",
+    "src": "src/game/game.ts",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html",
+      "_upgrades-TBmSwTsF.js",
+      "_megaStart-Lb3qgy6F.js",
+      "_three-65SRy6Mp.js",
+      "_objectives-DFAwXMlY.js",
+      "_sfx-BvBWk5S0.js",
+      "_runnerRig-CmFByZou.js",
+      "_objNormals-BhrWZ4sO.js",
+      "_vue-yA5kcq01.js"
+    ]
+  },
+  "src/ui/HelpOverlay.vue": {
+    "file": "assets/HelpOverlay-CVfFfaoO.js",
+    "name": "HelpOverlay",
+    "src": "src/ui/HelpOverlay.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html",
+      "_vue-yA5kcq01.js",
+      "_sfx-BvBWk5S0.js"
+    ],
+    "css": [
+      "assets/HelpOverlay-l2QED4tn.css"
+    ]
+  },
+  "src/ui/ObjectivesOverlay.vue": {
+    "file": "assets/ObjectivesOverlay-CHrHuCvW.js",
+    "name": "ObjectivesOverlay",
+    "src": "src/ui/ObjectivesOverlay.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue-yA5kcq01.js",
+      "index.html",
+      "_objectives-DFAwXMlY.js",
+      "_sfx-BvBWk5S0.js"
+    ],
+    "css": [
+      "assets/ObjectivesOverlay-DE_H8eOM.css"
+    ]
+  },
+  "src/ui/StatsOverlay.vue": {
+    "file": "assets/StatsOverlay-D-EyUvC-.js",
+    "name": "StatsOverlay",
+    "src": "src/ui/StatsOverlay.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue-yA5kcq01.js",
+      "index.html",
+      "_sfx-BvBWk5S0.js"
+    ]
+  },
+  "src/ui/StoreOverlay.vue": {
+    "file": "assets/StoreOverlay-DTv4gVFY.js",
+    "name": "StoreOverlay",
+    "src": "src/ui/StoreOverlay.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue-yA5kcq01.js",
+      "index.html",
+      "_megaStart-Lb3qgy6F.js",
+      "_three-65SRy6Mp.js",
+      "_runnerRig-CmFByZou.js",
+      "_sfx-BvBWk5S0.js"
+    ],
+    "css": [
+      "assets/StoreOverlay-Bi_kHWzl.css"
+    ]
+  },
+  "src/ui/UpgradesOverlay.vue": {
+    "file": "assets/UpgradesOverlay-Cw4mRlkn.js",
+    "name": "UpgradesOverlay",
+    "src": "src/ui/UpgradesOverlay.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vue-yA5kcq01.js",
+      "index.html",
+      "_upgrades-TBmSwTsF.js",
+      "_sfx-BvBWk5S0.js"
+    ]
+  }
+}
