@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
-    "build": "npm run temple:assets:verify && npm run temple:reference:verify && vite build --config target/temple-run/vite.config.ts",
+    "build": "npm run temple:assets:verify && npm run temple:reference:verify && npm run temple:evidence:verify && vite build --config target/temple-run/vite.config.ts",
     "temple:dev": "vite --config target/temple-run/vite.config.ts --host 0.0.0.0",
-    "temple:build": "npm run temple:assets:verify && npm run temple:reference:verify && vite build --config target/temple-run/vite.config.ts",
+    "temple:build": "npm run temple:assets:verify && npm run temple:reference:verify && npm run temple:evidence:verify && vite build --config target/temple-run/vite.config.ts",
     "temple:typecheck": "npm run temple:check:source && npm run temple:typecheck:app && npm run temple:typecheck:tools",
     "temple:test:lightmap": "esbuild tools/test-native-lightmap.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-lightmap-test.mjs >/dev/null && node /tmp/temple-lightmap-test.mjs",
     "temple:test:t-junction": "esbuild tools/test-native-t-junction.ts --bundle --platform=node --format=esm --define:import.meta.env.BASE_URL='\"/\"' --outfile=/tmp/temple-t-junction-test.mjs >/dev/null && node /tmp/temple-t-junction-test.mjs",
@@ -128,7 +128,9 @@
     "temple:test:pages-cache": "esbuild tools/test-pages-retention.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-pages-cache.mjs >/dev/null && node /tmp/temple-pages-cache.mjs",
     "temple:test:merge-road": "esbuild tools/test-merge-road.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-merge-road.mjs >/dev/null && node /tmp/temple-merge-road.mjs",
     "temple:reference:build": "python3 tools/publish-video-reference.py",
-    "temple:reference:verify": "esbuild tools/verify-video-reference.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-reference-verify.mjs >/dev/null && node /tmp/temple-reference-verify.mjs"
+    "temple:reference:verify": "esbuild tools/verify-video-reference.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-reference-verify.mjs >/dev/null && node /tmp/temple-reference-verify.mjs",
+    "temple:evidence:build": "esbuild tools/design-evidence-client.ts --bundle --format=esm --minify --outfile=node_modules/.cache/design-evidence-client.txt && python3 tools/build-design-evidence.py",
+    "temple:evidence:verify": "esbuild tools/verify-design-evidence.ts --bundle --platform=node --format=esm --outfile=/tmp/temple-evidence-verify.mjs >/dev/null && node /tmp/temple-evidence-verify.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

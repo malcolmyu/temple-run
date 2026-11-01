@@ -1,0 +1,986 @@
+{
+  "title": "神庙逃亡 · 玩法架构证据图",
+  "sourceCommit": "b41ce82164531b0a515718b72cfa51f3cf7eb171",
+  "video": "https://www.bilibili.com/video/BV1ypuKzPErT/",
+  "sections": [
+    {
+      "id": "architecture",
+      "title": "整体架构 / 一局流程",
+      "intro": "先分清视频直接展示的流程与网页补齐的状态机。视频秒位取截图索引，与画面内计时器不相同。",
+      "cards": [
+        {
+          "id": "run-loop",
+          "title": "一局的状态与闭环",
+          "conclusion": "入口镜头进入持续跑动；失败后进入结算并可重新开始。复活、商店与升级是独立分支，不能靠结算截图证明其全部原版行为。",
+          "frames": [
+            {
+              "second": 3,
+              "observation": "兽口入口与跟随镜头"
+            },
+            {
+              "second": 263,
+              "observation": "卷轴结算：47,240 分、2,312 米、20x"
+            },
+            {
+              "second": 265,
+              "observation": "再次出现入口画面"
+            }
+          ],
+          "sources": [
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/gameSession.ts"
+            },
+            {
+              "category": "视频观察",
+              "path": "target/temple-run/web/src/game/state.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "gameSession.ts",
+            "state.ts",
+            "../ui/GameOverOverlay.vue"
+          ],
+          "rules": "网页状态：菜单 → 开场 → 跑动 → 死亡 → 复活或结算 → 重开；局内升级快照在开局固定。"
+        },
+        {
+          "id": "theme-sequence",
+          "title": "主题不是这条视频中的固定三段顺序",
+          "conclusion": "00:00 是悬崖插入片段，画面内计时已超过一分钟；后续主跑动多次石桥与木桥互换。不能把剪辑当作生成时序。",
+          "frames": [
+            {
+              "second": 0,
+              "observation": "灰色破岩道路与木板补片：开头插入"
+            },
+            {
+              "second": 67,
+              "observation": "石桥接入木桥"
+            },
+            {
+              "second": 111,
+              "observation": "木桥接回石桥"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeThemeTransition.ts"
+            },
+            {
+              "category": "视频观察",
+              "path": "target/temple-run/web/src/game/nativeThemePacing.ts"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "nativeThemePacing.ts",
+            "nativeThemeTransition.ts",
+            "surface.ts"
+          ],
+          "rules": "原版 PathLevel：Plank=1、Temple=2、Cliff=3。网页有三主题和连接件；完整原版主题选择概率尚未得到视频交叉验证。"
+        },
+        {
+          "id": "difficulty",
+          "title": "难度由进度阶段与安全约束共同决定",
+          "conclusion": "原版阶段表提供最小间隔与双障碍概率；网页组合调度和提难幅度另行标明，不能声称都是原版权重。",
+          "frames": [
+            {
+              "second": 15,
+              "observation": "根障与转向连续出现"
+            },
+            {
+              "second": 162,
+              "observation": "后段火塔与金币高低位"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativePathPacing.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/courseDirector.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativePathPacing.ts",
+            "courseDirector.ts",
+            "coursePlan.ts"
+          ],
+          "rules": "原版进度 0/250/500/1000/1500/2000/3250/4500：转弯最小格数 12/10/8/6/5/4/3/2；障碍 6/5/4/4/3/3/3/2；双障碍概率 0/0/.05/.05/.1/.15/.175/.2。网页每格映射12米，普通组合地板120米，提难版进度1000后108米。"
+        },
+        {
+          "id": "chaser",
+          "title": "追逐者参与开场、失误压力与死亡",
+          "conclusion": "近距离追逐可在画面中确认；失误后如何追近及何时抓住需要代码判定，不能由单帧推定。",
+          "frames": [
+            {
+              "second": 8,
+              "observation": "追逐者在玩家身后"
+            },
+            {
+              "second": 24,
+              "observation": "缺口附近追逐队形"
+            },
+            {
+              "second": 37,
+              "observation": "拾取附近追逐者重新贴近"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/chasePresentation.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/obstacles/feedback.ts"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "chasePresentation.ts",
+            "obstacles/feedback.ts"
+          ],
+          "rules": "网页有追逐队形、跳跃与绊倒压力；抓捕呈现与原版每个动画时刻未逐帧核对。"
+        }
+      ]
+    },
+    {
+      "id": "roads",
+      "title": "路面设计",
+      "intro": "支撑范围决定是否坠落；贴图看起来连续不代表有支撑。原版几何、网页长度组合与分支设计分开记录。",
+      "cards": [
+        {
+          "id": "straight-turn",
+          "title": "直路、左右角与连接帽",
+          "conclusion": "原版包含直路、角和连接件；网页道路以约4米宽、12米单元映射，宽度属于缩放后的世界单位。",
+          "frames": [
+            {
+              "second": 3,
+              "observation": "石桥直路"
+            },
+            {
+              "second": 33,
+              "observation": "横向路口与道路端部"
+            },
+            {
+              "second": 67,
+              "observation": "石桥/木桥连接"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeThemeTransition.ts"
+            },
+            {
+              "category": "原版资源",
+              "path": "docs/original-map-catalog.md"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "surface.ts",
+            "render.ts",
+            "nativeThemeTransition.ts"
+          ],
+          "rules": "主路大致 x∈[-2,2]；碰撞支撑跟随路型。普通方向输入在路口外换道，转弯只在路口窗口内确认。"
+        },
+        {
+          "id": "t-topology",
+          "title": "T 路口存在；固定分路再合流是网页设计",
+          "conclusion": "templeTLeft/TRight/TUp/TDown 以及木桥、悬崖 T 资源均有真实网格。四向连接支持拓扑扩展，但不足以证明视频出现网页这种固定平行双臂合流。",
+          "frames": [
+            {
+              "second": 33,
+              "observation": "可见横向 T 路面"
+            },
+            {
+              "second": 97,
+              "observation": "木桥横向侧路"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "docs/original-topology-evidence.md"
+            },
+            {
+              "category": "原版 il2cpp",
+              "path": "docs/map-generation-rules.md"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/sidePath.ts"
+            }
+          ],
+          "status": "网页假设",
+          "modules": [
+            "trackGraph.ts",
+            "sidePath.ts",
+            "branchRewards.ts"
+          ],
+          "rules": "PathElement.AddRandomPath 与 CanPathExtendOnSide 是原版侧向扩展证据。网页双臂共用4米宽基底，中间缺口±0.55米，出入口各6米；合流后至少96米才允许下一强制转弯。"
+        },
+        {
+          "id": "short-half",
+          "title": "短半边路：narrowBeamLeft / Right",
+          "conclusion": "短缺口是原生支撑多边形裁切，不是把整条路缩成一个规则矩形。须沿保留路面换道或在允许区间跳过。",
+          "frames": [
+            {
+              "second": 181,
+              "observation": "局部半边缺口与保留石面"
+            },
+            {
+              "second": 186,
+              "observation": "半边缺口与金币引导"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeNarrowRegions.json"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/terrain.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "terrain.ts",
+            "render.ts",
+            "nativeNarrowRegions.json"
+          ],
+          "rules": "单元12米；左右命名不能直接当作安全侧，实际以导出的多边形为准。补面使用同源 UV0/UV1 与材质，不能用平铺纹理代替。"
+        },
+        {
+          "id": "long-half",
+          "title": "长半边路：narrowWallLeft / Right",
+          "conclusion": "连续较长的一侧缺失需要提前靠向支撑侧；视频能确认左右两类，不能用短跳覆盖整个长段。",
+          "frames": [
+            {
+              "second": 190,
+              "observation": "左侧缺失，右侧保留"
+            },
+            {
+              "second": 196,
+              "observation": "右侧缺失，左侧保留"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeNarrowRegions.json"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/coursePlan.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "terrain.ts",
+            "coursePlan.ts",
+            "render.ts"
+          ],
+          "rules": "原版 A/B 端件与支撑多边形；网页重复组合为36/48/60米长段。这些组合长度是网页设计，判定取真实多边形。"
+        },
+        {
+          "id": "holes",
+          "title": "断桥、长坑与木桥缺口",
+          "conclusion": "坑的可见开口必须与无支撑区一致；木桥下交叉梁是结构展示，不能自动当作玩家可踩地面。",
+          "frames": [
+            {
+              "second": 24,
+              "observation": "石桥缺口与跳跃"
+            },
+            {
+              "second": 76,
+              "observation": "木桥缺口，下方可见交叉支架"
+            },
+            {
+              "second": 170,
+              "observation": "整幅蓝色坑面，不是悬崖主题证据"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/terrain.ts"
+            },
+            {
+              "category": "原版资源",
+              "path": "docs/original-map-catalog.md"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/actionSafety.ts"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "terrain.ts",
+            "terrain.ts",
+            "actionSafety.ts"
+          ],
+          "rules": "pit / pitLong、plankPit 对应资源族；网页长坑正向腾空预算26米，速度不足时不生成。视频170帧只能证明可见坑面，不能证明它就是 pitLong。"
+        }
+      ]
+    },
+    {
+      "id": "obstacles",
+      "title": "路障设置",
+      "intro": "动作与致命性来自碰撞规则；画面仅证明外观。下面把视频观察与代码判定分列。",
+      "cards": [
+        {
+          "id": "roots",
+          "title": "低根绊倒 / 高根跳跃",
+          "conclusion": "低根用于绊倒压力，高弯根要求跳跃；两者不能因都叫树根就用同一碰撞高度。",
+          "frames": [
+            {
+              "second": 6,
+              "observation": "较低跨路根"
+            },
+            {
+              "second": 15,
+              "observation": "高弯根与跳跃场景"
+            },
+            {
+              "second": 18,
+              "observation": "另一侧高根；不是滑铲树洞"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/referenceObstacles.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/obstacles/collision.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "obstacles/catalog.ts",
+            "obstacles/collision.ts",
+            "obstacles/feedback.ts"
+          ],
+          "rules": "treeTrip：绊倒，追逐压力可导致后续抓捕；treeJump：跳过，否则致命碰撞。视频拟合距离不是原版物理距离。"
+        },
+        {
+          "id": "slide-obstacles",
+          "title": "树洞拱门与木桥横梁要求滑铲",
+          "conclusion": "树洞上方树干与木桥低横梁限制站立高度；这是明确的滑铲障碍族。",
+          "frames": [
+            {
+              "second": 82,
+              "observation": "带绳索的木桥低横梁"
+            },
+            {
+              "second": 115,
+              "observation": "巨大空心树洞，玩家低身通过"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/referenceObstacles.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/obstacles/collision.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "obstacles/catalog.ts",
+            "obstacles/collision.ts"
+          ],
+          "rules": "treeSlide / plankBeam：滑铲进入净空，站立碰撞可致命；不能把18秒高弯根截图当作 treeSlide。"
+        },
+        {
+          "id": "fire",
+          "title": "原版高位火塔与网页低火墙分开",
+          "conclusion": "视频出现侧向喷出的高位火焰；网页另有要求跳跃的低火墙，没有足够证据认定其为独立原版 prefab。",
+          "frames": [
+            {
+              "second": 118,
+              "observation": "火塔横向高位火焰"
+            },
+            {
+              "second": 162,
+              "observation": "高架火焰与高位金币"
+            },
+            {
+              "second": 257,
+              "observation": "后段火塔横梁"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeFlame.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/obstacles/catalog.ts"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "nativeFlame.ts",
+            "obstacles/catalog.ts",
+            "obstacles/collision.ts"
+          ],
+          "rules": "flameTower：按高位净空滑铲；fireWall：网页低火障，跳跃避开。二者动作、视觉与来源不同。"
+        },
+        {
+          "id": "blockers",
+          "title": "石墩、窄墙与深坑不能混为一种路障",
+          "conclusion": "网页 stonePedestal 是占道阻挡物；narrowWall 是缺失支撑道路；深坑属于无地面区。当前没有视频帧可确认网页黄色物体就是原版石墩。",
+          "frames": [],
+          "sources": [
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/obstacles/catalog.ts"
+            },
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeNarrowRegions.json"
+            }
+          ],
+          "status": "网页假设",
+          "modules": [
+            "obstacles/catalog.ts",
+            "obstacles/collision.ts",
+            "render.ts"
+          ],
+          "rules": "石墩侧移躲避，按阻挡/绊倒规则；窄墙沿有支撑一侧跑；坑中无支撑时坠落。缺少独立石墩原版几何证明。"
+        },
+        {
+          "id": "spawn-rules",
+          "title": "生成先遵守原版阶段，再加网页可玩性约束",
+          "conclusion": "原版阶段间隔不是完整生成器；网页为换道、跳跃、路口加入安全预算，并用防重复调度补齐多样性。",
+          "frames": [
+            {
+              "second": 15,
+              "observation": "树根接转向的组合"
+            },
+            {
+              "second": 190,
+              "observation": "长窄路需要换道准备"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativePathPacing.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/courseDirector.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/encounterSafety.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativePathPacing.ts",
+            "courseDirector.ts",
+            "encounterSafety.ts",
+            "lateralSafety.ts"
+          ],
+          "rules": "网页权重 3/(1+已出现次数)，避免最近两类重复；树洞/火塔进度500、短窄300、长窄800、低火墙1000后解锁；合成双障碍仅在进度2000后且已练习过的类别出现。安全规则可进一步推迟生成。"
+        }
+      ]
+    },
+    {
+      "id": "powers",
+      "title": "道具设计",
+      "intro": "原版道具用面向镜头的图集精灵加闪光；本片未直接展示的道具，不借用相似颜色截图冒充证据。",
+      "cards": [
+        {
+          "id": "pickup-look",
+          "title": "外观应匹配原版图集，而非随意几何模型",
+          "conclusion": "黄色圆形箭头与白绿轮廓拾取物可见；拾取后角色变为青色半透明。效果身份还需要资源映射，单帧不证明持续时间。",
+          "frames": [
+            {
+              "second": 37,
+              "observation": "黄色圆形箭头拾取物"
+            },
+            {
+              "second": 145,
+              "observation": "白绿人形轮廓拾取物"
+            },
+            {
+              "second": 146,
+              "observation": "随后角色青色透明"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativePickupFrames.json"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/nativePower.ts"
+            },
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/public/assets/ui/EffectsTexture2x.png"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativePower.ts",
+            "nativePickupFrames.json",
+            "render.ts"
+          ],
+          "rules": "网页使用原版 atlas 区域、面向镜头精灵和闪光帧。37秒对应金币奖励图标；145→146与护盾效果相符，时长仍以代码为依据。",
+          "icons": [
+            "magnet",
+            "shield",
+            "boost",
+            "bonus"
+          ]
+        },
+        {
+          "id": "magnet-shield",
+          "title": "磁铁与护盾：时长升级有原版表",
+          "conclusion": "本片未取得磁铁直接证据；护盾可见效果不等于复活天使翼。",
+          "frames": [
+            {
+              "second": 146,
+              "observation": "青色透明角色：仅证明视觉效果"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeCoinBonus.ts"
+            },
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeMagnet.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativeCoinBonus.ts",
+            "nativeMagnet.ts",
+            "runUpgrades.ts"
+          ],
+          "rules": "磁铁0–6档秒数：15/15/20/20/25/25/25，半径18世界单位；金币收益倍率1/1/1/2/2/3/3。护盾：15/15/17.5/20/22.5/25/25秒。0级默认数值不意味着未解锁时会生成。"
+        },
+        {
+          "id": "boost-bonus",
+          "title": "加速按进度预算，金币加成是即时奖励",
+          "conclusion": "加速不是简单固定秒数；金币加成拾取奖励也不是100金币充能。",
+          "frames": [
+            {
+              "second": 37,
+              "observation": "金币奖励拾取物外观，不证明奖励数值"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeBoost.ts"
+            },
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeCoinBonus.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativeBoost.ts",
+            "nativeCoinBonus.ts"
+          ],
+          "rules": "加速0–6档预算250/250/375/500/625/750/750原版进度；金币奖励50/50/75/100/125/150/150。常规最高速度42，加速84；收尾另有减速逻辑。本片无加速直接帧证据。"
+        },
+        {
+          "id": "wings-start",
+          "title": "天使翼、起跑道具与商店升级",
+          "conclusion": "复活翼与护盾是不同系统；普通/超级起跑使用库存及开局激活窗口。本片没有直接显示购买或使用流程。",
+          "frames": [],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeAngelWings.ts"
+            },
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/megaStart.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/upgradeCatalog.ts"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "nativeAngelWings.ts",
+            "megaStart.ts",
+            "upgradeCatalog.ts",
+            "../ui/StoreOverlay.vue"
+          ],
+          "rules": "翼激活30秒、临时冷却45秒；永久复活冷却15秒。起跑预算950/2350原版进度，激活窗口25<进度<100。道具6档升级价250/1000/2500/5000/7500/25000。均为已提取静态默认值，远程价格覆盖未确认。"
+        },
+        {
+          "id": "power-spawn",
+          "title": "获取方式：已解锁道具才参与随机生成",
+          "conclusion": "原版最小间隔和抽取机制与网页安全放置组合；不是把商店配置数值直接当生成权重。",
+          "frames": [],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeBonusSpawn.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/runUpgrades.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativeBonusSpawn.ts",
+            "runUpgrades.ts",
+            "coursePlan.ts"
+          ],
+          "rules": "间隔超过600世界米才尝试，按12米网格；1/2门控，再在已启用类别里均匀选择。磁铁/护盾/加速/奖励须升级解锁，网页再过滤不安全位置。"
+        }
+      ]
+    },
+    {
+      "id": "economy",
+      "title": "金币 / 宝石 / 计分经济",
+      "intro": "区分世界距离、原版进度、分数与经济金币；不要用视频分数除倍率反推所有距离。",
+      "cards": [
+        {
+          "id": "coin-layout",
+          "title": "金币排布同时提示动作与安全侧",
+          "conclusion": "直排、偏侧、转角、高低位属于不同布局；高根和火塔上方金币不能与地面奖励混用。",
+          "frames": [
+            {
+              "second": 15,
+              "observation": "树根附近金币路线"
+            },
+            {
+              "second": 162,
+              "observation": "火塔高位金币"
+            },
+            {
+              "second": 186,
+              "observation": "黄红币串与缺口引导"
+            },
+            {
+              "second": 196,
+              "observation": "保留侧金币串"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeCoinRuns.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/courseCoins.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativeCoinRuns.ts",
+            "courseCoins.ts",
+            "nativeCoinEligibility.ts"
+          ],
+          "rules": "原版5枚纵向偏移-5/-2.5/0/2.5/5；跳跃币高度3.6/4/4/4/3.6，滑铲币0.6；侧排±1.4，悬崖乘0.8。斜排与转角由各自表处理，网页裁掉无支撑侧错误金币。"
+        },
+        {
+          "id": "coin-values",
+          "title": "红蓝币由升级与原版进度阈值开启",
+          "conclusion": "视频出现红币能证明币色存在，不能证明该账号的升级档或完整阈值。",
+          "frames": [
+            {
+              "second": 186,
+              "observation": "黄币与红币同排"
+            },
+            {
+              "second": 196,
+              "observation": "红黄交替币路"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeCoinValues.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativeCoinValues.ts",
+            "nativeCoinRuns.ts"
+          ],
+          "rules": "金币经济价值黄/红/蓝=1/2/3，计分值5/10/15。红币阈值：未启用/1500/1000/1000/1000/1000；蓝币：未启用/未启用/未启用/3000/2500/2000。交替排布是网页适配。"
+        },
+        {
+          "id": "meter-score",
+          "title": "100金币充能与倍率分开计算",
+          "conclusion": "充能给予分数与等级变化，不是随机赠送道具；结算20x是视频该局的倍率。",
+          "frames": [
+            {
+              "second": 263,
+              "observation": "原版结果含20x倍率与47,240分"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版 il2cpp",
+              "path": "target/temple-run/web/src/game/nativeCoinMeter.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/scoring.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativeCoinMeter.ts",
+            "scoring.ts"
+          ],
+          "rules": "100金币阈值：一次正向AddCoins消耗一个阈值，奖励500×倍率；绊倒清空计数并重置等级。普通倍率=10+已完成成就数；视频参考模式固定20。距离计分采用原版进度转换，不直接等于网页道路米数。"
+        },
+        {
+          "id": "gems-bank",
+          "title": "宝石、复活费用与网页经济扩展",
+          "conclusion": "本片没有宝石用途证据。分支宝石奖励、2宝石复活及额外收入升级应明确作为网页经济设计。",
+          "frames": [],
+          "sources": [
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/branchRewards.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/progress.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/upgradeCatalog.ts"
+            }
+          ],
+          "status": "网页假设",
+          "modules": [
+            "branchRewards.ts",
+            "progress.ts",
+            "upgradeCatalog.ts",
+            "gameSession.ts"
+          ],
+          "rules": "特殊支路9币或1宝石，安全支路5币；宝石复活费用2。网页收入升级3档，每档+25%，价格300/600/1200；不能冒称原版红蓝币升级。"
+        }
+      ]
+    },
+    {
+      "id": "environment",
+      "title": "主题与环境",
+      "intro": "主题识别结合道路几何、材料、连接件；蓝色地面不能自动判成新主题。",
+      "cards": [
+        {
+          "id": "materials",
+          "title": "石桥、木桥与悬崖各有原版几何与材质",
+          "conclusion": "石桥偏灰绿、木桥有木板与绳索、悬崖有破岩与补板；视频开头的悬崖只是插入证据。",
+          "frames": [
+            {
+              "second": 0,
+              "observation": "悬崖破岩与木板补片"
+            },
+            {
+              "second": 67,
+              "observation": "木桥接缝"
+            },
+            {
+              "second": 76,
+              "observation": "木桥板与交叉支撑"
+            },
+            {
+              "second": 111,
+              "observation": "木桥回石桥"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "docs/original-map-catalog.md"
+            },
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeThemeTransition.ts"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "render.ts",
+            "surface.ts",
+            "nativeThemeTransition.ts"
+          ],
+          "rules": "使用原版主题网格与连接件；网页主题时序及部分环境布局近似。连接高度、帽件与支撑必须同时转换，不能只换贴图。"
+        },
+        {
+          "id": "uv-light-water",
+          "title": "半边路 UV、烘焙光与水雾属于不同映射",
+          "conclusion": "缺口补面必须保持原版主纹理UV0与光照UV1；单一平铺会出现“奇怪花纹”。蓝色区域仍需按支撑判断。",
+          "frames": [
+            {
+              "second": 190,
+              "observation": "缺失侧水面与保留石面"
+            },
+            {
+              "second": 196,
+              "observation": "另一侧缺失与石面"
+            },
+            {
+              "second": 170,
+              "observation": "全幅坑面"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeLightmap.ts"
+            },
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/game/nativeWater.ts"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/game/render.ts"
+            }
+          ],
+          "status": "已实现",
+          "modules": [
+            "nativeLightmap.ts",
+            "nativeWater.ts",
+            "render.ts"
+          ],
+          "rules": "主纹理×烘焙光图；原版雾因子clamp((相机距离-20)/60)，色值(50,82,86)/255。网页补面投影同源UV；发布用WebP副本，源图保留，属于有损传输优化。"
+        }
+      ]
+    },
+    {
+      "id": "ui",
+      "title": "HUD / UI",
+      "intro": "原版图集来源不等于原版布局逻辑。Vue重建、辅助提示和调试入口都应单独标注。",
+      "cards": [
+        {
+          "id": "hud-layout",
+          "title": "局内 HUD 采用原版数字与图集，布局由网页重建",
+          "conclusion": "画面显示计分、币与进度等局内信息；网页增加路口操作提示和诊断出口。",
+          "frames": [
+            {
+              "second": 3,
+              "observation": "开场局内HUD"
+            },
+            {
+              "second": 146,
+              "observation": "拾取效果中的HUD"
+            },
+            {
+              "second": 263,
+              "observation": "结算数字、卷轴与倍率"
+            }
+          ],
+          "sources": [
+            {
+              "category": "原版资源",
+              "path": "target/temple-run/web/src/ui/NativeScoreNumber.vue"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/ui/Hud.vue"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "../ui/Hud.vue",
+            "../ui/NativeScoreNumber.vue",
+            "../ui/SpriteNumber.vue"
+          ],
+          "rules": "原版图集字形与数字资源复用；Vue布局与普通路口48米提示、边缘18米提示属于网页辅助，诊断按钮也不是原版UI。"
+        },
+        {
+          "id": "results-shop",
+          "title": "结算、重开、商店、升级形成可玩闭环",
+          "conclusion": "结算与再次入口可在视频核对；商店、升级、成就面板有网页实现，但本片未展示它们的完整交互。",
+          "frames": [
+            {
+              "second": 263,
+              "observation": "原版卷轴结算"
+            },
+            {
+              "second": 265,
+              "observation": "再次进入入口"
+            }
+          ],
+          "sources": [
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/ui/GameOverOverlay.vue"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/ui/StoreOverlay.vue"
+            },
+            {
+              "category": "网页假设",
+              "path": "target/temple-run/web/src/ui/UpgradesOverlay.vue"
+            }
+          ],
+          "status": "部分",
+          "modules": [
+            "../ui/GameOverOverlay.vue",
+            "../ui/StoreOverlay.vue",
+            "../ui/UpgradesOverlay.vue",
+            "../ui/ObjectivesOverlay.vue"
+          ],
+          "rules": "死亡→结果入账→重开；商店购买库存与升级，下一局读取快照。原版完整导航、每项价格远程配置与所有文案尚未核实。"
+        }
+      ]
+    },
+    {
+      "id": "implementation",
+      "title": "实现对照表",
+      "intro": "以下状态是代码覆盖审计，不冒充本轮逐项实际游戏试玩。原版完整性、视频可见性与网页完成度是三个独立问题。",
+      "cards": [
+        {
+          "id": "unimplemented",
+          "title": "明确未做与未证实项",
+          "conclusion": "schema1诊断日志不支持精确输入回放；不能仅凭seed宣称复现同一局。原版完整随机图生成器、远程经济配置和所有主题切换概率仍未完整复刻。",
+          "frames": [],
+          "sources": [
+            {
+              "category": "网页假设",
+              "path": "docs/adr/seed-and-retry.md"
+            }
+          ],
+          "status": "未做",
+          "modules": [
+            "runTrace.ts",
+            "runDiagnostics.ts"
+          ],
+          "rules": "本轮交付证据页，不调整玩法。表中“已实现”表示对应模块存在并有规则实现，“部分”表示机制或原版表现仍有缺口；各条视频观察只覆盖列出的画面。"
+        }
+      ]
+    }
+  ]
+}
