@@ -903,6 +903,7 @@ export class Game {
       mutateUi.runnerLoadStatus='ready';
     } catch (error) {
       if (token !== this.rigToken || this.disposed) return;
+      if(this.runnerRig){mutateUi.runnerLoadStatus='error';console.warn('Keeping current playable runner after optional load failure',error);return;}
       this.releaseRunnerRig();
       this.runnerGroup.clear();
       console.warn('runner rig unavailable, using proxy', error);
@@ -2574,6 +2575,7 @@ export class Game {
     this.chaserGroup.scale.setScalar(this.difficulty.name==='classic'?1:1 + (chase.lunge > 0 ? 0.12 : 0));
     for (let i=0;i<this.chaserRigs.length;i++) {
       const rig=this.chaserRigs[i];
+      if(!rig.object.parent)continue; // Prepared pack is not attached until the next scene reset.
       const active=i<3||this.runElapsed<3;
       if(rig.object.parent)rig.object.parent.visible=active;
       if(active) {

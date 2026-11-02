@@ -1,4 +1,4 @@
-"""A small opening pack: unchanged native geometry, visibly reduced texture detail."""
+"""Native support surfaces and full default mesh, reduced texture/animation detail."""
 from pathlib import Path
 from PIL import Image
 import json,hashlib,gzip,base64,io
@@ -8,7 +8,7 @@ names=['coin-yellow','coin-red','coin-blue','temple-road-tile','stone-turn-a','s
 models={k:v for k,v in full.items()if any(k.endswith('/'+n+'.obj')for n in names)}
 # Later themes retain original upper support triangles, without underside decoration.
 # Their physics/Region2D stays unchanged. UV1 follows the selected triangle order.
-for name in ['stone-turn-a','stone-turn-b','temple-t-junction','pit','plank-road-tile','plank-corner','plank-t-junction','cliff-road-tile','cliff-turn-a','cliff-turn-b','cliff-t-down','cliff-cap-a','cliff-cap-b']:
+for name in ['temple-road-tile','stone-turn-a','stone-turn-b','temple-t-junction','pit','plank-road-tile','plank-corner','plank-t-junction','cliff-road-tile','cliff-turn-a','cliff-turn-b','cliff-t-down','cliff-cap-a','cliff-cap-b']:
  key=('assets/obstacles/' if name=='pit' else 'assets/track/')+name+'.obj';record=full[key];verts=[];uv=[];norm=[];faces=[]
  for line in record['obj'].splitlines():
   words=line.split()
@@ -28,7 +28,7 @@ for name in ['stone-turn-a','stone-turn-b','temple-t-junction','pit','plank-road
   out.append('f '+' '.join(f'{i}/{i}/{i}'for i in range(count+1,count+4)));count+=3
   if record['uv']:outuv+=record['uv'][fi*6:fi*6+6]
  models[key]={'obj':'\n'.join(out),'uv':outuv if record['uv'] else None}
-# Preserve topology; round positions to 0.0001 world units (max error 0.00005).
+# Retain selected triangles; round positions to 0.0001 world units (max error 0.00005).
 for record in models.values():
  lines=[]
  for line in record['obj'].splitlines():
@@ -55,5 +55,5 @@ def compact(v):
  return v
 rigSource=P/'assets/characters/rig-orig_02___Default.json';rig=compact(json.loads(rigSource.read_text()));sources['assets/characters/rig-orig_02___Default.json']=hashlib.sha256(rigSource.read_bytes()).hexdigest()
 data=json.dumps({'models':models,'textures':textures,'rig':rig},separators=(',',':')).encode();name='assets/runtime/opening.'+hashlib.sha256(data).hexdigest()[:12]+'.json';(P/name).write_bytes(data)
-manifest={'pack':name,'bytes':len(data),'gzipBytes':len(gzip.compress(data,mtime=0)),'sources':sources,'models':list(models),'quality':'32–128px textures,64px effects;same opening topology;positions rounded1e-4,UV1e-5'}
+manifest={'pack':name,'bytes':len(data),'gzipBytes':len(gzip.compress(data,mtime=0)),'sources':sources,'models':list(models),'quality':'32–128px textures,64px effects;native support triangles;decoration omitted;positions rounded1e-4,UV1e-5;animation curves sampled every2 keys'}
 (R/'target/temple-run/web/src/game/startupAssets.generated.json').write_text(json.dumps(manifest,separators=(',',':'))+'\n');print(name,len(data),manifest['gzipBytes'])

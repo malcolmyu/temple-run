@@ -1,3 +1,4 @@
+import {applyQuickCliffSupport} from './quickCliffSupport';
 import {loadStartupPack} from './startupAssets';
 import {optimizedAsset,packedModel,preloadWorldModels,releaseWorldModelText} from './runtimeAssets';
 import {CLIFF_MESH_Y} from './nativeCliff';
@@ -127,12 +128,14 @@ export async function createWorld(canvas: HTMLCanvasElement,quick=false,existing
   // Desktop keeps the full-quality path. The game loop can lower the ratio further if FPS dips.
   const mobile = quick || innerWidth<=700 || window.matchMedia('(pointer: coarse)').matches || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   const renderer = existingRenderer??new THREE.WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' });
+  if(!existingRenderer){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2));
   renderer.shadowMap.enabled = !mobile;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.35;
+  }
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0x325256, 20, 80);
@@ -373,6 +376,7 @@ export async function createWorld(canvas: HTMLCanvasElement,quick=false,existing
     const object=await worldObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`);
     return sceneryTemplates[path]=paint(object,path==='Trees/templeHead'||path==='Trees/groundPatchTemple'?nativeRoadMaterial:nativeTreeMaterial,false);
   };
+  const finishAssets=(assets:Assets):Assets=>{if(quick)applyQuickCliffSupport(assets);return assets;};
   // Parsed scene geometry owns its buffers; free the transport OBJ/UV text.
   releaseWorldModelText();
   return {
@@ -382,7 +386,7 @@ export async function createWorld(canvas: HTMLCanvasElement,quick=false,existing
     sun,
     sky,
     material,
-    assets: {
+    assets: finishAssets({
       quick,
       texture: { wall, tree, leaf, flame, coinFace, wings: wingsTexture, glow: glowTexture, safetyNet: safetyNetAtlas },
       material,
@@ -415,7 +419,7 @@ export async function createWorld(canvas: HTMLCanvasElement,quick=false,existing
       towerGate: extractNativeGate(obstacles['tower-arch'], 'tower'),
       enemy: enemyMesh,
       obstacles,
-    },
+    }),
   };
 }
 

@@ -1,0 +1,579 @@
+{
+  "method": {
+    "viewport": [
+      375,
+      812
+    ],
+    "cpuRate": 4,
+    "cacheDisabled": true,
+    "fast": {
+      "downloadBytesPerSecond": 200000,
+      "uploadBytesPerSecond": 93750,
+      "latencyMs": 150
+    },
+    "slow": {
+      "downloadBytesPerSecond": 180000,
+      "uploadBytesPerSecond": 84375,
+      "latencyMs": 562.5
+    },
+    "tti": "temple-ready plus started simulation with >=2 ticks;not Lighthouse quiet-window TTI",
+    "bytes": "HTTP resource TransferSize started by button-ready + HTML navigation TransferSize;data-URI textures/rig are counted within opening JSON;no warm HTTP cache entries",
+    "controlledServer": "same machine,gzip level6,no-store,production builds;before source039a034;UA remains desktop Chrome with mobile viewport and CPU/network emulation,not a physical-device test"
+  },
+  "groups": {
+    "controlledBeforeFast": {
+      "rounds": [
+        {
+          "file": "startup-before-local-fast-1.json",
+          "buttonReadyMs": 22218.900000572205,
+          "playableTtiMs": 22327,
+          "fcpMs": 756,
+          "transferBytes": 4056515,
+          "requests": 36,
+          "encodedBytes": 4045715,
+          "documentTtfbMs": 39.10000038146973,
+          "longTasksBeforeTti": [
+            {
+              "start": 341.9000005722046,
+              "duration": 52
+            },
+            {
+              "start": 535.6999998092651,
+              "duration": 56
+            },
+            {
+              "start": 3587.699999809265,
+              "duration": 65
+            },
+            {
+              "start": 20982.60000038147,
+              "duration": 110
+            },
+            {
+              "start": 21094.199999809265,
+              "duration": 697
+            },
+            {
+              "start": 21870,
+              "duration": 350
+            }
+          ]
+        },
+        {
+          "file": "startup-before-local-fast-2.json",
+          "buttonReadyMs": 22490.699999809265,
+          "playableTtiMs": 22581.900000572205,
+          "fcpMs": 736,
+          "transferBytes": 4056515,
+          "requests": 36,
+          "encodedBytes": 4045715,
+          "documentTtfbMs": 6.100000381469727,
+          "longTasksBeforeTti": [
+            {
+              "start": 212.4000005722046,
+              "duration": 108
+            },
+            {
+              "start": 405.4000005722046,
+              "duration": 57
+            },
+            {
+              "start": 584.6999998092651,
+              "duration": 51
+            },
+            {
+              "start": 881,
+              "duration": 91
+            },
+            {
+              "start": 3718.699999809265,
+              "duration": 57
+            },
+            {
+              "start": 21118.5,
+              "duration": 123
+            },
+            {
+              "start": 21243.300000190735,
+              "duration": 806
+            },
+            {
+              "start": 22140.10000038147,
+              "duration": 351
+            }
+          ]
+        },
+        {
+          "file": "startup-before-local-fast-3.json",
+          "buttonReadyMs": 22010.199999809265,
+          "playableTtiMs": 22116,
+          "fcpMs": 764,
+          "transferBytes": 4056515,
+          "requests": 36,
+          "encodedBytes": 4045715,
+          "documentTtfbMs": 7.600000381469727,
+          "longTasksBeforeTti": [
+            {
+              "start": 441.5,
+              "duration": 51
+            },
+            {
+              "start": 20961,
+              "duration": 141
+            },
+            {
+              "start": 21103,
+              "duration": 685
+            },
+            {
+              "start": 21826.39999961853,
+              "duration": 183
+            }
+          ]
+        }
+      ],
+      "median": {
+        "buttonReadyMs": 22218.900000572205,
+        "playableTtiMs": 22327,
+        "fcpMs": 756,
+        "transferBytes": 4056515,
+        "requests": 36,
+        "encodedBytes": 4045715,
+        "documentTtfbMs": 7.600000381469727
+      }
+    },
+    "controlledAfterFast": {
+      "rounds": [
+        {
+          "file": "startup-after-local-fast-1.json",
+          "buttonReadyMs": 2929.8999996185303,
+          "playableTtiMs": 3014.199999809265,
+          "fcpMs": 628,
+          "transferBytes": 376717,
+          "requests": 13,
+          "encodedBytes": 372817,
+          "documentTtfbMs": 18.399999618530273,
+          "longTasksBeforeTti": [
+            {
+              "start": 236.0999994277954,
+              "duration": 120
+            },
+            {
+              "start": 440.80000019073486,
+              "duration": 54
+            },
+            {
+              "start": 625.6999998092651,
+              "duration": 50
+            },
+            {
+              "start": 1096.8999996185303,
+              "duration": 90
+            },
+            {
+              "start": 2311.300000190735,
+              "duration": 67
+            },
+            {
+              "start": 2405.800000190735,
+              "duration": 109
+            },
+            {
+              "start": 2592.5,
+              "duration": 338
+            }
+          ]
+        },
+        {
+          "file": "startup-after-local-fast-2.json",
+          "buttonReadyMs": 2467.199999809265,
+          "playableTtiMs": 2521,
+          "fcpMs": 572,
+          "transferBytes": 376717,
+          "requests": 13,
+          "encodedBytes": 372817,
+          "documentTtfbMs": 5.100000381469727,
+          "longTasksBeforeTti": []
+        },
+        {
+          "file": "startup-after-local-fast-3.json",
+          "buttonReadyMs": 2614.300000190735,
+          "playableTtiMs": 2679.1000003814697,
+          "fcpMs": 652,
+          "transferBytes": 376717,
+          "requests": 13,
+          "encodedBytes": 372817,
+          "documentTtfbMs": 5.90000057220459,
+          "longTasksBeforeTti": [
+            {
+              "start": 394,
+              "duration": 51
+            },
+            {
+              "start": 2336.800000190735,
+              "duration": 63
+            },
+            {
+              "start": 2441.800000190735,
+              "duration": 173
+            }
+          ]
+        }
+      ],
+      "median": {
+        "buttonReadyMs": 2614.300000190735,
+        "playableTtiMs": 2679.1000003814697,
+        "fcpMs": 628,
+        "transferBytes": 376717,
+        "requests": 13,
+        "encodedBytes": 372817,
+        "documentTtfbMs": 5.90000057220459
+      }
+    },
+    "controlledBeforeSlow": {
+      "rounds": [
+        {
+          "file": "startup-before-local-slow-1.json",
+          "buttonReadyMs": 25761.199999809265,
+          "playableTtiMs": 25828.5,
+          "fcpMs": 1576,
+          "transferBytes": 4056515,
+          "requests": 36,
+          "encodedBytes": 4045715,
+          "documentTtfbMs": 8.100000381469727,
+          "longTasksBeforeTti": [
+            {
+              "start": 615.3999996185303,
+              "duration": 102
+            },
+            {
+              "start": 798.6000003814697,
+              "duration": 52
+            },
+            {
+              "start": 964.5,
+              "duration": 53
+            },
+            {
+              "start": 1730,
+              "duration": 92
+            },
+            {
+              "start": 24418.10000038147,
+              "duration": 138
+            },
+            {
+              "start": 24559,
+              "duration": 770
+            },
+            {
+              "start": 25426.60000038147,
+              "duration": 335
+            }
+          ]
+        },
+        {
+          "file": "startup-before-local-slow-2.json",
+          "buttonReadyMs": 25801.300000190735,
+          "playableTtiMs": 25860.10000038147,
+          "fcpMs": 1572,
+          "transferBytes": 4056515,
+          "requests": 36,
+          "encodedBytes": 4045715,
+          "documentTtfbMs": 16.600000381469727,
+          "longTasksBeforeTti": [
+            {
+              "start": 616.5,
+              "duration": 112
+            },
+            {
+              "start": 812.3000001907349,
+              "duration": 51
+            },
+            {
+              "start": 1730.8000001907349,
+              "duration": 87
+            },
+            {
+              "start": 4613.10000038147,
+              "duration": 66
+            },
+            {
+              "start": 24409.89999961853,
+              "duration": 158
+            },
+            {
+              "start": 24569.10000038147,
+              "duration": 800
+            },
+            {
+              "start": 25455.10000038147,
+              "duration": 346
+            }
+          ]
+        },
+        {
+          "file": "startup-before-local-slow-3.json",
+          "buttonReadyMs": 25832.39999961853,
+          "playableTtiMs": 25911,
+          "fcpMs": 1572,
+          "transferBytes": 4056515,
+          "requests": 36,
+          "encodedBytes": 4045715,
+          "documentTtfbMs": 12.399999618530273,
+          "longTasksBeforeTti": [
+            {
+              "start": 626.3000001907349,
+              "duration": 108
+            },
+            {
+              "start": 818.3999996185303,
+              "duration": 51
+            },
+            {
+              "start": 983,
+              "duration": 56
+            },
+            {
+              "start": 1763.0999994277954,
+              "duration": 89
+            },
+            {
+              "start": 4437.800000190735,
+              "duration": 68
+            },
+            {
+              "start": 24419.5,
+              "duration": 151
+            },
+            {
+              "start": 24572.099999427795,
+              "duration": 790
+            },
+            {
+              "start": 25468,
+              "duration": 365
+            }
+          ]
+        }
+      ],
+      "median": {
+        "buttonReadyMs": 25801.300000190735,
+        "playableTtiMs": 25860.10000038147,
+        "fcpMs": 1572,
+        "transferBytes": 4056515,
+        "requests": 36,
+        "encodedBytes": 4045715,
+        "documentTtfbMs": 12.399999618530273
+      }
+    },
+    "controlledAfterSlow": {
+      "rounds": [
+        {
+          "file": "startup-after-local-slow-1.json",
+          "buttonReadyMs": 3623.699999809265,
+          "playableTtiMs": 3686.7999992370605,
+          "fcpMs": 1408,
+          "transferBytes": 376717,
+          "requests": 13,
+          "encodedBytes": 372817,
+          "documentTtfbMs": 4.799999237060547,
+          "longTasksBeforeTti": [
+            {
+              "start": 3340.699999809265,
+              "duration": 67
+            },
+            {
+              "start": 3449.5999994277954,
+              "duration": 175
+            }
+          ]
+        },
+        {
+          "file": "startup-after-local-slow-2.json",
+          "buttonReadyMs": 3623.8999996185303,
+          "playableTtiMs": 3693.5999994277954,
+          "fcpMs": 1436,
+          "transferBytes": 376717,
+          "requests": 13,
+          "encodedBytes": 372817,
+          "documentTtfbMs": 5.199999809265137,
+          "longTasksBeforeTti": [
+            {
+              "start": 3350.800000190735,
+              "duration": 66
+            },
+            {
+              "start": 3459.0999994277954,
+              "duration": 165
+            }
+          ]
+        },
+        {
+          "file": "startup-after-local-slow-3.json",
+          "buttonReadyMs": 3629.1000003814697,
+          "playableTtiMs": 3684,
+          "fcpMs": 1424,
+          "transferBytes": 376717,
+          "requests": 13,
+          "encodedBytes": 372817,
+          "documentTtfbMs": 5.300000190734863,
+          "longTasksBeforeTti": [
+            {
+              "start": 802.1999998092651,
+              "duration": 52
+            },
+            {
+              "start": 3345.3999996185303,
+              "duration": 64
+            },
+            {
+              "start": 3450.5,
+              "duration": 178
+            }
+          ]
+        }
+      ],
+      "median": {
+        "buttonReadyMs": 3623.8999996185303,
+        "playableTtiMs": 3686.7999992370605,
+        "fcpMs": 1424,
+        "transferBytes": 376717,
+        "requests": 13,
+        "encodedBytes": 372817,
+        "documentTtfbMs": 5.199999809265137
+      }
+    },
+    "publicBeforeFast": {
+      "rounds": [
+        {
+          "file": "startup-before-fast-1.json",
+          "buttonReadyMs": 31427.599999427795,
+          "playableTtiMs": 31567.599999427795,
+          "fcpMs": 9668,
+          "transferBytes": 4074145,
+          "requests": 36,
+          "encodedBytes": 4063345,
+          "documentTtfbMs": 8757.89999961853,
+          "longTasksBeforeTti": [
+            {
+              "start": 9161.79999923706,
+              "duration": 57
+            },
+            {
+              "start": 12757.79999923706,
+              "duration": 69
+            },
+            {
+              "start": 30347.599999427795,
+              "duration": 145
+            },
+            {
+              "start": 30493.099999427795,
+              "duration": 612
+            },
+            {
+              "start": 31177.89999961853,
+              "duration": 249
+            },
+            {
+              "start": 31442.199999809265,
+              "duration": 62
+            }
+          ]
+        },
+        {
+          "file": "startup-before-fast-2.json",
+          "buttonReadyMs": 25149.699999809265,
+          "playableTtiMs": 25220.60000038147,
+          "fcpMs": 3120,
+          "transferBytes": 4074145,
+          "requests": 36,
+          "encodedBytes": 4063345,
+          "documentTtfbMs": 549,
+          "longTasksBeforeTti": [
+            {
+              "start": 787.6000003814697,
+              "duration": 53
+            },
+            {
+              "start": 1035,
+              "duration": 58
+            },
+            {
+              "start": 6318.900000572205,
+              "duration": 87
+            },
+            {
+              "start": 24027.800000190735,
+              "duration": 147
+            },
+            {
+              "start": 24174.900000572205,
+              "duration": 648
+            },
+            {
+              "start": 24891,
+              "duration": 258
+            }
+          ]
+        },
+        {
+          "file": "startup-before-fast-3.json",
+          "buttonReadyMs": 23307.5,
+          "playableTtiMs": 23391.199999809265,
+          "fcpMs": 1240,
+          "transferBytes": 4074145,
+          "requests": 36,
+          "encodedBytes": 4063345,
+          "documentTtfbMs": 367.5999994277954,
+          "longTasksBeforeTti": [
+            {
+              "start": 451.79999923706055,
+              "duration": 132
+            },
+            {
+              "start": 634.3999996185303,
+              "duration": 72
+            },
+            {
+              "start": 833.2999992370605,
+              "duration": 59
+            },
+            {
+              "start": 1379,
+              "duration": 110
+            },
+            {
+              "start": 4363.799999237061,
+              "duration": 73
+            },
+            {
+              "start": 22019.29999923706,
+              "duration": 127
+            },
+            {
+              "start": 22146.39999961853,
+              "duration": 736
+            },
+            {
+              "start": 22979.599999427795,
+              "duration": 328
+            }
+          ]
+        }
+      ],
+      "median": {
+        "buttonReadyMs": 25149.699999809265,
+        "playableTtiMs": 25220.60000038147,
+        "fcpMs": 3120,
+        "transferBytes": 4074145,
+        "requests": 36,
+        "encodedBytes": 4063345,
+        "documentTtfbMs": 549
+      }
+    },
+    "publicAfterFast": null,
+    "publicAfterSlow": null
+  }
+}
