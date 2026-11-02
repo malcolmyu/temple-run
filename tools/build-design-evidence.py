@@ -1,5 +1,5 @@
 """Publish a source-linked design map. Video frames remain a separate appendix."""
-import json, html, hashlib
+import json, html, hashlib, subprocess
 from pathlib import Path
 R=Path(__file__).resolve().parents[1]
 D=json.loads((R/'docs/design-evidence/content.json').read_text())
@@ -21,7 +21,7 @@ for s in D['sections']:
   refs='';frames=''
   for ref in c['sources']:
    assert ref['category']in ['原版 il2cpp','原版资源','视频观察','网页假设']
-   ref['sha256']=hashlib.sha256((R/ref['path']).read_bytes()).hexdigest()
+   ref['sha256']=hashlib.sha256(subprocess.check_output(['git','show',D['sourceCommit']+':'+ref['path']],cwd=R)).hexdigest()
    refs+=f'<li><b>{e(ref["category"])}</b> <a href="{link(ref["path"])}" target="_blank" rel="noopener">{e(ref["path"])}</a></li>'
   for fr in c['frames']:
    n=fr['second'];assert 0<=n<len(F)

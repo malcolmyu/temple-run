@@ -13,6 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Fetch pinned design evidence snapshot
+        shell: bash
+        run: |
+          snapshot="$(python3 -c "import json; print(json.load(open('docs/design-evidence/content.json'))['sourceCommit'])")"
+          [[ "$snapshot" =~ ^[a-f0-9]{40}$ ]]
+          git fetch --depth=1 origin "$snapshot"
       - uses: actions/setup-node@v4
         with:
           node-version: 20

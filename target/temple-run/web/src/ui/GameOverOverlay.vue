@@ -3,21 +3,25 @@ import { computed } from 'vue';
 import {resultIllustration,type DeathCause,type DeathKind} from '../game/deathPresentation';
 import NativeResultNumber from './NativeResultNumber.vue';
 import DiagnosticsExport from './DiagnosticsExport.vue';
+import {optimizedAsset} from '../game/runtimeAssets';
 
 const props = defineProps<{ distance: number; coins: number; gems: number; best: number; score: number; multiplier: number; reason: string; kind:DeathKind|'';cause?:DeathCause|'';skin?:string; reviveAvailable: boolean; reviveCost: number }>();
 const BASE = import.meta.env.BASE_URL;
-const art = computed(() => `${BASE}assets/ui/${resultIllustration(props.kind,props.cause??'',props.skin??'jhony')}`);
+// Custom-property URLs used by bundled CSS resolve against assets/*.css.
+// Resolve against the document before handing any UI image to CSS or <img>.
+const uiAsset = (file:string):string => new URL(optimizedAsset(`${BASE}assets/ui/${file}`),document.baseURI).href;
+const art = computed(() => uiAsset(resultIllustration(props.kind,props.cause??'',props.skin??'jhony')));
 const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
 </script>
 
 <template>
   <section class="result-overlay" aria-label="本局结算">
-    <article class="result-scroll" :style="{ '--scroll-atlas': `url(${BASE}assets/ui/result-paper-tile.png)` }">
-      <div class="scroll-paper" aria-hidden="true"></div>
+    <article class="result-scroll">
+      <div class="scroll-paper" :style="{backgroundImage:`url(${uiAsset('result-paper-tile.png')})`}" aria-hidden="true"></div>
       <img class="result-illustration" :src="art" alt="" />
       <p class="result-message">{{ reason || '本次逃亡结束' }}</p>
       <div class="result-summary">
-        <h2><img :src="`${BASE}assets/ui/result-header-left.png`" alt="" />得分<img :src="`${BASE}assets/ui/result-header-right.png`" alt="" /></h2>
+        <h2><img :src="uiAsset('result-header-left.png')" alt="" />得分<img :src="uiAsset('result-header-right.png')" alt="" /></h2>
         <NativeResultNumber :value="score" />
         <dl class="result-metrics">
           <div><dt>距离：</dt><dd>{{ distance.toLocaleString('en-US') }}米</dd></div>
@@ -28,7 +32,7 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
       </div>
       <nav class="result-actions" aria-label="结算操作">
         <button v-if="reviveAvailable" class="result-revive" @click="emit('revive')">宝石复活 · ◆ {{ reviveCost }}</button>
-        <button class="result-restart" :style="{backgroundImage:`url(${BASE}assets/ui/result-ribbon-wide.png)`}" @click="emit('restart')">再跑一次</button>
+        <button class="result-restart" :style="{backgroundImage:`url(${uiAsset('result-ribbon-wide.png')})`}" @click="emit('restart')">再跑一次</button>
         <div class="result-links">
           <button @click="emit('store')">结算并去商店</button>
           <button @click="emit('menu')">主菜单</button>
@@ -42,7 +46,7 @@ const emit = defineEmits<{ restart: []; menu: []; store: []; revive: [] }>();
 <style scoped>
 .result-overlay { position:absolute; inset:0; z-index:5; overflow:auto; container-type:size; background:#10221b45; }
 .result-scroll { position:relative; width:76.5%; min-height:100cqh; margin:0 auto; color:#302617; font-family:Georgia,'Songti SC',serif; text-align:center; }
-.scroll-paper { position:absolute; inset:0; background-image:var(--scroll-atlas); background-size:100% auto; background-position:left top; background-repeat:repeat-y; pointer-events:none; }
+.scroll-paper { position:absolute; inset:0; background-size:100% auto; background-position:left top; background-repeat:repeat-y; pointer-events:none; }
 .result-illustration { position:absolute; width:82%; height:auto; left:9%; top:11.6cqh; }
 .result-message { position:absolute; top:27.8cqh; left:9%; width:82%; margin:0; font-size:clamp(12px,2vh,18px); }
 .result-summary { position:absolute; top:44.65cqh; left:12%; width:76%; }
