@@ -26,16 +26,16 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 </script>
 
 <template>
-  <div class="hud">
-    <div class="relic-vines" aria-hidden="true" />
-    <div class="relic-left" aria-hidden="true" />
-    <div class="relic-right" aria-hidden="true" />
+  <div class="hud" :class="{'hud-quick':ui.quickStart}">
+    <div v-if="!ui.quickStart" class="relic-vines" aria-hidden="true" />
+    <div v-if="!ui.quickStart" class="relic-left" aria-hidden="true" />
+    <div v-if="!ui.quickStart" class="relic-right" aria-hidden="true" />
     <div class="relic-score">
-      <strong><NativeScoreNumber :value="ui.score" /></strong>
-      <span><img :src="uiAsset('hud-coin.png')" alt="" /><SpriteNumber :value="ui.coins" label="金币" :height="16" /></span>
+      <strong><span v-if="ui.quickStart">{{ ui.score }}</span><NativeScoreNumber v-else :value="ui.score" /></strong>
+      <span v-if="ui.quickStart">金币 {{ ui.coins }}</span><span v-else><img :src="uiAsset('hud-coin.png')" alt="" /><SpriteNumber :value="ui.coins" label="金币" :height="16" /></span>
     </div>
     <button class="relic-pause" aria-label="暂停" @click="emit('pause')">
-      <img :src="uiAsset('bag.png')" alt="" /><img class="pause-glyph" :src="uiAsset('hud-pause.png')" alt="" />
+      <span v-if="ui.quickStart" class="quick-pause">Ⅱ</span><template v-else><img :src="uiAsset('bag.png')" alt="" /><img class="pause-glyph" :src="uiAsset('hud-pause.png')" alt="" /></template>
     </button>
     <div v-if="ui.phase === 'playing'" class="coin-meter" aria-label="金币充能">
       <small>金币充能 {{ Math.floor(ui.charge) }}/100 · 等级 {{ ui.coinBonusLevel }}</small>
@@ -107,4 +107,8 @@ function press(action: 'left' | 'right' | 'jump' | 'slide'): void {
 <style scoped>
 .revive-protection{color:#fff1bd;font-weight:700}
 .revive-arrival{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 44px 12px #e6b65488;border:2px solid #f6d78988;box-sizing:border-box}
+</style>
+
+<style scoped>
+.hud-quick .relic-score strong{background-image:none;background-color:#173529dd}.quick-pause{display:grid;place-items:center;width:44px;height:44px;border:1px solid #e5d6ae;background:#173529dd;font-size:24px;color:#f5dfac}
 </style>

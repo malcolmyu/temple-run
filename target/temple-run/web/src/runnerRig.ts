@@ -632,3 +632,18 @@ export function normalizeRigHeight<T extends {object:THREE.Object3D;update?:(dt:
   }
   return rig;
 }
+
+/** One network/decode operation, independent animation state for each enemy.
+ * The pack owns its shared texture and releases it after the final member. */
+export async function loadEnemyRigPack(count=8){
+ const [data,texture]=await Promise.all([loadRigData(`${import.meta.env.BASE_URL}assets/characters/rig-enemy.json`),new THREE.TextureLoader().loadAsync(optimizedAsset(`${import.meta.env.BASE_URL}assets/apk/texture-53-enemyTexture.webp`))]);
+ texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=true;
+ const rigs:ReturnType<typeof buildRunnerRig>[]=[];let remaining=count;
+ try{for(let i=0;i<count;i++){
+  // Yield between skinning-buffer builds rather than a Promise.all CPU burst.
+  if(i)await new Promise<void>(resolve=>setTimeout(resolve,0));
+  const rig=buildRunnerRig(data,{texture,ownsTexture:false,scale:.2,yOffset:0,authoredSkeleton:true});
+  const dispose=rig.dispose;let disposed=false;rig.dispose=()=>{if(disposed)return;disposed=true;dispose();if(--remaining===0)texture.dispose();};
+  rig.setClip('run');rig.setTime(i*.11,true);rigs.push(rig);
+ }return rigs;}catch(error){for(const rig of rigs)rig.dispose();texture.dispose();throw error;}
+}

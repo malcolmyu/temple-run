@@ -1,3 +1,5 @@
+import {useQuickStart,loadStartupPack} from './startupAssets';
+import {loadEnemyRigPack,buildRunnerRig} from '../runnerRig';
 import type {DeathCause,DeathKind} from './deathPresentation';
 import {branchGapRange,branchHasCenterGapAt} from './sidePath';
 import {RunDiagnostics} from './runDiagnostics';
@@ -139,6 +141,28 @@ export class Game {
   readonly input = new Input();
   bundle!: SceneBundle;
   private canvas!: HTMLCanvasElement;
+  private quickStart=useQuickStart();
+  private detailsStarted=false;
+  private pendingWorld:SceneBundle|null=null;
+  private detailTimer:ReturnType<typeof setTimeout>|null=null;
+  private quickRunner():void {
+    const proxy=new THREE.Mesh(new THREE.CapsuleGeometry(.3,1.1,3,6),new THREE.MeshStandardMaterial({color:0xd6b388}));
+    proxy.position.y=1.1;proxy.userData.runnerProxy=true;this.runnerGroup.add(proxy);
+  }
+  private loadBackgroundDetails():void {
+    if(this.detailsStarted||this.disposed)return;this.detailsStarted=true;
+    mutateUi.detailStatus='loading';
+    this.detailTimer=setTimeout(()=>{
+      this.detailTimer=null;if(this.disposed)return;performance.mark('temple-background-start');
+      if(this.quickStart){
+        void this.setSkin(progress.equipped);
+        void createWorld(this.canvas,false,this.bundle.renderer).then(bundle=>{
+          if(this.disposed)return;this.pendingWorld=bundle;mutateUi.detailStatus='ready';performance.mark('temple-details-ready');
+        }).catch(error=>{mutateUi.detailStatus='error';console.warn('Optional detail pack unavailable; quick mode remains playable',error);});
+      }else mutateUi.detailStatus='ready';
+      void loadEnemyRigPack().then(rigs=>{if(this.disposed){rigs.forEach(r=>r.dispose());return;}this.chaserRigs=rigs;}).catch(error=>console.warn('Pursuit proxy retained',error));
+    },1500);
+  }
   private runnerEntity: Entity = 0;
   private chaserEntity: Entity = 0;
   private runnerRig: Awaited<ReturnType<typeof loadRunnerRig>> | null = null;
@@ -243,11 +267,15 @@ export class Game {
   async init(canvas: HTMLCanvasElement): Promise<void> {
     this.canvas = canvas;
     const initialSkin=skinById(isOwned(progress.equipped)?progress.equipped:'jhony');
-    for(const url of [`${BASE}assets/characters/rig-${initialSkin.rig}.json`,DEFAULT_SKIN_URL,`${BASE}assets/characters/rig-enemy.json`])void loadRigData(url).catch(()=>{});
-    const initialRig=this.loadSkinRig(initialSkin);
-    void initialRig.catch(()=>{}); // consumed below; avoid an early unhandled rejection.
-    try {this.bundle=await createWorld(canvas);}catch(error){void initialRig.then(r=>r.dispose()).catch(()=>{});throw error;}
-    if(this.disposed){this.bundle.renderer.dispose();void initialRig.then(r=>r.dispose()).catch(()=>{});return;}
+    let initialRig:ReturnType<typeof loadRunnerRig>|undefined;
+    if(this.quickStart){initialRig=loadStartupPack().then(async pack=>{
+      const texture=await new THREE.TextureLoader().loadAsync(pack.textures['assets/characters/tex-orig_02___Default.png']);
+      texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=true;
+      return buildRunnerRig(pack.rig,{texture,ownsTexture:true,scale:.2,yOffset:.2,authoredSkeleton:true});
+    });}else initialRig=this.loadSkinRig(initialSkin);
+    void initialRig.catch(()=>{});
+    try {this.bundle=await createWorld(canvas,this.quickStart);}catch(error){void initialRig?.then(r=>r.dispose()).catch(()=>{});throw error;}
+    if(this.disposed){this.bundle.renderer.dispose();void initialRig?.then(r=>r.dispose()).catch(()=>{});return;}
     this.maxPixelRatio = this.bundle.renderer.getPixelRatio();
     this.bundle.scene.add(this.runnerGroup);
     this.bundle.scene.add(this.chaserGroup);
@@ -262,17 +290,8 @@ export class Game {
     },()=>this.viewportBlocked());
     this.resize();
     window.addEventListener('resize', this.resize);
-    await this.setSkin(initialSkin.id,false,initialRig);
-    try {
-      this.chaserRigs = await Promise.all(Array.from({length:8},(_,i)=>i).map(async (i) => {
-        const rig = await loadRunnerRig(`${BASE}assets/characters/rig-enemy.json`, `${BASE}assets/apk/texture-53-enemyTexture.webp`, { scale: .2, yOffset: 0, authoredSkeleton: true });
-        rig.setClip('run');
-        rig.setTime(i * 0.11, true);
-        return rig;
-      }));
-    } catch (error) {
-      console.warn('enemy rig unavailable; using pursuit proxy', error);
-    }
+    if(initialRig)await this.setSkin(initialSkin.id,false,initialRig);
+    mutateUi.quickStart=this.quickStart;
     if (this.disposed) return;
     this.resetWorld();
     mutateUi.ready = true;
@@ -560,6 +579,7 @@ export class Game {
         const p = this.world.require(entity, Pickup);
         return { kind: p.kind, value:p.value, lane: p.lane, ahead: Math.round(p.distance - this.distance) };
       }),
+      startup:{quick:this.quickStart,details:mutateUi.detailStatus,enemyRigs:this.chaserRigs.length,pendingWorld:!!this.pendingWorld},
       rig: this.runnerRig ? 'ready' : 'pending',
       rigLoadStatus: mutateUi.runnerLoadStatus,
     };
@@ -670,8 +690,17 @@ export class Game {
       this.bundle.scene.remove(this.monkeyGroup);
       this.monkeyGroup = null;
     }
+    if(this.pendingWorld){
+      this.bundle=this.pendingWorld;this.pendingWorld=null;this.quickStart=false;mutateUi.quickStart=false;
+      this.tilePrototypes.clear();this.junctionPrototypes.clear();this.narrowOverlays.clear();this.tilePools.clear();this.obstaclePools.clear();this.pickupPools.clear();
+      this.bundle.scene.add(this.runnerGroup,this.chaserGroup);
+      if(this.safetyNet)this.bundle.scene.add(this.safetyNet);
+      this.resize();
+    }
+    if(!this.runnerRig)this.releaseRunnerRig();
     this.runnerGroup.clear();
     if (this.runnerRig) this.runnerGroup.add(this.runnerRig.object);
+    else this.quickRunner();
     this.installWings();
     this.chaserGroup.clear();
     this.graph.reset();
@@ -755,6 +784,7 @@ export class Game {
     if(this.viewportBlocked())this.session.pause();
     mutateUi.speed = RUN_SPEED;
     this.publishSession();
+    this.loadBackgroundDetails();
     sfx.unlockAudio();
     if (progress.music&&this.session.phase==='playing') sfx.startMusic('theme');
     this.updateCamera(0);
@@ -2776,6 +2806,8 @@ export class Game {
 
   dispose(): void {
     this.disposed = true;
+    if(this.detailTimer)clearTimeout(this.detailTimer);
+    this.chaserRigs.forEach(r=>r.dispose());
     this.stopFootsteps();sfx.stopAllLoops();sfx.stopAmbience(.05);sfx.stopFriction();sfx.stopWaterfall();sfx.stopWind();sfx.pauseMusic();
     this.unbindFocusPause?.();this.unbindFocusPause=null;
     cancelAnimationFrame(this.raf);

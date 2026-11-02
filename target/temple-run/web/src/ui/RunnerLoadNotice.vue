@@ -5,8 +5,9 @@ import { progress } from '../game/progress';
 </script>
 
 <template>
-  <div v-if="ui.ready && ui.runnerLoadStatus!=='ready'" class="runner-load-notice" role="status">
-    <p>{{ ui.runnerLoadStatus==='loading' ? '角色加载中…' : '角色素材加载失败，暂用替身。已购角色仍会保留。' }}</p>
+  <div v-if="ui.ready && (ui.quickStart || ui.runnerLoadStatus!=='ready')" class="runner-load-notice" role="status">
+    <p>{{ ui.quickStart ? '快速模式已可玩：默认跑者与简化场景已准备好。' : ui.runnerLoadStatus==='loading' ? '角色加载中…' : '角色素材加载失败，暂用替身。已购角色仍会保留。' }}</p>
+    <p v-if="ui.quickStart && ui.detailStatus==='ready'">高清场景已准备好，下一局启用；当前道路保持不变。</p>
     <button v-if="ui.runnerLoadStatus==='error'" class="menu-btn" @click="getGame()?.setSkin(progress.equipped)">重新加载角色</button>
   </div>
 </template>
