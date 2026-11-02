@@ -2,7 +2,7 @@
 import {readFile,writeFile,readdir,cp,mkdir,rm} from 'node:fs/promises';
 import {join,resolve} from 'node:path';
 export interface ReleaseMetadata {sourceCommit:string;builtAt:string;immutableAssets:string[];retainedFromPrevious:number;retainedAssets:Array<{path:string;expiresAt:number}>;}
-const hashed=(p:string)=>!p.includes('\\')&&(/^assets\/[^/]+-[\w-]{8,}\.(js|css)$/.test(p)||/^assets\/runtime\/[^/]+\.[a-f0-9]{12}\.(json|webp)$/.test(p));
+const hashed=(p:string)=>!p.includes('\\')&&(/^assets\/[^/]+-[\w-]{8,}\.(js|css)$/.test(p)||/^assets\/runtime\/[^/]+\.[a-f0-9]{12}\.(json|webp|ktx2)$/.test(p)||/^assets\/basis\/[a-f0-9]{12}\/basis_transcoder\.(js|wasm)$/.test(p));
 async function inventory(root:string,at='assets'):Promise<string[]>{
  const result:string[]=[];let entries;
  try{entries=await readdir(join(root,at),{withFileTypes:true});}catch{return result;}

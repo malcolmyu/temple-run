@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+const stores=new Map<string,Map<string,Response>>([['temple-payload-v2-previous',new Map()]]);
+let denied=false,quota=false,requests=0;
+const env=globalThis as any;
+env.document={baseURI:'https://test.invalid/game/'};env.location={search:''};env.window={__startupTiming:{version:'current'}};
+env.caches={keys:async()=>[...stores.keys()],delete:async(k:string)=>stores.delete(k),open:async(k:string)=>{
+ if(!stores.has(k))stores.set(k,new Map());const rows=stores.get(k)!;
+ return {keys:async()=>[...rows.keys()].map(url=>new Request(url)),match:async(url:Request|string)=>{if(denied)throw Error('storage denied');return rows.get(typeof url==='string'?url:url.url)?.clone();},delete:async(url:Request|string)=>rows.delete(typeof url==='string'?url:url.url),put:async(url:Request|string,r:Response)=>{if(denied||quota)throw Error('quota/denied');rows.set(typeof url==='string'?url:url.url,r.clone());}};
+}};
+env.fetch=async()=>{requests++;return new Response('{"native":true}',{headers:{'content-type':'application/json'}});};
+const {cachedResponse,flushAssetCache,assetCacheStats}=await import('../target/temple-run/web/src/game/assetCache');
+const a='./assets/runtime/model.123456abcdef.json',b='./assets/runtime/texture.abcdef123456.webp';
+assert.deepEqual(await(await cachedResponse(a)).json(),{native:true});await flushAssetCache();
+assert.ok(!stores.has('temple-payload-v2-previous'),'New deployment evicts old cache namespace');
+assert.deepEqual(await(await cachedResponse(a)).json(),{native:true});assert.equal(requests,1);assert.equal(assetCacheStats.hits,1);
+const rows=stores.get('temple-payload-v2-current')!;
+rows.clear();rows.set('https://test.invalid/old',new Response('large',{headers:{'x-temple-bytes':String(32*1024*1024)}}));
+await cachedResponse(b);await flushAssetCache();assert.ok(assetCacheStats.evicted>0);assert.ok(assetCacheStats.bytes<=32*1024*1024);
+quota=true;assert.equal((await cachedResponse(a)).status,200);await flushAssetCache();assert.ok(assetCacheStats.errors>0);
+denied=true;assert.equal((await cachedResponse(b)).status,200);await flushAssetCache();
+console.log('Asset cache: hash hits, old deployment cleanup,32MiB eviction, quota/storage failure network fallback pass.');

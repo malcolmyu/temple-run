@@ -171,9 +171,9 @@ export class Game {
       if(this.disposed)return;
       if(this.quickStart){
         void this.setSkin(progress.equipped);
-        void createWorld(this.canvas,false,this.bundle.renderer).then(bundle=>{
-          if(this.disposed)return;this.pendingWorld=bundle;mutateUi.detailStatus='ready';performance.mark('temple-details-ready');
-        }).catch(error=>{mutateUi.detailStatus='error';console.warn('Optional detail pack unavailable; quick mode remains playable',error);});
+        void this.bundle.upgradeVisuals?.().then(()=>{
+          if(this.disposed)return;mutateUi.detailStatus='ready';performance.mark('temple-details-ready');this.renderOnce();
+        }).catch(error=>{mutateUi.detailStatus='error';console.warn('Detail textures unavailable; complete starter visuals remain',error);});
       }else mutateUi.detailStatus='ready';
 
     },300);

@@ -26,12 +26,26 @@
           '场景完成→角色就绪: '+span('world-ready','runner-ready'),
           '重置场景/首帧: '+span('runner-ready','first-frame'),
           '脚本下载详见下方；解析/执行含在模块等待内，不假报纯解析时间',
+          '持久缓存: '+JSON.stringify(window.__assetCache||{}),
           '详情 window.__startupTiming；时间相对导航起点',
           ...this.resources.map(r=>r.name.split('/').pop()+':下载 '+Math.round(r.responseEnd-r.responseStart)+'ms / 等待 '+Math.round(r.responseStart-r.startTime)+'ms')].join('\n');
       }};
       new PerformanceObserver(list=>{for(const r of list.getEntries())if(!t.marks.ready)t.resources.push(r.toJSON());t.paint();}).observe({type:'resource',buffered:true});
       try{new PerformanceObserver(list=>{for(const e of list.getEntries())if(!t.marks.ready)t.longTasks.push(e.toJSON());}).observe({type:'longtask',buffered:true});}catch{}
       const timer=setInterval(()=>{t.paint();if(t.marks.ready)clearInterval(timer);},200);t.paint();
+      // Begin the real hash-addressed pack before the game module has downloaded.
+      // Consult persistent storage first; never redownload it just to preload.
+      if(t.mode==='quick'&&new URLSearchParams(location.search).get('cache')!=='off'){
+        const early=window.__earlyOpening={url:new URL('__OPENING_PACK__',document.baseURI).href,hit:false,promise:null};
+        early.promise=(async()=>{
+          try{
+            const store=await Promise.race([caches.open('temple-payload-v2-'+t.version),new Promise(resolve=>setTimeout(()=>resolve(null),200))]);
+            const hit=store?await Promise.race([store.match(early.url),new Promise(resolve=>setTimeout(()=>resolve(null),200))]):null;
+            if(hit){early.hit=true;return hit;}
+          }catch{}
+          return fetch(early.url);
+        })().catch(()=>null);
+      }
     })();
     </script>
     <div id="app"><div style="min-height:100dvh;display:grid;place-content:center;text-align:center;background:#173529;color:#f2d79b;font:18px Georgia,serif"><h1>TEMPLE RUN</h1><p>神庙逃亡</p><p style="font:14px system-ui">正在准备道路与操作…</p></div></div>
