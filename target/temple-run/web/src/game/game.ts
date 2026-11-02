@@ -143,6 +143,15 @@ export class Game {
   private canvas!: HTMLCanvasElement;
   private quickStart=useQuickStart();
   private detailsStarted=false;
+  private pursuitFallback=false;
+  private mountChasers():void {
+    this.chaserGroup.clear();
+    if(this.chaserRigs.length===8){
+      const pack=new THREE.Group();
+      this.chaserRigs.forEach((rig,i)=>{const monkey=new THREE.Group(),formation=nativeEnemyFormation(i);monkey.position.set(formation.side,0,formation.behind);monkey.add(rig.object);pack.add(monkey);});
+      this.chaserGroup.add(pack);
+    }else if(this.pursuitFallback)this.chaserGroup.add(buildChaser(this.bundle.assets));
+  }
   private pendingWorld:SceneBundle|null=null;
   private detailTimer:ReturnType<typeof setTimeout>|null=null;
   private quickRunner():void {
@@ -154,13 +163,14 @@ export class Game {
     mutateUi.detailStatus='loading';
     this.detailTimer=setTimeout(()=>{
       this.detailTimer=null;if(this.disposed)return;performance.mark('temple-background-start');
+      void loadEnemyRigPack().then(rigs=>{if(this.disposed){rigs.forEach(r=>r.dispose());return;}this.chaserRigs=rigs;this.mountChasers();}).catch(error=>{if(this.disposed)return;this.pursuitFallback=true;this.mountChasers();console.warn('Pursuit proxy retained',error);});
       if(this.quickStart){
         void this.setSkin(progress.equipped);
         void createWorld(this.canvas,false,this.bundle.renderer).then(bundle=>{
           if(this.disposed)return;this.pendingWorld=bundle;mutateUi.detailStatus='ready';performance.mark('temple-details-ready');
         }).catch(error=>{mutateUi.detailStatus='error';console.warn('Optional detail pack unavailable; quick mode remains playable',error);});
       }else mutateUi.detailStatus='ready';
-      void loadEnemyRigPack().then(rigs=>{if(this.disposed){rigs.forEach(r=>r.dispose());return;}this.chaserRigs=rigs;}).catch(error=>console.warn('Pursuit proxy retained',error));
+
     },1500);
   }
   private runnerEntity: Entity = 0;
@@ -391,7 +401,7 @@ export class Game {
         pos: this.chaserGroup.position.toArray().map((n) => +n.toFixed(2)),
         children: this.chaserGroup.children.length,
         visible: this.chaserGroup.visible,
-        enemyLoaded: !!this.bundle.assets.enemy,
+        enemyLoaded: !!this.bundle.assets.enemy||this.chaserRigs.length===8,
         gap: this.world.require(this.runnerEntity, Chase).gap,
         presentationGap: this.nativeEnemyGap,
         formation: this.chaserRigs.map(rig=>({visible:rig.object.parent?.visible,position:rig.object.parent?.position.toArray(),modelScale:rig.object.scale.toArray(),modelPosition:rig.object.position.toArray(),animation:rig.getTime()})),
@@ -748,19 +758,7 @@ export class Game {
     this.world.add(chaser, TrackPos, { distance: -6, side: 0, smooth: true });
     this.world.add(chaser, Chaser, { object: null });
     this.chaserEntity = chaser;
-    if (this.chaserRigs.length === 8) {
-      const pack = new THREE.Group();
-      this.chaserRigs.forEach((rig, i) => {
-        const monkey = new THREE.Group();
-        const formation=nativeEnemyFormation(i);
-        monkey.position.set(formation.side, 0, formation.behind);
-        monkey.add(rig.object);
-        pack.add(monkey);
-      });
-      this.chaserGroup.add(pack);
-    } else {
-      this.chaserGroup.add(buildChaser(this.bundle.assets));
-    }
+    this.mountChasers();
     this.chaserGroup.position.set(0, 0, 9);
     this.cameraPos.set(0, 5.8, 10.1);
     this.cameraLook.set(0, 0.65, -7.5);
@@ -1767,8 +1765,9 @@ export class Game {
     for (let index = from; index <= to; index++) {
       const distance = index * TILE;
       // The native Temple root occupies origin; regular straight meshes begin
-      // with the next 12m cell. A duplicate cell0 clips its sloping dark mouth.
-      if(this.difficulty.name==='classic'&&index<=0)continue;
+      // with the next12m cell. Without that optional entrance, cell0 is essential
+      // playable floor; keep it in quick mode instead of leaving the runner over water.
+      if(this.difficulty.name==='classic'&&(index<0||index===0&&this.bundle.assets.originCoveredByEntrance))continue;
       // A 12 m tile that straddles a corner cannot be rotated to both headings: its walls
       // cut across the other leg. Drop it and let the road-width corner fill the gap.
       const crossesTurn = this.path.segments.some((segment, segmentIndex) => segmentIndex > 0 && !(this.difficulty.name==='classic'&&referenceJunction(this.path.segmentOffset+segmentIndex-1,segment.start)==='tee') && Math.abs(segment.start - distance) < TILE / 2 - 0.01);
@@ -2575,7 +2574,7 @@ export class Game {
     this.chaserGroup.scale.setScalar(this.difficulty.name==='classic'?1:1 + (chase.lunge > 0 ? 0.12 : 0));
     for (let i=0;i<this.chaserRigs.length;i++) {
       const rig=this.chaserRigs[i];
-      if(!rig.object.parent)continue; // Prepared pack is not attached until the next scene reset.
+      if(!rig.object.parent)continue; // Only animate rigs mounted in the current chase.
       const active=i<3||this.runElapsed<3;
       if(rig.object.parent)rig.object.parent.visible=active;
       if(active) {

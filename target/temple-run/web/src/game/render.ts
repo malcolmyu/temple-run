@@ -28,6 +28,7 @@ const asset = (name: string): string => `${BASE}assets/apk/${name}`;
 
 export interface Assets {
   quick?:boolean;
+  originCoveredByEntrance?:boolean;
   texture: {
     wall: THREE.Texture;
     tree: THREE.Texture;
@@ -387,7 +388,7 @@ export async function createWorld(canvas: HTMLCanvasElement,quick=false,existing
     sky,
     material,
     assets: finishAssets({
-      quick,
+      quick,originCoveredByEntrance:!!entranceMesh,
       texture: { wall, tree, leaf, flame, coinFace, wings: wingsTexture, glow: glowTexture, safetyNet: safetyNetAtlas },
       material,
       roadTile: paint(roadTile, nativeRoadMaterial, false),
