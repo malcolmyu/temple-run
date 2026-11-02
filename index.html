@@ -6,19 +6,18 @@
     <meta name="theme-color" content="#171d18" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317251d'/%3E%3Cpath d='M32 5 59 32 32 59 5 32Z' fill='%23e8b759'/%3E%3C/svg%3E" />
     <title>神庙逃亡 · TypeScript + ECS + Vue</title>
-    <script type="module" crossorigin src="./assets/main-tqEqwFsH.js"></script>
-    <link rel="modulepreload" crossorigin href="./assets/sfx-DNl3Hmx-.js">
+    <script type="module" crossorigin src="./assets/main-5dt4fdYL.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/sfx-CjeGJBKy.js">
     <link rel="modulepreload" crossorigin href="./assets/vue-BnOplUgJ.js">
-    <link rel="stylesheet" crossorigin href="./assets/main-zxnF55kU.css">
-    <link rel="modulepreload" href="./assets/three-FJtf4Ccs.js" crossorigin="">
-    <link rel="modulepreload" href="./assets/game-tNoBqzER.js" crossorigin="">
-    <link rel="preload" as="fetch" href="./assets/runtime/opening.60978dd06b48.json" crossorigin="">
+    <link rel="stylesheet" crossorigin href="./assets/main-8NgwwCTV.css">
+    <link rel="modulepreload" href="./assets/three-CKW3pbwd.js" crossorigin="">
+    <link rel="modulepreload" href="./assets/game-Cwc7fsWW.js" crossorigin="">
   </head>
   <body>
-    <details id="startup-diagnostics" style="position:fixed;top:0;left:0;max-width:100%;z-index:9999;background:#10271fed;color:#fff;font:11px monospace;padding:5px;max-height:45vh;overflow:auto"><summary id="startup-summary">版本 7c2e7aa4f9ff · 启动中</summary><pre id="startup-stages" style="white-space:pre-wrap"></pre></details>
+    <details id="startup-diagnostics" style="position:fixed;top:0;left:0;max-width:100%;z-index:9999;background:#10271fed;color:#fff;font:11px monospace;padding:5px;max-height:45vh;overflow:auto"><summary id="startup-summary">版本 a202a76fd9a7 · 启动中</summary><pre id="startup-stages" style="white-space:pre-wrap"></pre></details>
     <script>
     (()=>{
-      const t=window.__startupTiming={version:'7c2e7aa4f9ff',mode:new URLSearchParams(location.search).get('quality')==='native'?'native':'quick',marks:{html:performance.now()},longTasks:[],resources:[],mark(name){if(this.marks[name]!==undefined)return;this.marks[name]=performance.now();this.paint();},paint(){
+      const t=window.__startupTiming={version:'a202a76fd9a7',mode:new URLSearchParams(location.search).get('quality')==='native'?'native':'quick',marks:{html:performance.now()},longTasks:[],resources:[],mark(name){if(this.marks[name]!==undefined)return;this.marks[name]=performance.now();this.paint();},paint(){
         const m=this.marks, span=(a,b)=>m[b]===undefined?'进行中':Math.round(m[b]-(m[a]||0))+'ms';
         const nav=performance.getEntriesByType('navigation')[0];const pack=performance.getEntriesByType('resource').find(r=>r.name.includes('/opening.')); 
         document.getElementById('startup-summary').textContent='版本 '+this.version+' · '+this.mode+' · '+(m.ready?'可开始 '+Math.round(m.ready)+'ms':'加载 '+Math.round(performance.now())+'ms');
@@ -33,12 +32,26 @@
           '场景完成→角色就绪: '+span('world-ready','runner-ready'),
           '重置场景/首帧: '+span('runner-ready','first-frame'),
           '脚本下载详见下方；解析/执行含在模块等待内，不假报纯解析时间',
+          '持久缓存: '+JSON.stringify(window.__assetCache||{}),
           '详情 window.__startupTiming；时间相对导航起点',
           ...this.resources.map(r=>r.name.split('/').pop()+':下载 '+Math.round(r.responseEnd-r.responseStart)+'ms / 等待 '+Math.round(r.responseStart-r.startTime)+'ms')].join('\n');
       }};
       new PerformanceObserver(list=>{for(const r of list.getEntries())if(!t.marks.ready)t.resources.push(r.toJSON());t.paint();}).observe({type:'resource',buffered:true});
       try{new PerformanceObserver(list=>{for(const e of list.getEntries())if(!t.marks.ready)t.longTasks.push(e.toJSON());}).observe({type:'longtask',buffered:true});}catch{}
       const timer=setInterval(()=>{t.paint();if(t.marks.ready)clearInterval(timer);},200);t.paint();
+      // Begin the real hash-addressed pack before the game module has downloaded.
+      // Consult persistent storage first; never redownload it just to preload.
+      if(t.mode==='quick'&&new URLSearchParams(location.search).get('cache')!=='off'){
+        const early=window.__earlyOpening={url:new URL('assets/runtime/opening.9d4df254d605.json',document.baseURI).href,hit:false,promise:null};
+        early.promise=(async()=>{
+          try{
+            const store=await Promise.race([caches.open('temple-payload-v2-'+t.version),new Promise(resolve=>setTimeout(()=>resolve(null),200))]);
+            const hit=store?await Promise.race([store.match(early.url),new Promise(resolve=>setTimeout(()=>resolve(null),200))]):null;
+            if(hit){early.hit=true;return hit;}
+          }catch{}
+          return fetch(early.url);
+        })().catch(()=>null);
+      }
     })();
     </script>
     <div id="app"><div style="min-height:100dvh;display:grid;place-content:center;text-align:center;background:#173529;color:#f2d79b;font:18px Georgia,serif"><h1>TEMPLE RUN</h1><p>神庙逃亡</p><p style="font:14px system-ui">正在准备道路与操作…</p></div></div>

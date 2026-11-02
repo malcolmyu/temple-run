@@ -1,43 +1,55 @@
 {
-  "_megaStart-DTXZJ3m_.js": {
-    "file": "assets/megaStart-DTXZJ3m_.js",
+  "../../../node_modules/three/examples/jsm/loaders/KTX2Loader.js": {
+    "file": "assets/ktx2-CflX0VcG.js",
+    "name": "ktx2",
+    "src": "../../../node_modules/three/examples/jsm/loaders/KTX2Loader.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_three-CKW3pbwd.js"
+    ]
+  },
+  "_megaStart-DH4cqDMd.js": {
+    "file": "assets/megaStart-DH4cqDMd.js",
     "name": "megaStart",
     "imports": [
       "index.html"
     ]
   },
-  "_objNormals-DPdw9MSh.js": {
-    "file": "assets/objNormals-DPdw9MSh.js",
+  "_objNormals-3jx6Xwdz.js": {
+    "file": "assets/objNormals-3jx6Xwdz.js",
     "name": "objNormals",
     "imports": [
-      "_three-FJtf4Ccs.js"
+      "_three-CKW3pbwd.js"
     ]
   },
-  "_objectives-9WG1dw1O.js": {
-    "file": "assets/objectives-9WG1dw1O.js",
+  "_objectives-BbtKvK3a.js": {
+    "file": "assets/objectives-BbtKvK3a.js",
     "name": "objectives",
     "imports": [
       "index.html"
     ]
   },
-  "_runnerRig-5HFjqgiG.js": {
-    "file": "assets/runnerRig-5HFjqgiG.js",
+  "_runnerRig-DfcYqSO7.js": {
+    "file": "assets/runnerRig-DfcYqSO7.js",
     "name": "runnerRig",
     "imports": [
-      "_sfx-DNl3Hmx-.js",
-      "_three-FJtf4Ccs.js"
+      "_sfx-CjeGJBKy.js",
+      "_three-CKW3pbwd.js"
+    ],
+    "dynamicImports": [
+      "../../../node_modules/three/examples/jsm/loaders/KTX2Loader.js"
     ]
   },
-  "_sfx-DNl3Hmx-.js": {
-    "file": "assets/sfx-DNl3Hmx-.js",
+  "_sfx-CjeGJBKy.js": {
+    "file": "assets/sfx-CjeGJBKy.js",
     "name": "sfx"
   },
-  "_three-FJtf4Ccs.js": {
-    "file": "assets/three-FJtf4Ccs.js",
+  "_three-CKW3pbwd.js": {
+    "file": "assets/three-CKW3pbwd.js",
     "name": "three"
   },
-  "_upgrades-BPloLXIy.js": {
-    "file": "assets/upgrades-BPloLXIy.js",
+  "_upgrades-C2eql2QE.js": {
+    "file": "assets/upgrades-C2eql2QE.js",
     "name": "upgrades",
     "imports": [
       "index.html"
@@ -48,12 +60,12 @@
     "name": "vue"
   },
   "index.html": {
-    "file": "assets/main-tqEqwFsH.js",
+    "file": "assets/main-5dt4fdYL.js",
     "name": "main",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_sfx-DNl3Hmx-.js",
+      "_sfx-CjeGJBKy.js",
       "_vue-BnOplUgJ.js"
     ],
     "dynamicImports": [
@@ -65,108 +77,108 @@
       "src/ui/HelpOverlay.vue"
     ],
     "css": [
-      "assets/main-zxnF55kU.css"
+      "assets/main-8NgwwCTV.css"
     ]
   },
   "legacy.html": {
-    "file": "assets/legacy-B5n4A_CX.js",
+    "file": "assets/legacy-C_GOBcRX.js",
     "name": "legacy",
     "src": "legacy.html",
     "isEntry": true,
     "imports": [
-      "_sfx-DNl3Hmx-.js",
-      "_three-FJtf4Ccs.js",
-      "_objNormals-DPdw9MSh.js",
-      "_runnerRig-5HFjqgiG.js"
+      "_sfx-CjeGJBKy.js",
+      "_three-CKW3pbwd.js",
+      "_objNormals-3jx6Xwdz.js",
+      "_runnerRig-DfcYqSO7.js"
     ],
     "css": [
       "assets/legacy-BY8Fp4ul.css"
     ]
   },
   "src/game/game.ts": {
-    "file": "assets/game-tNoBqzER.js",
+    "file": "assets/game-Cwc7fsWW.js",
     "name": "game",
     "src": "src/game/game.ts",
     "isDynamicEntry": true,
     "imports": [
-      "_three-FJtf4Ccs.js",
+      "_three-CKW3pbwd.js",
       "index.html",
-      "_runnerRig-5HFjqgiG.js",
-      "_upgrades-BPloLXIy.js",
-      "_megaStart-DTXZJ3m_.js",
-      "_objectives-9WG1dw1O.js",
-      "_sfx-DNl3Hmx-.js",
-      "_objNormals-DPdw9MSh.js",
+      "_sfx-CjeGJBKy.js",
+      "_runnerRig-DfcYqSO7.js",
+      "_upgrades-C2eql2QE.js",
+      "_megaStart-DH4cqDMd.js",
+      "_objectives-BbtKvK3a.js",
+      "_objNormals-3jx6Xwdz.js",
       "_vue-BnOplUgJ.js"
     ]
   },
   "src/ui/HelpOverlay.vue": {
-    "file": "assets/HelpOverlay-2ONgm-pI.js",
+    "file": "assets/HelpOverlay-BJOuMP9S.js",
     "name": "HelpOverlay",
     "src": "src/ui/HelpOverlay.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
       "_vue-BnOplUgJ.js",
-      "_sfx-DNl3Hmx-.js"
+      "_sfx-CjeGJBKy.js"
     ],
     "css": [
       "assets/HelpOverlay-l2QED4tn.css"
     ]
   },
   "src/ui/ObjectivesOverlay.vue": {
-    "file": "assets/ObjectivesOverlay-DB3sBDlq.js",
+    "file": "assets/ObjectivesOverlay-CqyJ0AWJ.js",
     "name": "ObjectivesOverlay",
     "src": "src/ui/ObjectivesOverlay.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vue-BnOplUgJ.js",
       "index.html",
-      "_objectives-9WG1dw1O.js",
-      "_sfx-DNl3Hmx-.js"
+      "_objectives-BbtKvK3a.js",
+      "_sfx-CjeGJBKy.js"
     ],
     "css": [
       "assets/ObjectivesOverlay-DE_H8eOM.css"
     ]
   },
   "src/ui/StatsOverlay.vue": {
-    "file": "assets/StatsOverlay-u5084SOW.js",
+    "file": "assets/StatsOverlay-D6t_Qn3A.js",
     "name": "StatsOverlay",
     "src": "src/ui/StatsOverlay.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vue-BnOplUgJ.js",
       "index.html",
-      "_sfx-DNl3Hmx-.js"
+      "_sfx-CjeGJBKy.js"
     ]
   },
   "src/ui/StoreOverlay.vue": {
-    "file": "assets/StoreOverlay-B6pZKtml.js",
+    "file": "assets/StoreOverlay-XRCgAxW5.js",
     "name": "StoreOverlay",
     "src": "src/ui/StoreOverlay.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vue-BnOplUgJ.js",
       "index.html",
-      "_megaStart-DTXZJ3m_.js",
-      "_three-FJtf4Ccs.js",
-      "_runnerRig-5HFjqgiG.js",
-      "_sfx-DNl3Hmx-.js"
+      "_megaStart-DH4cqDMd.js",
+      "_three-CKW3pbwd.js",
+      "_runnerRig-DfcYqSO7.js",
+      "_sfx-CjeGJBKy.js"
     ],
     "css": [
       "assets/StoreOverlay-Bi_kHWzl.css"
     ]
   },
   "src/ui/UpgradesOverlay.vue": {
-    "file": "assets/UpgradesOverlay-Cyg2igfV.js",
+    "file": "assets/UpgradesOverlay-BYRl1qrW.js",
     "name": "UpgradesOverlay",
     "src": "src/ui/UpgradesOverlay.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vue-BnOplUgJ.js",
       "index.html",
-      "_upgrades-BPloLXIy.js",
-      "_sfx-DNl3Hmx-.js"
+      "_upgrades-C2eql2QE.js",
+      "_sfx-CjeGJBKy.js"
     ]
   }
 }
