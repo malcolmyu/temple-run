@@ -1230,18 +1230,7 @@ function buildChaserBody(assets: Assets): THREE.Object3D {
     group.add(assets.enemy.clone(true));
     return group;
   }
-  const body = new THREE.Mesh(
-    new THREE.SphereGeometry(0.8, 12, 10),
-    assets.quick?new THREE.MeshBasicMaterial({color:0x231a16}):new THREE.MeshStandardMaterial({ color: 0x231a16, roughness: 0.9 }),
-  );
-  body.scale.set(0.85, 1.15, 0.9);
-  body.position.y = 1.15;
-  group.add(body);
-  for (const side of [-1, 1] as const) {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), assets.quick?new THREE.MeshBasicMaterial({color:0xffb43a}):new THREE.MeshStandardMaterial({ color: 0xffb43a, emissive: 0xff8a12, emissiveIntensity: 1.4 }));
-    eye.position.set(side * 0.26, 1.5, 0.62);
-    group.add(eye);
-  }
+  // A missing native mesh is hidden; never display the old sphere/eye proxy.
   return group;
 }
 

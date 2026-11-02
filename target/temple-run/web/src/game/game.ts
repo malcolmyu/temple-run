@@ -1,3 +1,4 @@
+import {mountPursuitRigs} from './pursuitMount';
 import {startupMark} from './startupTiming';
 import {useQuickStart,loadStartupPack} from './startupAssets';
 import {loadEnemyRigPack,buildRunnerRig} from '../runnerRig';
@@ -102,7 +103,7 @@ import {
   TURN_PREBUILD_DISTANCE,
   laneX,
 } from './config';
-import { createWorld, buildTile, buildStoneGate, buildSceneryTree, buildNativeScenery, alignNativeSceneryRoots, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildChaser, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
+import { createWorld, buildTile, buildStoneGate, buildSceneryTree, buildNativeScenery, alignNativeSceneryRoots, buildJunction, buildTJunction, buildObstacle, buildCoin, buildGem, buildPower, buildNarrowOverlay, mergeStaticMeshes, type Assets, type SceneBundle } from './render';
 import { Input, type Action } from './input';
 import { narrowAt, terrainAt, type TerrainKind } from './terrain';
 import { surfaceAt, nativeGroundHeightAt, nativeMeshHeightAt, nativeTransitionAt, nativeCliffTransitionAt, nativeTransitionSupported, type SurfaceKind } from './surface';
@@ -144,27 +145,30 @@ export class Game {
   private canvas!: HTMLCanvasElement;
   private quickStart=useQuickStart();
   private detailsStarted=false;
-  private pursuitFallback=false;
-  private mountChasers():void {
-    this.chaserGroup.clear();
-    if(this.chaserRigs.length===8){
-      const pack=new THREE.Group();
-      this.chaserRigs.forEach((rig,i)=>{const monkey=new THREE.Group(),formation=nativeEnemyFormation(i);monkey.position.set(formation.side,0,formation.behind);monkey.add(rig.object);pack.add(monkey);});
-      this.chaserGroup.add(pack);
-    }else if(this.pursuitFallback)this.chaserGroup.add(buildChaser(this.bundle.assets));
+  private mountChasers(syncPhase=false):void {
+    mountPursuitRigs(this.chaserGroup,this.chaserRigs,this.runElapsed,this.enemyJumps,syncPhase);
+    if(this.bundle)this.renderOnce();
   }
   private pendingWorld:SceneBundle|null=null;
   private detailTimer:ReturnType<typeof setTimeout>|null=null;
-  private quickRunner():void {
-    const proxy=new THREE.Mesh(new THREE.CapsuleGeometry(.3,1.1,3,6),new THREE.MeshStandardMaterial({color:0xd6b388}));
-    proxy.position.y=1.1;proxy.userData.runnerProxy=true;this.runnerGroup.add(proxy);
-  }
   private loadBackgroundDetails():void {
     if(this.detailsStarted||this.disposed)return;this.detailsStarted=true;
     mutateUi.detailStatus='loading';
-    this.detailTimer=setTimeout(()=>{
+    this.detailTimer=setTimeout(async ()=>{
       this.detailTimer=null;if(this.disposed)return;performance.mark('temple-background-start');
-      void loadEnemyRigPack().then(rigs=>{if(this.disposed){rigs.forEach(r=>r.dispose());return;}this.chaserRigs=rigs;this.mountChasers();}).catch(error=>{if(this.disposed)return;this.pursuitFallback=true;this.mountChasers();console.warn('Pursuit proxy retained',error);});
+      // Prioritise the visible pursuit over optional world downloads. Retry transient failures.
+      for(let attempt=0;attempt<2;attempt++){
+        try{
+          const rigs=await loadEnemyRigPack();
+          if(this.disposed){rigs.forEach(r=>r.dispose());return;}
+          this.chaserRigs=rigs;this.mountChasers(true);performance.mark('temple-pursuit-ready');break;
+        }catch(error){
+          if(this.disposed)return;
+          this.mountChasers();console.warn('Pursuit unavailable; hidden until retry',error);
+          if(attempt===0)await new Promise<void>(resolve=>setTimeout(resolve,500));
+        }
+      }
+      if(this.disposed)return;
       if(this.quickStart){
         void this.setSkin(progress.equipped);
         void createWorld(this.canvas,false,this.bundle.renderer).then(bundle=>{
@@ -172,7 +176,7 @@ export class Game {
         }).catch(error=>{mutateUi.detailStatus='error';console.warn('Optional detail pack unavailable; quick mode remains playable',error);});
       }else mutateUi.detailStatus='ready';
 
-    },1500);
+    },300);
   }
   private runnerEntity: Entity = 0;
   private chaserEntity: Entity = 0;
@@ -718,7 +722,7 @@ export class Game {
     if(!this.runnerRig)this.releaseRunnerRig();
     this.runnerGroup.clear();
     if (this.runnerRig) this.runnerGroup.add(this.runnerRig.object);
-    else this.quickRunner();
+    else this.runnerGroup.visible=false;
     this.installWings();
     this.chaserGroup.clear();
     this.graph.reset();
@@ -905,21 +909,15 @@ export class Game {
       this.runnerGroup.clear();
       this.runnerRig = rig;
       this.runnerGroup.add(rig.object);
+      this.runnerGroup.visible=true;
       this.installWings();
       mutateUi.runnerLoadStatus='ready';
     } catch (error) {
       if (token !== this.rigToken || this.disposed) return;
       if(this.runnerRig){mutateUi.runnerLoadStatus='error';console.warn('Keeping current playable runner after optional load failure',error);return;}
-      this.releaseRunnerRig();
-      this.runnerGroup.clear();
-      console.warn('runner rig unavailable, using proxy', error);
-      const proxy = new THREE.Mesh(new THREE.CapsuleGeometry(0.35, 1.1, 4, 8), new THREE.MeshStandardMaterial({ color: 0xd6b388 }));
-      proxy.userData.runnerProxy = true;
-      proxy.position.y = 1.1;
-      this.runnerGroup.add(proxy);
-      this.runnerRig = null;
-      this.installWings();
       mutateUi.runnerLoadStatus='error';
+      // Boot must not advertise readiness with an indefinite capsule replacing the player.
+      throw error;
     }
   }
 

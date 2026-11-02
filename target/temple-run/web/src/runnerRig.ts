@@ -636,7 +636,12 @@ export function normalizeRigHeight<T extends {object:THREE.Object3D;update?:(dt:
 /** One network/decode operation, independent animation state for each enemy.
  * The pack owns its shared texture and releases it after the final member. */
 export async function loadEnemyRigPack(count=8){
- const [data,texture]=await Promise.all([loadRigData(`${import.meta.env.BASE_URL}assets/characters/rig-enemy.json`),new THREE.TextureLoader().loadAsync(optimizedAsset(`${import.meta.env.BASE_URL}assets/apk/texture-53-enemyTexture.webp`))]);
+ const [dataResult,textureResult]=await Promise.allSettled([loadRigData(`${import.meta.env.BASE_URL}assets/characters/rig-enemy.json`),new THREE.TextureLoader().loadAsync(optimizedAsset(`${import.meta.env.BASE_URL}assets/apk/texture-53-enemyTexture.webp`))]);
+ if(dataResult.status==='rejected'||textureResult.status==='rejected'){
+  if(textureResult.status==='fulfilled')textureResult.value.dispose();
+  throw dataResult.status==='rejected'?dataResult.reason:(textureResult as PromiseRejectedResult).reason;
+ }
+ const data=dataResult.value,texture=textureResult.value;
  texture.colorSpace=THREE.SRGBColorSpace;texture.flipY=true;
  const rigs:ReturnType<typeof buildRunnerRig>[]=[];let remaining=count;
  try{for(let i=0;i<count;i++){
