@@ -4,12 +4,12 @@
 
 ## 结论与测量口径
 
-相同本机gzip生产服务器、375×812、禁用HTTP缓存、4×CPU：指定Fast 3G（1.6Mbps/150ms）三轮可玩TTI中位数22,327ms → 2,700ms；开始按钮可用2,656ms；首屏4,056,515B → 376,333B。Chrome官方Slow 4G参数下为25,860ms → 3,687ms，**尚未低于3秒**。不把受控本机结果冒充线上结果。
+相同本机gzip生产服务器、375×812、禁用HTTP缓存、4×CPU：指定Fast 3G（1.6Mbps/150ms）三轮可玩TTI中位数22,327ms → 2,589ms；开始按钮可用2,550ms；首屏4,056,515B → 376,814B。Chrome官方Slow 4G参数下为25,860ms → 3,599ms，**尚未低于3秒**。不把受控本机结果冒充线上结果。
 
 详细中位数、FCP、请求数和每轮数据见[measurements.md](measurements.md)，全部原始浏览器记录见[raw/](raw/)，汇总数据见[summary.json](summary.json)。线上结果完成后单列，不与本机混算。探索中的较小无默认角色包、异常回源包等试验数据没有混入最终三轮。
 
 - “按钮可用”：App完成Game.init后标记temple-ready，菜单按钮已启用，操作没有被加载遮罩拦截。
-- “可玩TTI”：该时刻调用真实Game.start，等待真实playing状态且模拟完成至少2个tick再取时间。它是本项目的等价可操作指标，**不是Lighthouse等待5秒安静窗口的TTI**。人工首跑教学确认用独立GUI回归验证。
+- “可玩TTI”：该时刻调用真实Game.start，等待真实playing状态且模拟完成至少2个tick再取时间。它衡量菜单可响应并真正启动引擎，不计用户阅读教学与既有开场镜头本身的时长。它是本项目的等价可操作指标，**不是Lighthouse等待5秒安静窗口的TTI**。人工首跑教学确认用独立GUI回归验证。
 - HTTP冷缓存：Network.setCacheDisabled(true)，每轮新文档；不是重启操作系统或清空DNS/TLS连接。每条首屏HTTP记录均检查200且TransferSize>0。
 - CPU：Emulation.setCPUThrottlingRate(4)。视口375×812；浏览器UA仍为桌面Chrome，采用窄屏、CPU、网络仿真，**未做真机实测**。
 - Fast 3G严格按本任务给的200000B/s下行、93750B/s上行、150ms延迟。Slow 4G采用Chrome源码实际调整值180000B/s、84375B/s、562.5ms。它的名义目标RTT虽为150ms，CDP施加的延迟不同，不能混用。[Chrome原始定义](https://chromium.googlesource.com/devtools/devtools-frontend/+/HEAD/front_end/core/sdk/NetworkManager.ts#711)
@@ -24,12 +24,13 @@ bootGame确实等待Game.init；后者原来等待完整createWorld、角色、8
 
 - 默认角色保留976个顶点与原始索引，骨架名称/父子关系不变；浮点取4位小数，动作曲线隔一帧取样并插值。保留run/jump/slide/slideLoop/stumble，动作物理时长不改变。
 - 纹理32–128px，效果图集64px，WebP质量65。地面保留原版支撑三角面与UV1对应，顶点取1e-4世界单位、UV取1e-5。删除桥底、侧墙、护栏等非支撑装饰面。悬崖快速模式另按原生半宽1.3米、地面3米及网页12米格生成支撑平面/转角/端帽，这是网页低细节适配，不冒称原版网格；避免裁掉低于岩石顶面的可踩位置。**有明显的纹理清晰度与装饰损失**，不是原画质3秒加载。
+- 快速模式省略入口装饰时补齐原点道路；不能沿用“入口承担cell0”的跳过规则，留下看不见地面的开局。browser-quick-origin.ts在真实Game.init调用链修前失败、修后通过。
 - 半边路/长坑缺失原网格时，按同一groundSupportRegion生成可踩面，不能画整块平地。10类支撑多边形的射线采样与碰撞判定做交叉验证。
 - 空几何是有意省去装饰，不再被误判为资源缺失而串行回源下载完整OBJ。
 - Vite在HTML预加载游戏/Three模块，以及窄屏opening包，减轻菜单JS之后才发现依赖的串行链。
 - 窄屏快速模式关闭阴影、降低渲染分辨率，追逐替代模型使用简单材质；金币使用小型原版网格，避免开场PBR路径。
 - 首次开始1.5秒后才触发高清世界与角色资源。当前道路几何不被替换；下载完成后只在下一局/回菜单重置时采用高清场景，清除旧的道路/路口/半边路缓存，避免跑到脚下变形。
-- 8个追逐者共享一份rig数据及一张已解码纹理，动画状态/蒙皮缓冲独立，逐个让出事件循环构建。浏览器实际观察到rig请求1次、贴图请求1次、实例8个；静态敌人模型不再另行阻塞createWorld。
+- 8个追逐者共享一份rig数据及一张已解码纹理，动画状态/蒙皮缓冲独立，逐个让出事件循环构建，优先于大场景排入后台；准备完成即挂载到当前追逐，不把黑球替代物当作正常开场。浏览器实际观察到rig请求1次、贴图请求1次、实例8个；静态敌人模型不再另行阻塞createWorld。
 - 音频仅在交互后初始化，先预取3个常用声音，其他按第一次使用请求。不把尚未加载的单次音效延迟补播，以免错位；跑步循环仅在仍可跑时重试。
 - 高清模型后台逐个让出事件循环解析。商店3D预览、非当前皮肤和装饰资源延后到相应流程；高清下载失败仍可继续快速模式。
 
@@ -48,7 +49,7 @@ bootGame确实等待Game.init；后者原来等待完整createWorld、角色、8
 - 实际键盘左/右：lane1→0→1，始终playing，没有非路口撞墙。
 - 受控半边路：右侧lane2通过，支撑返回[false,false,true]；同场景左侧踩空触发fall并进入结算。高清已下载时当前局仍quick=true、pendingWorld=true，几何不换。
 - 死亡结算纸卷与插画200、指标可见；“再跑一次”分数归0、playing、采用已准备的高清场景与8个敌人；再次失败后“结算并去商店”实际打开角色与道具面板。
-- Console error为空；死亡后脚步循环为空。
+- 常规流程Console error为空；死亡后脚步循环为空。另行阻断高清默认角色rig下载，验证loadStatus=error时原已可玩的角色仍保留、phase=playing；没有因可选资源失败退化为不可玩。故障注入中的网络错误属于预期，记录见failure-check.json。
 - typecheck、生产构建、31组core契约、opening源哈希/支撑顶点/UV/角色骨架检查通过。
 
 ## 复现与维护
@@ -58,3 +59,7 @@ bootGame确实等待Game.init；后者原来等待完整createWorld、角色、8
 `tools/measure-startup.browser.ts`编译后在导航后、ready前注入；读取window.__startupSample，附navigation timing保存。用相同CDP网络/CPU配置独立重载三次。`python3 tools/report-startup.py`汇总所有轮次，不删除最慢值。
 
 `?quality=quick`强制快速模式，`?quality=native`用于原细节对照。原细节模式不承诺3秒，首次快速模式也不承诺视觉无损。未做：物理手机/低内存设备测量、Slow4G低于3秒、默认首局即所有原版装饰；这些不应隐藏在平均值里。
+
+## Pages 最终实测
+
+运行时代码 ad72e79；375×812、4×CPU、禁用HTTP缓存，每组三轮全部保留。Fast 3G（1.6Mbps/150ms）线上可玩时间 2839.1 / 2857.2 / 2868.5ms，中位数2857.2ms；按钮2766.5ms，FCP720ms，首屏381410字节、13请求。优化前同站点中位数25220.6ms、4074145字节、36请求。Slow 4G（180000B/s、562.5ms）线上中位数3745.8ms，未达到3秒。这里只是Chrome视口/网络/CPU仿真，未做真机测试；可玩时间定义为开始动作进入playing且完成两个模拟步，不包含开场动画观看时间，也不是Lighthouse静默窗口TTI。完整数据见measurements.md及raw/。

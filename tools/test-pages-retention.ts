@@ -5,11 +5,13 @@ import assert from 'node:assert/strict';
 import {stageRelease} from './stage-pages-release';
 const root=await mkdtemp(join(tmpdir(),'temple-retention-')),dist=join(root,'dist'),dest=join(root,'site');
 try{
+ await mkdir(dist,{recursive:true});await writeFile(join(dist,'index.html'),'<html><head></head><body>test</body></html>');
  await mkdir(join(dist,'assets'),{recursive:true});await writeFile(join(dist,'assets/new-12345678.js'),'new');
  await mkdir(join(dest,'assets'),{recursive:true});await writeFile(join(dest,'assets/old-abcdefgh.js'),'old');await writeFile(join(dest,'assets/stale-abcdefgh.js'),'stale');
  await mkdir(join(dest,'.git'));await writeFile(join(dest,'.git/keep'),'git');
  await writeFile(join(dest,'deployment.json'),JSON.stringify({immutableAssets:['assets/old-abcdefgh.js','../../secret.txt']}));
  const first=await stageRelease(dist,dest,'commit1',1_000_000);assert.equal(first.retainedFromPrevious,1);
+ assert.ok((await readFile(join(dest,'releases/commit1/index.html'),'utf8')).includes('<base href="../../">'));
  assert.equal(await readFile(join(dest,'assets/new-12345678.js'),'utf8'),'new');
  assert.equal(await readFile(join(dest,'assets/old-abcdefgh.js'),'utf8'),'old');
  await assert.rejects(readFile(join(dest,'assets/stale-abcdefgh.js')));

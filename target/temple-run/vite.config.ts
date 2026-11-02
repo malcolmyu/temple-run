@@ -1,3 +1,4 @@
+import {execFileSync} from 'node:child_process';
 import { defineConfig, type Plugin } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { fileURLToPath } from 'node:url';
@@ -46,12 +47,12 @@ function lanUrlPlugin():Plugin {
 export default defineConfig({
   root: path.join(here, 'web'),
   base: './',
-  plugins: [vue(), lanUrlPlugin(), {
+  plugins: [{name:'visible-build-version',transformIndexHtml:{order:'pre',handler:html=>html.replaceAll('__BUILD_VERSION__',execFileSync('git',['rev-parse','--short=12','HEAD'],{cwd:here,encoding:'utf8'}).trim())}},vue(), lanUrlPlugin(), {
     name:'playable-start-preloads',
     transformIndexHtml:{order:'post',handler(_html,ctx){
       if(!ctx.bundle)return [];
       return [...Object.values(ctx.bundle).filter(c=>c.type==='chunk'&&['game','three'].includes(c.name)).map(c=>({tag:'link',attrs:{rel:'modulepreload',href:'./'+c.fileName,crossorigin:''},injectTo:'head' as const})),
-        {tag:'link',attrs:{rel:'preload',as:'fetch',href:'./'+startup.pack,crossorigin:'',media:'(max-width:700px)'},injectTo:'head' as const}];
+        {tag:'link',attrs:{rel:'preload',as:'fetch',href:'./'+startup.pack,crossorigin:''},injectTo:'head' as const}];
     }},
   }],
   // Expose the dev server on the LAN so phones can open it via the QR code in the side panel.
