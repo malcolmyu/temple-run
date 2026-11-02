@@ -59,3 +59,7 @@ bootGame确实等待Game.init；后者原来等待完整createWorld、角色、8
 `tools/measure-startup.browser.ts`编译后在导航后、ready前注入；读取window.__startupSample，附navigation timing保存。用相同CDP网络/CPU配置独立重载三次。`python3 tools/report-startup.py`汇总所有轮次，不删除最慢值。
 
 `?quality=quick`强制快速模式，`?quality=native`用于原细节对照。原细节模式不承诺3秒，首次快速模式也不承诺视觉无损。未做：物理手机/低内存设备测量、Slow4G低于3秒、默认首局即所有原版装饰；这些不应隐藏在平均值里。
+
+## Pages 最终实测
+
+运行时代码 ad72e79；375×812、4×CPU、禁用HTTP缓存，每组三轮全部保留。Fast 3G（1.6Mbps/150ms）线上可玩时间 2839.1 / 2857.2 / 2868.5ms，中位数2857.2ms；按钮2766.5ms，FCP720ms，首屏381410字节、13请求。优化前同站点中位数25220.6ms、4074145字节、36请求。Slow 4G（180000B/s、562.5ms）线上中位数3745.8ms，未达到3秒。这里只是Chrome视口/网络/CPU仿真，未做真机测试；可玩时间定义为开始动作进入playing且完成两个模拟步，不包含开场动画观看时间，也不是Lighthouse静默窗口TTI。完整数据见measurements.md及raw/。

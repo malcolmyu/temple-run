@@ -545,7 +545,151 @@
         "documentTtfbMs": 549
       }
     },
-    "publicAfterFast": null,
-    "publicAfterSlow": null
+    "publicAfterFast": {
+      "rounds": [
+        {
+          "file": "startup-after-public-fast-1.json",
+          "buttonReadyMs": 2766.5,
+          "playableTtiMs": 2839.1000003814697,
+          "fcpMs": 716,
+          "transferBytes": 381410,
+          "requests": 13,
+          "encodedBytes": 377510,
+          "documentTtfbMs": 221.5,
+          "longTasksBeforeTti": [
+            {
+              "start": 2487.5,
+              "duration": 71
+            },
+            {
+              "start": 2607.300000190735,
+              "duration": 160
+            }
+          ]
+        },
+        {
+          "file": "startup-after-public-fast-2.json",
+          "buttonReadyMs": 2764.7999992370605,
+          "playableTtiMs": 2857.199999809265,
+          "fcpMs": 736,
+          "transferBytes": 381410,
+          "requests": 13,
+          "encodedBytes": 377510,
+          "documentTtfbMs": 215.79999923706055,
+          "longTasksBeforeTti": [
+            {
+              "start": 2476,
+              "duration": 71
+            },
+            {
+              "start": 2598.5999994277954,
+              "duration": 166
+            }
+          ]
+        },
+        {
+          "file": "startup-after-public-fast-3.json",
+          "buttonReadyMs": 2803.800000190735,
+          "playableTtiMs": 2868.5,
+          "fcpMs": 720,
+          "transferBytes": 381410,
+          "requests": 13,
+          "encodedBytes": 377510,
+          "documentTtfbMs": 228.80000019073486,
+          "longTasksBeforeTti": [
+            {
+              "start": 2514.1000003814697,
+              "duration": 71
+            },
+            {
+              "start": 2637.9000005722046,
+              "duration": 166
+            }
+          ]
+        }
+      ],
+      "median": {
+        "buttonReadyMs": 2766.5,
+        "playableTtiMs": 2857.199999809265,
+        "fcpMs": 720,
+        "transferBytes": 381410,
+        "requests": 13,
+        "encodedBytes": 377510,
+        "documentTtfbMs": 221.5
+      }
+    },
+    "publicAfterSlow": {
+      "rounds": [
+        {
+          "file": "startup-after-public-slow-1.json",
+          "buttonReadyMs": 3700.8999996185303,
+          "playableTtiMs": 3745.800000190735,
+          "fcpMs": 1452,
+          "transferBytes": 381410,
+          "requests": 13,
+          "encodedBytes": 377510,
+          "documentTtfbMs": 216.0999994277954,
+          "longTasksBeforeTti": [
+            {
+              "start": 3409.199999809265,
+              "duration": 75
+            },
+            {
+              "start": 3538.800000190735,
+              "duration": 162
+            }
+          ]
+        },
+        {
+          "file": "startup-after-public-slow-2.json",
+          "buttonReadyMs": 3689.7000007629395,
+          "playableTtiMs": 3744.7000007629395,
+          "fcpMs": 1448,
+          "transferBytes": 381410,
+          "requests": 13,
+          "encodedBytes": 377510,
+          "documentTtfbMs": 215.9000005722046,
+          "longTasksBeforeTti": [
+            {
+              "start": 3420.1000003814697,
+              "duration": 65
+            },
+            {
+              "start": 3529,
+              "duration": 161
+            }
+          ]
+        },
+        {
+          "file": "startup-after-public-slow-3.json",
+          "buttonReadyMs": 3717.699999809265,
+          "playableTtiMs": 3760.5999994277954,
+          "fcpMs": 1516,
+          "transferBytes": 381410,
+          "requests": 13,
+          "encodedBytes": 377510,
+          "documentTtfbMs": 216.19999980926514,
+          "longTasksBeforeTti": [
+            {
+              "start": 3427.0999994277954,
+              "duration": 82
+            },
+            {
+              "start": 3562.5999994277954,
+              "duration": 156
+            }
+          ]
+        }
+      ],
+      "median": {
+        "buttonReadyMs": 3700.8999996185303,
+        "playableTtiMs": 3745.800000190735,
+        "fcpMs": 1452,
+        "transferBytes": 381410,
+        "requests": 13,
+        "encodedBytes": 377510,
+        "documentTtfbMs": 216.0999994277954
+      }
+    }
   }
 }
