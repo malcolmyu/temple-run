@@ -15,10 +15,10 @@
     <link rel="preload" as="fetch" href="./assets/runtime/opening.60978dd06b48.json" crossorigin="">
   </head>
   <body>
-    <details id="startup-diagnostics" style="position:fixed;top:0;left:0;max-width:100%;z-index:9999;background:#10271fed;color:#fff;font:11px monospace;padding:5px;max-height:45vh;overflow:auto"><summary id="startup-summary">版本 60825cda66e3 · 启动中</summary><pre id="startup-stages" style="white-space:pre-wrap"></pre></details>
+    <details id="startup-diagnostics" style="position:fixed;top:0;left:0;max-width:100%;z-index:9999;background:#10271fed;color:#fff;font:11px monospace;padding:5px;max-height:45vh;overflow:auto"><summary id="startup-summary">版本 26f92360733d · 启动中</summary><pre id="startup-stages" style="white-space:pre-wrap"></pre></details>
     <script>
     (()=>{
-      const t=window.__startupTiming={version:'60825cda66e3',mode:new URLSearchParams(location.search).get('quality')==='native'?'native':'quick',marks:{html:performance.now()},longTasks:[],resources:[],mark(name){if(this.marks[name]!==undefined)return;this.marks[name]=performance.now();this.paint();},paint(){
+      const t=window.__startupTiming={version:'26f92360733d',mode:new URLSearchParams(location.search).get('quality')==='native'?'native':'quick',marks:{html:performance.now()},longTasks:[],resources:[],mark(name){if(this.marks[name]!==undefined)return;this.marks[name]=performance.now();this.paint();},paint(){
         const m=this.marks, span=(a,b)=>m[b]===undefined?'进行中':Math.round(m[b]-(m[a]||0))+'ms';
         const nav=performance.getEntriesByType('navigation')[0];const pack=performance.getEntriesByType('resource').find(r=>r.name.includes('/opening.')); 
         document.getElementById('startup-summary').textContent='版本 '+this.version+' · '+this.mode+' · '+(m.ready?'可开始 '+Math.round(m.ready)+'ms':'加载 '+Math.round(performance.now())+'ms');
