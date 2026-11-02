@@ -1,3 +1,4 @@
+import {useQuickStart} from '../target/temple-run/web/src/game/startupAssets';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {gzipSync} from 'node:zlib';
@@ -38,3 +39,8 @@ assert.deepEqual(pack.rig.bones.map(b=>[b.name,b.parent]),originalRig.bones.map(
 assert.deepEqual(Object.keys(pack.rig.clips),Object.keys(originalRig.clips),'All action clips remain available');
 for(const key of Object.keys(originalRig.clips))assert.ok(Math.abs(pack.rig.clips[key].duration-originalRig.clips[key].duration)<.0001);
 console.log('Opening pack: hashed payload <125KB gzip, source texture hashes, native-only vertices, UV1 order and structural floors pass.');
+
+for(const [search,expected] of [['',true],['?quality=quick',true],['?quality=native',false],['?quality=other',true]] as const){
+ Object.defineProperty(globalThis,'location',{value:{search},configurable:true});
+ assert.equal(useQuickStart(),expected,'Quick is default even without viewport/pointer APIs');
+}

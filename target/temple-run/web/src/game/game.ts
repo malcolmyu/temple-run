@@ -1,3 +1,4 @@
+import {startupMark} from './startupTiming';
 import {useQuickStart,loadStartupPack} from './startupAssets';
 import {loadEnemyRigPack,buildRunnerRig} from '../runnerRig';
 import type {DeathCause,DeathKind} from './deathPresentation';
@@ -275,6 +276,7 @@ export class Game {
   private qualityCheckAt = 0;
 
   async init(canvas: HTMLCanvasElement): Promise<void> {
+    startupMark('init-start');
     this.canvas = canvas;
     const initialSkin=skinById(isOwned(progress.equipped)?progress.equipped:'jhony');
     let initialRig:ReturnType<typeof loadRunnerRig>|undefined;
@@ -286,6 +288,7 @@ export class Game {
     void initialRig.catch(()=>{});
     try {this.bundle=await createWorld(canvas,this.quickStart);}catch(error){void initialRig?.then(r=>r.dispose()).catch(()=>{});throw error;}
     if(this.disposed){this.bundle.renderer.dispose();void initialRig?.then(r=>r.dispose()).catch(()=>{});return;}
+    startupMark('world-ready');
     this.maxPixelRatio = this.bundle.renderer.getPixelRatio();
     this.bundle.scene.add(this.runnerGroup);
     this.bundle.scene.add(this.chaserGroup);
@@ -301,6 +304,7 @@ export class Game {
     this.resize();
     window.addEventListener('resize', this.resize);
     if(initialRig)await this.setSkin(initialSkin.id,false,initialRig);
+    startupMark('runner-ready');
     mutateUi.quickStart=this.quickStart;
     if (this.disposed) return;
     this.resetWorld();
@@ -308,7 +312,11 @@ export class Game {
     mutateUi.speed = RUN_SPEED;
     this.bindDebugApi();
     this.showEntranceCamera();
+    startupMark('first-render-start');
     this.renderOnce();
+    startupMark('first-render-submitted');
+    await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
+    startupMark('first-frame');
     this.startLoop();
   }
 

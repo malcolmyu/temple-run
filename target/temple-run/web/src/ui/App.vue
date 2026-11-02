@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import {startupMark} from '../game/startupTiming';
 import { bootGame, getGame } from '../game/boot';
 import { mutableUi as ui } from '../game/state';
 import Hud from './Hud.vue';
@@ -38,7 +39,7 @@ onMounted(async () => {
     console.error(err);
   } finally {
     loading.value = false;
-    if(!error.value)performance.mark('temple-ready');
+    if(!error.value){performance.mark('temple-ready');startupMark('ready');}
   }
 });
 

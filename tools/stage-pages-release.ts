@@ -25,6 +25,11 @@ export async function stageRelease(dist:string,destination:string,commit:string,
  await cp(dist,destination,{recursive:true});
  for(const [path,data]of retained){await mkdir(resolve(destination,path,'..'),{recursive:true});await writeFile(join(destination,path),data);}
  const metadata={sourceCommit:commit,builtAt:new Date(now).toISOString(),immutableAssets:current,retainedFromPrevious:retained.size,retainedAssets:[...expiry].map(([path,expiresAt])=>({path,expiresAt}))};
+ // A new commit gets a never-before-requested HTML URL. Assets still share the root.
+ const releaseDir=join(destination,'releases',commit);
+ await mkdir(releaseDir,{recursive:true});
+ const html=await readFile(join(dist,'index.html'),'utf8');
+ await writeFile(join(releaseDir,'index.html'),html.replace('<head>','<head><base href="../../">'));
  await writeFile(join(destination,'.nojekyll'),'');
  await writeFile(join(destination,'deployment.json'),JSON.stringify(metadata)+'\n');return metadata;
 }

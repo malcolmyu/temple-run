@@ -1,0 +1,11 @@
+# 手机仍需20秒：入口与启动诊断
+
+用户真实手机的20秒尚未复现，不能把Chrome仿真当作真机结论。旧HTML/旧bundle、桌面模式误选native、真实CPU/GPU差异均是待验证假说。
+
+本批变更：所有设备默认quick，只有`?quality=native`主动退出；HTML内联诊断在Vue/Three下载前可显示，版本为构建时git提交前12位；折叠面板及`window.__startupTiming`记录导航时间、资源网络时间、JSON解析、场景和角色准备、首帧提交/两次RAF以及ready。两次RAF是浏览器呈现机会，不代表GPU完成的精确测量。脚本导入跨度包含网络、解析、执行，明确不冒称纯解析时间。并行阶段不能直接相加。
+
+Pages不支持本项目任意修改响应Cache-Control。部署新增`/releases/<完整提交>/`独立HTML入口，以全新URL避开旧index缓存；它用base指向同版本的根目录哈希资源。根入口仍可被Pages缓存，`?release`也不能保证刷新已经打开的页面。每次发布应发独立版本路径，页面版本号必须与提交前12位一致；旧版本路径不作为永久归档。
+
+本地探索测量：生产gzip6服务、禁用HTTP缓存、375×812、Slow4G 180000B/s/562.5ms、CPU6倍，三轮可玩3900.6/3966.4/3954.9ms，中位数3954.9ms。开局JSON解析24.4–27.1ms，场景准备296.7–307.5ms。下载/模块等待占主要时间，而非JSON解析；暂不盲目再削模型或拆分会产生额外请求的Three模块。当前未达Slow4G三秒，也未确认用户手机的具体瓶颈。线上同条件结果另附原始记录。
+
+回归：默认quick策略不依赖宽度/指针API；显式native退出；Pages版本路径base解析；31组核心逻辑；类型检查与生产构建。冷缓存使用Network.setCacheDisabled(true)，保留ResourceTiming transferSize；不声称清空OS/DNS/TLS缓存。
