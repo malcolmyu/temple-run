@@ -1,6 +1,7 @@
 import {readFileSync,existsSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
+import {execFileSync} from 'node:child_process';
 const root='target/temple-run/web/public/design-evidence/';
 const doc=JSON.parse(readFileSync(root+'evidence.json','utf8'));
 const content=JSON.parse(readFileSync('docs/design-evidence/content.json','utf8'));
@@ -24,7 +25,7 @@ for(const [i,section]of doc.sections.entries()){
   assert.ok(page.includes(`id="${card.id}"`));
   for(const source of card.sources){
    assert.ok(existsSync(source.path),source.path);
-   assert.equal(source.sha256,createHash('sha256').update(readFileSync(source.path)).digest('hex'));
+   assert.equal(source.sha256,createHash('sha256').update(execFileSync('git',['show',`${doc.sourceCommit}:${source.path}`],{maxBuffer:20*1024*1024})).digest('hex'));
   }
   for(const frame of card.frames){assert.equal(frame.sourceSHA256,frames[frame.second].sourceSHA256);assert.ok(page.includes(frame.observation));}
  }

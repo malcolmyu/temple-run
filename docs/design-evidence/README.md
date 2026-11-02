@@ -19,7 +19,7 @@ T口有真实几何与四向连接。固定双臂分支再合流没有足够原�
 
 内容源：`content.json`。页面样式/交互：`tools/design-evidence.css`、`tools/design-evidence-client.ts`。
 
-运行 `npm run temple:evidence:build` 重建发布页，再运行 `npm run temple:evidence:verify`。生产构建验证8维度、28项、源文件SHA-256、关键帧源哈希与附录链接；规则变化后须重新审阅内容并更新审计快照，不能只刷新哈希。
+运行 `npm run temple:evidence:build` 重建发布页，再运行 `npm run temple:evidence:verify`。生产构建验证8维度、28项、固定审计提交中的源文件SHA-256、关键帧源哈希与附录链接；规则变化后须重新审阅内容并更新审计快照，不能只刷新哈希。
 
 发布清单 `evidence.json` 包含逐条来源路径与哈希；`timestamps.json` 和本目录 `timestamps.md` 给出各维度时间戳。
 
