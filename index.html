@@ -6,15 +6,41 @@
     <meta name="theme-color" content="#171d18" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317251d'/%3E%3Cpath d='M32 5 59 32 32 59 5 32Z' fill='%23e8b759'/%3E%3C/svg%3E" />
     <title>神庙逃亡 · TypeScript + ECS + Vue</title>
-    <script type="module" crossorigin src="./assets/main-B6VDk3MH.js"></script>
+    <script type="module" crossorigin src="./assets/main-DwGlCzWm.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/sfx-DNl3Hmx-.js">
     <link rel="modulepreload" crossorigin href="./assets/vue-BnOplUgJ.js">
-    <link rel="stylesheet" crossorigin href="./assets/main-rmsiBltg.css">
+    <link rel="stylesheet" crossorigin href="./assets/main-zxnF55kU.css">
     <link rel="modulepreload" href="./assets/three-CadAGbSQ.js" crossorigin="">
-    <link rel="modulepreload" href="./assets/game-D2u9u5hB.js" crossorigin="">
-    <link rel="preload" as="fetch" href="./assets/runtime/opening.60978dd06b48.json" crossorigin="" media="(max-width:700px)">
+    <link rel="modulepreload" href="./assets/game-biQtDaIT.js" crossorigin="">
+    <link rel="preload" as="fetch" href="./assets/runtime/opening.60978dd06b48.json" crossorigin="">
   </head>
   <body>
+    <details id="startup-diagnostics" style="position:fixed;top:0;left:0;max-width:100%;z-index:9999;background:#10271fed;color:#fff;font:11px monospace;padding:5px;max-height:45vh;overflow:auto"><summary id="startup-summary">版本 60825cda66e3 · 启动中</summary><pre id="startup-stages" style="white-space:pre-wrap"></pre></details>
+    <script>
+    (()=>{
+      const t=window.__startupTiming={version:'60825cda66e3',mode:new URLSearchParams(location.search).get('quality')==='native'?'native':'quick',marks:{html:performance.now()},longTasks:[],resources:[],mark(name){if(this.marks[name]!==undefined)return;this.marks[name]=performance.now();this.paint();},paint(){
+        const m=this.marks, span=(a,b)=>m[b]===undefined?'进行中':Math.round(m[b]-(m[a]||0))+'ms';
+        const nav=performance.getEntriesByType('navigation')[0];const pack=performance.getEntriesByType('resource').find(r=>r.name.includes('/opening.')); 
+        document.getElementById('startup-summary').textContent='版本 '+this.version+' · '+this.mode+' · '+(m.ready?'可开始 '+Math.round(m.ready)+'ms':'加载 '+Math.round(performance.now())+'ms');
+        document.getElementById('startup-stages').textContent=[
+          'HTML响应: '+(nav?Math.round(nav.responseStart)+'ms':'等待'),
+          'HTML→应用执行（含下载/解析/执行）: '+span('html','app-module-executed'),
+          '游戏模块导入（含下载/执行）: '+span('game-import-start','game-import-end'),
+          '开局包网络（含预加载）: '+(pack?Math.round(pack.duration)+'ms；传输 '+pack.transferSize+'B':'进行中'),
+          '消费开局包等待: '+span('init-start','pack-downloaded'),
+          '开局JSON解析: '+span('pack-downloaded','pack-parsed'),
+          '场景准备（与角色并行）: '+span('pack-parsed','world-ready'),
+          '场景完成→角色就绪: '+span('world-ready','runner-ready'),
+          '重置场景/首帧: '+span('runner-ready','first-frame'),
+          '脚本下载详见下方；解析/执行含在模块等待内，不假报纯解析时间',
+          '详情 window.__startupTiming；时间相对导航起点',
+          ...this.resources.map(r=>r.name.split('/').pop()+':下载 '+Math.round(r.responseEnd-r.responseStart)+'ms / 等待 '+Math.round(r.responseStart-r.startTime)+'ms')].join('\n');
+      }};
+      new PerformanceObserver(list=>{for(const r of list.getEntries())if(!t.marks.ready)t.resources.push(r.toJSON());t.paint();}).observe({type:'resource',buffered:true});
+      try{new PerformanceObserver(list=>{for(const e of list.getEntries())if(!t.marks.ready)t.longTasks.push(e.toJSON());}).observe({type:'longtask',buffered:true});}catch{}
+      const timer=setInterval(()=>{t.paint();if(t.marks.ready)clearInterval(timer);},200);t.paint();
+    })();
+    </script>
     <div id="app"><div style="min-height:100dvh;display:grid;place-content:center;text-align:center;background:#173529;color:#f2d79b;font:18px Georgia,serif"><h1>TEMPLE RUN</h1><p>神庙逃亡</p><p style="font:14px system-ui">正在准备道路与操作…</p></div></div>
   </body>
 </html>
