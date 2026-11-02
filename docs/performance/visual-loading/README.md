@@ -31,3 +31,11 @@ Three KTX2Loader + 本地Basis transcoder，worker数1；在开跑、追逐者�
 同机位截图在docs/screenshots/visual-loading：before与after为距离20、相同相机；after-ktx为当前局热更新；30s为受控加速保护测试（模拟31.8秒，非声称自然无道具存活）；half-road为右侧安全车道。左右换道实际playing且lane0→1；半边路右侧可过，缺失侧water；被阻断Basis WASM时五贴图全部WebP-fallback且playing/rig ready。追逐者未改回球；结算/商店继续回归。
 
 木桥与悬崖截图使用planTheme、seek与测试加速保护使镜头收敛，不冒称自然随机跑出的主题时序。
+
+## Pages 最终三态
+
+运行代号a202a76fd9a7c292b482f6b33ec0005ef637db3e。完整每轮数据在本目录，汇总见measurements.md。线上冷可玩9611.7/9800.9/9798.4ms，中位数9798.4ms；温4312.1/4282.4/4265.2ms，中位数4282.4ms；热1360.4/1270.1/1257.0ms，中位数1270.1ms。每次先调用flushAssetCache；冷清本项目命名空间+HTTP禁缓存，温仅禁HTTP缓存，热显式预热一次再测。仍是Chrome仿真，不是真机。
+
+KTX开启与texture=webp各三次热态首帧对照：中位数1220.9ms / 1208.3ms，约13ms差异不作显著性能结论；二者格式加载都在首帧之后。WASM转码、GPU字节估算另见visual-ktx-bench.json；GPU查询返回0时已记为null。
+
+线上审计页：/visual-audit/，含7幅压缩截图约282KB。完整视觉恢复后的冷启动比稀疏版本慢，未实现3秒冷启动，这是明确剩余限制。

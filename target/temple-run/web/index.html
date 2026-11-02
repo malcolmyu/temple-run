@@ -12,14 +12,14 @@
     <script>
     (()=>{
       const t=window.__startupTiming={version:'__BUILD_VERSION__',mode:new URLSearchParams(location.search).get('quality')==='native'?'native':'quick',marks:{html:performance.now()},longTasks:[],resources:[],mark(name){if(this.marks[name]!==undefined)return;this.marks[name]=performance.now();this.paint();},paint(){
-        const m=this.marks, span=(a,b)=>m[b]===undefined?'进行中':Math.round(m[b]-(m[a]||0))+'ms';
+        const m=this.marks, span=(a,b)=>m[a]===undefined?'未进入／此模式不适用':m[b]===undefined?'进行中':Math.round(m[b]-(m[a]||0))+'ms';
         const nav=performance.getEntriesByType('navigation')[0];const pack=performance.getEntriesByType('resource').find(r=>r.name.includes('/opening.')); 
         document.getElementById('startup-summary').textContent='版本 '+this.version+' · '+this.mode+' · '+(m.ready?'可开始 '+Math.round(m.ready)+'ms':'加载 '+Math.round(performance.now())+'ms');
         document.getElementById('startup-stages').textContent=[
           'HTML响应: '+(nav?Math.round(nav.responseStart)+'ms':'等待'),
           'HTML→应用执行（含下载/解析/执行）: '+span('html','app-module-executed'),
           '游戏模块导入（含下载/执行）: '+span('game-import-start','game-import-end'),
-          '开局包网络（含预加载）: '+(pack?Math.round(pack.duration)+'ms；传输 '+pack.transferSize+'B':'进行中'),
+          '开局包网络（含预加载）: '+(pack?Math.round(pack.duration)+'ms；传输 '+pack.transferSize+'B':m['pack-parsed']?'持久缓存读取完成（无网络请求）':'等待／读取中'),
           '消费开局包等待: '+span('init-start','pack-downloaded'),
           '开局JSON解析: '+span('pack-downloaded','pack-parsed'),
           '场景准备（与角色并行）: '+span('pack-parsed','world-ready'),
