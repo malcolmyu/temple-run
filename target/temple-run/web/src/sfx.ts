@@ -137,24 +137,18 @@ export function unlockAudio() {
   return preload();
 }
 
+const clipRequests=new Map<string,Promise<boolean>>();
+function loadClip(file:string):Promise<boolean>{
+ if(!ctx)return Promise.resolve(false);
+ let request=clipRequests.get(file);if(request)return request;
+ request=fetch(BASE+file).then(r=>{if(!r.ok)throw Error(`${r.status} ${file}`);return r.arrayBuffer();}).then(data=>ctx!.decodeAudioData(data)).then(buffer=>{buffers.set(file,buffer);return true;}).catch(error=>{clipRequests.delete(file);console.warn('sfx load failed',file,error);return false;});
+ clipRequests.set(file,request);return request;
+}
 export function preload() {
-  if (!ctx) return Promise.resolve(false);
-  if (preloadPromise) return preloadPromise;
-  const unique = [...new Set(Object.values(CLIPS).map((c: any) => c.file))];
-  preloadPromise = Promise.all(
-    unique.map(async (file: any) => {
-      try {
-        const res = await fetch(BASE + file);
-        if (!res.ok) throw new Error(`${res.status} ${file}`);
-        const data = await res.arrayBuffer();
-        const buffer = await ctx!.decodeAudioData(data);
-        buffers.set(file, buffer);
-      } catch (err) {
-        console.warn('sfx load failed', file, err);
-      }
-    }),
-  ).then(() => true);
-  return preloadPromise;
+ if(!ctx)return Promise.resolve(false);
+ // Only opening actions. Other effects load on first use, no all-clips burst.
+ if(!preloadPromise)preloadPromise=Promise.all(['footstepsTemple.mp3','coin.mp3','gruntJump.wav'].map(loadClip)).then(()=>true);
+ return preloadPromise;
 }
 
 const nodeStats={created:0,ended:0,loops:0,amb:0,friction:0,fall:0,wind:0,music:0};
@@ -162,7 +156,7 @@ export function stats(){return {...nodeStats,active:nodeStats.created-nodeStats.
 function playBuffer(file:string, { gain = 1, rate = 1, when = 0, loop = false, detune = 0 }:SoundOptions = {}):SoundHandle|null {
   if (!ctx || muted) return null;
   const buffer = buffers.get(file);
-  if (!buffer) return null;
+  if (!buffer) {void loadClip(file);return null;}
   const source = ctx.createBufferSource();
   nodeStats.created++;source.addEventListener('ended',()=>{nodeStats.ended++;try{source.disconnect();gainNode.disconnect()}catch{}});
   source.buffer = buffer;

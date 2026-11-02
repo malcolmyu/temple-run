@@ -80,7 +80,7 @@ function dismissTutorial(): void {
     <div class="frame">
       <canvas ref="canvas" class="scene" aria-label="3D 神庙逃亡" />
       <div class="shade" />
-      <Hud @pause="getGame()?.togglePause()" />
+      <Hud v-if="ui.ready && ui.phase!=='menu'" @pause="getGame()?.togglePause()" />
 
       <MenuOverlay
         v-if="ui.phase === 'menu'"
@@ -132,12 +132,13 @@ function dismissTutorial(): void {
 
       <TutorialOverlay v-if="showTutorial" @start="dismissTutorial" @close="showTutorial = false" />
 
-      <div v-if="loading" class="loading">
+      <div v-if="loading" class="startup-progress" role="status">
         <div class="loading-card">
-          <strong>正在点亮火把…</strong>
-          <span>加载原版素材与角色骨骼</span>
+          <strong>正在准备可玩道路…</strong>
+          <span>菜单已可浏览；先准备道路与操作，角色和装饰稍后加载。</span>
         </div>
       </div>
+      <p v-if="ui.quickStart && ui.phase==='playing'" class="detail-progress" role="status">{{ ui.detailStatus==='ready'?'高清场景已准备，下局启用':ui.detailStatus==='error'?'高清资源暂不可用，快速模式可继续':'快速模式 · 高清场景将在后台加载' }}</p>
       <div class="rotate-hint" aria-hidden="true">
         <div class="rotate-card"><span>⟳</span><strong>请竖屏游玩</strong><small>ROTATE YOUR DEVICE</small></div>
       </div>
@@ -153,3 +154,8 @@ function dismissTutorial(): void {
 
   </div>
 </template>
+
+<style scoped>
+.detail-progress{position:absolute;left:12px;bottom:6px;z-index:4;max-width:75%;font:10px system-ui;color:#f4dfa1;background:#173529bb;padding:3px 6px;pointer-events:none}
+.startup-progress{position:absolute;bottom:10px;left:16px;right:16px;z-index:6;padding:10px;background:#173529ed;pointer-events:none}.startup-progress .loading-card{font-size:11px}
+</style>

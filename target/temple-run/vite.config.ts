@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
+import startup from './web/src/game/startupAssets.generated.json';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
@@ -45,7 +46,14 @@ function lanUrlPlugin():Plugin {
 export default defineConfig({
   root: path.join(here, 'web'),
   base: './',
-  plugins: [vue(), lanUrlPlugin()],
+  plugins: [vue(), lanUrlPlugin(), {
+    name:'playable-start-preloads',
+    transformIndexHtml:{order:'post',handler(_html,ctx){
+      if(!ctx.bundle)return [];
+      return [...Object.values(ctx.bundle).filter(c=>c.type==='chunk'&&['game','three'].includes(c.name)).map(c=>({tag:'link',attrs:{rel:'modulepreload',href:'./'+c.fileName,crossorigin:''},injectTo:'head' as const})),
+        {tag:'link',attrs:{rel:'preload',as:'fetch',href:'./'+startup.pack,crossorigin:'',media:'(max-width:700px)'},injectTo:'head' as const}];
+    }},
+  }],
   // Expose the dev server on the LAN so phones can open it via the QR code in the side panel.
   server: { host: '0.0.0.0' },
   build: {

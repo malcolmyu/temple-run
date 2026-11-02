@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import * as THREE from 'three';
 import {OBJLoader} from 'three/addons/loaders/OBJLoader.js';
 import {attachNativeLightmapUV} from '../target/temple-run/web/src/game/nativeLightmap';
-import {buildNativeNarrowFloor} from '../target/temple-run/web/src/game/render';
+import {buildNativeNarrowFloor,buildObstacle} from '../target/temple-run/web/src/game/render';
 import {DEFS} from '../target/temple-run/web/src/game/obstacles/catalog';
 import {collisionWouldHit,insideGroundSupport} from '../target/temple-run/web/src/game/obstacles/collision';
 const runner={prevDistance:99.8,distance:100,laneIndex:1,side:0,jumpY:0,jumpV:0,slideRemaining:0,lastJumpAt:10,lastSlideAt:10,now:10,jumpWindow:1,slideWindow:1};
@@ -54,3 +54,17 @@ for(const def of [DEFS.narrowBeamLeft,DEFS.narrowBeamRight]){
  assert.ok(Array.from(floor.geometry.getAttribute('uv1').array).every(Number.isFinite));
 }
 console.log('Narrow UV: native source shader and projected UV0/UV1 replace generic full-atlas mapping.');
+
+// Weak-network rendering must keep the same support contract without native ornament meshes.
+const quickAssets={quick:true,obstacles:{},material:{stone:new THREE.MeshBasicMaterial({side:THREE.DoubleSide})},texture:{}} as any;
+for(const def of [DEFS.narrowBeamLeft,DEFS.narrowBeamRight,DEFS.narrowWallLeft,DEFS.narrowWallRight,DEFS.narrowWallLeftA,DEFS.narrowWallLeftB,DEFS.narrowWallRightA,DEFS.narrowWallRightB,DEFS.pitLongA,DEFS.pitLongB]){
+ const visual=buildObstacle(quickAssets,def,def.prefabs[0]);visual.updateMatrixWorld(true);
+ for(let x=-1.7;x<1.8;x+=.4)for(let z=-5.3;z<5.4;z+=1.1){
+  const points=def.groundSupportRegion!;
+  if(points.some(([ax,az],i)=>{const [bx,bz]=points[(i+1)%points.length];return Math.abs((x-ax)*(bz-az)-(z-az)*(bx-ax))<1e-5&&x>=Math.min(ax,bx)-1e-5&&x<=Math.max(ax,bx)+1e-5&&z>=Math.min(az,bz)-1e-5&&z<=Math.max(az,bz)+1e-5;}))continue; // ray/edge floating-point ambiguity
+  const support=insideGroundSupport(def.groundSupportRegion,x,z);
+  const visible=new THREE.Raycaster(new THREE.Vector3(x,.2,z),new THREE.Vector3(0,-1,0),0,.3).intersectObject(visual,true).length>0;
+  assert.equal(visible,support,`${def.id}: quick floor and physics disagree at ${x},${z}`);
+ }
+}
+console.log('Quick mode:10 narrow/long-hole support polygons match actual rendered triangles across sampled lanes/depths.');
