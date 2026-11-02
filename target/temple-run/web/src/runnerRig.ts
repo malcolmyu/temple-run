@@ -1,3 +1,5 @@
+import {imageTexture} from './game/visualTextures';
+import {cachedResponse} from './game/assetCache';
 import {optimizedAsset} from './game/runtimeAssets';
 import { nativeUnlitMaterial } from './nativeUnlit.ts';
 import * as THREE from 'three';
@@ -558,7 +560,7 @@ const rigDataRequests=new Map<string,Promise<any>>();
 export function loadRigData(url:string):Promise<any>{
  url=optimizedAsset(url);
  let pending=rigDataRequests.get(url);
- if(!pending){pending=fetch(url).then(r=>{if(!r.ok)throw Error(`runner rig ${url}: ${r.status}`);return r.json()}).catch(error=>{rigDataRequests.delete(url);throw error;});rigDataRequests.set(url,pending);}
+ if(!pending){pending=cachedResponse(url).then(r=>{if(!r.ok)throw Error(`runner rig ${url}: ${r.status}`);return r.json()}).catch(error=>{rigDataRequests.delete(url);throw error;});rigDataRequests.set(url,pending);}
  return pending;
 }
 export async function loadRunnerRig(url: string, textureUrl: string|null, options: RigOptions = {}) {
@@ -566,14 +568,8 @@ export async function loadRunnerRig(url: string, textureUrl: string|null, option
   const [data, texture] = await Promise.all([
     loadRigData(url),
     textureUrl
-      ? new Promise<THREE.Texture>((resolve, reject) => {
-          new THREE.TextureLoader().load(optimizedAsset(textureUrl), (tex: any) => {
-            ownedTexture = tex;
-            if (failed) tex.dispose();
-            tex.colorSpace = THREE.SRGBColorSpace;
-            tex.flipY = true; // Unity bakes these UVs for a non-flipped V (verified against the atlas regions)
-            resolve(tex);
-          }, undefined, reject);
+      ? imageTexture(textureUrl).then((tex:THREE.Texture)=>{
+          ownedTexture=tex;if(failed)tex.dispose();tex.colorSpace=THREE.SRGBColorSpace;tex.flipY=true;return tex;
         })
       : Promise.resolve(null),
   ]).catch((error: any) => {
@@ -636,7 +632,7 @@ export function normalizeRigHeight<T extends {object:THREE.Object3D;update?:(dt:
 /** One network/decode operation, independent animation state for each enemy.
  * The pack owns its shared texture and releases it after the final member. */
 export async function loadEnemyRigPack(count=8){
- const [dataResult,textureResult]=await Promise.allSettled([loadRigData(`${import.meta.env.BASE_URL}assets/characters/rig-enemy.json`),new THREE.TextureLoader().loadAsync(optimizedAsset(`${import.meta.env.BASE_URL}assets/apk/texture-53-enemyTexture.webp`))]);
+ const [dataResult,textureResult]=await Promise.allSettled([loadRigData(`${import.meta.env.BASE_URL}assets/characters/rig-enemy.json`),imageTexture(`${import.meta.env.BASE_URL}assets/apk/texture-53-enemyTexture.webp`)]);
  if(dataResult.status==='rejected'||textureResult.status==='rejected'){
   if(textureResult.status==='fulfilled')textureResult.value.dispose();
   throw dataResult.status==='rejected'?dataResult.reason:(textureResult as PromiseRejectedResult).reason;

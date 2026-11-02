@@ -1,3 +1,5 @@
+import {readFileSync} from 'node:fs';
+import ktx from './web/src/game/ktxAssets.generated.json';
 import {execFileSync} from 'node:child_process';
 import { defineConfig, type Plugin } from 'vite';
 import vue from '@vitejs/plugin-vue';
@@ -47,12 +49,12 @@ function lanUrlPlugin():Plugin {
 export default defineConfig({
   root: path.join(here, 'web'),
   base: './',
-  plugins: [{name:'visible-build-version',transformIndexHtml:{order:'pre',handler:html=>html.replaceAll('__BUILD_VERSION__',execFileSync('git',['rev-parse','--short=12','HEAD'],{cwd:here,encoding:'utf8'}).trim())}},vue(), lanUrlPlugin(), {
+  plugins: [{name:'local-basis-decoder',generateBundle(){for(const name of ['basis_transcoder.js','basis_transcoder.wasm'])this.emitFile({type:'asset',fileName:ktx.decoderPath+name,source:readFileSync(path.join(here,'../../node_modules/three/examples/jsm/libs/basis',name))});this.emitFile({type:'asset',fileName:ktx.decoderPath+'LICENSE.txt',source:readFileSync(path.join(here,'../../docs/third-party/BASIS-LICENSE.txt'))});}},{name:'visible-build-version',transformIndexHtml:{order:'pre',handler:html=>html.replaceAll('__OPENING_PACK__',startup.pack).replaceAll('__BUILD_VERSION__',execFileSync('git',['rev-parse','--short=12','HEAD'],{cwd:here,encoding:'utf8'}).trim())}},vue(), lanUrlPlugin(), {
     name:'playable-start-preloads',
     transformIndexHtml:{order:'post',handler(_html,ctx){
       if(!ctx.bundle)return [];
       return [...Object.values(ctx.bundle).filter(c=>c.type==='chunk'&&['game','three'].includes(c.name)).map(c=>({tag:'link',attrs:{rel:'modulepreload',href:'./'+c.fileName,crossorigin:''},injectTo:'head' as const})),
-        {tag:'link',attrs:{rel:'preload',as:'fetch',href:'./'+startup.pack,crossorigin:''},injectTo:'head' as const}];
+        ];
     }},
   }],
   // Expose the dev server on the LAN so phones can open it via the QR code in the side panel.
@@ -64,6 +66,7 @@ export default defineConfig({
     rollupOptions: {
       // New TypeScript/Vue build is index.html; the legacy game stays at legacy.html.
       output:{manualChunks(id:string){
+        if(/KTX2Loader|WorkerPool|ktx-parse/.test(id))return 'ktx2';
         if(id.includes('/node_modules/three/'))return 'three';
         if(id.includes('/node_modules/@vue/')||id.includes('/node_modules/vue/'))return 'vue';
       }},

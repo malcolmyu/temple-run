@@ -136,10 +136,10 @@ function dismissTutorial(): void {
       <div v-if="loading" class="startup-progress" role="status">
         <div class="loading-card">
           <strong>正在准备可玩道路…</strong>
-          <span>菜单已可浏览；先准备道路与操作，角色和装饰稍后加载。</span>
+          <span>菜单已可浏览；先准备真实角色、道路与障碍，远景和高清贴图稍后加载。</span>
         </div>
       </div>
-      <p v-if="ui.quickStart && ui.phase==='playing'" class="detail-progress" role="status">{{ ui.detailStatus==='ready'?'高清场景已准备，下局启用':ui.detailStatus==='error'?'高清资源暂不可用，快速模式可继续':'快速模式 · 高清场景将在后台加载' }}</p>
+      <p v-if="ui.quickStart && ui.phase==='playing'" class="detail-progress" role="status">{{ ui.detailStatus==='ready'?'高清贴图已接入当前场景':ui.detailStatus==='error'?'高清资源暂不可用，快速模式可继续':'快速模式 · 高清贴图将在后台加载' }}</p>
       <div class="rotate-hint" aria-hidden="true">
         <div class="rotate-card"><span>⟳</span><strong>请竖屏游玩</strong><small>ROTATE YOUR DEVICE</small></div>
       </div>

@@ -1,4 +1,4 @@
-import {applyQuickCliffSupport} from './quickCliffSupport';
+import {imageTexture,detailTexture,replaceVisualTextures} from './visualTextures';
 import {loadStartupPack} from './startupAssets';
 import {optimizedAsset,packedModel,preloadWorldModels,releaseWorldModelText} from './runtimeAssets';
 import {CLIFF_MESH_Y} from './nativeCliff';
@@ -79,22 +79,13 @@ export interface SceneBundle {
   sky: THREE.Mesh;
   assets: Assets;
   material: Record<string, THREE.Material>;
+  upgradeVisuals?:()=>Promise<void>;
 }
 
 const textureRequests=new Map<string,Promise<THREE.Texture>>();
 const loadTexture = (url: string): Promise<THREE.Texture> => {
  const pending=textureRequests.get(url);if(pending)return pending;
- const request=new Promise<THREE.Texture>((resolve, reject) => {
-    new THREE.TextureLoader().load(
-      optimizedAsset(url),
-      (texture: THREE.Texture) => {
-        texture.colorSpace = THREE.SRGBColorSpace;
-        resolve(texture);
-      },
-      undefined,
-      reject,
-    );
-  });
+ const request=imageTexture(url).then(texture=>{texture.colorSpace=THREE.SRGBColorSpace;return texture;}).catch(error=>{textureRequests.delete(url);throw error;});
  textureRequests.set(url,request);return request;
 };
 
@@ -102,7 +93,7 @@ const lightmappedMeshes = new Set(['decor-tree-native-1','decor-tree-native-2','
 const loadObj = async (url: string, quick=false, background=false): Promise<THREE.Group | null> => {
   try {
     const packed=quick?(await loadStartupPack()).models[url.slice(url.indexOf('assets/'))]:await packedModel(url);
-    if(quick&&!packed)return null;
+    if(quick&&!packed){if(url.includes('decor-scenery-'))return null;throw Error('Essential model missing from visual pack: '+url);}
     let text=packed?.obj;
     if(text===undefined){const response=await fetch(url);if(!response.ok)return null;text=await response.text();}
     if(background)await new Promise<void>(resolve=>setTimeout(resolve,0));
@@ -114,15 +105,16 @@ const loadObj = async (url: string, quick=false, background=false): Promise<THRE
       attachNativeLightmapUV(obj,coordinates!);
     }
     return obj;
-  } catch(error) { console.warn('Unable to load OBJ', url, error); return null; }
+  } catch(error) { console.warn('Unable to load OBJ', url, error); if(quick)throw error;return null; }
 };
 
 export async function createWorld(canvas: HTMLCanvasElement,quick=false,existingRenderer?:THREE.WebGLRenderer): Promise<SceneBundle> {
   const opening=quick?await loadStartupPack():null;
   const worldTexture=(url:string)=>{const image=opening?.textures[url.slice(url.indexOf('assets/'))];
-    if(quick&&!image){const t=new THREE.DataTexture(new Uint8Array([200,180,130,255]),1,1);t.needsUpdate=true;return Promise.resolve(t);}
-    return loadTexture(image??url);};
+    if(quick&&!image)throw Error('Essential texture missing from visual pack: '+url);
+    return loadTexture(image??url).then(texture=>{texture.userData.sourceAsset=url.slice(url.indexOf('assets/'));return texture;});};
   const worldObj=(url:string)=>loadObj(url,quick,!!existingRenderer);
+  let allowDeferred=!quick;
   if(!quick)void preloadWorldModels().catch(()=>{});
   for(const url of [asset('terrainTexture.webp'),asset('wallTexture.webp'),asset('treeTexture.webp'),asset('leafTexture.webp'),asset('playerGlowTexture.webp'),asset('lightMapTexture.webp'),`${BASE}assets/ui/fx-flame.png`,`${BASE}assets/ui/coin-face.png`,`${BASE}assets/ui/wings.png`,`${BASE}assets/ui/EffectsTexture2x.png`])void worldTexture(url).catch(()=>{});
   // Mobile GPUs are fill-rate bound: lower the render resolution and skip the shadow pass.
@@ -373,11 +365,11 @@ export async function createWorld(canvas: HTMLCanvasElement,quick=false,existing
   sceneryPaths.forEach(path=>{sceneryTemplates[path]=null;});
   const loadScenery=async(path:string):Promise<THREE.Group|null>=>{
     if(sceneryTemplates[path])return sceneryTemplates[path];
-    if(!sceneryPaths.includes(path))return null;
-    const object=await worldObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`);
+    if(!sceneryPaths.includes(path)||!allowDeferred)return null;
+    const object=await loadObj(`${BASE}assets/track/decor-scenery-${path.slice(6).toLowerCase()}.obj`,false,true);
     return sceneryTemplates[path]=paint(object,path==='Trees/templeHead'||path==='Trees/groundPatchTemple'?nativeRoadMaterial:nativeTreeMaterial,false);
   };
-  const finishAssets=(assets:Assets):Assets=>{if(quick)applyQuickCliffSupport(assets);return assets;};
+  const finishAssets=(assets:Assets):Assets=>assets;
   // Parsed scene geometry owns its buffers; free the transport OBJ/UV text.
   releaseWorldModelText();
   return {
@@ -386,6 +378,17 @@ export async function createWorld(canvas: HTMLCanvasElement,quick=false,existing
     camera,
     sun,
     sky,
+    upgradeVisuals:async()=>{
+      const keys=['wallTexture','treeTexture','lightMapTexture','terrainTexture','leafTexture'];
+      const upgraded=new Map<string,THREE.Texture>();
+      // Sequential background uploads reduce frame stalls and peak memory.
+      for(const key of keys){const url=asset(key+'.webp');upgraded.set('assets/apk/'+key+'.webp',await detailTexture(url,renderer));await new Promise<void>(resolve=>setTimeout(resolve,0));}
+      const mats=new Set<THREE.Material>(Object.values(material));
+      const collect=(object:THREE.Object3D|null)=>object?.traverse(o=>{const m=(o as THREE.Mesh).material;if(m)for(const item of Array.isArray(m)?m:[m])mats.add(item);});
+      collect(scene);for(const obj of [roadTile,wallTemplate,treeTemplate,gateTemplate,entranceMesh,cornerMesh,plankMesh,plankCorner,tJunction,plankTJunction,stoneCornerLeft,stoneCornerRight,transitionA,transitionB,...standaloneTrees,cliffTile,cliffCornerLeft,cliffCornerRight,cliffTJunction,cliffCapA,cliffCapB,cliffSlide,...Object.values(obstacles)])collect(obj);
+      const swaps=replaceVisualTextures(mats,upgraded);for(const texture of upgraded.values())texture.dispose();allowDeferred=true;
+      (window as unknown as Record<string,unknown>).__visualUpgrade={swaps,ready:true};
+    },
     material,
     assets: finishAssets({
       quick,originCoveredByEntrance:!!entranceMesh,
@@ -870,7 +873,7 @@ export function buildJunction(assets: Assets, direction: 1 | -1, path: TrackPath
   const cliffCorner=terrain==='cliff'?(direction<0?assets.cliffCornerLeft:assets.cliffCornerRight):null;
   const stoneCorner=cliffCorner??(direction<0?assets.stoneCornerLeft:assets.stoneCornerRight);
   const road=cliffCorner?assets.cliffTile:assets.roadTile;
-  if((surface==='stone'||assets.quick)&&stoneCorner&&road) {
+  if(surface==='stone'&&stoneCorner&&road) {
     group.userData.nativeCliffCorner=!!cliffCorner;
     const corner=stoneCorner.clone(true);
     corner.name=cliffCorner?'native-cliff-corner':'native-stone-corner';corner.position.y=cliffCorner?CLIFF_MESH_Y:0;

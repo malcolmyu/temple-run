@@ -1,3 +1,4 @@
+import {cachedResponse} from './assetCache';
 import manifest from './runtimeAssets.generated.json';
 type ModelRecord={obj:string;uv:number[]|null};
 const redirects:Record<string,string>={...manifest.textures,...manifest.rigs};
@@ -9,7 +10,7 @@ export function optimizedAsset(url:string):string {
  return redirects[key]?url.slice(0,at)+redirects[key]:url;
 }
 export function preloadWorldModels():Promise<Record<string,ModelRecord>>{
- if(!models)models=fetch(`${import.meta.env.BASE_URL}${manifest.worldPack}`).then(r=>{if(!r.ok)throw Error(`world pack: ${r.status}`);return r.json()}).catch(error=>{models=null;throw error;});
+ if(!models)models=cachedResponse(`${import.meta.env.BASE_URL}${manifest.worldPack}`).then(r=>{if(!r.ok)throw Error(`world pack: ${r.status}`);return r.json()}).catch(error=>{models=null;throw error;});
  return models;
 }
 export function releaseWorldModelText():void{models=null;}
